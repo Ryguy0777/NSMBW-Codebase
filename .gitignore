@@ -1,5 +1,6 @@
 /_build
 /.vscode
+/bin
 build.ninja
 configure.bat
 ninja.exe
