@@ -1,3 +1,6 @@
+_restgpr_29=0x802DD0B8
+_savegpr_29=0x802DD06C
+
 vfb4__8dActor_cFv=0x80065B40
 
 __check_pad3=0x80004000

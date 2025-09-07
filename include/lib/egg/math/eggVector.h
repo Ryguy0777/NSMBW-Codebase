@@ -46,6 +46,8 @@ namespace EGG {
             this->y = y;
             this->z = z;
         }
+
+        void normalise();
     };
 
 }

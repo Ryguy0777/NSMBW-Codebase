@@ -158,6 +158,14 @@ __kConstFloat\@: .float float_value
 	.endm
 
 
+// TODO: write nop to an array of addresses
+// kmWriteNop
+//	Write a nop instruction to address
+kmWriteNop: .macro addr
+	kmHook3 kctWrite, 2, addr, 0x38600000
+	.endm
+
+
 // Default to .text so that Kamek macros work
 .text
 

@@ -82,4 +82,10 @@
 #define kmCallDefAsm(addr) \
 	kmCallDefInt(__COUNTER__, addr, asm void, )
 
+
+// TODO: write nop to an array of addresses
+// kmWriteNop
+//	Write a nop instruction to address
+#define kmWriteNop(addr) kmHook3(kctWrite, 2, (addr), 0x38600000)
+
 #endif
