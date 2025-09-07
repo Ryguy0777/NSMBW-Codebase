@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<game name="Codebase" description="NSMBW Custom Codebase">
+
+    <!-- Files -->
+    <file name="spritedata" path="spritedata.xml" />
+	<file name="sprites" path="sprites.py" />
+
+</game>
