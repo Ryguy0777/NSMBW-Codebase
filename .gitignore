@@ -1,0 +1,5 @@
+/_build
+/.vscode
+build.ninja
+configure.bat
+ninja.exe
