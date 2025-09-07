@@ -1,6 +1,6 @@
-/_build
-/.vscode
-/bin
-build.ninja
-configure.bat
-ninja.exe
+/Codebase/_build
+/Codebase/.vscode
+/Codebase/bin
+Codebase/build.ninja
+Codebase/configure.bat
+Codebase/ninja.exe
