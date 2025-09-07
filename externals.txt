@@ -1,3 +1,6 @@
+TileGodTiles=0x80936868
+TileTable=0x802EFCB8
+
 _restgpr_29=0x802DD0B8
 _savegpr_29=0x802DD06C
 
