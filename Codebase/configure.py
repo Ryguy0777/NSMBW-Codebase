@@ -344,7 +344,21 @@ cflags = $
   -sdata 0 $
   -sdata2 0 $
   -RTTI off{(dumb_constant + ' '.join(config.extra_cflags)) if config.extra_cflags else ''} $
-  -maxerrors 1
+  -maxerrors 1 $
+  -proc gekko $
+  -d REVOLUTION $
+  -i include/new/nsmbw-updated $
+  -i include/lib $
+  -i include/lib/MSL $
+  -i include/lib/MSL/internal $
+  -i include/lib/nw4r $
+  -i include/lib/revolution/BTE/include $
+  -i include/lib/revolution/BTE/stack/include $
+  -i include/lib/revolution/BTE/stack/btm $
+  -i include/lib/revolution/BTE/bta/include $
+  -i include/lib/revolution/BTE/bta/sys $
+  -i include/lib/revolution/BTE/gki/common $
+  -i include/lib/revolution/BTE/gki/platform
 
 rule cw
   command = $cc $cflags -c -o $out -MDfile $out.d $in
