@@ -14,11 +14,23 @@ kmWritePointer(0x80ADEA00, &daSpawner_c::build);
 
 int daSpawner_c::execute() {
     mEventID = mEventNums >> 10 & 0b111111;
+    // we use the event ids to store the profile id, so we can reserve the settings
+    // this does limit the amount of spawnable actors from 0-1023, but I don't think we'll hit 1023 profiles
     mChildProfileID = mEventNums & 0b1111111111;
     // if triggering event id is set and it has not spawned anything
     if (checkEvent(mEventID)) {
         if (mHasChild == false) {
             // spawn child actor
+            // adjust profile id!!
+            #if GAME_REVISION >= GAME_REVISION_C
+            if (mChildProfileID > fProfile::WII_STRAP) {
+                mChildProfileID += 3;
+            }
+            #elif GAME_REVISION >= GAME_REVISION_K
+            if (mChildProfileID > fProfile::MULTI_COURSE_SELECT) {
+                mChildProfileID += 2;
+            }
+            #endif
             construct(mChildProfileID, mParam, &mPos, &mAngle, mLayer);
             mHasChild = true;
         }

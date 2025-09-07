@@ -628,7 +628,7 @@ namespace fProfile {
         AC_LIGHT_WATER,
         AC_COPYRIGHT,
         WII_STRAP,
-#if defined(IS_GAME_VERSION_C_COMPATIBLE)
+#if GAME_REVISION >= GAME_REVISION_C
         LOGO_SCREEN,
         NV_SCREEN,
         ANTI_ADDICTION_SCREEN,
@@ -714,7 +714,7 @@ namespace fProfile {
         EVENT_OPENING_TITLE,
         SELECT_PLAYER,
         MULTI_COURSE_SELECT,
-#if defined(IS_GAME_VERSION_K_COMPATIBLE)
+#if GAME_REVISION >= GAME_REVISION_K
         MULTI_COURSE_SELECT_TOURNAMENT,
         MULTI_COURSE_SELECT_TOURNAMENT_BUTTON,
 #endif
@@ -774,7 +774,8 @@ namespace fProfile {
         PROFILE_COUNT,
         INVALID = PROFILE_COUNT
     };
-
+    
+    // TODO see how DRAW_ORDER was shifted in KR/TW and C
     namespace DRAW_ORDER {
         /// @brief The draw order for the profiles.
         /// @ingroup profile
