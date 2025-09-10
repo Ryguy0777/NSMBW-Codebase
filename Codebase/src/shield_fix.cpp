@@ -16,6 +16,10 @@
  * as it tries to check the device type of a null pointer.
  *
  * Amazing.
+ * 
+ * NOTE: We use 0x90000000 addresses because Kamek has no way of patching addresses
+ * for certain regions only, in order to prevent C addresses from being treated as PAL addresses
+ * and going through a PAL->C address translation
  */
 
 struct DRMStruct {
@@ -62,7 +66,7 @@ void calculateCamera(const EGG::Vector3f &pos, const EGG::Vector3f &target, cons
 }
 
 // lingcod_callNVSISnippet
-kmBranchDefCpp(0x80100840, NULL, void, DRMStruct *data) {
+kmBranchDefCpp(0x90100840, NULL, void, DRMStruct *data) {
 	// This logic is stripped out of the game and executed by
 	// the "NVSI" DRM logic in the Lingcod emulator.
 	// So, we reimplement it here
@@ -85,7 +89,7 @@ kmBranchDefCpp(0x80100840, NULL, void, DRMStruct *data) {
 }
 
 // lingcod_getIniState
-kmBranchDefCpp(0x801007B0, NULL, bool, char *section, char *key) {
+kmBranchDefCpp(0x901007B0, NULL, bool, char *section, char *key) {
 	if (strcmp(section, "NSMB") == 0) {
 		// reference: e_assets/ini/nsmb/nsmb.ini
 		if (strcmp(key, "AUTO_PILOTING") == 0) return false;
@@ -102,7 +106,7 @@ kmBranchDefCpp(0x801007B0, NULL, bool, char *section, char *key) {
 }
 
 // lingcod_getIniKeyValueInt16
-kmBranchDefCpp(0x801007D0, NULL, short, char *section, char *key, short defaultValue) {
+kmBranchDefCpp(0x901007D0, NULL, short, char *section, char *key, short defaultValue) {
 	if (strcmp(section, "NSMB") == 0) {
 		// reference: e_assets/ini/nsmb/nsmb.ini
 		if (strcmp(key, "NOTCH_SPEED") == 0) return 0x1C0;
@@ -119,7 +123,7 @@ kmBranchDefCpp(0x801007D0, NULL, short, char *section, char *key, short defaultV
 }
 
 // lingcod_getIniKeyValueFloat
-kmBranchDefCpp(0x801007E0, NULL, float, char *section, char *key, float defaultValue) {
+kmBranchDefCpp(0x901007E0, NULL, float, char *section, char *key, float defaultValue) {
 	if (strcmp(section, "NSMB") == 0) {
 		// reference: e_assets/ini/nsmb/nsmb.ini
 		if (strcmp(key, "NINTENDO_LOGO_TIME") == 0) return 2.0f;
