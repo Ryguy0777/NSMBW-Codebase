@@ -5,3 +5,7 @@ Codebase/build.ninja
 Codebase/configure.bat
 Codebase/ninja.exe
 /.vscode
+Codebase/loader/kamekLoader.o
+Codebase/loader/nsmbw.o
+Codebase/loader/loader.xml
+Codebase/loader/loader.bin
