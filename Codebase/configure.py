@@ -208,6 +208,7 @@ class TranslationUnit:
             json_path = inspect_path.with_suffix('.json')
             if json_path.is_file():
                 self.read_config(json_path, game_versions)
+                return
 
             if inspect_path == src_root_dir or inspect_path == inspect_path.parent:
                 break
