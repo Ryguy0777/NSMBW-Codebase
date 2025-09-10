@@ -137,8 +137,7 @@ const loaderFunctionsEx functions_c = {
 	(u32*) 0x8032d2f8
 };
 
-void unknownVersion()
-{
+void unknownVersion() {
 	// can't do much here!
 	// we can't output a message on screen without a valid OSFatal addr;
 	// all we can really do is set the screen to solid red before we die
@@ -155,7 +154,7 @@ struct versionInfo {
 };
 
 static versionInfo sVersionInfo;
-static const loaderFunctionsEx *funcs;
+static const loaderFunctionsEx *sFuncs;
 
 versionInfo checkVersion() {
 	versionInfo version;
@@ -189,10 +188,10 @@ versionInfo checkVersion() {
 int loadBinary() {
 	char path[64];
 	if (sVersionInfo.revision == 0)
-		funcs->base.sprintf(path, "/Code/%c.bin", sVersionInfo.region);
+		sFuncs->base.sprintf(path, "/Code/%c.bin", sVersionInfo.region);
 	else
-		funcs->base.sprintf(path, "/Code/%c%d.bin", sVersionInfo.region, sVersionInfo.revision);
-	loadKamekBinaryFromDisc(&funcs->base, path);
+		sFuncs->base.sprintf(path, "/Code/%c%d.bin", sVersionInfo.region, sVersionInfo.revision);
+	loadKamekBinaryFromDisc(&sFuncs->base, path);
 
 	return 1;
 }
@@ -203,41 +202,40 @@ void loadIntoNSMBW() {
 
 	// choose functions
 	// (these are all the same in v1 and v2, thankfully)
-	funcs = NULL;
 	switch (sVersionInfo.region) {
-		case 'P': funcs = &functions_p; break;
-		case 'E': funcs = &functions_e; break;
-		case 'J': funcs = &functions_j; break;
-		case 'K': funcs = &functions_k; break;
-		case 'W': funcs = &functions_w; break;
-		case 'C': funcs = &functions_c; break;
+		case 'P': sFuncs = &functions_p; break;
+		case 'E': sFuncs = &functions_e; break;
+		case 'J': sFuncs = &functions_j; break;
+		case 'K': sFuncs = &functions_k; break;
+		case 'W': sFuncs = &functions_w; break;
+		case 'C': sFuncs = &functions_c; break;
 	}
 
 	// report some info
-	funcs->base.OSReport("<< CODE - LOADER 	release build: Sep 10 2025 01:39:56 (0x4302_145) >>\n");
-	funcs->base.OSReport("found region %c%d!\n", sVersionInfo.region, sVersionInfo.revision);
+	sFuncs->base.OSReport("<< CODE - LOADER 	release build: Sep 10 2025 01:39:56 (0x4302_145) >>\n");
+	sFuncs->base.OSReport("found region %c%d!\n", sVersionInfo.region, sVersionInfo.revision);
 
 	// remove the BCA check
-	*funcs->bcaCheck = 0x60000000;
+	*sFuncs->bcaCheck = 0x60000000;
 
 	// modify gameInitTable to load rels earlier & load kamek binary
 	u32 buffer[20];
-	funcs->memcpy(&buffer, funcs->gameInitTable, 80);
+	sFuncs->memcpy(&buffer, sFuncs->gameInitTable, 80);
 
 	// set rel loading functions as first entries in the table
-	funcs->gameInitTable[0] = buffer[15];
-	funcs->gameInitTable[1] = buffer[16];
-	funcs->gameInitTable[2] = buffer[17];
+	sFuncs->gameInitTable[0] = buffer[15];
+	sFuncs->gameInitTable[1] = buffer[16];
+	sFuncs->gameInitTable[2] = buffer[17];
 
 	// kamek binary loading as fourth entry
-	funcs->gameInitTable[3] = (u32)&loadBinary;
+	sFuncs->gameInitTable[3] = (u32)&loadBinary;
 
 	// set all the previous functions
-	funcs->memcpy(&funcs->gameInitTable[4], &buffer, 60);
+	sFuncs->memcpy(&sFuncs->gameInitTable[4], &buffer, 60);
 
 	// set the remaining two functions
-	funcs->gameInitTable[19] = buffer[18];
-	funcs->gameInitTable[20] = buffer[19];
+	sFuncs->gameInitTable[19] = buffer[18];
+	sFuncs->gameInitTable[20] = buffer[19];
 }
 
 kmBranch(0x80004320, loadIntoNSMBW);
