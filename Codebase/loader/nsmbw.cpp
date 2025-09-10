@@ -3,12 +3,14 @@
 typedef void *(*EGG_Heap_Alloc_t) (u32 size, s32 align, void *heap);
 typedef void (*EGG_Heap_Free_t) (void *buffer, void *heap);
 typedef void *(*memcpy_t) (void *dest, const void *src, size_t count);
+typedef void (*flush_cache_t) (void*, size_t);
 
 struct loaderFunctionsEx {
 	loaderFunctions base;
 	EGG_Heap_Alloc_t eggAlloc;
 	EGG_Heap_Free_t eggFree;
 	memcpy_t memcpy;
+	flush_cache_t flushCache;
 	void **gameHeapPtr;
 	void **archiveHeapPtr;
 	u32* bcaCheck;
@@ -40,6 +42,7 @@ const loaderFunctionsEx functions_p = {
 	(EGG_Heap_Alloc_t) 0x802B8E00,
 	(EGG_Heap_Free_t) 0x802B90B0,
 	(memcpy_t) 0x80004364,
+	(flush_cache_t) 0x80004330,
 	(void **) 0x80377F48,
 	(void **) 0x8042A72C,
 	(u32*) 0x800CA0B8,
@@ -58,10 +61,12 @@ const loaderFunctionsEx functions_e = {
 	(EGG_Heap_Alloc_t) 0x802B8CC0,
 	(EGG_Heap_Free_t) 0x802B8F70,
 	(memcpy_t) 0x80004364,
+	(flush_cache_t) 0x80004330,
 	(void **) 0x80377C48,
 	(void **) 0x8042A44C,
 	(u32*) 0x800C9FC8,
 	(u32*) 0x803280E0
+
 };
 const loaderFunctionsEx functions_j = {
 	{(OSReport_t) 0x8015F540,
@@ -76,6 +81,7 @@ const loaderFunctionsEx functions_j = {
 	(EGG_Heap_Alloc_t) 0x802B8AD0,
 	(EGG_Heap_Free_t) 0x802B8D80,
 	(memcpy_t) 0x80004364,
+	(flush_cache_t) 0x80004330,
 	(void **) 0x803779C8,
 	(void **) 0x8042A16C,
 	(u32*) 0x800C9F48,
@@ -94,6 +100,7 @@ const loaderFunctionsEx functions_k = {
 	(EGG_Heap_Alloc_t) 0x802B9200,
 	(EGG_Heap_Free_t) 0x802B94B0,
 	(memcpy_t) 0x80004364,
+	(flush_cache_t) 0x80004330,
 	(void **) 0x80384948,
 	(void **) 0x804370EC,
 	(u32*) 0x800CA0D8,
@@ -112,6 +119,7 @@ const loaderFunctionsEx functions_w = {
 	(EGG_Heap_Alloc_t) 0x802B9200,
 	(EGG_Heap_Free_t) 0x802B94B0,
 	(memcpy_t) 0x80004364,
+	(flush_cache_t) 0x80004330,
 	(void **) 0x80382D48,
 	(void **) 0x804354EC,
 	(u32*) 0x800CA0D8,
@@ -131,6 +139,7 @@ const loaderFunctionsEx functions_c = {
 	(EGG_Heap_Alloc_t) 0x802bb360,
 	(EGG_Heap_Free_t) 0x802bb610,
 	(memcpy_t) 0x80004364,
+	(flush_cache_t) 0x80004330,
 	(void **) 0x8037d4c8,
 	(void **) 0x8042fccc,
 	(u32*) 0x800ca2d8,
@@ -196,6 +205,8 @@ int loadBinary() {
 	return 1;
 }
 
+extern vu32 aiControl:0xCD006C00;
+
 void loadIntoNSMBW() {
 	// set version before we do anything
 	sVersionInfo = checkVersion();
@@ -215,8 +226,14 @@ void loadIntoNSMBW() {
 	sFuncs->base.OSReport("<< CODE - LOADER 	release build: Sep 10 2025 01:39:56 (0x4302_145) >>\n");
 	sFuncs->base.OSReport("found region %c%d!\n", sVersionInfo.region, sVersionInfo.revision);
 
+	// reset the AI control register because libogc doesn't reset this right,
+	// so on console the SDK can't initialize audio correctly coming from the Riivolution channel
+	aiControl = 0;
+
 	// remove the BCA check
 	*sFuncs->bcaCheck = 0x60000000;
+	// we call __flush_cache to remove any stale instructions after writing to RAM
+	sFuncs->flushCache(sFuncs->gameInitTable, 4);
 
 	// modify gameInitTable to load rels earlier & load kamek binary
 	u32 buffer[20];
@@ -236,6 +253,8 @@ void loadIntoNSMBW() {
 	// set the remaining two functions
 	sFuncs->gameInitTable[19] = buffer[18];
 	sFuncs->gameInitTable[20] = buffer[19];
+
+	sFuncs->flushCache(sFuncs->gameInitTable, 80);
 }
 
 kmBranch(0x80004320, loadIntoNSMBW);
