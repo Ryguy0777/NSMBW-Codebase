@@ -2,9 +2,10 @@
 #include <string.h>
 #include <lib/egg/math/eggVector.h>
 #include <lib/nw4r/math/math_types.h>
+#include <game_versions_nsmbw.h>
 
 #if GAME_REVISION < GAME_REVISION_C
-#error "Shield fixes should not be built for non shield versions!"
+#error Shield fixes should not be built for non shield versions!
 #endif
 
 /*

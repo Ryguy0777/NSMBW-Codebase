@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <lib/revolution/OS/OSError.h>
+#include <revolution/OS/OSError.h>
 
 // prolog hook
 // this is the equivalent of the prolog.S file from NewerSMBW
