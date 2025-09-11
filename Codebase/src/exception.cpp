@@ -1,5 +1,7 @@
 #include <kamek.h>
 #include <revolution/OS/OSContext.h>
+#include <game/bases/d_game_key.hpp>
+#include <revolution/WPAD.h>
 #include <game_versions_nsmbw.h>
 
 // replace the exception handler with our own version
@@ -13,7 +15,7 @@ namespace nw4r { namespace db {
 
 #define GAME_NAME "NSMBW - Custom Codebase"
 
-const bool gprFun = false;
+extern const u32 codeAddr;
 
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.
@@ -62,10 +64,11 @@ const char *errDesc[] = {
 
 // write our new exception info
 kmBranchDefCpp(0x80234CA0, NULL, void, u16 OSError, OSContext *osContext, u32 dsisr, u32 dar) {
-    nw4r::db::Exception_Printf_("Whoops! " GAME_NAME " has crashed - %s\n\nPlease send the information below to\nthe github repo\nYou can scroll through this report using the D-Pad.\n" VERSION_NAME "\n", errDesc[OSError]);
+    nw4r::db::Exception_Printf_("Whoops! " GAME_NAME " has crashed - %s\n\nYou can scroll through this report using the D-Pad.\n" VERSION_NAME "\n", errDesc[OSError]);
     nw4r::db::Exception_Printf_("SRR0: %08X | DSISR: %08X | DAR: %08X\n", osContext->srr0, dsisr, dar);
 
-    if (gprFun) {
+    // show gpr info if holding minus while the game crashes
+    if (dGameKey_c::m_instance->mRemocon[0]->mDownButtons & WPAD_BUTTON_MINUS) {
         int i = 0;
         do {
             nw4r::db::Exception_Printf_("R%02d:%08X  R%02d:%08X  R%02d:%08X\n", i, osContext->gprs[i], i + 0xB, osContext->gprs[i + 0xB], i + 0x16, osContext->gprs[i + 0x16]);
@@ -83,9 +86,10 @@ kmBranchDefCpp(0x80234CA0, NULL, void, u16 OSError, OSContext *osContext, u32 ds
             break;
 
         nw4r::db::Exception_Printf_("%08X", stackPointer[1]);
-        /* if (stackPointer[1] >= dlcode) {
-            nw4r::db::Exception_Printf_(" - %08X NewerASM", stackPointer[1] - dlcode);
-        } */
+        // print the offset of the function in the kamek map if custom code
+        if (stackPointer[1] >= codeAddr) {
+            nw4r::db::Exception_Printf_(" - %08X _map", stackPointer[1] - codeAddr);
+        }
         nw4r::db::Exception_Printf_("\n");
 
         i++;

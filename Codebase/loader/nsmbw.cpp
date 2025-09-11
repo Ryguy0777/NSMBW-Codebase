@@ -17,10 +17,17 @@ struct loaderFunctionsEx {
 	u32* gameInitTable;
 };
 
+extern u32 codeAddr:0x800014e0;
+
 void *allocAdapter(u32 size, bool isForCode, const loaderFunctions *funcs) {
 	const loaderFunctionsEx *funcsEx = (const loaderFunctionsEx *)funcs;
 	void **heapPtr = isForCode ? funcsEx->gameHeapPtr : funcsEx->archiveHeapPtr;
-	return funcsEx->eggAlloc(size, 0x20, *heapPtr);
+	void *text = funcsEx->eggAlloc(size, 0x20, *heapPtr);
+	if (isForCode) {
+		funcs->OSReport("Code start at %p\n", text);
+		codeAddr = (u32)text;
+	}
+	return text;
 }
 void freeAdapter(void *buffer, bool isForCode, const loaderFunctions *funcs) {
 	const loaderFunctionsEx *funcsEx = (const loaderFunctionsEx *)funcs;

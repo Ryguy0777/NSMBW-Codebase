@@ -377,7 +377,7 @@ rule cw
             lines.append(f'  in_filename = {ninja_escape(tu.cpp_file.relative_to(config.get_src_dir()))}')
             lines.append('')
 
-    rule_command = f"{quote}$kamek{quote} $in -quiet -dynamic"
+    rule_command = f"{quote}$kamek{quote} $in -quiet -dynamic -output-map=_map/$selectversion.txt"
     if use_addrmap:
         rule_command += f" {quote}-versions=$addrmap{quote}"
     if use_externals:
@@ -432,6 +432,7 @@ def main(argv=None) -> None:
     txt = make_ninja_file(config)
     ninja_fp = config.get_ninja_file()
     ninja_fp.write_text(txt, encoding='utf-8')
+    Path('_map').mkdir(exist_ok=True)
 
 
 if __name__ == '__main__':
