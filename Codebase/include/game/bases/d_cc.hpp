@@ -335,6 +335,7 @@ private:
      */
     static hitCheck _hitCheck[4][4];
 
+public:
     static dCc_c *mEntryN; ///< The first collider in the list.
     static dCc_c *mEntryB; ///< The last collider in the list.
 };
