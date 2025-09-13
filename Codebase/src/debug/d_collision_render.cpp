@@ -2,13 +2,14 @@
 #include <kamek.h>
 #include <new/bases/d_collision_render.hpp>
 #include <game/bases/d_actor.hpp>
+#include <game/bases/d_ride_circle.hpp>
 #include <nw4r/g3d/g3d_camera.h>
 #include <nw4r/math/math_triangular.h>
 #include <revolution/GX.h>
 #include <game_versions_nsmbw.h>
 
-static const bool renderCollision = true;
-static const bool renderTileColliders = true;
+static const bool renderCollision = false;
+static const bool renderTileColliders = false;
 
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.
@@ -337,7 +338,7 @@ void dCollisionRender_c::drawXlu() {
                 DrawQuad(tlX, tlY, trX, trY, blX, blY, brX, brY, 9000.0f, r, g, b, a, false);
             }
 
-            currBgCtr = currBgCtr->mpPrev;
+            currBgCtr = currBgCtr->mpNext;
         }
     }
 
@@ -409,7 +410,6 @@ void dCollisionRender_c::drawXlu() {
         }
     }
 
-    /*
     // Draw all instances of dRide_ctr_c
     if (renderCollision) {
         dRide_ctr_c* currRide = dRide_ctr_c::mEntryN;
@@ -422,33 +422,33 @@ void dCollisionRender_c::drawXlu() {
             u8 a = 0xFF;
 
             // For dRide2Point and dRideRoll, draw a simple line
-            if (currRide->type <= 2)
-                DrawLine(currRide->left.x, currRide->left.y, currRide->right.x, currRide->right.y, 9000.0f, r, g, b, a);
+            if (currRide->mType <= 2)
+                DrawLine(currRide->mLeft.x, currRide->mLeft.y, currRide->mRight.x, currRide->mRight.y, 9000.0f, r, g, b, a);
 
             // dRideCircle is a little bit more complex
             else {
                 dRideCircle_c* currCircle = (dRideCircle_c*)currRide;
 
                 // Get centre and radius
-                float centreX = currCircle->owner->pos.x + currCircle->centreOffset.x;
-                float centreY = currCircle->owner->pos.y + currCircle->centreOffset.y;
-                float radius = currCircle->radius;
+                float centreX = currCircle->mpOwner->mPos.x + currCircle->mCentreOffset.x;
+                float centreY = currCircle->mpOwner->mPos.y + currCircle->mCentreOffset.y;
+                float radius = currCircle->mRadius;
 
                 // If the circle is full, use the regular circle method
-                if (currCircle->leftAngleOffset + currCircle->rightAngleOffset == 0x10000)
+                if (currCircle->mLeftAngleOffset + currCircle->mRightAngleOffset == 0x10000)
                     DrawCircle(centreX, centreY, radius, radius, 9000.0f, r, g, b, a);
 
                 // Else draw a partial circle
                 else {
-                    u16 minAngle = currCircle->rotation - currCircle->rightAngleOffset;
-                    u16 maxAngle = minAngle + currCircle->leftAngleOffset;
+                    u16 minAngle = currCircle->mRotation - currCircle->mRightAngleOffset;
+                    u16 maxAngle = minAngle + currCircle->mLeftAngleOffset;
                     DrawPartialCircle(centreX, centreY, radius, 9000.0f, minAngle, maxAngle, r, g, b, a);
                 }
             }
 
-            currRide = currRide->prev;
+            currRide = currRide->mpNext;
         }
-    } */
+    }
 }
 
 // Schedule renderer for drawing
