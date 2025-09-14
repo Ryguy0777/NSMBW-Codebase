@@ -18,14 +18,14 @@ extern const char* profileNames[fProfile::PROFILE_COUNT];
 const char* customProfileNames[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
 
 // custom profile ctor
-dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, u16 spriteId, const SpriteData *spriteData, const char** files) {
+dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files) {
     // store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
     mProfile.mActorProperties = profile->mActorProperties;
 
-    u32 profileId;
+    ProfileName profileId;
 
     // if spritedata is not null, store this as a sprite
     if (spriteData) {
@@ -52,7 +52,7 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const cha
     }
 }
 
-dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, u16 profileId) {
+dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId) {
     // store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;

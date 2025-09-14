@@ -491,6 +491,8 @@ enum Value {
 
     // Start of custom entries
     AC_SPAWNER,
+    AC_MULTI_SPAWNER,
+    AC_SPAWNER_PAIRED,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT,

@@ -4,8 +4,10 @@
 #include <new/sprite_ids.hpp>
 #include <game/framework/f_profile.hpp>
 
+typedef u16 SpriteName;
+
 struct SpriteData {
-    u16 profileId;
+    ProfileName profileId;
     s32 xoffs;
     s32 yoffs;
     s32 spawnRangeOffset[2];
@@ -24,9 +26,9 @@ struct SpriteData {
 class dCustomProfile_c {
 public:
     // stage actor
-    dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, u16 spriteId, const SpriteData *spriteData, const char** files=NULL);
+    dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files=NULL);
     // scenes, bases, etc
-    dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, u16 profileId);
+    dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId);
 
     fProfile::fActorProfile_c mProfile;
 };

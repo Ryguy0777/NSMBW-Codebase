@@ -13,6 +13,8 @@ public:
     virtual int execute();
 
     u8 mEventID;
-    u16 mChildProfileID;
+    ProfileName mChildProfileID;
     bool mHasChild;
+    u32 mTimer;
+    fBaseID_e mChildID;
 };
