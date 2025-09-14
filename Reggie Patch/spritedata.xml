@@ -24,35 +24,9 @@
 <!-- Stopped after Line xxxx / 10755 (#x) -->
 
 <sprites>
-  <sprite id="310" name="Signboard - Arrow" notes="A signboard with a red arrow on it, useful for suggesting a player travel in a specific direction.">
-	<value nybble="5" title="Scale" comment="1.0 + 0.5 * value"/>
-	<list nybble="6" title="Rotation" comment="This determines which direction the sign will face.">
-      <entry value="0">Up</entry>
-      <entry value="1">Up + Left</entry>
-      <entry value="2">Left</entry>
-      <entry value="3">Down + Left</entry>
-      <entry value="4">Down</entry>
-      <entry value="5">Down + Right</entry>
-      <entry value="6">Right</entry>
-      <entry value="7">Up + Right</entry>
-    </list>
-    <list nybble="12" title="Direction" comment="This determines which direction the arrow will point in.">
-      <entry value="0">Right</entry>
-      <entry value="1">Up + Right</entry>
-      <entry value="2">Up</entry>
-      <entry value="3">Up + Left</entry>
-      <entry value="4">Left</entry>
-      <entry value="5">Down + Left</entry>
-      <entry value="6">Down</entry>
-      <entry value="7">Down + Right</entry>
-    </list>
-    <checkbox nybble="11.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Signboard placing it further behind other sprites."/>
-  </sprite> <!-- #310: Signboard - Arrow -->
- 
-  <sprite id="88" name="Actor Spawner" notes="Spawns an actor.">
-	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
-	<value nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
-  </sprite> <!-- #88: Actor Spawner -->
+  <sprite id="22" name="Mini Goomba" sizehacks="True" notes="A Tiny Goomba that will walk forward and die upon contact with the player.">
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Goomba placing it further behind other sprites."/>
+  </sprite> <!-- #22: Mini Goomba -->
 
   <sprite id="191" name="Tile God Event" notes="The Tile God can Create / Change / Destroy tiles within a specified area when an Event is activated.">
     <dependency notes="The Tile God sprite can be placed no more than one block outside of the Zone it is being activated in for it to function."/>
@@ -96,4 +70,40 @@
     <value nybble="6" title="Tileset Row" comment="When using [Tile: Tile from Pa(x)], you can spawn every tile from the tileset by selecting it from a grid formation. Each tileset contains 16 Rows (0-15), and 16 Columns (0-15). The first tile in the top left is 0,0 and the last tile in the bottom right is 15,15." comment2="Some common examples for Pa0: &lt;br&gt; &lt;i&gt;Coin: 1,14 | Coin Outline: 1,15 | ?-Block: 3,1 | Used Block: 3,2 | Wooden Block: 3,3 | Stone Block: 3,4 | Donut Lift: 3,5 | Steel Block: 3,6" requirednybble="9" requiredval="8-11"/><!-- Appears only if Block Type (Tile) = 8-11 -->
     <value nybble="7" title="Tileset Column" comment="When using [Block Type: Tile from Pa(x)], you can spawn every tile from the tileset by selecting it from a grid formation. Each tileset contains 16 Rows (0-15), and 16 Columns (0-15). The first tile in the top left is 0,0 and the last tile in the bottom right is 15,15." comment2="Some common examples for Pa0: &lt;br&gt; &lt;i&gt;Coin: 1,14 | Coin Outline: 1,15 | ?-Block: 3,1 | Used Block: 3,2 | Wooden Block: 3,3 | Stone Block: 3,4 | Donut Lift: 3,5 | Steel Block: 3,6" requirednybble="9" requiredval="8-11"/><!-- Appears only if Block Type (Tile) = 8-11 -->
   </sprite><!-- #191: Tile God Event -->
+  
+  <sprite id="273" name="Jumbo Ray Respawner 2" notes="A controller that will respawn or otherwise spawn additional Jumbo Rays.">
+    <value nybble="12" title="Ray ID" comment="This determines which Jumbo Rays will be respawned by this controller." idtype="Ray"/>
+    <value nybble="7-9" title="Spawn Delay While Ridden" comment="This determines how soon after the launch of the initial Jumbo Ray that another one will be spawned. Used whenever at least one Ray is being ridden by a player." comment2="A value of 16 is equal to about the width of one Jumbo Ray. &lt;font color=&quot;red&quot;&gt;Do not use a value of 0 or the game will crash.&lt;/font&gt;"/>
+    <value nybble="5-6" title="Spawn Delay While Not Ridden" comment="Used instead of the other Spawn Delay whenever no Rays are currently being ridden." />
+  </sprite> <!-- #273: Jumbo Ray Respawner 2 -->
+  
+  <sprite id="310" name="Signboard - Arrow" notes="A signboard with a red arrow on it, useful for suggesting a player travel in a specific direction.">
+	<value nybble="5" title="Scale" comment="1.0 + 0.5 * value"/>
+	<list nybble="6" title="Rotation" comment="This determines which direction the sign will face.">
+      <entry value="0">Up</entry>
+      <entry value="1">Up + Left</entry>
+      <entry value="2">Left</entry>
+      <entry value="3">Down + Left</entry>
+      <entry value="4">Down</entry>
+      <entry value="5">Down + Right</entry>
+      <entry value="6">Right</entry>
+      <entry value="7">Up + Right</entry>
+    </list>
+    <list nybble="12" title="Direction" comment="This determines which direction the arrow will point in.">
+      <entry value="0">Right</entry>
+      <entry value="1">Up + Right</entry>
+      <entry value="2">Up</entry>
+      <entry value="3">Up + Left</entry>
+      <entry value="4">Left</entry>
+      <entry value="5">Down + Left</entry>
+      <entry value="6">Down</entry>
+      <entry value="7">Down + Right</entry>
+    </list>
+    <checkbox nybble="11.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Signboard placing it further behind other sprites."/>
+  </sprite> <!-- #310: Signboard - Arrow -->
+  
+  <sprite id="483" name="Actor Spawner" notes="Spawns an actor.">
+	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
+	<value nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
+  </sprite> <!-- #483: Actor Spawner -->
 </sprites>
