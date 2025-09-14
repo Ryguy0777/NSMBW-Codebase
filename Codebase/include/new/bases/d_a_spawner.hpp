@@ -12,8 +12,6 @@ public:
 
     virtual int execute();
 
-    static daSpawner_c *build();
-
     u8 mEventID;
     u16 mChildProfileID;
     bool mHasChild;

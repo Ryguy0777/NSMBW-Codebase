@@ -772,7 +772,13 @@ namespace fProfile {
         /// @details This value varies across New Super Mario Bros. Wii versions due to profiles added
         /// later in development.
         PROFILE_COUNT,
-        INVALID = PROFILE_COUNT
+        INVALID = PROFILE_COUNT,
+
+        // Start of custom entries
+        AC_SPAWNER,
+
+        // End of custom entries, do NOT remove
+        TOTAL_ACTOR_COUNT
     };
     
     // TODO see how DRAW_ORDER was shifted in KR/TW and C

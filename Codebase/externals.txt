@@ -1,3 +1,8 @@
+profileList=0x8076A748
+profileNames=0x80320B58
+spriteDataTable=0x8030A340
+spriteFiles=0x8031AB4C
+
 __vt__Q23m3d6proc_c=0xDEADBEEF
 
 codeAddr=0x800014e0
