@@ -778,6 +778,7 @@ namespace fProfile {
         AC_SPAWNER,
         AC_MULTI_SPAWNER,
         AC_SPAWNER_PAIRED,
+        EN_HEIHO,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

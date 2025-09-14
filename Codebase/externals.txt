@@ -1,3 +1,7 @@
+set__5dBc_cFP8dActor_cP11dBcSensor_cP11dBcSensor_cP11dBcSensor_c=0x8006d090
+registerCc__5dCc_cFP12dBaseActor_cPQ25dCc_c8CcData_s=0x8008c3e0
+quakeAction__5dEn_cFv=0x800955d0
+
 g_profile_WATER_LIFT=0x80980200
 
 profileList=0x8076A748

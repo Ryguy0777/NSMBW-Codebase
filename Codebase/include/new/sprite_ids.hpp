@@ -494,6 +494,7 @@ enum Value {
     AC_MULTI_SPAWNER,
     AC_SPAWNER_PAIRED,
     WATER_LIFT,
+    EN_HEIHO,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT

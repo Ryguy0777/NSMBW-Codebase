@@ -4,6 +4,9 @@
 #include <new/sprite_ids.hpp>
 #include <game/framework/f_profile.hpp>
 
+// all the neccessary code for profile/actor expansion
+// check d_a_spawner.cpp for a usage example
+
 typedef u16 SpriteName;
 
 struct SpriteData {
