@@ -25,9 +25,11 @@ struct SpriteData {
 
 class dCustomProfile_c {
 public:
-    // stage actor
+    // stage actor with sprite
     dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files=NULL);
-    // scenes, bases, etc
+    // stage actor without sprite
+    dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, ProfileName profileId);
+    // non-stage actors (scenes, bases, etc)
     dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId);
 
     fProfile::fActorProfile_c mProfile;

@@ -116,4 +116,7 @@
 	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
 	<value nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
   </sprite> <!-- #485: Paired Actor Spawner -->
+
+  <sprite id="486" name="Basic Platform - Water" notes="This platform floats on water. Can follow the current set by sprite 243." advancenotes="Does not work with location water.">
+  </sprite> <!-- #486: Basic Platform - Water -->
 </sprites>

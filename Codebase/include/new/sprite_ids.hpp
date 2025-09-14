@@ -493,8 +493,9 @@ enum Value {
     AC_SPAWNER,
     AC_MULTI_SPAWNER,
     AC_SPAWNER_PAIRED,
+    WATER_LIFT,
 
     // End of custom entries, do NOT remove
-    TOTAL_SPRITE_COUNT,
+    TOTAL_SPRITE_COUNT
 };
 };

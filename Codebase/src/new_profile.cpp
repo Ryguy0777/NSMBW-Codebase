@@ -1,5 +1,8 @@
 #include <kamek.h>
 #include <new/new_profile.hpp>
+#include <revolution/OS/OSError.h>
+
+#define DEBUG_PROFILE_CALL
 
 // sprites
 
@@ -17,30 +20,28 @@ fProfile::fProfilePtr_c* customProfileList[fProfile::TOTAL_ACTOR_COUNT - fProfil
 extern const char* profileNames[fProfile::PROFILE_COUNT];
 const char* customProfileNames[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
 
-// custom profile ctor
+// custom profile ctors
+
+// stage actor with sprite
 dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files) {
+#ifdef DEBUG_PROFILE_CALL
+    OSReport("Profile Setter: Sprite, %p, %s, %d, %d, %p, %p\n", profile, name, spriteData->profileId, spriteId, spriteData, files);
+#endif
     // store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
     mProfile.mActorProperties = profile->mActorProperties;
 
-    ProfileName profileId;
-
-    // if spritedata is not null, store this as a sprite
-    if (spriteData) {
-        profileId = spriteData->profileId;
-        if (spriteId < SPRITE_COUNT) {
-            spriteDataTable[spriteId] = *spriteData;
-            spriteFiles[spriteId] = files;
-        } else {
-            customSpriteDataTable[spriteId - SPRITE_COUNT] = *spriteData;
-            customSpriteFiles[spriteId - SPRITE_COUNT] = files;
-        }
-
-    // else use it as a profile id
-    } else
-        profileId = spriteId;
+    // store sprite data
+    ProfileName profileId = spriteData->profileId;
+    if (spriteId < SPRITE_COUNT) {
+        spriteDataTable[spriteId] = *spriteData;
+        spriteFiles[spriteId] = files;
+    } else {
+        customSpriteDataTable[spriteId - SPRITE_COUNT] = *spriteData;
+        customSpriteFiles[spriteId - SPRITE_COUNT] = files;
+    }
 
     // store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
@@ -52,7 +53,32 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const cha
     }
 }
 
+// stage actor without sprite
+dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, ProfileName profileId) {
+#ifdef DEBUG_PROFILE_CALL
+    OSReport("Profile Setter: Actor, %p, %s, %d\n", profile, name, profileId);
+#endif
+    // store profile in the class
+    mProfile.mpClassInit = profile->mpClassInit;
+    mProfile.mExecuteOrder = profile->mExecuteOrder;
+    mProfile.mDrawOrder = profile->mDrawOrder;
+    mProfile.mActorProperties = profile->mActorProperties;
+
+    // store profile data
+    if (profileId < fProfile::PROFILE_COUNT) {
+        profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
+        profileNames[profileId] = name;
+    } else {
+        customProfileList[profileId - fProfile::PROFILE_COUNT]= (fProfile::fProfilePtr_c*)&mProfile;
+        customProfileNames[profileId - fProfile::PROFILE_COUNT] = name;
+    }
+}
+
+// non-stage actors
 dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId) {
+#ifdef DEBUG_PROFILE_CALL
+    OSReport("Profile Setter: Base, %p, %s, %d\n", profile, name, profileId);
+#endif
     // store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;

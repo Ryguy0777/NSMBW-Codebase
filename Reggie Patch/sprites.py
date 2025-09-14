@@ -10,6 +10,21 @@ ImageCache = SLib.ImageCache
 ################################################################################
 ################################################################################
 
+class SpriteImage_MiniGoomba(SLib.SpriteImage_StaticMultiple):  # 22
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Goomba', 'goomba.png')
+
+    def dataChanged(self):
+        base = ImageCache['Goomba']
+        self.image = base.scaled(
+            int(base.width() * 0.6),
+            int(base.height() * 0.6),
+        )
+        self.offset = (3, 4)
+
+        super().dataChanged()
+
 class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
     def __init__(self, parent):
         super().__init__(parent)
@@ -39,6 +54,28 @@ class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
 
         return None
 
+class SpriteImage_WaterPlatform(SLib.SpriteImage):  # 486
+    def __init__(self, parent, scale=1.5):
+        super().__init__(parent, scale)
+        self.spritebox.shown = False
+        self.offset = (-32, -8)
+        self.width = 64
+
+    @staticmethod
+    def loadImages():
+        if 'WoodenPlatformL' not in ImageCache:
+            ImageCache['WoodenPlatformL'] = SLib.GetImg('wood_platform_left.png')
+            ImageCache['WoodenPlatformM'] = SLib.GetImg('wood_platform_middle.png')
+            ImageCache['WoodenPlatformR'] = SLib.GetImg('wood_platform_right.png')
+
+    def paint(self, painter):
+        super().paint(painter)
+        painter.drawTiledPixmap(24, 0, int((self.width * 1.5) - 48), int(self.height * 1.5), ImageCache['WoodenPlatformM'])
+        painter.drawPixmap(int((self.width - 16) * 1.5), 0, ImageCache['WoodenPlatformR'])
+        painter.drawPixmap(0, 0, ImageCache['WoodenPlatformL'])
+
 ImageClasses = {
+    22: SpriteImage_MiniGoomba,
     191: SpriteImage_TileEventImproved,
+    486: SpriteImage_WaterPlatform
 }
