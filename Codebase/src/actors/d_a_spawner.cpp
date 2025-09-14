@@ -6,7 +6,7 @@
 inline bool checkEvent(u8 event) {return (dSwitchFlagMng_c::m_instance->mFlags & (u64)(1 << event));}
 
 const SpriteData ActorSpawnerSpriteData = { fProfile::AC_SPAWNER, 0, 0, 0 , 0, 0x18, 0x18, 0, 0, 0, 0, 0 };
-CUSTOM_ACTOR_PROFILE(AC_SPAWNER, daSpawner_c, fProfile::AC_SPAWNER, fProfile::DUMMY_ACTOR, 0);
+CUSTOM_ACTOR_PROFILE(AC_SPAWNER, daSpawner_c, fProfile::AC_SPAWNER, fProfile::DRAW_ORDER::DUMMY_ACTOR, 0);
 dCustomProfile_c CustomActorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_SPAWNER", SpriteId::AC_SPAWNER, &ActorSpawnerSpriteData);
 
 int daSpawner_c::execute() {
