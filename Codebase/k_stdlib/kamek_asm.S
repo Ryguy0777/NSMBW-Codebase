@@ -162,7 +162,7 @@ __kConstFloat\@: .float float_value
 // kmWriteNop
 //	Write a nop instruction to address
 kmWriteNop: .macro addr
-	kmHook3 kctWrite, 2, addr, 0x38600000
+	kmHook3 kctWrite, 2, addr, 0x60000000
 	.endm
 
 

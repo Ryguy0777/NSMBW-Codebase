@@ -10,16 +10,16 @@ inline bool checkEvent(u8 event) {return (dSwitchFlagMng_c::m_instance->mFlags &
 CUSTOM_ACTOR_PROFILE(AC_SPAWNER, daSpawner_c, fProfile::EN_BOYON, fProfile::DRAW_ORDER::DUMMY_ACTOR, 0);
 
 // if a stage actor is the new actor, create spritedata for it 
-const SpriteData ActorSpawnerSpriteData = {fProfile::AC_SPAWNER, 0, 0, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
+const SpriteData ActorSpawnerSpriteData = {fProfile::AC_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
 // make a new object of dCustomProfile_c, the ctor call for it will assign profile data on game boot
 dCustomProfile_c ActorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_SPAWNER", SpriteId::AC_SPAWNER, &ActorSpawnerSpriteData);
 
 // you can even assign multiple profile/sprite ids to the same profile!
-const SpriteData MultiActorSpawnerSpriteData = {fProfile::AC_MULTI_SPAWNER, 0, 0, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
+const SpriteData MultiActorSpawnerSpriteData = {fProfile::AC_MULTI_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
 dCustomProfile_c MultiActorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_MULTI_SPAWNER", SpriteId::AC_MULTI_SPAWNER, &MultiActorSpawnerSpriteData);
 
 // third actor spawner variant
-const SpriteData PairedActorSpawnerSpriteData = {fProfile::AC_SPAWNER_PAIRED, 0, 0, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
+const SpriteData PairedActorSpawnerSpriteData = {fProfile::AC_SPAWNER_PAIRED, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
 dCustomProfile_c PairedActorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_SPAWNER_PAIRED", SpriteId::AC_SPAWNER_PAIRED, &PairedActorSpawnerSpriteData);
 
 int daSpawner_c::execute() {

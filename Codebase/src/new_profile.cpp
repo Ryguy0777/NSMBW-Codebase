@@ -122,8 +122,8 @@ kmCallDefAsm(0x80068440) {
     sub r0, r0, r12
 
     // Override table address
-    lis r12, customSpriteDataTable@h
-    ori r12, r12, customSpriteDataTable@l
+    lis r4, customSpriteDataTable@h
+    ori r4, r4, customSpriteDataTable@l
 
     // Modified original instruction
     notCustom:
