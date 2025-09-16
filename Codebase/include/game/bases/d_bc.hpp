@@ -55,6 +55,13 @@ public:
     bool hasSensorWall() { return mpSensorWall != nullptr; }
     u32 getFootAttr();
 
+    static u32 getUnitType(float x, float y, u8 layer);
+    static u32 getUnitKind(float x, float y, u8 layer);
+    static u32 getUnitType(u16 x, u16 y, u8 layer);
+    static u32 getUnitKind(u16 x, u16 y, u8 layer);
+
+    static bool checkGround(const mVec3_c *, float *, u8, u8, s8);
+
     void set(dActor_c *owner, dBcSensor_c *feet, dBcSensor_c *head, dBcSensor_c *wall);
 
     enum WaterCheckResult_e {

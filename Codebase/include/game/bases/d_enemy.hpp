@@ -73,10 +73,21 @@ struct block_hit {
     block_hit_data_s mData;
 };
 
+struct dIceInfo {
+    ~dIceInfo();
+    
+    u32 mFlags;
+    mVec3_c mPos;
+    mVec3_c mScale;
+    float mPad[8];
+};
+
 class dIceMng_c {
 public:
     dIceMng_c(dActor_c *owner);
     ~dIceMng_c();
+
+    bool createIce(dIceInfo*, int);
 
     u8 mPad[0x6c];
 };
@@ -144,9 +155,9 @@ public:
     virtual void setDeathInfo_IceVanish();
 
     void setDeathInfo_Smoke(dActor_c *actor);
-    //void setDeathInfo_Fumi__5dEn_cFP8dActor_c7mVec2_cRC12sStateIDIf_ci
-    //void setDeathInfo_YoshiFumi__5dEn_cFP8dActor_c
-    //void setDeathInfo_SpinFumi__5dEn_cFP8dActor_ci
+    void setDeathInfo_Fumi(dActor_c *, mVec2_c, const sStateIDIf_c&, int);
+    void setDeathInfo_YoshiFumi(dActor_c *);
+    void setDeathInfo_SpinFumi(dActor_c *, int);
 
     virtual bool isQuakeDamage();
 
@@ -250,6 +261,8 @@ public:
     void Bound(float, float, float);
     void boyonInit();
     void setNicePoint_Death();
+    void killIfTouchingLava(const mVec3_c &, float);
+    
 
     static const float smc_WATER_GRAVITY;
     static const float smc_WATER_YMAXSPD;

@@ -8,8 +8,8 @@
 #include <revolution/GX.h>
 #include <game_versions_nsmbw.h>
 
-static const bool renderCollision = true;
-static const bool renderTileColliders = true;
+static const bool renderCollision = false;
+static const bool renderTileColliders = false;
 
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.
