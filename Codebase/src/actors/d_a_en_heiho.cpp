@@ -219,7 +219,7 @@ void daEnHeiho_c::executeState_DieOther() {
 }
 
 void daEnHeiho_c::createIceActor() {
-    dIceInfo heihoIceInfo = {
+    dIceInfo heihoIceInfo[1] = {
         0,                                      // mFlags
         mVec3_c(mPos.x, mPos.y-3.8, mPos.z),    // mPos
         mVec3_c(1.3, 1.5, 1.5),                 // mScale
@@ -231,7 +231,7 @@ void daEnHeiho_c::createIceActor() {
         0.0, 
         0.0
     };
-    mIceMng.createIce(&heihoIceInfo, 1);
+    mIceMng.createIce(&heihoIceInfo[1], 1);
 }
 
 void daEnHeiho_c::setWalkSpeed() {
