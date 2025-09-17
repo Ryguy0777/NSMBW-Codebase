@@ -12,29 +12,29 @@ public:
 class dBcSensorPoint_c : public dBcSensor_c {
 public:
     dBcSensorPoint_c() { }
-	dBcSensorPoint_c(s32 _x, s32 _y) {
-		mX = _x; mY = _y;
-	}
-	dBcSensorPoint_c(u32 _flags, s32 _x, s32 _y) {
-		mFlags = _flags | SensorFlags::Point;
-		mX = _x; mY = _y;
-	}
+    dBcSensorPoint_c(s32 _x, s32 _y) {
+        mX = _x; mY = _y;
+    }
+    dBcSensorPoint_c(u32 _flags, s32 _x, s32 _y) {
+        mFlags = _flags | SensorFlags::Point;
+        mX = _x; mY = _y;
+    }
     s32 mX, mY;
 };
 
 class dBcSensorLine_c : public dBcSensor_c {
 public:
     dBcSensorLine_c() { }
-	dBcSensorLine_c(s32 _a, s32 _b, s32 _d) {
-		mFlags = SensorFlags::Line;
-		mLineA = _a; mLineB = _b;
-		mDistanceFromCenter = _d;
-	}
-	dBcSensorLine_c(u32 _flags, s32 _a, s32 _b, s32 _d) {
-		mFlags = _flags | SensorFlags::Line;
-		mLineA = _a; mLineB = _b;
-		mDistanceFromCenter = _d;
-	}
+    dBcSensorLine_c(s32 _a, s32 _b, s32 _d) {
+        mFlags = SensorFlags::Line;
+        mLineA = _a; mLineB = _b;
+        mDistanceFromCenter = _d;
+    }
+    dBcSensorLine_c(u32 _flags, s32 _a, s32 _b, s32 _d) {
+        mFlags = _flags | SensorFlags::Line;
+        mLineA = _a; mLineB = _b;
+        mDistanceFromCenter = _d;
+    }
     s32 mLineA, mLineB, mDistanceFromCenter;
 };
 

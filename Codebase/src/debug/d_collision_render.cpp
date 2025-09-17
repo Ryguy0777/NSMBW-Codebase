@@ -348,8 +348,8 @@ void dCollisionRender_c::drawXlu() {
         while (owner = (dActor_c*)fManager_c::searchBaseByGroupType(2, owner)) {
             // verify if dBc_c vtable is set
             u8 *vtablePtr = ((u8*)owner) + 0x1EC;
-		        if (*((u32*)vtablePtr) != BC_VTABLE)
-			        continue;
+                if (*((u32*)vtablePtr) != BC_VTABLE)
+                    continue;
 
             // Get the color
             u32 uptr = (u32)owner;

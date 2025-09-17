@@ -10,7 +10,7 @@
 namespace nw4r { namespace db {
     void Exception_Printf_(const char *msg, ...);
     // I hate this
-	void* sException();
+    void* sException();
 }}
 
 #define GAME_NAME "NSMBW - Custom Codebase"

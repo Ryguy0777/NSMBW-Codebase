@@ -37,14 +37,14 @@ int daEnHeiho_c::create() {
     dActor_c::setSoftLight_Enemy(mHeihoModel);
 
     nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("idle");
-	mAnmChr.create(mdl, resAnmChr, &mAllocator, 0);
+    mAnmChr.create(mdl, resAnmChr, &mAllocator, 0);
     playChrAnim("idle", m3d::FORWARD_LOOP, 0.0, 2.0);
 
     mResPat = mRes.GetResAnmTexPat("color");
-	mAnmTexPat.create(mdl, mResPat, &mAllocator, 0, 1);
-	mAnmTexPat.setAnm(mHeihoModel, mResPat, 0, m3d::FORWARD_ONCE);
-	mAnmTexPat.setRate(0.0f, 0);
-	mHeihoModel.setAnm(mAnmTexPat);
+    mAnmTexPat.create(mdl, mResPat, &mAllocator, 0, 1);
+    mAnmTexPat.setAnm(mHeihoModel, mResPat, 0, m3d::FORWARD_ONCE);
+    mAnmTexPat.setRate(0.0f, 0);
+    mHeihoModel.setAnm(mAnmTexPat);
 
     mAllocator.adjustFrmHeap();
 
@@ -73,9 +73,9 @@ int daEnHeiho_c::create() {
 
     // set size for model culling
     mVisibleAreaSize.x = 28.0;
-	mVisibleAreaSize.y = 32.0;
-	mVisibleAreaOffset.x = 0.0;
-	mVisibleAreaOffset.y = 12.0;
+    mVisibleAreaSize.y = 32.0;
+    mVisibleAreaOffset.x = 0.0;
+    mVisibleAreaOffset.y = 12.0;
 
     // set yoshi eating behavior
     mEatBehaviour = EAT_TYPE_EAT_PERMANENT;
@@ -84,11 +84,11 @@ int daEnHeiho_c::create() {
     mPos.z = zPositions[mBackFence];
 
     // tile sensors
-	static const dBcSensorLine_c below(-4<<12, 4<<12, 0<<12);
-	static const dBcSensorPoint_c above(0<<12, 20<<12);
-	static const dBcSensorLine_c adjacent(5<<12, 10<<12, 8<<12);
+    static const dBcSensorLine_c below(-4<<12, 4<<12, 0<<12);
+    static const dBcSensorPoint_c above(0<<12, 20<<12);
+    static const dBcSensorLine_c adjacent(5<<12, 10<<12, 8<<12);
 
-	mBc.set(this, (dBcSensor_c*)&below, (dBcSensor_c*)&above, (dBcSensor_c*)&adjacent);
+    mBc.set(this, (dBcSensor_c*)&below, (dBcSensor_c*)&above, (dBcSensor_c*)&adjacent);
 
     // set pacer final distances
     if (mType == HEIHO_TYPE_PACER) {
@@ -229,7 +229,7 @@ void daEnHeiho_c::initializeState_DieOther() {
     // play animation
     playChrAnim("die", m3d::FORWARD_LOOP, 0.0, 1.15);
 
-	mAngle.y = 0;
+    mAngle.y = 0;
 
     mAccelY = -0.1075;
     mSpeed.x = 0.0;
@@ -266,10 +266,10 @@ void daEnHeiho_c::setWalkSpeed() {
 
 // play a chr animation
 void daEnHeiho_c::playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate) {
-	nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr(name);
-	mAnmChr.setAnm(mHeihoModel, resAnmChr, playMode);
-	mHeihoModel.setAnm(mAnmChr, blendFrame);
-	mAnmChr.setRate(rate);
+    nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr(name);
+    mAnmChr.setAnm(mHeihoModel, resAnmChr, playMode);
+    mHeihoModel.setAnm(mAnmChr, blendFrame);
+    mAnmChr.setRate(rate);
 }
 
 // update animations
@@ -283,25 +283,25 @@ bool daEnHeiho_c::checkForLedge(float xOffset) {
     float xOffs[] = {xOffset, -xOffset};
 
     mVec3_c tileToCheck;
-	tileToCheck.y = 4.0 + mPos.y;
+    tileToCheck.y = 4.0 + mPos.y;
     tileToCheck.z = mPos.z;
     tileToCheck.x = mPos.x + xOffs[mDirection];
 
-	u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0, mLayer);
+    u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0, mLayer);
 
-	if (((unit >> 0x10) & 0xFF) == 8) {
-		return false;
+    if (((unit >> 0x10) & 0xFF) == 8) {
+        return false;
     } else {
         float zeroFloat = 0.0;
         bool result = mBc.checkGround(&tileToCheck, &zeroFloat, mLayer, 1, -1);
-	    if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0)) {
+        if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0)) {
             return false;
         } else {
             return true;
         }
     }
 
-	return false;
+    return false;
 }
 
 // react to being stomped
@@ -407,7 +407,7 @@ void daEnHeiho_c::executeState_Turn() {
 }
 
 void daEnHeiho_c::initializeState_Sleep() {
-	playChrAnim("sleep", m3d::FORWARD_LOOP, 0.0, 0.5);
+    playChrAnim("sleep", m3d::FORWARD_LOOP, 0.0, 0.5);
     mAngle.y = 0;
 }
 
@@ -419,13 +419,13 @@ void daEnHeiho_c::executeState_Sleep() {
     posMove();
 
     // handle tile collisions
-	EnBgCheck();
+    EnBgCheck();
 
     killIfTouchingLava(mPos, 1.0);
 }
 
 void daEnHeiho_c::initializeState_Jump() {
-	mJumpCounter = 0;
+    mJumpCounter = 0;
 }
 
 void daEnHeiho_c::finalizeState_Jump() {}
@@ -442,26 +442,26 @@ void daEnHeiho_c::executeState_Jump() {
     }
 
     // touching the grounds
-	if (BgCheck & 1) {
+    if (BgCheck & 1) {
         mVec2_c soundPos;
         soundPos = dAudio::cvtSndObjctPos(mPos);
         
-		if (mJumpCounter == 3)
+        if (mJumpCounter == 3)
             mJumpCounter = 0;
 
-		mJumpCounter++;
+        mJumpCounter++;
 
         // play animation, set speed, and play sound
-		if (mJumpCounter == 3) {
-			playChrAnim("jump2", m3d::FORWARD_ONCE, 0.0, 0.6);
-			mSpeed.y = 6.0;
-			dAudio::g_pSndObjEmy->startSound(SE_PLY_JUMPDAI_HIGH, soundPos, 0);
-		} else {
+        if (mJumpCounter == 3) {
+            playChrAnim("jump2", m3d::FORWARD_ONCE, 0.0, 0.6);
+            mSpeed.y = 6.0;
+            dAudio::g_pSndObjEmy->startSound(SE_PLY_JUMPDAI_HIGH, soundPos, 0);
+        } else {
             playChrAnim("jump", m3d::FORWARD_ONCE, 0.0, 0.45);
             mSpeed.y = 4.5;
             dAudio::g_pSndObjEmy->startSound(SE_PLY_JUMPDAI, soundPos, 0);
-	    }
-	}
+        }
+    }
 
     killIfTouchingLava(mPos, 1.0);
 }
@@ -475,10 +475,10 @@ void daEnHeiho_c::initializeState_Dizzy() {
         playChrAnim("dizzy", m3d::FORWARD_LOOP, 0.0, 1.0);
     }
 
-	mSpeed.x = 0;
-	mSpeed.y = -4.0;
+    mSpeed.x = 0;
+    mSpeed.y = -4.0;
 
-	mTimer = 0;
+    mTimer = 0;
 }
 
 void daEnHeiho_c::finalizeState_Dizzy() {}
@@ -488,16 +488,16 @@ void daEnHeiho_c::executeState_Dizzy() {
     calcSpeedY();
     posMove();
 
-	EnBgCheck();
+    EnBgCheck();
 
     killIfTouchingLava(mPos, 1.0);
 
-	//mDizzyEffect.spawn("Wm_en_spindamage", 0, &(Vec){pos.x, pos.y + 24.0, 0}, (S16Vec *)0, &(Vec){1.0, 1.0, 1.0});
+    //mDizzyEffect.spawn("Wm_en_spindamage", 0, &(Vec){pos.x, pos.y + 24.0, 0}, (S16Vec *)0, &(Vec){1.0, 1.0, 1.0});
 
-	if (mTimer > 600) {
-		changeState(*mRecoverState);
-		mHealth = 1;
-	}
+    if (mTimer > 600) {
+        changeState(*mRecoverState);
+        mHealth = 1;
+    }
     mTimer++;
 }
 
@@ -512,7 +512,7 @@ void daEnHeiho_c::executeState_Idle() {
     calcSpeedY();
     posMove();
 
-	EnBgCheck();
+    EnBgCheck();
 
     killIfTouchingLava(mPos, 1.0);
 }
