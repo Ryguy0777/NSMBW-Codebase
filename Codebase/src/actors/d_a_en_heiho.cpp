@@ -29,6 +29,7 @@ dCc_c::CcData_s l_heiho_cc = {
 };
 
 int daEnHeiho_c::create() {
+    // setup our model
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
     mRes = dResMng_c::m_instance->mRes.getRes("heiho", "g3d/heiho.brres");
     nw4r::g3d::ResMdl mdl = mRes.GetResMdl("heiho");
@@ -47,11 +48,15 @@ int daEnHeiho_c::create() {
 
     mAllocator.adjustFrmHeap();
 
+    // set y acceleration and max speed for gravity
+    mAccelY = -0.1875;
     mSpeedMax.y = -4.0;
 
+    // register the cc data (hitbox)
     mCc.registerCc(this, &l_heiho_cc);
     mCc.entry();
 
+    // assign settings variables
     mBackFence = (mParam >> 0x10 & 1);
 
     mType = (HEIHO_TYPE_e)(mParam >> 28 & 0xF);
@@ -62,30 +67,37 @@ int daEnHeiho_c::create() {
 
     mAnmTexPat.setFrame(mColor, 0);
 
+    // mCenterOffs is used to set the "center" of the actor
+    // for yoshi tongue and dieFall
     mCenterOffs = mVec3_c(0.0, 12.0, 0.0);
 
+    // set size for model culling
     mVisibleAreaSize.x = 28.0;
 	mVisibleAreaSize.y = 32.0;
 	mVisibleAreaOffset.x = 0.0;
 	mVisibleAreaOffset.y = 12.0;
 
+    // set yoshi eating behavior
     mEatBehaviour = EAT_TYPE_EAT_PERMANENT;
 
     float zPositions[2] = {1500.0, -2500.0};
     mPos.z = zPositions[mBackFence];
 
+    // tile sensors
 	static const dBcSensorLine_c below(-4<<12, 4<<12, 0<<12);
 	static const dBcSensorPoint_c above(0<<12, 20<<12);
 	static const dBcSensorLine_c adjacent(5<<12, 10<<12, 8<<12);
 
 	mBc.set(this, (dBcSensor_c*)&below, (dBcSensor_c*)&above, (dBcSensor_c*)&adjacent);
 
+    // set pacer final distances
     if (mType == HEIHO_TYPE_PACER) {
         float finalOffset = 16.0 * mDistance - 8.0;
         mFinalPos[0] = mPos.x + finalOffset;
         mFinalPos[1] = mPos.x - finalOffset;
     }
 
+    // set spawning direction
     u8 direction;
     if (mType < HEIHO_TYPE_JUMPER || mType > HEIHO_TYPE_PACER) {
         direction = getPl_LRflag(mPos);
@@ -93,8 +105,9 @@ int daEnHeiho_c::create() {
         direction = mSpawnDir;
     }
     mDirection = direction;
-    mAngle.y = l_look_angle[direction];
+    mAngle.y = l_heiho_look_angle[direction];
 
+    // set initial state
     switch (mType) {
         case HEIHO_TYPE_WALKER:
         case HEIHO_TYPE_WALKER_LEDGE:
@@ -116,6 +129,7 @@ int daEnHeiho_c::create() {
 }
 
 int daEnHeiho_c::execute() {
+    // execute state and remove if outisde of zone
     mStateMgr.executeState();
     ActorScrOutCheck(0);
     return true;
@@ -127,22 +141,30 @@ int daEnHeiho_c::draw() {
 }
 
 void daEnHeiho_c::finalUpdate() {
+    // calculate model
     Mtx someMatrix;
     Mtx thirdMatrix;
 
+    // do screen wrapping for levels with it enabled
     dActor_c::changePosAngle(&mPos, &mAngle, 1);
+
+    // set matrix to world position
     PSMTXTrans(mMatrix, mPos.x, mPos.y, mPos.z);
+
+    // apply rotation vector
     mMatrix.YrotM(mAngle.y);
+    mMatrix.XrotM(mAngle.x);
+    mMatrix.ZrotM(mAngle.z);
     
+    // apply center offsets
     PSMTXTrans(someMatrix, 0.0, mCenterOffs.y, 0.0);
     PSMTXConcat(mMatrix, someMatrix, mMatrix);
-    mMatrix.XrotM(mAngle.x);
-
     PSMTXTrans(thirdMatrix, 0.0, -mCenterOffs.y, 0.0);
     PSMTXConcat(mMatrix, thirdMatrix, mMatrix);
-    mMatrix.ZrotM(mAngle.z);
 
+    // set the matrix for the model
     mHeihoModel.setLocalMtx(&mMatrix);
+    // see scale using boyon 
     mHeihoModel.setScale(mBoyon.mScale.x, mBoyon.mScale.y, mBoyon.mScale.z);
     mHeihoModel.calc(false);
 
@@ -150,6 +172,7 @@ void daEnHeiho_c::finalUpdate() {
 }
 
 void daEnHeiho_c::Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2) {
+    // collisions with other non-player actors
     if ((mDirection != 1) || (cc1->mCollOffsetX[3] <= 0.0)) {
         if (mDirection != 0) {
             return;
@@ -166,12 +189,13 @@ void daEnHeiho_c::Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2) {
 
 void daEnHeiho_c::Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2) {
     dActor_c *pl = (dActor_c*)cc2->mpOwner;
+    // Enfumi_check returns the collision type of the player and enemy 
     int fumi_check = Enfumi_check(cc1, cc2, 0);
-    if (fumi_check == 1) {
+    if (fumi_check == 1) { // regular jump
         return reactFumiProc(pl);
-    } else if (fumi_check == 3) {
+    } else if (fumi_check == 3) { // spin jump
         return reactSpinFumiProc(pl);
-    } else if (fumi_check == 0) {
+    } else if (fumi_check == 0) { // hit from the sides
         return dEn_c::Normal_VsPlHitCheck(cc1, cc2);
     }
 }
@@ -186,8 +210,8 @@ void daEnHeiho_c::Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2) {
     }
 }
 
-void daEnHeiho_c::initalizeState_DieFall() {
-    OSReport("diefalling!\n");
+// play the death animation during DieFall
+void daEnHeiho_c::initializeState_DieFall() {
     playChrAnim("diefall", m3d::FORWARD_LOOP, 0.0, 1.0);
     return dEn_c::initializeState_DieFall();
 }
@@ -197,17 +221,17 @@ void daEnHeiho_c::executeState_DieFall() {
     return dEn_c::executeState_DieFall();
 }
 
-
+// play a falling animation and fall off the stage when stomped
 void daEnHeiho_c::initializeState_DieOther() {
+    // remove collider
     removeCc();
 
+    // play animation
     playChrAnim("die", m3d::FORWARD_LOOP, 0.0, 1.15);
 
 	mAngle.y = 0;
-	mAngle.x = 0;
 
     mAccelY = -0.1075;
-    mSpeedMax.y = -4.0;
     mSpeed.x = 0.0;
     mSpeed.y = 0.0;
 }
@@ -219,6 +243,7 @@ void daEnHeiho_c::executeState_DieOther() {
 }
 
 void daEnHeiho_c::createIceActor() {
+    // iceinfo is an array so that __destory_arr can be called
     dIceInfo heihoIceInfo[1] = {
         0,                                      // mFlags
         mVec3_c(mPos.x, mPos.y-3.8, mPos.z),    // mPos
@@ -235,10 +260,11 @@ void daEnHeiho_c::createIceActor() {
 }
 
 void daEnHeiho_c::setWalkSpeed() {
-    mSpeed.x = l_walk_speed[mDirection];
+    mSpeed.x = l_heiho_walk_speed[mDirection];
     return;
 }
 
+// play a chr animation
 void daEnHeiho_c::playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate) {
 	nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr(name);
 	mAnmChr.setAnm(mHeihoModel, resAnmChr, playMode);
@@ -246,6 +272,7 @@ void daEnHeiho_c::playChrAnim(const char* name, m3d::playMode_e playMode, float 
 	mAnmChr.setRate(rate);
 }
 
+// update animations
 void daEnHeiho_c::updateModel() {
     mHeihoModel.play();
     mAnmTexPat.play();
@@ -277,6 +304,7 @@ bool daEnHeiho_c::checkForLedge(float xOffset) {
 	return false;
 }
 
+// react to being stomped
 void daEnHeiho_c::reactFumiProc(dActor_c* player) {
     if (mHealth == 1) {
         mHealth = 0;
@@ -287,49 +315,54 @@ void daEnHeiho_c::reactFumiProc(dActor_c* player) {
     }
 }
 
+// react to being spin-stomped
 void daEnHeiho_c::reactSpinFumiProc(dActor_c* player) {
     setDeathInfo_SpinFumi(player, 1);
 }
 
+// react to yoshi stomp
 void daEnHeiho_c::reactYoshiFumiProc(dActor_c* player) {
     setDeathInfo_YoshiFumi(player);
 }
 
 void daEnHeiho_c::initializeState_Walk() {
+    // play walk animation if coming from turn state
     if (mStateMgr.getOldStateID() != &StateID_Turn) {
         playChrAnim("walk", m3d::FORWARD_LOOP, 0.0, 0.85);
     }
     setWalkSpeed();
-    mAccelY = -0.1875;
-    mSpeedMax = mVec3_c(0.0, -4.0, 0.0);
 }
 
 void daEnHeiho_c::finalizeState_Walk() {}
 
 void daEnHeiho_c::executeState_Walk() {
+    // update model & do speed calculations
     updateModel();
     calcSpeedY();
     posMove();
-    sLib::chaseAngle((short*)&mAngle.y, l_look_angle[mDirection], 0x800);
+    // finish turning if not facing a direction
+    sLib::chaseAngle((short*)&mAngle.y, l_heiho_look_angle[mDirection], 0x800);
 
-    if (!EnBgCheck()) {
+    if (!EnBgCheck()) { // not touching a tile
+        // related to walking speed in water? not sure
         if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
             mFootRelated2.x = mFootRelated2.x + m_1eb.x;
         }
-    } else {
+    } else { // touching a tile
         mFootRelated2.x = 0.0;
         mSpeed.y = 0.0;
-        if (checkForLedge(2.5f) == false) {
+        if (checkForLedge(2.5f) == false) { // check for ledges
             if (mType == HEIHO_TYPE_WALKER_LEDGE) {
                 changeState(StateID_Turn);
                 return;
             }
         }
     }
-    if (mType == HEIHO_TYPE_PACER) {
+    if (mType == HEIHO_TYPE_PACER) { // check if we've reached final pacer distances
         if ((mDirection == 0 && mPos.x >= mFinalPos[0]) || (mDirection == 1 && mPos.x <= mFinalPos[1]))
             changeState(StateID_Turn);
     }
+    // turn if touching a wall
     if (mBc.mFlags & 0x15 << mDirection & 0x3f) {
         changeState(StateID_Turn);
     }
@@ -338,6 +371,7 @@ void daEnHeiho_c::executeState_Walk() {
 }
 
 void daEnHeiho_c::initializeState_Turn() {
+    // quick fix for being stunned while turning
     if (mStateMgr.getOldStateID() == &StateID_Dizzy) {
         playChrAnim("walk", m3d::FORWARD_LOOP, 0.0, 0.85);
     }
@@ -347,6 +381,7 @@ void daEnHeiho_c::initializeState_Turn() {
 
 void daEnHeiho_c::finalizeState_Turn() {}
 
+// mostly the same as walk state
 void daEnHeiho_c::executeState_Turn() {
     updateModel();
     calcSpeedY();
@@ -362,7 +397,8 @@ void daEnHeiho_c::executeState_Turn() {
 
     killIfTouchingLava(mPos, 1.0);
 
-    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_look_angle[mDirection], 0x800);
+    // face our new direction, and exit state when finished
+    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_heiho_look_angle[mDirection], 0x800);
 
     if (doneTurning) {
         changeState(StateID_Walk);
@@ -372,8 +408,6 @@ void daEnHeiho_c::executeState_Turn() {
 
 void daEnHeiho_c::initializeState_Sleep() {
 	playChrAnim("sleep", m3d::FORWARD_LOOP, 0.0, 0.5);
-    mAccelY = -0.1875;
-    mSpeedMax = mVec3_c(0.0, -4.0, 0.0);
     mAngle.y = 0;
 }
 
@@ -384,20 +418,14 @@ void daEnHeiho_c::executeState_Sleep() {
     calcSpeedY();
     posMove();
 
+    // handle tile collisions
 	EnBgCheck();
 
     killIfTouchingLava(mPos, 1.0);
 }
 
 void daEnHeiho_c::initializeState_Jump() {
-	mSpeedMax.x = 0.0;
-	mSpeed.x = 0.0;
-	mAccelF = 0.0;
-
 	mJumpCounter = 0;
-
-    mAccelY = -0.1875;
-    mSpeedMax.y = -4.0;
 }
 
 void daEnHeiho_c::finalizeState_Jump() {}
@@ -407,11 +435,13 @@ void daEnHeiho_c::executeState_Jump() {
     calcSpeedY();
     posMove();
 
+    // if touching a ceiling, stop moving upwards
     u8 BgCheck = EnBgCheck();
     if (BgCheck & 2) {
         mSpeed.y = 0.0;
     }
 
+    // touching the grounds
 	if (BgCheck & 1) {
         mVec2_c soundPos;
         soundPos = dAudio::cvtSndObjctPos(mPos);
@@ -421,6 +451,7 @@ void daEnHeiho_c::executeState_Jump() {
 
 		mJumpCounter++;
 
+        // play animation, set speed, and play sound
 		if (mJumpCounter == 3) {
 			playChrAnim("jump2", m3d::FORWARD_ONCE, 0.0, 0.6);
 			mSpeed.y = 6.0;
@@ -444,16 +475,10 @@ void daEnHeiho_c::initializeState_Dizzy() {
         playChrAnim("dizzy", m3d::FORWARD_LOOP, 0.0, 1.0);
     }
 
-	mSpeedMax.x = 0;
 	mSpeed.x = 0;
-	mAccelF = 0;
-
-	mSpeedMax.y = -4.0;
 	mSpeed.y = -4.0;
-	mAccelY = -0.1875;
 
 	mTimer = 0;
-	mJumpCounter = 0;
 }
 
 void daEnHeiho_c::finalizeState_Dizzy() {}
@@ -478,9 +503,6 @@ void daEnHeiho_c::executeState_Dizzy() {
 
 void daEnHeiho_c::initializeState_Idle() {
     mSpeed.x = 0.0;
-
-    mAccelY = -0.1875;
-    mSpeedMax = mVec3_c(0.0, -4.0, 0.0);
 }
 
 void daEnHeiho_c::finalizeState_Idle() {}

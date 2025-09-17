@@ -2,7 +2,7 @@
 #include <new/new_profile.hpp>
 #include <revolution/OS/OSError.h>
 
-#define DEBUG_PROFILE_CALL
+//#define DEBUG_PROFILE_CALL
 
 // sprites
 

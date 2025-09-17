@@ -21,17 +21,20 @@ public:
     daEnHeiho_c() : mRes(nullptr) {};
     ~daEnHeiho_c() {};
 
+    // fBase_c overrides
     virtual int create();
     virtual int execute();
     virtual int draw();
 
+    // dBaseActor_c overrides
     virtual void finalUpdate();
 
+    // dEn_c overrides
     virtual void Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2);
     virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
     virtual void Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2);
 
-    virtual void initalizeState_DieFall();
+    virtual void initializeState_DieFall();
     virtual void executeState_DieFall();
 
     virtual void initializeState_DieOther();
@@ -39,6 +42,7 @@ public:
 
     virtual void createIceActor();
 
+    // new functions
     void setWalkSpeed();
     void playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate);
     void updateModel();
@@ -48,6 +52,7 @@ public:
     void reactSpinFumiProc(dActor_c *player);
     void reactYoshiFumiProc(dActor_c *player);
 
+    // states
     STATE_FUNC_DECLARE(daEnHeiho_c, Walk);
 	STATE_FUNC_DECLARE(daEnHeiho_c, Turn);
     STATE_FUNC_DECLARE(daEnHeiho_c, Sleep);
@@ -55,6 +60,7 @@ public:
     STATE_FUNC_DECLARE(daEnHeiho_c, Dizzy);
     STATE_FUNC_DECLARE(daEnHeiho_c, Idle);
 
+    // internal variables
     dHeapAllocator_c mAllocator;
     nw4r::g3d::ResFile mRes;
     m3d::mdl_c mHeihoModel;
@@ -71,6 +77,7 @@ public:
     //mEf::levelEffect_c mDizzyEffect;
     sStateIDIf_c *mRecoverState;
 
+    // settings variables
     HEIHO_TYPE_e mType;
     int mColor;
     u8 mHealth;
@@ -78,5 +85,5 @@ public:
     u8 mSpawnDir;
 };
 
-const s16 l_look_angle[2] = {0x2000, 0xE000};
-const float l_walk_speed[2] = {0.6, -0.6};
+const s16 l_heiho_look_angle[2] = {0x2000, 0xE000};
+const float l_heiho_walk_speed[2] = {0.6, -0.6};
