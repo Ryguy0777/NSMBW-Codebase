@@ -492,7 +492,9 @@ void daEnHeiho_c::executeState_Dizzy() {
 
     killIfTouchingLava(mPos, 1.0);
 
-    //mDizzyEffect.spawn("Wm_en_spindamage", 0, &(Vec){pos.x, pos.y + 24.0, 0}, (S16Vec *)0, &(Vec){1.0, 1.0, 1.0});
+    mVec3_c effectPos(mPos.x, mPos.y + 24.0, 0);
+    mVec3_c effectScale(1.0, 1.0, 1.0);
+    mDizzyEffect.createEffect("Wm_en_spindamage", 0, &effectPos, nullptr, &effectScale);
 
     if (mTimer > 600) {
         changeState(*mRecoverState);

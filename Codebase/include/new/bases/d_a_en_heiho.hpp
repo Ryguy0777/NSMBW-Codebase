@@ -4,6 +4,7 @@
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_audio.hpp>
+#include <game/bases/d_effect.hpp>
 #include <constants/sound_list.h>
 
 // custom shyguy enemy
@@ -74,7 +75,7 @@ public:
     float mFinalPos[2];
     int mJumpCounter;
 
-    //mEf::levelEffect_c mDizzyEffect;
+    mEf::levelEffect_c mDizzyEffect;
     sStateIDIf_c *mRecoverState;
 
     // settings variables

@@ -21,6 +21,11 @@ public:
     virtual void startSound(unsigned long, const nw4r::math::VEC2 &, unsigned long);
 };
 
+class SndObjctPly : public NMSndObject<4> {
+public:
+    virtual void startSound(unsigned long, const nw4r::math::VEC2 &, unsigned long);
+};
+
 class SndObjctCmnEmy : public NMSndObject<4> {
 public:
     virtual void startSound(unsigned long, const nw4r::math::VEC2 &, unsigned long);
@@ -40,6 +45,14 @@ namespace dAudio {
 
     int getRemotePlayer(int);
     mVec2_c cvtSndObjctPos(const mVec3_c &);
+
+    class SndObjctPlyBase_c : public SndObjctPly {
+    };
+
+    class SndObjctPly_c : public SndObjctPlyBase_c {
+    public:
+        virtual void startSound(ulong, ulong);
+    };
 
     class SndObjctCmnEmy_c : SndObjctCmnEmy {
     public:
