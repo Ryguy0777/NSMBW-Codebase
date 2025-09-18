@@ -89,6 +89,28 @@ int daEnBlockRotate_c::preDraw() {
     return ret;
 }
 
+void daEnBlockRotate_c::initialize_upmove() {
+	shouldSpawnContinuousStar(&mContents, mPlayerID);
+    if (mContents == 14) {
+        int isBig = player_bigmario_check(mPlayerID);
+        if (isBig) 
+            mContents = 1;    
+    }
+    if (l_early_items[mContents])
+        createItem();
+}
+
+void daEnBlockRotate_c::initialize_downmove() {
+	shouldSpawnContinuousStar(&mContents, mPlayerID);
+    if (mContents == 14) {
+        int isBig = player_bigmario_check(mPlayerID);
+        if (isBig) 
+            mContents = 1;    
+    }
+    if (l_early_items[mContents])
+        createItem();
+}
+
 void daEnBlockRotate_c::block_upmove() {
     if (mInitialY >= mPos.y)
         blockWasHit(false);
@@ -120,15 +142,6 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
     mPos.y = mInitialY;
 
     if (mContents != 0) {
-        shouldSpawnContinuousStar(&mContents, mPlayerID);
-        if (mContents == 14) {
-            int isBig = player_bigmario_check(mPlayerID);
-            if (isBig) 
-                mContents = 1;    
-        }
-        if (l_early_items[mContents])
-            createItem();
-        
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
         } else 

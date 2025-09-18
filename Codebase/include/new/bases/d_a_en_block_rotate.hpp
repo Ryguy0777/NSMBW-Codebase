@@ -13,6 +13,9 @@ public:
     virtual int draw();
     virtual int preDraw();
 
+    virtual void initialize_upmove();
+    virtual void initialize_downmove();
+
     virtual void block_upmove();
     virtual void block_downmove();
 
