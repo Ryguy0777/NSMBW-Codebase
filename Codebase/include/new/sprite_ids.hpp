@@ -495,6 +495,7 @@ enum Value {
     AC_SPAWNER_PAIRED,
     WATER_LIFT,
     EN_HEIHO,
+    EN_BLOCK_ROTATE,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT

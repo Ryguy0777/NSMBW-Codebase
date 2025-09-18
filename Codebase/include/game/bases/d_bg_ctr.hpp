@@ -3,15 +3,28 @@
 #include <game/mLib/m_vec.hpp>
 #include <game/bases/d_bc.hpp>
 
+typedef bool (*checkF)(dActor_c* self, dActor_c* other);
+typedef bool (*checkH)(dActor_c* self, dActor_c* other);
+typedef bool (*checkW)(dActor_c* self, dActor_c* other, u8 direction);
+
+typedef void (*callbackF)(dActor_c* self, dActor_c* other);
+typedef void (*callbackH)(dActor_c* self, dActor_c* other);
+typedef void (*callbackW)(dActor_c* self, dActor_c* other, u8 direction);
+
+struct sBgSetInfo {
+    mVec2_c pos1, pos2;
+    checkF belowCheck;
+    checkH aboveCheck;
+    checkW adjCheck;
+};
+
 class dBg_ctr_c {
 public:
-    typedef bool (*checkF)(dActor_c* self, dActor_c* other);
-    typedef bool (*checkH)(dActor_c* self, dActor_c* other);
-    typedef bool (*checkW)(dActor_c* self, dActor_c* other, u8 direction);
+    void entry();
+    void release();
+    void calc();
 
-    typedef void (*callbackF)(dActor_c* self, dActor_c* other);
-    typedef void (*callbackH)(dActor_c* self, dActor_c* other);
-    typedef void (*callbackW)(dActor_c* self, dActor_c* other, u8 direction);
+    void set(dActor_c*, const sBgSetInfo*, unsigned char, unsigned char, mVec3_c*);
 
     dActor_c* mpOwner;
 
@@ -33,7 +46,7 @@ public:
     callbackW mAdjCallback;
 
     checkF mBelowCheckFunc;
-    checkH mAoveCheckFunc;
+    checkH mAboveCheckFunc;
     checkW mAdjCheckFunc;
 
     mVec2_c mLastPos;
