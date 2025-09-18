@@ -153,8 +153,8 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
 bool daEnBlockRotate_c::playerOverlaps() {
     dActor_c *player = nullptr;
 
-    mVec3_c myBL = mVec3_c(mPos.x - 8.0f, mPos.y - 8.0f, 0.0f);
-    mVec3_c myTR = mVec3_c(mPos.x + 8.0f, mPos.y + 8.0f, 0.0f);
+    mVec3_c myBL(mPos.x - 8.0f, mPos.y - 8.0f, 0.0f);
+    mVec3_c myTR(mPos.x + 8.0f, mPos.y + 8.0f, 0.0f);
 
     while ((player = (dActor_c*)fManager_c::searchBaseByProfName(fProfile::PLAYER, player)) != 0) {
         float centerX = player->mPos.x + player->mCc.mCcData.mOffsetX;
@@ -166,8 +166,8 @@ bool daEnBlockRotate_c::playerOverlaps() {
         float top = centerY + player->mCc.mCcData.mHeight;
         float bottom = centerY - player->mCc.mCcData.mHeight;
 
-        mVec3_c playerBL = mVec3_c(left, bottom + 0.1f, 0.0f);
-        mVec3_c playerTR = mVec3_c(right, top - 0.1f, 0.0f);
+        mVec3_c playerBL(left, bottom + 0.1f, 0.0f);
+        mVec3_c playerTR(right, top - 0.1f, 0.0f);
 
         if (dGameCom::checkRectangleOverlap(&playerBL, &playerTR, &myBL, &myTR, 0.0))
             return true;
