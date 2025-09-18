@@ -195,7 +195,7 @@ void DrawPartialCircle(float centreX, float centreY, float radius, float z, u16 
 static dCollisionRender_c m_instance;
 
 dCollisionRender_c::dCollisionRender_c() {
-    this->create(NULL, NULL);
+    this->create(nullptr, nullptr);
 }
 
 // Dummy function
@@ -344,7 +344,7 @@ void dCollisionRender_c::drawXlu() {
 
     // Draw all instances of dBc_c
     if (renderTileColliders) {
-        dActor_c *owner = NULL;
+        dActor_c *owner = nullptr;
         while (owner = (dActor_c*)fManager_c::searchBaseByGroupType(2, owner)) {
             // verify if dBc_c vtable is set
             u8 *vtablePtr = ((u8*)owner) + 0x1EC;
@@ -373,7 +373,7 @@ void dCollisionRender_c::drawXlu() {
 
                 // Check if the sensor exists
                 dBcSensor_c* sensor = sensors[i];
-                if (sensor == NULL)
+                if (sensor == nullptr)
                     continue;
 
                 // Multiplier for the adjacent sensors
