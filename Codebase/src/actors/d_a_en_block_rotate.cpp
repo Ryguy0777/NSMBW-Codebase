@@ -177,7 +177,6 @@ bool daEnBlockRotate_c::playerOverlaps() {
 }
 
 void daEnBlockRotate_c::createItem() {
-    OSReport("%d\n", mPlayerID);
     switch (mContents) {
         case 9: // yoshi egg
             if (YoshiEggCreateCheck(0))
@@ -192,7 +191,7 @@ void daEnBlockRotate_c::createItem() {
         case 10: // 10-coin, don't care for the time mechanic
             mCoinsRemaining--;
         default: // normal items
-            dActor_c::construct(fProfile::EN_ITEM, (mIsGroundPound * 3) << 18 | l_item_values[mContents] & 0b11111, &mPos, nullptr, mLayer);
+            dActor_c::construct(fProfile::EN_ITEM, mPlayerID << 16 | (mIsGroundPound * 3) << 18 | l_item_values[mContents] & 0b11111, &mPos, nullptr, mLayer);
             playItemAppearSound(&mPos, l_item_values[mContents], mPlayerID, 0, 0);
             break;
     }
