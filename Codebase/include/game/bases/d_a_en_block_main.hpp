@@ -37,9 +37,9 @@ public:
     static void checkRevFoot(dActor_c*, dActor_c*);
     static void checkRevHead(dActor_c*, dActor_c*);
     static void checkRevWall(dActor_c*, dActor_c*, u8);
-    static bool callBackF(dActor_c*, dActor_c*);
-    static bool callBackH(dActor_c*, dActor_c*);
-    static bool callBackW(dActor_c*,dActor_c*, u8);
+    static void callBackF(dActor_c*, dActor_c*);
+    static void callBackH(dActor_c*, dActor_c*);
+    static void callBackW(dActor_c*,dActor_c*, u8);
 
     u8 mPad[0x10];
     dBg_ctr_c mBg;

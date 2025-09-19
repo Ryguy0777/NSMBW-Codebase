@@ -15,10 +15,31 @@ dCustomProfile_c flipblockProfile(&g_profile_EN_BLOCK_ROTATE, "EN_BLOCK_ROTATE",
 sBgSetInfo l_flipblock_info = {
     mVec2_c(-8, 16),
     mVec2_c(8, 0),
-    &daEnBlockMain_c::callBackF,
+    &daEnBlockRotate_c::callBackF,
     &daEnBlockMain_c::callBackH,
     &daEnBlockMain_c::callBackW
 };
+
+void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
+    daEnBlockMain_c::callBackF(self, other);
+    daEnBlockRotate_c *_this = (daEnBlockRotate_c *)self;
+    if (_this->mContents == 0 && _this->mIndestructible == false) {
+        if (other->mKind == STAGE_ACTOR_PLAYER) {
+            daPlBase_c *player = (daPlBase_c *)other;
+            if (player->isStatus(daPlBase_c::STATUS_2B)) {
+                nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(_this->mPos);
+                dAudio::g_pSndObjMap->startSound(SE_OBJ_BLOCK_BREAK, soundPos, 0);
+
+                
+                dEffActorMng_c::m_instance->createBlockFragEff(_this->mPos, 0x202, -1);
+
+                _this->deleteActor(1);
+
+                player->mSpeed.y = 2.0;
+            }
+        }
+    }
+}
 
 int daEnBlockRotate_c::create() {
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
@@ -39,7 +60,7 @@ int daEnBlockRotate_c::create() {
     mBg.mAboveCallback = &daEnBlockMain_c::checkRevHead;
     mBg.mAdjCallback = &daEnBlockMain_c::checkRevWall;
 
-    mBg.mBelowCheckFunc = &daEnBlockMain_c::callBackF;
+    mBg.mBelowCheckFunc = &daEnBlockRotate_c::callBackF;
     mBg.mAboveCheckFunc = &daEnBlockMain_c::callBackH;
     mBg.mAdjCheckFunc = &daEnBlockMain_c::callBackW;
 
@@ -48,6 +69,7 @@ int daEnBlockRotate_c::create() {
     mCoinsRemaining = 10;
 
     mContents = mParam & 0xF;
+    mIndestructible = mParam >> 4 & 1;
 
     changeState(StateID_Wait);
 
@@ -90,7 +112,7 @@ int daEnBlockRotate_c::preDraw() {
 }
 
 void daEnBlockRotate_c::initialize_upmove() {
-	shouldSpawnContinuousStar(&mContents, mPlayerID);
+    shouldSpawnContinuousStar(&mContents, mPlayerID);
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
         if (isBig) 
@@ -101,7 +123,7 @@ void daEnBlockRotate_c::initialize_upmove() {
 }
 
 void daEnBlockRotate_c::initialize_downmove() {
-	shouldSpawnContinuousStar(&mContents, mPlayerID);
+    shouldSpawnContinuousStar(&mContents, mPlayerID);
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
         if (isBig) 

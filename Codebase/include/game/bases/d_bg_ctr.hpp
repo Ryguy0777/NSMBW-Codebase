@@ -3,9 +3,9 @@
 #include <game/mLib/m_vec.hpp>
 #include <game/bases/d_bc.hpp>
 
-typedef bool (*checkF)(dActor_c* self, dActor_c* other);
-typedef bool (*checkH)(dActor_c* self, dActor_c* other);
-typedef bool (*checkW)(dActor_c* self, dActor_c* other, u8 direction);
+typedef void (*checkF)(dActor_c* self, dActor_c* other);
+typedef void (*checkH)(dActor_c* self, dActor_c* other);
+typedef void (*checkW)(dActor_c* self, dActor_c* other, u8 direction);
 
 typedef void (*callbackF)(dActor_c* self, dActor_c* other);
 typedef void (*callbackH)(dActor_c* self, dActor_c* other);

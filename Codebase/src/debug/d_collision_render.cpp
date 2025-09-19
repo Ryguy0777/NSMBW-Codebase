@@ -9,7 +9,6 @@
 #include <game_versions_nsmbw.h>
 
 static const bool renderCollision = false;
-static const bool renderTileColliders = false;
 
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.
@@ -343,7 +342,7 @@ void dCollisionRender_c::drawXlu() {
     }
 
     // Draw all instances of dBc_c
-    if (renderTileColliders) {
+    if (renderCollision) {
         dActor_c *owner = nullptr;
         while (owner = (dActor_c*)fManager_c::searchBaseByGroupType(2, owner)) {
             // verify if dBc_c vtable is set

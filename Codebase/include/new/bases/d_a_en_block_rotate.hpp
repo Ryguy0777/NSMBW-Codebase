@@ -4,6 +4,9 @@
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_bg.hpp>
+#include <game/bases/d_a_player_base.hpp>
+#include <constants/sound_list.h>
+#include <game/bases/d_eff_actor_manager.hpp>
 
 class daEnBlockRotate_c : public daEnBlockMain_c {
 public:
@@ -24,8 +27,10 @@ public:
     bool playerOverlaps();
     void createItem();
 
+    static void callBackF(dActor_c *self, dActor_c *other);
+
     STATE_FUNC_DECLARE(daEnBlockRotate_c, Wait);
-	STATE_FUNC_DECLARE(daEnBlockRotate_c, Flipping);
+    STATE_FUNC_DECLARE(daEnBlockRotate_c, Flipping);
     STATE_FUNC_DECLARE(daEnBlockRotate_c, Empty);
 
     dHeapAllocator_c mAllocator;
@@ -38,6 +43,7 @@ public:
     int mCoinsRemaining;
 
     int mContents;
+    bool mIndestructible;
 };
 
 const u32 l_item_values[16] = {
