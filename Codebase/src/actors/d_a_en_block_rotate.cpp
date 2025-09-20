@@ -199,6 +199,7 @@ bool daEnBlockRotate_c::playerOverlaps() {
 }
 
 void daEnBlockRotate_c::createItem() {
+    OSReport("%d\n", mIsGroundPound);
     switch (mContents) {
         case 9: // yoshi egg
             if (YoshiEggCreateCheck(0))
@@ -230,13 +231,13 @@ void daEnBlockRotate_c::executeState_Wait() {
         return;
 
     if (result == 1) {
-        changeState(StateID_UpMove);
         mAnotherFlag = 2;
         mIsGroundPound = false;
+        changeState(StateID_UpMove);
     } else {
-        changeState(StateID_DownMove);
         mAnotherFlag = 1;
         mIsGroundPound = true;
+        changeState(StateID_DownMove);
     }
 }
 
