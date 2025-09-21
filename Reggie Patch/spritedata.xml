@@ -24,7 +24,7 @@
 <!-- Stopped after Line xxxx / 10755 (#x) -->
 
 <sprites>
-  <sprite id="22" name="Mini Goomba" sizehacks="True" notes="A Tiny Goomba that will walk forward and die upon contact with the player.">
+  <sprite id="22" name="Mini Goomba" notes="A Tiny Goomba that will walk forward and die upon contact with the player.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Goomba placing it further behind other sprites."/>
   </sprite> <!-- #22: Mini Goomba -->
 
@@ -119,4 +119,52 @@
 
   <sprite id="486" name="Basic Platform - Water" notes="This platform floats on water. Can follow the current set by sprite 243." advancenotes="Does not work with location water.">
   </sprite> <!-- #486: Basic Platform - Water -->
+  
+  <sprite id="487" name="Shy Guy" notes="A walking Shy Guy. Can be set to turn at ledges, pace a specified distance, sleep, or bounce up and down.">
+    <list nybble="5" title="Type" comment="Types greater than 4 spawn Shy Guys that won't move.">
+      <entry value="0">Walker (Walks Off Ledges)</entry>
+      <entry value="1">Walker (Turns Around At Ledges)</entry>
+      <entry value="2">Sleeper</entry>
+      <entry value="3">Jumper</entry>
+      <entry value="4">Pacer</entry>
+    </list>
+	<list nybble="6" title="Color" comment2="While you can set Shy Guys to any color, it is recommended to keep Shy Guy types and colors consistent.">
+	  <entry value="0">Red</entry>
+	  <entry value="1">Pink</entry>
+	  <entry value="2">Yellow</entry>
+	  <entry value="3">Blue</entry>
+	  <entry value="4">Green</entry>
+	  <entry value="5">Black</entry>
+	  <entry value="6">White</entry>
+	  <entry value="7">Light Blue</entry>
+	  <entry value="8">Orange</entry>
+	  <entry value="9">Purple</entry>
+	</list>
+	<checkbox nybble="8.3" title="Dies in 2 Stomps" comment="When enabled, this causes the Shy Guy to die in 2 stomps instead of 1." comment2="It is recommended to keep this consistent across Shy Guy variants."/>
+	<checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
+    <value nybble="9" title="Distance" comment="The distance the Shy Guy will walk in each direction. The Shy Guy will ignore ledges." requirednybble="5" requiredval="4"/>
+	<dualbox nybble="10.4" title1="Spawns Left" title2="Spawns Right" requirednybble="5" requiredval="3-4"/>
+  </sprite> <!-- #487: Shy Guy -->
+  
+  <sprite id="488" name="Flip Block" notes="A yellow block with two eyes that can be destroyed by spin jumps. When struck, it will spin, allowing passage through it for a limited time.">
+    <list nybble="12" title="Block Contains" comment="This determines what item the block contains." comment2="This block will release only one power-up item.">
+      <entry value="0">Empty</entry>
+      <entry value="1">1 Coin</entry>
+      <entry value="10">10-Coin</entry>
+      <entry value="14">Mushroom (if small)</entry>
+      <entry value="2">Fire Flower</entry>
+      <entry value="3">Fire Flower</entry>
+      <entry value="15">Ice Flower</entry>
+      <entry value="4">Propeller Shroom</entry>
+      <entry value="5">Penguin Suit</entry>
+      <entry value="6">Mini Mushroom</entry>
+      <entry value="7">Star</entry>
+      <entry value="8">Continuous Star</entry>
+      <entry value="9">Yoshi Egg</entry>
+      <entry value="11">1-Up</entry>
+      <entry value="12">Vine</entry>
+      <entry value="13">Spring</entry>
+    </list>
+	<checkbox nybble="11.4" title="Indestructible" comment="When enabled, the Flip Block will not be destroyed when Spin Jumped." comment2="It is recommended to keep this consistent across Flip Blocks." requirednybble="12" requiredval="0"/>
+  </sprite> <!-- #488: Flip Block -->
 </sprites>

@@ -1,0 +1,25 @@
+<wiidisc version="1" shiftfiles="true" root="/Codebase" log="true">
+	<id game="SMN">
+		<region type="P"/>
+		<region type="E"/>
+		<region type="J"/>
+		<region type="K"/>
+		<region type="W"/>
+		<region type="C"/>
+	</id>
+	<options>
+		<section name="Codebase">
+			<option name="Game" id="codebase" default="1">
+				<choice name="Enabled"><patch id="codebase"/></choice>
+			</option>
+		</section>
+	</options>
+	<patch id="codebase">
+		<folder external="Code" disc="/Code" create="true" />
+		<folder external="Stage" disc="/Stage" create="true" />
+		<folder external="Object" disc="/Object" create="true" />
+		
+		<memory offset="0x800046E4" valuefile="Code/loader.bin" />
+		<memory offset="0x80004320" value="48001164" />
+	</patch>
+</wiidisc>
