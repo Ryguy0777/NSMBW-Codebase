@@ -145,11 +145,21 @@ class SpriteImage_FlipBlock(SLib.SpriteImage):  # 488
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         painter.drawPixmap(0, 0, ImageCache['Flipblock'])
         painter.drawPixmap(0, 0, self.image)
+        
+
+class SpriteImage_OnOffBlock(SLib.SpriteImage_Static):  # 489
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            SLib.GetTile(0x9C),
+        )
 
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
     191: SpriteImage_TileEventImproved,
     486: SpriteImage_WaterPlatform,
     487: SpriteImage_Shyguy,
-    488: SpriteImage_FlipBlock
+    488: SpriteImage_FlipBlock,
+    489: SpriteImage_OnOffBlock
 }

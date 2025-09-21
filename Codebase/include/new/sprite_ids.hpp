@@ -496,6 +496,7 @@ enum Value {
     WATER_LIFT,
     EN_HEIHO,
     EN_BLOCK_ROTATE,
+    EN_BLOCK_FLAG,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT

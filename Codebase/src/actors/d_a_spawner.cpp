@@ -3,8 +3,6 @@
 #include <game/bases/d_switch_flag_mng.hpp>
 #include <new/new_profile.hpp>
 
-inline bool checkEvent(u8 event) {return (dSwitchFlagMng_c::m_instance->mFlags & (u64)(1 << event));}
-
 // to make a new profile id
 // call one of the 4 profile macros from f_profile.hpp to make the profile itself
 CUSTOM_ACTOR_PROFILE(AC_SPAWNER, daSpawner_c, fProfile::EN_BOYON, fProfile::DRAW_ORDER::DUMMY_ACTOR, 0);

@@ -167,4 +167,10 @@
     </list>
 	<checkbox nybble="11.4" title="Indestructible" comment="When enabled, the Flip Block will not be destroyed when Spin Jumped." comment2="It is recommended to keep this consistent across Flip Blocks." requirednybble="12" requiredval="0"/>
   </sprite> <!-- #488: Flip Block -->
+
+  <sprite id="489" name="ON/OFF Block" notes="A red or blue block that, when struck, will affect the state of the Target Event(s). Events that are deactivated will become activated, and those that are activated will become deactivated.">
+    <dualbox nybble="12.4" title1="Affect Event 1" title2="Swap Event 2 and Event 1" comment="This determines which associated Event IDs will be affected when the block is struck." comment2="If set to Affect Event 1, Event 1 will be activated or deactivated and the color of the block will display the state of Event 1, red for on and blue for off. &lt;br&gt; &lt;br&gt;If set to Swap Events, Event 2 will be activated initially and Event 1 will be deactivated initially during the Zone loading. The color of the block will rely on Event 2's current state."/>
+    <value nybble="1-2" title="Target Event ID 1" idtype="Target Event"/>
+    <value nybble="3-4" title="Target Event ID 2" requirednybble="12.4" idtype="Target Event"/>
+  </sprite> <!-- #239: Event Block -->
 </sprites>

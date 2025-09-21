@@ -17,6 +17,7 @@
 	<patch id="codebase">
 		<folder external="Code" disc="/Code" create="true" />
 		<folder external="Stage" disc="/Stage" create="true" />
+		<folder external="Stage/Texture" disc="/Stage/Texture" create="true" />
 		<folder external="Object" disc="/Object" create="true" />
 		
 		<memory offset="0x800046E4" valuefile="Code/loader.bin" />
