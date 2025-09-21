@@ -34,6 +34,7 @@ int daEnBlockFlag_c::create() {
 
     mBg.entry();
 
+    // setup tile renderer
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
     list->addPanelObjList(&mTile);
 
@@ -41,6 +42,7 @@ int daEnBlockFlag_c::create() {
     mTile.mPos.y = -(8 + mPos.y);
     mTile.mTileNumber = 0x9C;
 
+    // sprite settings
     mFlagMode = (BLOCK_FLAG_MODE_e)(mParam & 1);
 
     changeState(StateID_Wait);
@@ -50,6 +52,7 @@ int daEnBlockFlag_c::create() {
 
 
 int daEnBlockFlag_c::doDelete() {
+    // remove tile renderer and collider
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
     list->removePanelObjList(&mTile);
 
@@ -63,14 +66,18 @@ int daEnBlockFlag_c::execute() {
     mBg.calc();
     Block_ExecuteClearSet();
 
+    // assign event IDs
+    // done here instead of create because mEventNums aren't set during creation
     mEventID1 = (mEventNums >> 8 & 0xFF)-1;
     mEventID2 = (mEventNums & 0xFF)-1;
 
+    // update tile collider
     mTile.setPos(mPos.x-8, -(8+mPos.y), mPos.z);
     mTile.setScaleFoot(mScale.x);
 
     equaliseEvents();
 
+    // update tile number based on event id 1
     bool isActive = checkEvent(mEventID1);
 
     mTile.mTileNumber = (isActive ? 0x9B : 0x9C);
@@ -82,6 +89,7 @@ int daEnBlockFlag_c::execute() {
     return true;
 }
 
+// play sound upon being hit
 void daEnBlockFlag_c::initialize_upmove() {
     nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(mPos);
     dAudio::g_pSndObjMap->startSound(SE_OBJ_STEP_ON_SWITCH, soundPos, 0);
@@ -149,13 +157,16 @@ void daEnBlockFlag_c::initializeState_Wait() {}
 void daEnBlockFlag_c::finalizeState_Wait() {}
 
 void daEnBlockFlag_c::executeState_Wait() {
+    // check if the block has been hit
     int result = ObjBgHitCheck();
 
     if (result == 1) {
+        // hit from below
         mAnotherFlag = 2;
         mIsGroundPound = false;
         changeState(StateID_UpMove);
     } else if (result == 2) {
+        // hit from above
         mAnotherFlag = 1;
         mIsGroundPound = true;
         changeState(StateID_DownMove);
