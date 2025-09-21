@@ -71,10 +71,10 @@ public:
     // 2 bytes padding
 
     u32 mIsRound;
-    u32 _CC; // value 0-10, maybe a category sort of thing??
+    u32 m_cc; // value 0-10, maybe a category sort of thing??
     u32 mFlags; // TODO document
-    s32 _D4;
-    u32 _D8; // a bitfield
+    s32 m_d4;
+    u32 m_d8; // a bitfield
 
     bool mLinked;
 

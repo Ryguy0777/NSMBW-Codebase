@@ -229,7 +229,7 @@ void daEnBlockRotate_c::createItem() {
                 return;
             break;
         case 12: // vine
-            item_ivy_set(1, _68D);
+            item_ivy_set(1, m_169);
             break;
         case 13: // spring
             jumpdai_set();

@@ -46,15 +46,15 @@ public:
     u8 mPad2[0x18];
     float mInitialY;
     float mMoveAccel;
-    float _638, _63C, _640;
+    float m_114, m_118, m_11c;
     u32 mDownMoveCounter;
-    float _648, _64C;
+    float m_124, m_128;
     u32 mAmountOfItems;
     u8 mPad3[0xC];
     short mTimer;
     u8 mPad4[0x27];
     u8 mIsGroundPound, mAnotherFlag;
-    u8 _68B, _68C, _68D;
+    u8 m_167, m_168, m_169;
     u8 mPad5[0x6];
     u8 mPlayerID;
     u8 mPad6[0x3];

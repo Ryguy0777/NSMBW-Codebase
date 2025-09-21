@@ -14,6 +14,6 @@ public:
     s32 mLeftAngleOffset;
     s16 mPrevRotation;
 
-    bool _72; // ??
-    bool _73; // ??
+    bool m_72; // ??
+    bool m_73; // ??
 };

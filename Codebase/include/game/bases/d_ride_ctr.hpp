@@ -27,16 +27,16 @@ public:
     s16 mRotation;
     u8 mType; // 0 = dRideRoll_c, 2 = dRide2Point_c, 4 = dRideCircle_c
 
-    bool _43;
+    bool m_43;
     bool mLinked;
 
     u8 mChainlinkMode;
-    bool _46;
+    bool m_46;
     u8 mSubType;
-    u8 _48; // unused?
-    u8 _49; // unused?
+    u8 m_48; // unused?
+    u8 m_49; // unused?
     u8 mLayer;
-    u8 _4B; // unused?
+    u8 m_4b; // unused?
 
     static dRide_ctr_c* mEntryN;
     static dRide_ctr_c* mEntryB;
