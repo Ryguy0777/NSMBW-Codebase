@@ -20,28 +20,37 @@ sBgSetInfo l_flipblock_info = {
     &daEnBlockMain_c::callBackW
 };
 
+// we have our own callbackF function to detect player spinjumps
+
 void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
+    // call OG function
     daEnBlockMain_c::callBackF(self, other);
     daEnBlockRotate_c *_this = (daEnBlockRotate_c *)self;
+    // only break if empty and indestructible
     if (_this->mContents == 0 && _this->mIndestructible == false) {
         if (other->mKind == STAGE_ACTOR_PLAYER) {
             daPlBase_c *player = (daPlBase_c *)other;
-            if (player->isStatus(daPlBase_c::STATUS_2B)) {
-                nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(_this->mPos);
-                dAudio::g_pSndObjMap->startSound(SE_OBJ_BLOCK_BREAK, soundPos, 0);
+            // statuses 0xA9 and 0x2B are only both set when spinjumping
+            if (player->isStatus(0xA9) && player->isStatus(daPlBase_c::STATUS_2B)) {
+                if (player->mPowerup != POWERUP_NONE && player->mPowerup != POWERUP_MINI_MUSHROOM) {
+                    // play break sound and spawn shard effect
+                    nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(_this->mPos);
+                    dAudio::g_pSndObjMap->startSound(SE_OBJ_BLOCK_BREAK, soundPos, 0);
 
-                
-                dEffActorMng_c::m_instance->createBlockFragEff(_this->mPos, 0x202, -1);
+                    dEffActorMng_c::m_instance->createBlockFragEff(_this->mPos, 0x202, -1);
 
-                _this->deleteActor(1);
-
-                player->mSpeed.y = 2.0;
+                    // delete block
+                    _this->deleteActor(1);
+                    // move player upwards slightly
+                    player->mSpeed.y = 2.5;
+                }
             }
         }
     }
 }
 
 int daEnBlockRotate_c::create() {
+    // setup model
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
 
     mRes = dResMng_c::m_instance->mRes.getRes("block_rotate", "g3d/block_rotate.brres");
@@ -53,6 +62,7 @@ int daEnBlockRotate_c::create() {
 
     Block_CreateClearSet(mPos.y);
 
+    // set collider
     mBg.set(this, &l_flipblock_info, 3, mLayer, nullptr);
     mBg.mFlags = 0x260;
 
@@ -68,6 +78,7 @@ int daEnBlockRotate_c::create() {
 
     mCoinsRemaining = 10;
 
+    // sprite settings
     mContents = mParam & 0xF;
     mIndestructible = mParam >> 4 & 1;
 
@@ -91,7 +102,8 @@ int daEnBlockRotate_c::execute() {
     mBg.calc();
     Block_ExecuteClearSet();
 
-    if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
+    // only delete if not flipping
+    if (mStateMgr.getStateID()->operator!=(StateID_Flipping)) {
         ActorScrOutCheck(0);
     }
 
@@ -112,17 +124,21 @@ int daEnBlockRotate_c::preDraw() {
 }
 
 void daEnBlockRotate_c::initialize_upmove() {
+    // shouldSpawnContinuousStar sets the contents to either 7 (star) or 1 (coin)
     shouldSpawnContinuousStar(&mContents, mPlayerID);
+    // handle mushroom-if-small
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
         if (isBig) 
             mContents = 1;    
     }
+    // create coin items/propeller on block hit
     if (l_early_items[mContents])
         createItem();
 }
 
 void daEnBlockRotate_c::initialize_downmove() {
+    // same as upmove
     shouldSpawnContinuousStar(&mContents, mPlayerID);
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
@@ -134,16 +150,19 @@ void daEnBlockRotate_c::initialize_downmove() {
 }
 
 void daEnBlockRotate_c::block_upmove() {
+    // call blockWasHit at the end of upmove
     if (mInitialY >= mPos.y)
         blockWasHit(false);
 }
 
 void daEnBlockRotate_c::block_downmove() {
+    // call blockWasHit at the end of downmove
     if (mInitialY <= mPos.y)
         blockWasHit(true);
 }
 
 void daEnBlockRotate_c::calcModel() {
+    // calculate model if present
     if (mStateMgr.getStateID()->operator!=(StateID_Empty)) {
         dActor_c::changePosAngle(&mPos, &mAngle, 1);
         PSMTXTrans(mMatrix, mPos.x, mPos.y + 8.0, mPos.z);
@@ -161,9 +180,11 @@ void daEnBlockRotate_c::calcModel() {
 }
 
 void daEnBlockRotate_c::blockWasHit(bool isDown) {
+    // handle state changes after hitting block
     mPos.y = mInitialY;
 
     if (mContents != 0) {
+        // we've already spawned our coin if we're a 10-coin block, so go back to wait
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
         } else 
@@ -173,6 +194,8 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
 }
 
 bool daEnBlockRotate_c::playerOverlaps() {
+    // check if we're overlapping with a player
+    // used during flip state
     dActor_c *player = nullptr;
 
     mVec3_c myBL(mPos.x - 8.0f, mPos.y - 8.0f, 0.0f);
@@ -199,7 +222,7 @@ bool daEnBlockRotate_c::playerOverlaps() {
 }
 
 void daEnBlockRotate_c::createItem() {
-    OSReport("%d\n", mIsGroundPound);
+    // spawn block contents
     switch (mContents) {
         case 9: // yoshi egg
             if (YoshiEggCreateCheck(0))
@@ -215,6 +238,7 @@ void daEnBlockRotate_c::createItem() {
             mCoinsRemaining--;
         default: // normal items
             dActor_c::construct(fProfile::EN_ITEM, mPlayerID << 16 | (mIsGroundPound * 3) << 18 | l_item_values[mContents] & 0b11111, &mPos, nullptr, mLayer);
+            // play item spawn sound
             playItemAppearSound(&mPos, l_item_values[mContents], mPlayerID, 0, 0);
             break;
     }
@@ -225,16 +249,16 @@ void daEnBlockRotate_c::initializeState_Wait() {}
 void daEnBlockRotate_c::finalizeState_Wait() {}
 
 void daEnBlockRotate_c::executeState_Wait() {
+    // check if the block has been hit
     int result = ObjBgHitCheck();
 
-    if (result == 0)
-        return;
-
     if (result == 1) {
+        // hit from below
         mAnotherFlag = 2;
         mIsGroundPound = false;
         changeState(StateID_UpMove);
-    } else {
+    } else if (result == 2) {
+        // hit from above
         mAnotherFlag = 1;
         mIsGroundPound = true;
         changeState(StateID_DownMove);
@@ -268,6 +292,7 @@ void daEnBlockRotate_c::executeState_Flipping() {
 }
 
 void daEnBlockRotate_c::initializeState_Empty() {
+    // remove model, create empty block tile
     mFlipBlockModel.remove();
 
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
@@ -277,6 +302,7 @@ void daEnBlockRotate_c::initializeState_Empty() {
     mUsedTile.mPos.y = -(16 + mPos.y);
     mUsedTile.mTileNumber = 0x32;
 
+    // spawn item if we haven't already
     if (!l_early_items[mContents])
         createItem();
 }

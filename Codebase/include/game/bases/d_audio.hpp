@@ -18,7 +18,24 @@ class NMSndObjectBase : nw4r::snd::SoundActor {
 template<int T>
 class NMSndObject : NMSndObjectBase {
 public:
+    class SoundHandlePrm : public nw4r::snd::SoundHandle {
+    public:
+        SoundHandlePrm() : m_04(1.0f) {}
+
+        float m_04;
+    };
+
     virtual void startSound(unsigned long, const nw4r::math::VEC2 &, unsigned long);
+
+    float m_64;
+    int m_68;
+    float m_6c;
+    float m_70;
+    SoundHandlePrm mParams[T + 2];
+    nw4r::math::VEC2 mPos;
+    u32 m_ac;
+    u32 m_b0;
+    u8 m_b4;
 };
 
 class SndObjctPly : public NMSndObject<4> {

@@ -8,6 +8,8 @@
 #include <constants/sound_list.h>
 #include <game/bases/d_eff_actor_manager.hpp>
 
+// SMW-style flip blocks
+
 class daEnBlockRotate_c : public daEnBlockMain_c {
 public:
     virtual int create();
