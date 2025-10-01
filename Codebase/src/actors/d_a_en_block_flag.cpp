@@ -2,7 +2,7 @@
 #include <new/bases/d_a_en_block_flag.hpp>
 #include <new/new_profile.hpp>
 
-CUSTOM_ACTOR_PROFILE(EN_BLOCK_FLAG, daEnBlockFlag_c, fProfile::EN_OBJ_HATENAB_BLOCK, fProfile::DRAW_ORDER::OBJ_PIPE_UP, 0);
+CUSTOM_ACTOR_PROFILE(EN_BLOCK_FLAG, daEnBlockFlag_c, fProfile::EN_BLOCK_SOROBAN, fProfile::DRAW_ORDER::EN_BLOCK_SOROBAN, 0);
 
 STATE_DEFINE(daEnBlockFlag_c, Wait);
 

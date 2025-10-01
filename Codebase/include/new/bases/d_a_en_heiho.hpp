@@ -18,9 +18,6 @@ public:
         HEIHO_TYPE_JUMPER,
         HEIHO_TYPE_PACER,
     };
-    
-    daEnHeiho_c() : mRes(nullptr) {};
-    ~daEnHeiho_c() {};
 
     // fBase_c overrides
     virtual int create();
