@@ -9,31 +9,34 @@
 #include <game/bases/d_quake.hpp>
 #include <constants/game_constants.h>
 
+class daPlBase_c;
 class dPyMdlBase_c {
 public:
+    enum TexAnmType_e { };
+
     virtual ~dPyMdlBase_c();
-    virtual void getFaceJointIdx();
+    virtual int getFaceJointIdx() const;
     virtual void createModel();
     virtual void initialize();
     virtual void play();
     virtual void _calc();
     virtual void calc2();
     virtual void draw();
-    virtual void getBodyMdl();
-    virtual void getAnmResFile();
-    virtual void setPlayerMode();
-    virtual void setColorType();
-    virtual void setDark();
+    virtual m3d::mdl_c *getBodyMdl();
+    virtual const void *getAnmResFile() const;
+    virtual void setPlayerMode(int);
+    virtual void setColorType(u8 colorType);
+    virtual void setDark(int);
     virtual void vf3c(); ///< @unofficial
     virtual void onStarAnm();
     virtual void offStarAnm();
     virtual void onStarEffect();
     virtual void offStarEffect();
-    virtual void getJointMtx();
-    virtual void getHeadPropelJointMtx();
+    virtual void getJointMtx(mMtx_c*, int);
+    virtual bool getHeadPropelJointMtx(mMtx_c*);
     virtual void vf58(); ///< @unofficial
     virtual void setAnm(int, float, float, float);
-    virtual void vf60(); ///< @unofficial
+    virtual s32 vf60(); ///< @unofficial
     virtual void vf64(); ///< @unofficial
     virtual void vf68(); ///< @unofficial
     virtual void copyAnm();
@@ -41,17 +44,17 @@ public:
     virtual void vf74(); ///< @unofficial
     virtual void setAnmBind();
     virtual void vf7c(); ///< @unofficial
-    virtual void setTexAnmType();
+    virtual void setTexAnmType(TexAnmType_e);
     virtual void setFrame(float);
-    virtual void setBodyFrame();
+    virtual void setBodyFrame(float);
     virtual void setRate(float);
-    virtual void setBodyRate();
-    virtual void vf94(); ///< @unofficial
-    virtual void getPropelRollSpeed();
-    virtual void vf9c(); ///< @unofficial
-    virtual void vfa0(); ///< @unofficial
-    virtual void vfa4(); ///< @unofficial
-    virtual void vfa8(); ///< @unofficial
+    virtual void setBodyRate(float);
+    virtual void setPropelRollSpeed(u16);
+    virtual s16 getPropelRollSpeed();
+    virtual void setPropelRollAngle(s16);
+    virtual s16 getPropelRollAngle();
+    virtual void setPropelScale(float);
+    virtual float *getLegLengthP(u8);
     virtual void vfac(); ///< @unofficial
 
     bool isFootStepTiming();
@@ -59,14 +62,25 @@ public:
 
     float getFrameMax() { return mAnm.mFrameMax; }
 
-    u8 mPad1[0x24];
+    mAllocator_c mAllocator;
+    daPlBase_c *mpOwner;
+    u32 m_20;
     m3d::anmChr_c mAnm;
-    u8 mPad2[0x6c];
-    mVec3_c mHatPosMaybe;
-    u8 mPad3[0x7a];
-    u8 m_152;
-    int m_154;
-    u8 mPad4[8];
+    m3d::anmChr_c mAnm2;
+    u8 mAnmChrPart[0x28]; //m3d::banm_c mAnmChrPart;
+    mVec3_c mHeadPos;
+    mVec3_c mHatPos;
+    mMtx_c mFinalMatrix;
+    mMtx_c mFirstMatrix;
+    mVec3_c mHeadOffset;
+    mVec3_c mScale;
+    u8 mPlayerID;
+    u8 mCharaID;
+    u8 mPowerupID;
+    u8 mCurColorType;
+    u32 mCurAnim;
+    int mLastAnim;
+    u32 m_15c;
     u32 mFlags;
     u8 mPad5[0x98];
     mAng3_c m_1fe;
@@ -117,8 +131,20 @@ public:
 
 class dPyMdlMng_c {
 public:
+    enum ModelType_e {
+        MODEL_NONE = -1,
+        MODEL_MARIO = 0,
+        MODEL_LUIGI = 1,
+        MODEL_TOAD_BLUE = 2,
+        MODEL_TOAD_YELLOW = 3,
+        MODEL_TOAD_RED = 4,
+        MODEL_YOSHI = 5,
+    };
+
     u8 mPad[4];
     dPyMdlBase_c *mpMdl;
+
+    void construct(u8 index);
 
     void setAnm(int anmID, float rate, float blendDuration, float f) {
         mpMdl->setAnm(anmID, rate, blendDuration, f);
@@ -138,7 +164,7 @@ public:
     }
 
     int getAnm() const {
-        return mpMdl->m_154;
+        return mpMdl->mCurAnim;
     }
 
     float getLastFrame() const {
@@ -156,7 +182,7 @@ public:
         return mpMdl->mFlags;
     }
 
-    mVec3_c &getHatPos() const { return mpMdl->mHatPosMaybe; }
+    mVec3_c &getHatPos() const { return mpMdl->mHatPos; }
 
     static dPyMdlBase_HIO_c m_hio;
 };
