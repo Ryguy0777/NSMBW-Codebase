@@ -343,7 +343,7 @@ void daEnHeiho_c::executeState_Walk() {
     // finish turning if not facing a direction
     sLib::chaseAngle((short*)&mAngle.y, l_heiho_look_angle[mDirection], 0x800);
 
-    if (!EnBgCheck()) { // not touching a tile
+    if ((EnBgCheck() & 1) == 0) { // not touching a tile
         // related to walking speed in water? not sure
         if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
             mFootRelated2.x = mFootRelated2.x + m_1eb.x;
@@ -387,7 +387,7 @@ void daEnHeiho_c::executeState_Turn() {
     calcSpeedY();
     posMove();
 
-    if (!EnBgCheck()) {
+    if ((EnBgCheck() & 1) == 0) {
         if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
             mFootRelated2.x = mFootRelated2.x + m_1eb.x;
         }
@@ -419,7 +419,9 @@ void daEnHeiho_c::executeState_Sleep() {
     posMove();
 
     // handle tile collisions
-    EnBgCheck();
+    if (EnBgCheck() & 1) {
+        mSpeed.y = 0.0;
+    }
 
     killIfTouchingLava(mPos, 1.0);
 }
@@ -488,7 +490,9 @@ void daEnHeiho_c::executeState_Dizzy() {
     calcSpeedY();
     posMove();
 
-    EnBgCheck();
+    if (EnBgCheck() & 1) {
+        mSpeed.y = 0.0;
+    }
 
     killIfTouchingLava(mPos, 1.0);
 

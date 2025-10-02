@@ -627,7 +627,9 @@ namespace fProfile {
         AC_HOUSE_LIGHT,
         AC_LIGHT_WATER,
         AC_COPYRIGHT,
+#if GAME_REVISION < GAME_REVISION_C
         WII_STRAP,
+#endif
 #if GAME_REVISION >= GAME_REVISION_C
         LOGO_SCREEN,
         NV_SCREEN,

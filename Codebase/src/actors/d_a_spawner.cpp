@@ -27,7 +27,7 @@ int daSpawner_c::execute() {
     mChildProfileID = mEventNums & 0b1111111111;
     // adjust profile id!!
     #if GAME_REVISION >= GAME_REVISION_C
-    if (mChildProfileID > fProfile::WII_STRAP) {
+    if (mChildProfileID > fProfile::AC_COPYRIGHT) {
         mChildProfileID += 3;
     }
     #elif GAME_REVISION >= GAME_REVISION_K
