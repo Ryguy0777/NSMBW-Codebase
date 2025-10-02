@@ -88,6 +88,13 @@ VITVFormat VIGetTvFormat(void);
 VIScanMode VIGetScanMode(void);
 u32 VIGetDTVStatus(void);
 
+extern s32 __VIDimmingFlag_SI_IDLE;
+
+bool __VIResetSIIdle() {
+    __VIDimmingFlag_SI_IDLE = 0;
+    return true;
+}
+
 #ifdef __cplusplus
 }
 #endif

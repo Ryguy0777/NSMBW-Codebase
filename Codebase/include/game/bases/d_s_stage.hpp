@@ -22,6 +22,8 @@ public:
     static bool m_isCourseOut; ///< Whether the game is transitioning from a stage scene to a non-stage scene.
     static bool m_KoopaJrEscape;
 
+    static void *m_replayPlay_p[4];
+
     typedef void (*changePosFunc)(mVec3_c *);
     static void setChangePosFunc(int);
 

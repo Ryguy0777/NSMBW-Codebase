@@ -62,6 +62,7 @@ namespace dAudio {
 
     int getRemotePlayer(int);
     mVec2_c cvtSndObjctPos(const mVec3_c &);
+    bool isForbidRemoteSE();
 
     class SndObjctPlyBase_c : public SndObjctPly {
     };

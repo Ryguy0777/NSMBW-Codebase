@@ -9,23 +9,31 @@ extern "C" {
 
 #define KPAD_MAX_SAMPLES 16
 
-typedef union KPADEXStatus {
-    struct {
-        Vec2 stick;    // at 0x0
-        Vec acc;       // at 0x8
-        f32 acc_value; // at 0x14
-        f32 acc_speed; // at 0x18
-    } fs;              // at 0x0
+struct KPADEXStatus_fs {
+    Vec2 stick;
+    Vec acc;
+    float acc_value, acc_speed;
+};
 
-    struct {
-        u32 hold;     // at 0x0
-        u32 trig;     // at 0x4
-        u32 release;  // at 0x8
-        Vec2 lstick;  // at 0xC
-        Vec2 rstick;  // at 0x14
-        f32 ltrigger; // at 0x1C
-        f32 rtrigger; // at 0x20
-    } cl;             // at 0x0
+struct KPADEXStatus_cl {
+    u32 hold, trig, release;
+    Vec2 lstick;
+    Vec2 rstick;
+    float ltrigger, rtrigger;
+};
+
+struct KPADEXStatus_bl {
+    f64 tgc_weight;
+    f64 weight[4];
+    f64 weight_ave[4];
+    s32 weight_err;
+    s32 tgc_weight_err;
+};
+
+typedef union KPADEXStatus {
+    KPADEXStatus_fs fs;
+    KPADEXStatus_cl cl;
+    KPADEXStatus_bl bl;
 } KPADEXStatus;
 
 typedef struct KPADStatus {
