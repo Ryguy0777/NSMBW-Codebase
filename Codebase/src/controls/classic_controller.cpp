@@ -123,6 +123,23 @@ kmWriteNop(0x80109c7c);
 kmWriteNop(0x80109c80);
 kmWriteNop(0x80109c84);
 
+extern "C" void mapStickToPosHBM(int channel, Vec2 *pos);
+extern "C" void doneSettingPointerData(void);
+kmBranchDefAsm(0x80109cb4, 0x80109cb8) {
+	lbz r0, 0x5C(r3)
+	cmpwi r0, 2
+	bne notClassic
+
+    mr r3, r25
+	addi r4, r26, 0xE4
+	bl mapStickToPosHBM
+
+	b doneSettingPointerData
+
+    notClassic:
+	lbz r0, 0x5E(r3)
+}
+
 static const f32 stickMoveCoefficent = 2048.0f/72.0f;
 
 static f32 AbsClamp(f32 val, f32 max) {
@@ -140,7 +157,6 @@ void mapStickToPosHBM(int channel, Vec2 *pos) {
 }
 
 // fix dAcPyKey_c not working with our face button setup
-
 kmBranchDefCpp(0x8005e590, NULL, u16, dAcPyKey_c *_this) {
     KPADEXStatus_cl *cStatus = &mPad::g_core[_this->mRemoconID]->maStatus->ex_status.cl;
     switch (dGameKey_c::m_instance->mRemocon[_this->mRemoconID]->mAttachedExtension) {

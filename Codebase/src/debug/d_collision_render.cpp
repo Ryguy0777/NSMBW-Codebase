@@ -8,7 +8,13 @@
 #include <revolution/GX.h>
 #include <game_versions_nsmbw.h>
 
+#include <new/game_config.h>
+
+#ifdef COLLISION_RENDER_ENABLED
+static const bool renderCollision = true;
+#else
 static const bool renderCollision = false;
+#endif
 
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.

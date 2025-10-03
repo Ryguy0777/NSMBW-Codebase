@@ -2,6 +2,7 @@
 #include <new/bases/d_custom_controller.hpp>
 #include <lib/revolution/SI.h>
 #include <game/bases/d_audio.hpp>
+#include <game/bases/d_actor.hpp>
 
 // dRemoconMng_c state
 STATE_DEFINE(dRemoconMng_c::dConnect_c::dExtension_c, Gamecube);
@@ -108,6 +109,11 @@ void dCustomController_c::mapGameCubeButtons(EGG::CoreController *controller, in
 
     kStatus->acc.z = tilt;
     kStatus->acc_vertical.y = -tilt;
+
+    if (gStatus->mTrig & PAD_TRIGGER_R) {
+        dActor_c *player = (dActor_c *)fManager_c::searchBaseByProfName(fProfile::PLAYER, NULL);
+        dActor_c::construct(fProfile::YOSHI, 0x00010000, &player->mPos, &player->mAngle, player->mLayer);
+    }
 }
 
 u32 SIProbe(s32 chan) {

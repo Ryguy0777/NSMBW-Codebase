@@ -27,8 +27,11 @@ int daSpawner_c::execute() {
     mChildProfileID = mEventNums & 0b1111111111;
     // adjust profile id!!
     #if GAME_REVISION >= GAME_REVISION_C
-    if (mChildProfileID > fProfile::AC_COPYRIGHT) {
-        mChildProfileID += 3;
+    if (mChildProfileID > fProfile::LOGO_SCREEN) {
+        mChildProfileID += 2;
+    }
+    if (mChildProfileID > fProfile::MULTI_COURSE_SELECT) {
+        mChildProfileID += 2;
     }
     #elif GAME_REVISION >= GAME_REVISION_K
     if (mChildProfileID > fProfile::MULTI_COURSE_SELECT) {

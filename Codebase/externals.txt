@@ -1,3 +1,8 @@
+StateID_FoolMove__14daEnGakeNoko_c=0x80B14BC0
+StateID_Move__14daEnGakeNoko_c=0x80B14C00
+
+doneSettingPointerData=0x80109ce4
+
 vfac__12dPyMdlBase_cFv=0x800bd720
 vf68__12dPyMdlBase_cFv=0x800d63e0
 vf64__12dPyMdlBase_cFv=0x800d62f0

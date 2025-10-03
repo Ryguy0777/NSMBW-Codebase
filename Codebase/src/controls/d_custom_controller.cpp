@@ -1,5 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_custom_controller.hpp>
+#include <game/bases/d_fukidashi_manager.hpp>
 
 dCustomController_c *dCustomController_c::m_instance = nullptr;
 PADStatus dCustomController_c::saPadStatus[4];
@@ -7,6 +8,8 @@ PADStatus dCustomController_c::saPadStatus[4];
 void createCustomControllerClass() {
 	dCustomController_c::m_instance = new(sizeof(dCustomController_c)) dCustomController_c;
 }
+
+#include <new/game_config.h>
 
 void dCustomController_c::changeRemoconMgrState(dRemoconMng_c::dConnect_c::dExtension_c *self, u32 extension) {
     switch (extension) {
@@ -16,6 +19,7 @@ void dCustomController_c::changeRemoconMgrState(dRemoconMng_c::dConnect_c::dExte
         case WPAD_DEV_FREESTYLE: // nunchuck
             self->mStateMgr.changeState(dRemoconMng_c::dConnect_c::dExtension_c::StateID_Freestyle);
             return;
+#ifdef CONTROLLER_EXPANSION_ENABLED
         case WPAD_DEV_CLASSIC: // classic
             self->mStateMgr.changeState(dRemoconMng_c::dConnect_c::dExtension_c::StateID_Classic);
             return;
@@ -25,8 +29,12 @@ void dCustomController_c::changeRemoconMgrState(dRemoconMng_c::dConnect_c::dExte
         /* case WPAD_DEV_GUITAR: // guitar
             self->mStateMgr.changeState(dRemoconMng_c::dConnect_c::dExtension_c::StateID_Guitar);
             return; */
+#endif
         case WPAD_DEV_FUTURE: // unsupported
         case WPAD_DEV_GCN_FUTURE: // unsupported gc
+#ifndef CONTROLLER_EXPANSION_ENABLED
+        case WPAD_DEV_CLASSIC:
+#endif
             self->mStateMgr.changeState(dRemoconMng_c::dConnect_c::dExtension_c::StateID_Other);
             return;
     }
@@ -106,6 +114,7 @@ kmCallDefCpp(0x802bdc24, void, EGG::CoreController *_this) {
     OSReport("Wiimote: %08x %08x %08x\n", _this->maStatus->hold, _this->maStatus->trig, _this->maStatus->release);
 #endif
 
+#ifdef CONTROLLER_EXPANSION_ENABLED
     // assign wpad device type based on gc port type
     u32 gcctype = dCustomController_c::m_instance->checkForGCConnection(_this->mChannel);
     switch (gcctype) {
@@ -130,9 +139,17 @@ kmCallDefCpp(0x802bdc24, void, EGG::CoreController *_this) {
         /* case WPAD_DEV_GUITAR:
             return dCustomController_c::m_instance->mapGuitarButtons(_this, _this->mChannel); */
     }
+#endif
 }
 
 // assign game key id based on remoconmng
 kmBranchDefAsm(0x800b5df8, 0x800b5e08) {
     stw r0, 0x8(r3)
+}
+
+// hide fukidashi if custom controller
+kmBranchDefCpp(0x800b1990, NULL, void, dfukidashiInfo_c *_this) {
+    if (!_this->mVisible || getCustomController(_this->mPlayer)->mFlags & CCFLAG_HAS_CUSTOM)
+        return;
+    _this->mLayout.entry();
 }

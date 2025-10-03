@@ -1,4 +1,6 @@
-#ifdef FUCK_YOU_BITCH
+#include <new/game_config.h>
+
+#ifdef PLAYER_MODEL_HACKS
 
 #include <kamek.h>
 #include <game/bases/d_player_model.hpp>
