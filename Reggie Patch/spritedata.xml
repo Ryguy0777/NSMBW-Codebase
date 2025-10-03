@@ -76,6 +76,12 @@
     <value nybble="7-9" title="Spawn Delay While Ridden" comment="This determines how soon after the launch of the initial Jumbo Ray that another one will be spawned. Used whenever at least one Ray is being ridden by a player." comment2="A value of 16 is equal to about the width of one Jumbo Ray. &lt;font color=&quot;red&quot;&gt;Do not use a value of 0 or the game will crash.&lt;/font&gt;"/>
     <value nybble="5-6" title="Spawn Delay While Not Ridden" comment="Used instead of the other Spawn Delay whenever no Rays are currently being ridden." />
   </sprite> <!-- #273: Jumbo Ray Respawner 2 -->
+
+  <sprite id="302" name="Climbing Koopa - Cliffs" notes="Koopas that hang from cliff edges and shimmy across them." advancednotes="This sprite's constructor (and the sprite settings) was removed from the vanilla game and has been restored. There may have been more settings for this sprite at one point.">
+	<dualbox nybble="10" title1="Walks Off Ledges" title2="Turns Around At Ledges" comment="This determines if the Cliff Koopa will mindlessly walk off of ledges or if it will turn around when it reaches a ledge." comment2="This also changes the color of the Cliff Koopa."/>
+	<dualbox nybble="11" title1="Spawns Moving Left" title2= "Spawns Moving Right" comment="This determines what direction the Cliff Koopa will spawn."/>
+	<checkbox nybble="12" title="Spawn Locaton Fix" comment="by default, this sprite is placed too low to be useful. This setting will spawn them properly."/>
+  </sprite> <!-- #302: Climbing Koopa - Cliffs -->
   
   <sprite id="310" name="Signboard - Arrow" notes="A signboard with a red arrow on it, useful for suggesting a player travel in a specific direction.">
 	<value nybble="5" title="Scale" comment="1.0 + 0.5 * value"/>
@@ -168,9 +174,48 @@
 	<checkbox nybble="11.4" title="Indestructible" comment="When enabled, the Flip Block will not be destroyed when Spin Jumped." comment2="It is recommended to keep this consistent across Flip Blocks." requirednybble="12" requiredval="0"/>
   </sprite> <!-- #488: Flip Block -->
 
-  <sprite id="489" name="ON/OFF Block" notes="A red or blue block that, when struck, will affect the state of the Target Event(s). Events that are deactivated will become activated, and those that are activated will become deactivated.">
+  <sprite id="489" name="Event Controller - ON/OFF Block" notes="A red or blue block that, when struck, will affect the state of the Target Event(s). Events that are deactivated will become activated, and those that are activated will become deactivated.">
     <dualbox nybble="12.4" title1="Affect Event 1" title2="Swap Event 2 and Event 1" comment="This determines which associated Event IDs will be affected when the block is struck." comment2="If set to Affect Event 1, Event 1 will be activated or deactivated and the color of the block will display the state of Event 1, red for on and blue for off. &lt;br&gt; &lt;br&gt;If set to Swap Events, Event 2 will be activated initially and Event 1 will be deactivated initially during the Zone loading. The color of the block will rely on Event 2's current state."/>
     <value nybble="1-2" title="Target Event ID 1" idtype="Target Event"/>
     <value nybble="3-4" title="Target Event ID 2" requirednybble="12.4" idtype="Target Event"/>
   </sprite> <!-- #239: Event Block -->
+  
+  <sprite id="490" name="Message Window Controller" notes="This controller is required for all Message Windows to function correctly. It must be placed in every Zone that uses a Message Window.">
+    <dependency notes="This is used alongside sprites capable of spawning a pop-up Message Window.">
+      <suggested sprite="491"/>
+	  <suggested sprite="492"/>
+    </dependency>
+  </sprite> <!-- #490: Message Window Controller -->
+
+  <sprite id="491" name="Message Window Event" notes="When the target event is activated, a Message Window will display. Messages are defined in the BMG file.">
+    <dependency notes="The Message Window Controller must be included in each Zone for Message Blocks to function correctly.">
+      <required sprite="490"/>
+    </dependency>
+	<value nybble="1-2" title="Triggering Event ID" comment="The Message Window will open when the event is activated." idtype="Triggering Event"/>
+    <list nybble="5.3-5.4" title="Message Window Type" comment="This determines what layout the Message Window will use." comment2="It is recommended to enable Freeze Gameplay for types 1 and 2.">
+      <entry value="0">Toad Message</entry>
+      <entry value="1">NewerSMBW Message Box</entry>
+      <entry value="2">Yes No Window</entry>
+    </list>
+	<checkbox nybble="10.2" title="Close On Event Deactivation" comment="When enabled, the Message Window will close when the event is deactivated."/>
+	<dualbox nybble="10.3" title1="Player Canceled" title2="Timed Cancel" comment="Determines whether the player can cancel the Message Window, or if the Message Window disappears after a set amount of time." requirednybble="10.2" requiredval="0"/>
+	<value nybble="6-9" title="Message End Timer" comment="The amount of time in frames before the Message Window will close." requirednybble="10.3" requiredval="1"/>
+	<checkbox nybble="10.4" title="Freeze Gameplay" comment="When enabled, all gameplay will be paused while the Message Window is open." requirednybble="10.2" requiredval="0"/>
+    <value nybble="11-12" title="Message ID" comment="Messages defined in the BMG file."/>
+  </sprite> <!-- 491: Message Window Event -->
+
+  <sprite id="492" name="Message Block" notes="A block that the player can hit which will display a Message Window. Messages are defined in the BMG file.">
+    <dependency notes="The Message Window Controller must be included in each Zone for Message Blocks to function correctly.">
+      <required sprite="490"/>
+    </dependency>
+	<list nybble="5.3-5.4" title="Message Window Type" comment="This determines what layout the Message Window will use." comment2="It is recommended to enable Freeze Gameplay for types 1 and 2.">
+      <entry value="0">Toad Message</entry>
+      <entry value="1">NewerSMBW Message Box</entry>
+      <entry value="2">Yes No Window</entry>
+    </list>
+	<dualbox nybble="10.3" title1="Player Canceled" title2="Timed Cancel" comment="Determines whether the player can cancel the Message Window, or if the Message Window disappears after a set amount of time."/>
+	<value nybble="6-9" title="Message End Timer" comment="The amount of time in frames before the Message Window will close." requirednybble="10.3" requiredval="1"/>
+	<checkbox nybble="10.4" title="Freeze Gameplay" comment="When enabled, all gameplay will be paused while the Message Window is open."/>
+    <value nybble="11-12" title="Message ID" comment="Messages defined in the BMG file."/>
+  </sprite> <!-- 492: Message Block -->
 </sprites>

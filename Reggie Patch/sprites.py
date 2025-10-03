@@ -56,6 +56,33 @@ class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
         return None
         
 
+
+class SpriteImage_CliffKoopa(SLib.SpriteImage_StaticMultiple):  # 302
+    def __init__(self, parent):
+        super().__init__(parent, 1.5)
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('FenceKoopaHG', 'fencekoopa_horz.png')
+        SLib.loadIfNotInImageCache('FenceKoopaHR', 'fencekoopa_horz_red.png')
+
+    def dataChanged(self):
+
+        fix = self.parent.spritedata[5] & 1
+        if fix == 1:
+            self.offset = (-3, -13)
+        else:
+            self.offset = (-3, 2)
+        
+        color = self.parent.spritedata[4] & 1
+        if color == 1:
+            self.image = ImageCache['FenceKoopaHR']
+        else:
+            self.image = ImageCache['FenceKoopaHG']
+
+        super().dataChanged()
+        
+
 class SpriteImage_WaterPlatform(SLib.SpriteImage):  # 486
     def __init__(self, parent, scale=1.5):
         super().__init__(parent, scale)
@@ -158,6 +185,7 @@ class SpriteImage_OnOffBlock(SLib.SpriteImage_Static):  # 489
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
     191: SpriteImage_TileEventImproved,
+    302: SpriteImage_CliffKoopa,
     486: SpriteImage_WaterPlatform,
     487: SpriteImage_Shyguy,
     488: SpriteImage_FlipBlock,
