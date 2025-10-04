@@ -497,6 +497,7 @@ enum Value {
     EN_HEIHO,
     EN_BLOCK_ROTATE,
     EN_BLOCK_FLAG,
+    EN_PUCHI_PAKKUN,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT

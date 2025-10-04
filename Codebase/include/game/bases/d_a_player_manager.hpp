@@ -21,4 +21,5 @@ public:
     static int mPlayerMode[4];
     static int mRest[4];
     static u32 mCtrlPlrNo;
+    static int mCreateItem[4];
 };

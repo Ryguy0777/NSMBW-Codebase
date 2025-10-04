@@ -153,3 +153,49 @@ kmBranchDefCpp(0x800b1990, NULL, void, dfukidashiInfo_c *_this) {
         return;
     _this->mLayout.entry();
 }
+
+// fix dAcPyKey_c not working with our face button setup
+kmBranchDefCpp(0x8005e590, NULL, u16, dAcPyKey_c *_this) {
+    KPADEXStatus_cl *cStatus = &mPad::g_core[_this->mRemoconID]->maStatus->ex_status.cl;
+    dPADInfo *gStatus = &getCustomController(_this->mRemoconID)->mPadInfo;
+    switch (dGameKey_c::m_instance->mRemocon[_this->mRemoconID]->mAttachedExtension) {
+        case CONTROLLER_TYPE_e::CLASSIC:
+            if (_this->mStatus & 0x181) return 0; // player is in demo state
+            return cStatus->trig & (WPAD_BUTTON_CL_Y | WPAD_BUTTON_CL_X);
+        case CONTROLLER_TYPE_e::GAMECUBE:
+            if (_this->mStatus & 0x181) return 0; // player is in demo state
+            return gStatus->mTrig & PAD_BUTTON_Y;
+        case CONTROLLER_TYPE_e::NUNCHUCK:
+            return _this->mTriggeredButtons & WPAD_BUTTON_B;
+        default:
+            return _this->mTriggeredButtons & WPAD_BUTTON_1;
+    }
+}
+
+kmBranchDefCpp(0x8005e5d0, NULL, u16, dAcPyKey_c *_this) {
+    KPADEXStatus_cl *cStatus = &mPad::g_core[_this->mRemoconID]->maStatus->ex_status.cl;
+    dPADInfo *gStatus = &getCustomController(_this->mRemoconID)->mPadInfo;
+    switch (dGameKey_c::m_instance->mRemocon[_this->mRemoconID]->mAttachedExtension) {
+        case CONTROLLER_TYPE_e::CLASSIC:
+            if (_this->mStatus & 0x181) return 0; // player is in demo state
+            return cStatus->hold & (WPAD_BUTTON_CL_Y | WPAD_BUTTON_CL_X);
+        case CONTROLLER_TYPE_e::GAMECUBE:
+            if (_this->mStatus & 0x181) return 0; // player is in demo state
+            return gStatus->mHold & PAD_BUTTON_Y;
+        case CONTROLLER_TYPE_e::NUNCHUCK:
+            return _this->mDownButtons & WPAD_BUTTON_B;
+        default:
+            return _this->mDownButtons & WPAD_BUTTON_1;
+    }
+}
+
+kmBranchDefCpp(0x8005e610, NULL, u16, dAcPyKey_c *_this) {
+    KPADEXStatus_cl *cStatus = &mPad::g_core[_this->mRemoconID]->maStatus->ex_status.cl;
+    switch (dGameKey_c::m_instance->mRemocon[_this->mRemoconID]->mAttachedExtension) {
+        case CONTROLLER_TYPE_e::CLASSIC:
+            if (_this->mStatus & 0x181) return 0; // player is in demo state
+            return cStatus->hold & (WPAD_BUTTON_CL_Y | WPAD_BUTTON_CL_X);
+        default:
+            return _this->mDownButtons & WPAD_BUTTON_1;
+    }
+}

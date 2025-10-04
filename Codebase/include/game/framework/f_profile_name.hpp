@@ -783,6 +783,8 @@ namespace fProfile {
         EN_HEIHO,
         EN_BLOCK_ROTATE,
         EN_BLOCK_FLAG,
+        EN_PUCHI_PAKKUN,
+        AC_PAKKUN_PUCHI_FIRE,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

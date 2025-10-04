@@ -1,3 +1,7 @@
+ccCallback_BrosFire=0x807e9410
+vf13c__17daFireBall_Base_cFv=0x800413d0
+vf138__17daFireBall_Base_cFv=0x800413e0
+
 StateID_FoolMove__14daEnGakeNoko_c=0x80B14BC0
 StateID_Move__14daEnGakeNoko_c=0x80B14C00
 

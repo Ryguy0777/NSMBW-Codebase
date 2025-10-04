@@ -64,6 +64,8 @@ namespace dAudio {
     mVec2_c cvtSndObjctPos(const mVec3_c &);
     bool isForbidRemoteSE();
 
+    bool isBgmAccentSign(unsigned char);
+
     class SndObjctPlyBase_c : public SndObjctPly {
     };
 

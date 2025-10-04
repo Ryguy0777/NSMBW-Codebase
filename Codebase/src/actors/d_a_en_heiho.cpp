@@ -256,7 +256,7 @@ void daEnHeiho_c::createIceActor() {
         0.0, 
         0.0
     };
-    mIceMng.createIce(&heihoIceInfo[1], 1);
+    mIceMng.createIce(&heihoIceInfo[0], 1);
 }
 
 void daEnHeiho_c::setWalkSpeed() {
@@ -445,8 +445,7 @@ void daEnHeiho_c::executeState_Jump() {
 
     // touching the grounds
     if (BgCheck & 1) {
-        mVec2_c soundPos;
-        soundPos = dAudio::cvtSndObjctPos(mPos);
+        mVec2_c soundPos = dAudio::cvtSndObjctPos(mPos);
         
         if (mJumpCounter == 3)
             mJumpCounter = 0;

@@ -46,10 +46,11 @@ public:
     bool checkRide();
     bool checkHead(unsigned long);
     int getSakaMoveAngle(u8);
-    void checkWall(float *);
+    bool checkWall(float *);
     u32 checkWallEnm(float *);
 
     bool checkFootEnm();
+    bool checkFoot();
     bool hasSensorFoot() { return mpSensorFoot != nullptr; }
     bool hasSensorHead() { return mpSensorHead != nullptr; }
     bool hasSensorWall() { return mpSensorWall != nullptr; }

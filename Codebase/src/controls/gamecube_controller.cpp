@@ -109,11 +109,6 @@ void dCustomController_c::mapGameCubeButtons(EGG::CoreController *controller, in
 
     kStatus->acc.z = tilt;
     kStatus->acc_vertical.y = -tilt;
-
-    if (gStatus->mTrig & PAD_TRIGGER_R) {
-        dActor_c *player = (dActor_c *)fManager_c::searchBaseByProfName(fProfile::PLAYER, NULL);
-        dActor_c::construct(fProfile::YOSHI, 0x00010000, &player->mPos, &player->mAngle, player->mLayer);
-    }
 }
 
 u32 SIProbe(s32 chan) {
