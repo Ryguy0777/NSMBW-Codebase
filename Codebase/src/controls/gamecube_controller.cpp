@@ -149,7 +149,6 @@ u32 dCustomController_c::checkForGCConnection(int channel) {
         mControllers[channel].mFlags &= ~CCFLAG_NO_AUTOCONNECT;
         return GCC_TYPE_e::NONE;
     } else if (probe != SI_ERROR_BUSY && probe != SI_ERROR_UNKNOWN) {
-        OSReport("invalid GC type in port %d\n", channel);
         return GCC_TYPE_e::INVALID;
     }
     return GCC_TYPE_e::NONE;

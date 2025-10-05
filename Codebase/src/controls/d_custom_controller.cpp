@@ -1,6 +1,7 @@
 #include <kamek.h>
 #include <new/bases/d_custom_controller.hpp>
 #include <game/bases/d_fukidashi_manager.hpp>
+#include <game/snd/snd_scene_manager.hpp>
 
 dCustomController_c *dCustomController_c::m_instance = nullptr;
 PADStatus dCustomController_c::saPadStatus[4];
@@ -198,4 +199,148 @@ kmBranchDefCpp(0x8005e610, NULL, u16, dAcPyKey_c *_this) {
         default:
             return _this->mDownButtons & WPAD_BUTTON_1;
     }
+}
+
+// bool to see if hbm is open
+kmBranchDefCpp(0x800695a0, NULL, void) {
+    SndSceneMgr::sInstance->enterHBM();
+    OSReport("opening HBM!\n");
+    dCustomController_c::m_instance->mIsHBMOpen = true;
+}
+
+kmBranchDefCpp(0x800695b0, NULL, void) {
+    SndSceneMgr::sInstance->exitHBM();
+    OSReport("closing HBM!\n");
+    dCustomController_c::m_instance->mIsHBMOpen = false;
+}
+
+// use sideways inputs for new controller types
+kmWrite32(0x800b60dc, 0x2c000001);
+
+kmWrite32(0x800b6228, 0x2c000001);
+kmWrite32(0x800b622c, 0x41820024);
+
+// separate view map button from bubble button for new controller types
+kmBranchDefCpp(0x800fd4a0, NULL, bool, int player) {
+    dCustomControllerInfo *cont = getCustomController(player);
+    if (cont->mFlags & CCFLAG_NO_ACC || cont->mControllerType == CONTROLLER_TYPE_e::NUNCHUCK)
+        return false;
+    return true;
+}
+
+// tilt controlled objects
+
+// instead of using tilt, these will use shoulder buttons
+s16 getLRShort(u32 pid) {
+    dGameKeyCore_c *input = dGameKey_c::m_instance->mRemocon[pid];
+    // return tilt value as a usable s16
+    return (s16)(int)(((input->mAccVertX).y / 30.0) * 16384.0);
+}
+
+inline s16 clamp(s16 value, s16 one, s16 two) { return (value < one) ? one : ((value > two) ? two : value); }
+
+// for objects where L and R values simply add to the object's rotation
+bool handleTiltAdd(s16 *rot, s16 target, s16 increment, s8 player, s16 max) {
+    if (player < 0)
+        return sLib::chaseAngle(rot, target, increment);
+    
+    // if no accelerometer, return
+    dCustomControllerInfo *cont = getCustomController(player, 1);
+    if (cont == NULL || ((cont->mFlags & CCFLAG_NO_ACC) == 0))
+        return sLib::chaseAngle(rot, target, increment);
+    
+    // add current L/R values to object rotation
+    s16 tiltVal = getLRShort(player);
+    s16 newTarget = (*rot + tiltVal);
+    if (max != 0)
+        newTarget = clamp(newTarget, -max, max);
+    
+    return sLib::chaseAngle(rot, newTarget, increment);
+}
+
+// 6-6 boat
+kmBranchDefAsm(0x80871184, 0x80871188) {
+    nofralloc
+
+	mr r12, r6
+	mr r11, r7
+	lbz r6, 0x430(r30)
+	li r7, 0x4000
+	bl handleTiltAdd
+	mr r6, r12
+	mr r7, r11
+	blr
+}
+
+// 1-up blast cannon
+kmBranchDefCpp(0x80a964e0, NULL, bool, void *cannon, short target) {
+    return handleTiltAdd((s16*)((u8*)cannon + 0x7a4), target, 400, *(u32*)(((u8*)cannon)+0x778), 0x3520);
+}
+
+// tilt controlled wire fence
+extern "C" s16 remoWireGetTilt(void *);
+
+kmBranchDefCpp(0x808c4860, NULL, s16, void *remoWire) {
+    // get tilt amount
+    s16 tilt = remoWireGetTilt(remoWire);
+    if (tilt < 0x1a2c) {
+        if (tilt < -0x1a2b)
+            tilt = 0xffffe5d4;
+    } else {
+        tilt = 0x1a2c;
+    }
+
+    // if no accelerometer, return
+    dCustomControllerInfo *cont = getCustomController((int)*(s8*)((u8*)remoWire+0x63d), 1);
+    if (cont == NULL || ((cont->mFlags & CCFLAG_NO_ACC) == 0))
+        return tilt;
+    
+    // otherwise return the inverse of the tilt value
+    return -tilt;
+}
+
+// tilt controlled girder
+extern "C" s16 getRemoTiltValue(int, float, float);
+
+s16 seesawRots[4] = {0, 0, 0, 0};
+
+kmBranchDefCpp(0x8083f550, NULL, s16, void *remoSeesaw) {
+    int player = (int)*(char *)((u8*)remoSeesaw+0x430);
+    s16 tiltVal;
+    // if no accelerometer, return
+    dCustomControllerInfo *cont = getCustomController(player, 1);
+    if (cont == NULL || ((cont->mFlags & CCFLAG_NO_ACC) == 0)) {
+        tiltVal = getRemoTiltValue(player,5.0,1.0);
+    } else {
+        s16 LR = getLRShort(player);
+        s16 currentRot = *(short *)((u8*)remoSeesaw+0x54a);
+        seesawRots[player] = clamp(seesawRots[player] + LR, -0x1a2c, 0x1a2c);
+        tiltVal = seesawRots[player];
+        // called when we gain control, so reset the tilt value
+        seesawRots[player] = 0;
+    }
+    return tiltVal;
+}
+
+kmBranchDefCpp(0x8083f4f0, NULL, s16, void *remoSeesaw) {
+    int player = (int)*(char *)((u8*)remoSeesaw+0x430); 
+    s16 tiltVal;
+    // if no accelerometer, return
+    dCustomControllerInfo *cont = getCustomController(player, 1);
+    if (cont == NULL || ((cont->mFlags & CCFLAG_NO_ACC) == 0)) {
+        tiltVal = getRemoTiltValue(player,5.0,1.0);
+    } else {
+        s16 LR = getLRShort(player);
+        s16 currentRot = *(short *)((u8*)remoSeesaw+0x54a);
+        seesawRots[player] = clamp(seesawRots[player] + LR, -0x1a2c, 0x1a2c);
+        tiltVal = seesawRots[player];
+    }
+    if (tiltVal < 0x1a2c) {
+        if (tiltVal < -0x1a2b) {
+            tiltVal = -0x1a2c;
+        }
+    } else {
+        tiltVal = 0x1a2c;
+    }
+    return tiltVal;
 }

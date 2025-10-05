@@ -62,7 +62,7 @@ kmBranchDefCpp(0x800dcea0, NULL, void, dRemoconMng_c::dConnect_c::dExtension_c *
 kmBranchDefCpp(0x800dcec0, NULL, void, dRemoconMng_c::dConnect_c::dExtension_c *_this) {
     u8 extension = mPad::g_core[_this->mChannel]->maStatus->dev_type;
 #ifdef CONTROLLER_EXPANSION_ENABLED
-    if (extension != WPAD_DEV_FUTURE) {
+    if (extension != WPAD_DEV_FUTURE || extensions != WPAD_DEV_GCN_FUTURE) {
         dCustomController_c::changeRemoconMgrState(_this, extension);
     }
 #else

@@ -123,7 +123,22 @@ kmWriteNop(0x80109c7c);
 kmWriteNop(0x80109c80);
 kmWriteNop(0x80109c84);
 
-extern "C" void mapStickToPosHBM(int channel, Vec2 *pos);
+static const f32 stickMoveCoefficent = 2048.0f/72.0f;
+
+static f32 AbsClamp(f32 val, f32 max) {
+    return ((val > max) ? max : (val < -max) ? -max : val);
+}
+
+void mapStickToPosHBM(int channel, Vec2 *pos) {
+    KPADEXStatus_cl *cStatus = &mPad::g_core[channel]->maStatus->ex_status.cl;
+    Vec2 stick;
+    stick.x = cStatus->lstick.x / stickMoveCoefficent;
+    stick.y = cStatus->lstick.y / stickMoveCoefficent;
+    // don't let cursor go off screen edge
+    pos->x = AbsClamp(pos->x + stick.x, 1.0f);
+    pos->y = AbsClamp(pos->y - stick.y, 1.0f);
+}
+
 extern "C" void doneSettingPointerData(void);
 kmBranchDefAsm(0x80109cb4, 0x80109cb8) {
     nofralloc
@@ -141,20 +156,4 @@ kmBranchDefAsm(0x80109cb4, 0x80109cb8) {
     notClassic:
 	lbz r0, 0x5E(r3)
     blr
-}
-
-static const f32 stickMoveCoefficent = 2048.0f/72.0f;
-
-static f32 AbsClamp(f32 val, f32 max) {
-    return ((val > max) ? max : (val < -max) ? -max : val);
-}
-
-void mapStickToPosHBM(int channel, Vec2 *pos) {
-    KPADEXStatus_cl *cStatus = &mPad::g_core[channel]->maStatus->ex_status.cl;
-    Vec2 stick;
-    stick.x = cStatus->lstick.x / stickMoveCoefficent;
-    stick.y = cStatus->lstick.y / stickMoveCoefficent;
-    // don't let cursor go off screen edge
-    pos->x = AbsClamp(pos->x + stick.x, 1.0f);
-    pos->y = AbsClamp(pos->y - stick.y, 1.0f);
 }

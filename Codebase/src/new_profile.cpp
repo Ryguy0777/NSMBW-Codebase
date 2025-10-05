@@ -22,8 +22,6 @@ const char* customProfileNames[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_C
 
 // custom profile ctors
 
-#define DEBUG_PROFILE_CALL
-
 // stage actor with sprite
 dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files) {
 #ifdef DEBUG_PROFILE_CALL

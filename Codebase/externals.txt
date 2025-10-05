@@ -1,3 +1,9 @@
+useWiimoteTilt=0x908441b8
+
+remoWireGetTilt=0x808c4840
+getRemoTiltValue=0x800b3980
+
+continueToMeltIce=0x807f810c
 ccCallback_BrosFire=0x807e9410
 vf13c__17daFireBall_Base_cFv=0x800413d0
 vf138__17daFireBall_Base_cFv=0x800413e0

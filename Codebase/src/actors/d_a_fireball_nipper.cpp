@@ -40,10 +40,26 @@ dCc_c::CcData_s l_nipper_fire_cc = {
     0xF,                        // mCategoryInteract
     0x8800,                     // mAttackCategoryInteract     
     0,                          // mFlag
-    &ccCallback_BrosFire,          // mCallback
+    &ccCallback_BrosFire,       // mCallback
 };
 
 void daFireBall_Nipper_c::setCc() {
     mCc.registerCc(this, &l_nipper_fire_cc);
     mCc.entry();
+}
+
+extern "C" void continueToMeltIce(void);
+kmBranchDefAsm(0x807f8104, 0x807f812c) {
+    nofralloc
+
+    cmpwi r4, 0x13
+    beq meltIce // broken check? not sure
+    cmpwi r4, 758
+    bne dontMelt
+
+    meltIce:
+    b continueToMeltIce
+
+    dontMelt:
+    blr
 }

@@ -141,3 +141,21 @@ kmBranchDefCpp(0x901007E0, NULL, float, char *section, char *key, float defaultV
     return defaultValue;
 }
 
+// quick fix to daLiftRemoconSeesaw_c
+extern "C" void useWiimoteTilt(void);
+kmBranchDefAsm(0x90844188, 0x90844194) {
+    nofralloc
+
+    lbz r12, 0x430(r30)
+    cmpwi r12, 0xff
+    beq noClassic
+    lbz r3, 0x74(r3)
+    cmpwi r3, 2
+    beq yesClassic
+
+    noClassic:
+    b useWiimoteTilt
+
+    yesClassic:
+    blr
+}
