@@ -34,9 +34,9 @@ public:
 
     dHeapAllocator_c mAllocator;
     nw4r::g3d::ResFile mRes;
-	m3d::mdl_c mFlipBlockModel;
+    m3d::mdl_c mFlipBlockModel;
 
-	int mFlipsRemaining;
+    int mFlipsRemaining;
     int mCoinsRemaining;
 
     int mContents;
@@ -44,22 +44,22 @@ public:
 };
 
 const u32 l_item_values[16] = {
-	0xF,				// empty
-	2,					// mushroom
-	0,					// fire
-	0,					// fire
-	0x15,				// propeller
-	0x11,				// penguin
-	0x19,				// mini
-	1,					// star
-	0x1B,				// mushroom
-	0xC,				// mushroom
-	4,					// coin 2
-	7,					// 1up
-	0xA,				// mushroom
-	0xD,				// mushroom
-	8,					// mushroom
-	0xE					// ice
+    0xF,				// empty
+    2,					// mushroom
+    0,					// fire
+    0,					// fire
+    0x15,				// propeller
+    0x11,				// penguin
+    0x19,				// mini
+    1,					// star
+    0x1B,				// mushroom
+    0xC,				// mushroom
+    4,					// coin 2
+    7,					// 1up
+    0xA,				// mushroom
+    0xD,				// mushroom
+    8,					// mushroom
+    0xE					// ice
 };
 
 const bool l_early_items[16] = {
