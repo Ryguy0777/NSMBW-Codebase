@@ -1,6 +1,8 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_heiho.hpp>
 #include <new/new_profile.hpp>
+#include <game/bases/d_audio.hpp>
+#include <constants/sound_list.h>
 
 CUSTOM_ACTOR_PROFILE(EN_HEIHO, daEnHeiho_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 

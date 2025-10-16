@@ -1,9 +1,6 @@
 #pragma once
-#include <game/bases/d_a_en_block_main.hpp>
+#include <game/bases/d_a_en_blockmain.hpp>
 #include <game/bases/d_bg.hpp>
-#include <game/bases/d_switch_flag_mng.hpp>
-#include <game/bases/d_audio.hpp>
-#include <constants/sound_list.h>
 
 // ON/OFF switch block
 

@@ -9,6 +9,6 @@ public:
 
     static SndSceneMgr *sInstance;
 
-    static void enterHBM();
-    static void exitHBM();
+    void enterHBM();
+    void exitHBM();
 };

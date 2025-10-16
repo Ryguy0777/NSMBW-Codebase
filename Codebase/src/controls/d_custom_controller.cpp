@@ -2,6 +2,8 @@
 #include <new/bases/d_custom_controller.hpp>
 #include <game/bases/d_fukidashi_manager.hpp>
 #include <game/snd/snd_scene_manager.hpp>
+#include <game/bases/d_game_key.hpp>
+#include <game/bases/d_ac_py_key.hpp>
 
 dCustomController_c *dCustomController_c::m_instance = nullptr;
 PADStatus dCustomController_c::saPadStatus[4];

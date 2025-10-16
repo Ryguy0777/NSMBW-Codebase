@@ -3,11 +3,6 @@
 #include <game/bases/d_enemy.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
-#include <game/bases/d_audio.hpp>
-#include <game/bases/d_s_stage.hpp>
-#include <game/bases/d_a_player_manager.hpp>
-#include <game/mLib/m_effect.hpp>
-#include <constants/sound_list.h>
 
 class daEnPuchiPakkun_c : public dEn_c {
 public:

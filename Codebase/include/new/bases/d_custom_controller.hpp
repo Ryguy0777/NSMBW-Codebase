@@ -1,8 +1,6 @@
 #pragma once
 
 #include <game/bases/d_remocon_mng.hpp>
-#include <game/bases/d_game_key.hpp>
-#include <game/bases/d_ac_py_key.hpp>
 #include <game/bases/d_s_stage.hpp>
 
 typedef struct CONTROLLER_TYPE_e {

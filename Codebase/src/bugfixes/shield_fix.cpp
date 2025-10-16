@@ -9,14 +9,7 @@
 #endif
 
 /*
- * A tiny patch to make the Nvidia Shield port of NSMBW work on Dolphin.
- *
- * This may or may not work on a Wii. The sloppy edits Nvidia/Lightspeed did
- * to daLiftRemoconSeesaw_c (the player-tiltable platform seen in World 1-2)
- * cause the game to read from 0x00000074 when nobody is riding the platform
- * as it tries to check the device type of a null pointer.
- *
- * Amazing.
+ * A tiny patch to make the Nvidia Shield port of NSMBW work.
  * 
  * NOTE: We use 0x90000000 addresses because Kamek has no way of patching addresses
  * for certain regions only, in order to prevent C addresses from being treated as PAL addresses

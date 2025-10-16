@@ -1,6 +1,11 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_block_rotate.hpp>
 #include <new/new_profile.hpp>
+#include <game/bases/d_game_com.hpp>
+#include <game/bases/d_a_player_base.hpp>
+#include <constants/sound_list.h>
+#include <game/bases/d_eff_actor_manager.hpp>
+
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL, fProfile::DRAW_ORDER::RIVER_BARREL, 0x2);
 

@@ -32,4 +32,6 @@ public:
 
     static changePosFunc changePos;
     static dScStage_c *m_instance;
+
+    void mainLevelSetup();
 };

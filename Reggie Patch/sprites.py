@@ -181,6 +181,36 @@ class SpriteImage_OnOffBlock(SLib.SpriteImage_Static):  # 489
             1.5,
             SLib.GetTile(0x9C),
         )
+        
+    
+class SpriteImage_NipperPlant(SLib.SpriteImage_StaticMultiple):  # 490
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Nipper', 'nipper.png')
+        SLib.loadIfNotInImageCache('NipperF', 'nipper_frozen.png')
+
+    def dataChanged(self):
+
+        frozen = self.parent.spritedata[5] & 1
+        if frozen == 1:
+            self.image = ImageCache['NipperF']
+            self.offset = (0, 0)
+        else:
+            self.image = ImageCache['Nipper']
+            self.offset = (0, -1)
+
+        super().dataChanged()
+        
+
+
+class SpriteImage_MessageBlock(SLib.SpriteImage_Static):  # 491
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            SLib.GetTile(0x9A),
+        )
+        
 
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
@@ -189,5 +219,7 @@ ImageClasses = {
     486: SpriteImage_WaterPlatform,
     487: SpriteImage_Shyguy,
     488: SpriteImage_FlipBlock,
-    489: SpriteImage_OnOffBlock
+    489: SpriteImage_OnOffBlock,
+    490: SpriteImage_NipperPlant,
+    491: SpriteImage_MessageBlock
 }

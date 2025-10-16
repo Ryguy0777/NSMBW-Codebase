@@ -1,8 +1,6 @@
 #pragma once
 
 #include <game/bases/d_a_fireball_base.hpp>
-#include <game/bases/d_audio.hpp>
-#include <constants/sound_list.h>
 
 class daFireBall_Nipper_c : public daFireBall_Base_c {
 public:

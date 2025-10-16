@@ -46,6 +46,12 @@ public:
     u32 m_120, m_124;
 };
 
+class levelOneEffect_c : public levelEffect_c {
+public:
+    float mEmissionRate;
+    u32 mSettings;
+};
+
 void createEffect(const char *, unsigned long, const mVec3_c *, const mAng3_c *, const mVec3_c *);
 
 }; // namespace mEf

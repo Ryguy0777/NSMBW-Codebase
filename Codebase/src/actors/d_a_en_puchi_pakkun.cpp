@@ -1,7 +1,12 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_puchi_pakkun.hpp>
-#include <game/bases/d_a_freezer.hpp>
 #include <new/new_profile.hpp>
+#include <game/bases/d_audio.hpp>
+#include <game/bases/d_s_stage.hpp>
+#include <game/bases/d_a_player_manager.hpp>
+#include <game/mLib/m_effect.hpp>
+#include <constants/sound_list.h>
+#include <game/bases/d_a_freezer.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_PUCHI_PAKKUN, daEnPuchiPakkun_c, fProfile::EN_BLACK_PAKKUN, fProfile::DRAW_ORDER::EN_BLACK_PAKKUN, 0x12);
 

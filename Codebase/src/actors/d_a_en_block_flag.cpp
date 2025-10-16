@@ -1,6 +1,9 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_block_flag.hpp>
 #include <new/new_profile.hpp>
+#include <game/bases/d_switch_flag_mng.hpp>
+#include <game/bases/d_audio.hpp>
+#include <constants/sound_list.h>
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_FLAG, daEnBlockFlag_c, fProfile::EN_BLOCK_SOROBAN, fProfile::DRAW_ORDER::EN_BLOCK_SOROBAN, 0);
 

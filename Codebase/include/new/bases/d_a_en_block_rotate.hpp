@@ -1,12 +1,8 @@
 #pragma once
-#include <game/bases/d_a_en_block_main.hpp>
+#include <game/bases/d_a_en_blockmain.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
-#include <game/bases/d_game_com.hpp>
 #include <game/bases/d_bg.hpp>
-#include <game/bases/d_a_player_base.hpp>
-#include <constants/sound_list.h>
-#include <game/bases/d_eff_actor_manager.hpp>
 
 // SMW-style flip blocks
 
