@@ -11,7 +11,6 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL,
 
 STATE_DEFINE(daEnBlockRotate_c, Wait);
 STATE_DEFINE(daEnBlockRotate_c, Flipping);
-STATE_DEFINE(daEnBlockRotate_c, Empty);
 
 const char* flipblockArcList[] = {"block_rotate", NULL};
 const SpriteData flipblockSpriteData = {fProfile::EN_BLOCK_ROTATE, 8, -16, 8, 0, 16, 16, 0, 0, 0, 0, 0x8};
@@ -38,16 +37,15 @@ void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
             // statuses 0xA9 and 0x2B are only both set when spinjumping
             if (player->isStatus(0xA9) && player->isStatus(daPlBase_c::STATUS_2B)) {
                 if (player->mPowerup != POWERUP_NONE && player->mPowerup != POWERUP_MINI_MUSHROOM) {
-                    // play break sound and spawn shard effect
-                    nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(_this->mPos);
-                    dAudio::g_pSndObjMap->startSound(SE_OBJ_BLOCK_BREAK, soundPos, 0);
-
-                    dEffActorMng_c::m_instance->createBlockFragEff(_this->mPos, 0x202, -1);
-
-                    // delete block
-                    _this->deleteActor(1);
+                    _this->destroyBlock();
                     // move player upwards slightly
-                    player->mSpeed.y = 2.5;
+                    float playerSpeedInc;
+                    if (player->mKey.buttonJump()) {
+                        playerSpeedInc = 3.0;
+                    } else {
+                        playerSpeedInc = 2.5;
+                    }
+                    player->mSpeed.y = playerSpeedInc;
                 }
             }
         }
@@ -93,11 +91,6 @@ int daEnBlockRotate_c::create() {
 }
 
 int daEnBlockRotate_c::doDelete() {
-    if (mStateMgr.getStateID()->isEqual(StateID_Empty)) {
-        dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
-        list->removePanelObjList(&mUsedTile);
-    }
-
     mBg.release();
     return SUCCEEDED;
 }
@@ -108,7 +101,7 @@ int daEnBlockRotate_c::execute() {
     Block_ExecuteClearSet();
 
     // only delete if not flipping
-    if (mStateMgr.getStateID()->operator!=(StateID_Flipping)) {
+    if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
         ActorScrOutCheck(0);
     }
 
@@ -167,19 +160,17 @@ void daEnBlockRotate_c::block_downmove() {
 }
 
 void daEnBlockRotate_c::calcModel() {
-    // calculate model if present
-    if (mStateMgr.getStateID()->operator!=(StateID_Empty)) {
-        dActor_c::changePosAngle(&mPos, &mAngle, 1);
-        PSMTXTrans(mMatrix, mPos.x, mPos.y + 8.0, mPos.z);
+    // calculate model
+    dActor_c::changePosAngle(&mPos, &mAngle, 1);
+    PSMTXTrans(mMatrix, mPos.x, mPos.y + 8.0, mPos.z);
 
-        mMatrix.YrotM(mAngle.y);
-        mMatrix.XrotM(mAngle.x);
-        mMatrix.ZrotM(mAngle.z);
-        
-        mFlipBlockModel.setLocalMtx(&mMatrix);
-        mFlipBlockModel.setScale(mScale.x, mScale.y, mScale.z);
-        mFlipBlockModel.calc(false);
-    }
+    mMatrix.YrotM(mAngle.y);
+    mMatrix.XrotM(mAngle.x);
+    mMatrix.ZrotM(mAngle.z);
+    
+    mFlipBlockModel.setLocalMtx(&mMatrix);
+    mFlipBlockModel.setScale(mScale.x, mScale.y, mScale.z);
+    mFlipBlockModel.calc(false);
 
     return;
 }
@@ -193,7 +184,7 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
         } else 
-            changeState(StateID_Empty);
+            createEmpty();
     } else 
         changeState(StateID_Flipping);
 }
@@ -249,6 +240,32 @@ void daEnBlockRotate_c::createItem() {
     }
 }
 
+void daEnBlockRotate_c::createEmpty() {
+    // delete block
+    deleteActor(1);
+    
+    // create empty block tile
+    u16 worldX = ((u16)mPos.x) & 0xFFF0;
+	u16 worldY = ((u16)-(mPos.y + 16.0)) & 0xFFF0;
+
+    dBg_c::m_bg_p->BgUnitChange(worldX, worldY, mLayer, 0x0001);
+
+    // spawn item if we haven't already
+    if (!l_early_items[mContents])
+        createItem();
+}
+
+void daEnBlockRotate_c::destroyBlock() {
+    // delete block
+    deleteActor(1);
+
+    // play break sound and spawn shard effect
+    nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(mPos);
+    dAudio::g_pSndObjMap->startSound(SE_OBJ_BLOCK_BREAK, soundPos, 0);
+
+    dEffActorMng_c::m_instance->createBlockFragEff(mPos, 0x202, -1);
+}
+
 void daEnBlockRotate_c::initializeState_Wait() {}
 
 void daEnBlockRotate_c::finalizeState_Wait() {}
@@ -295,23 +312,3 @@ void daEnBlockRotate_c::executeState_Flipping() {
         }
     }
 }
-
-void daEnBlockRotate_c::initializeState_Empty() {
-    // remove model, create empty block tile
-    mFlipBlockModel.remove();
-
-    dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
-    list->addPanelObjList(&mUsedTile);
-
-    mUsedTile.mPos.x = mPos.x - 8;
-    mUsedTile.mPos.y = -(16 + mPos.y);
-    mUsedTile.mTileNumber = 0x32;
-
-    // spawn item if we haven't already
-    if (!l_early_items[mContents])
-        createItem();
-}
-
-void daEnBlockRotate_c::finalizeState_Empty() {}
-
-void daEnBlockRotate_c::executeState_Empty() {}
