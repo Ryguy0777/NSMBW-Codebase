@@ -3,7 +3,14 @@
 
 class dSaveMng_c {
 public:
-    dMj2dGame_c *getSaveGame(s8);
+    dMj2dGame_c* getSaveGame(s8 slot);
+    void initLoadGame(s8 slot);
 
-    static dSaveMng_c *m_instance;
+    inline u8 getLastSelectedFile() {return mSave.mLastSelectedFile;}
+
+    bool mIsNowSave; // set to true when accessing NAND
+    u8 mPad[31];
+    dMj2dHeader_c mSave;
+
+    static dSaveMng_c* m_instance;
 };

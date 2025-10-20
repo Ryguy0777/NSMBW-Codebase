@@ -103,5 +103,7 @@ namespace dGameCom {
     void SelectCursorSetup(nw4r::lyt::Pane *, int, bool);
     void WindowPaneColorSet(nw4r::lyt::Window *, int);
 
+    void initGame();
+
     extern u32 l_gameStop;
 }

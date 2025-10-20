@@ -1,8 +1,8 @@
 #include <kamek.h>
 #include <revolution/OS/OSError.h>
 #include <revolution/PAD.h>
-
-extern void createCustomControllerClass();
+#include <new/bases/d_custom_controller.hpp>
+#include <new/bases/d_debug_config.hpp>
 
 // prolog hook
 // this is the equivalent of the prolog.S file from NewerSMBW
@@ -10,7 +10,8 @@ extern void createCustomControllerClass();
 // as it runs right after kamek hooks are patched in
 kmBranchDefCpp(0x8015bd74, NULL, bool, bool ret) {
     OSReport("NSMBW Custom Codebase - Hacks by Ryguy\n");
-    createCustomControllerClass();
     PADInit();
+    dCustomController_c::makeInstance();
+    dDebugConfig_c::setupConfig();
     return ret;
 }

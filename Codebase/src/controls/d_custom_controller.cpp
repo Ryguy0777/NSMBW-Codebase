@@ -8,7 +8,7 @@
 dCustomController_c *dCustomController_c::m_instance = nullptr;
 PADStatus dCustomController_c::saPadStatus[4];
 
-void createCustomControllerClass() {
+void dCustomController_c::makeInstance() {
 	dCustomController_c::m_instance = new(sizeof(dCustomController_c)) dCustomController_c;
 }
 

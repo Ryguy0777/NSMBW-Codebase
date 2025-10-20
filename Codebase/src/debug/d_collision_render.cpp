@@ -7,14 +7,7 @@
 #include <nw4r/math/math_triangular.h>
 #include <revolution/GX.h>
 #include <game_versions_nsmbw.h>
-
-#include <new/game_config.h>
-
-#ifdef COLLISION_RENDER_ENABLED
-static const bool renderCollision = true;
-#else
-static const bool renderCollision = false;
-#endif
+#include <new/bases/d_debug_config.hpp>
 
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.
@@ -200,7 +193,7 @@ void DrawPartialCircle(float centreX, float centreY, float radius, float z, u16 
 static dCollisionRender_c m_instance;
 
 dCollisionRender_c::dCollisionRender_c() {
-    this->create(nullptr, nullptr);
+    create(nullptr, nullptr);
 }
 
 // Dummy function
@@ -247,8 +240,11 @@ void dCollisionRender_c::drawXlu() {
     GXSetLineWidth(18, 0);
     GXSetPointSize(36, 0);
 
+    // Load debug flags from config
+    u32 flags = dDebugConfig_c::m_instance->mCollisionDebugFlags;
+
     // Draw all instances of dCc_c
-    if (renderCollision) {
+    if (flags & (1 << ColliderDisplayFlags::Hitboxes)) {
         dCc_c* currCc = dCc_c::mEntryN;
         while (currCc) {
 
@@ -316,7 +312,7 @@ void dCollisionRender_c::drawXlu() {
     }
 
     // Draw all instances of dBg_ctr_c
-    if (renderCollision) {
+    if (flags & (1 << ColliderDisplayFlags::Colliders)) {
         dBg_ctr_c* currBgCtr = dBg_ctr_c::mEntryN;
         while (currBgCtr) {
 
@@ -348,7 +344,7 @@ void dCollisionRender_c::drawXlu() {
     }
 
     // Draw all instances of dBc_c
-    if (renderCollision) {
+    if (flags & (1 << ColliderDisplayFlags::Sensors)) {
         dActor_c *owner = nullptr;
         while (owner = (dActor_c*)fManager_c::searchBaseByGroupType(2, owner)) {
             // verify if dBc_c vtable is set
@@ -416,7 +412,7 @@ void dCollisionRender_c::drawXlu() {
     }
 
     // Draw all instances of dRide_ctr_c
-    if (renderCollision) {
+    if (flags & (1 << ColliderDisplayFlags::RideableColliders)) {
         dRide_ctr_c* currRide = dRide_ctr_c::mEntryN;
         while (currRide) {
 

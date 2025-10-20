@@ -25,7 +25,6 @@
 * Dynamic Discord RPC (?) !
 * Quick Restart !
 * Newer Pregame !
-* Debug config ini file
 * Debug menu scene (?) !
 * Player Script Event
 * Newer bosses (?)

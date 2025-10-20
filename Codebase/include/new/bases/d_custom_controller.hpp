@@ -66,6 +66,8 @@ public:
 
     u32 checkForGCConnection(int channel);
     void setGamecubeDevType(int channel);
+
+    static void makeInstance();
     
     static void setPadInfo();
 

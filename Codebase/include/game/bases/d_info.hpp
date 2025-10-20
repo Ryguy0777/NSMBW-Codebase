@@ -23,7 +23,7 @@ public:
 
 class dInfo_c {
 public:
-    struct StartGameInfo {
+    struct StartGameInfo_s {
         u32 mReplayDuration;
         u8 mMovieType;
         u8 mEntrance;
@@ -37,6 +37,7 @@ public:
     };
 
     enum GAME_FLAG_e {
+        GAME_FLAG_IS_EXTRA_MODE = BIT_FLAG(4),
         GAME_FLAG_IS_COIN_COURSE = BIT_FLAG(6)
     };
 
@@ -81,5 +82,5 @@ public:
 
     static dInfo_c *m_instance;
     static unsigned int mGameFlag; ///< See @p ::GAME_FLAG_e
-    static StartGameInfo m_startGameInfo;
+    static StartGameInfo_s m_startGameInfo;
 };

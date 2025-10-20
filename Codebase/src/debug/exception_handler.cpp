@@ -1,19 +1,13 @@
 #include <kamek.h>
-#include <revolution/OS/OSContext.h>
 #include <game/bases/d_game_key.hpp>
 #include <revolution/WPAD.h>
+#include <nw4r/db/exception.h>
 #include <game_versions_nsmbw.h>
+
+#define GAME_NAME "NSMBW - Custom Codebase"
 
 // replace the exception handler with our own version
 // designed with mod debugging in mind
-
-namespace nw4r { namespace db {
-    void Exception_Printf_(const char *msg, ...);
-    // I hate this
-    void* sException();
-}}
-
-#define GAME_NAME "NSMBW - Custom Codebase"
 
 extern const u32 codeAddr;
 

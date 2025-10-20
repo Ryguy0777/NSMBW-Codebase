@@ -1,6 +1,7 @@
 #pragma once
 #include <types.h>
 #include <lib/egg/core/eggFrmHeap.h>
+#include <lib/egg/core/eggExpHeap.h>
 #include <nw4r/ut.h>
 
 namespace mHeap {
@@ -20,4 +21,6 @@ namespace mHeap {
     EGG::FrmHeap *createFrmHeap(unsigned long size, EGG::Heap *parent, const char *name, u32 align, u32 opt);
 
     extern EGG::Heap *g_gameHeaps[3];
+
+    extern EGG::ExpHeap *g_archiveHeap;
 };

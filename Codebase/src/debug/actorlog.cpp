@@ -1,14 +1,12 @@
-#include <new/game_config.h>
-
-#ifdef ACTOR_LOG_ENABLED
-
 #include <kamek.h>
 #include <revolution/OS/OSError.h>
 #include <game/framework/f_profile.hpp>
+#include <new/bases/d_debug_config.hpp>
 
 void printActorInfo(u16 profId, void *parent, ulong settings, int group) {
     char *profName = dProf_getName(profId);
-    OSReport("I: %04d, P:%p S:%08x T:%d N:%s\n", profId, parent, settings, group, profName);
+	if (dDebugConfig_c::m_instance->mActorLog)
+    	OSReport("I: %04d, P:%p S:%08x T:%d N:%s\n", profId, parent, settings, group, profName);
     return;
 }
 
@@ -37,5 +35,3 @@ kmCallDefAsm(0x80162BC0) {
 	clrlslwi r31, r3, 16, 2
 	blr
 }
-
-#endif

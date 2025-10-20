@@ -1,7 +1,8 @@
 #include <kamek.h>
+#include <new/game_config.h>
 
 // disable the harcoded pick-a-path mechanic of 2-castle
-
+#ifdef NO_2_CASTLE_MAZE
 kmWrite8(0x8000D067, 0xFF);
 kmWrite8(0x80079BD3, 0xFF);
 kmWrite8(0x80079F63, 0xFF);
@@ -14,3 +15,4 @@ kmWrite8(0x807B4EAB, 0xFF);
 kmWrite8(0x807B532B, 0xFF);
 kmWrite8(0x8088895B, 0xFF);
 kmWrite8(0x80888B7B, 0xFF);
+#endif
