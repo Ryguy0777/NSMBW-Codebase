@@ -1,0 +1,65 @@
+# Feature List
+The codebase is still currently in development, so don't expect everything to be present or finished.
+
+## Toggling Features
+Inside of the `/Codebase/include/new/game_config.h` file, you will find several `#define`s that control whether certain features are active or not. Remove/un-comment them to disable/enable them, respectively.
+
+### Completed Features
+These features are complete and should be fully functional.
+* Profile and Sprite slot expansion
+* Tilegod expansion
+* Super Guide removal (togglable)
+* EN_GAKE_NOKO restoration
+* EN_LAND_BARREL fixes
+* Scalable + rotatable arrow signboards
+* Message Block sprite
+* Shyguy sprite
+* Nipper Plant sprite
+* Actor Spawner sprites
+* All bugfixes from NSMBW-Updated
+* Fixes to allow the NVIDIA Shield release to run on Dolphin Emulator
+* Actor creation logging
+* Collision rendering
+* Configuration ini file for debugging
+* Improved exception handler
+* 1-1 Peach's Castle BG removal (togglable)
+* 2-Castle Maze removal (toggleable)
+* Always skip cutscenes with plus
+
+### Unfinished Features
+These features are implemented, but not complete or not fully functional.
+* NewerSMBW styled pregame (togglable)
+* ON/OFF Block sprite
+* SMW Flip Block sprite
+* Classic + GameCube controller support (togglable)
+
+### Planned Features
+These features are planned to be implemented in the future.
+* Switch Blocks (togglable)
+* Magic Platform sprite
+* Shyguy variant sprites
+* Splunkin sprite
+* Goombrat sprite
+* Galoomba sprites
+* Bomb Bro sprite
+* RandTiles
+* AnimTiles
+* FlowerTiles
+* Player 1 Can Change Character (togglable)
+* 2D Maps (Koopatlas port) (togglable)
+* Petey Pirahna Boss sprite
+* Level Names/Info (togglable)
+* Triple ? Block sprite
+* Effect/SFX Spawner sprite
+* Hammer Suit/More Powerups (togglable)
+* Rotation controlled coin hacks
+* More Characters (togglable)
+* Region Free utilites (togglable)
+* Dynamic Discord RPC (togglable)
+* Quick Restart (togglable)
+* Debug menu scene (togglable)
+* Player Script Event sprite
+* Angry Sun/Moon sprite
+* Newer-esque file select (togglable)
+* Replay recorder
+* Load worldmap scripts from external file 
