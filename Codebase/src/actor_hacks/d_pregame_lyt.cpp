@@ -106,11 +106,12 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
     LevelName = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelName");
 
     MsgRes_c *msgRes = dMessage_c::getMesRes();
-
+    // grab names based on world + level number
     ulong category = BMG_CATEGORY_LEVEL_NAMES + dInfo_c::m_startGameInfo.mWorld1+1;
     ulong id = dInfo_c::m_startGameInfo.mLevel1+1;
     
     if (msgRes->getMsgEntry(category, id) == nullptr) {
+        // the bmg entry for the level name doesn't exist, go to the fallback
         category = BMG_CATEGORY_LEVEL_NAMES;
         id = 0;
     }
@@ -149,7 +150,7 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
 
     // unload file and free memory
     DVDClose(&dvdHandle);
-    // TODO: figure out why this causes corrupt textures
+    // TODO: figure out why this causes the preview to break
     //EGG::Heap::free(buffer, mHeap::g_archiveHeap);
 }
 

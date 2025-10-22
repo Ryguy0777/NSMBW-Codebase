@@ -9,25 +9,7 @@
 #include <game_versions_nsmbw.h>
 #include <new/bases/d_debug_config.hpp>
 
-#ifdef IS_GAME_VERSION_DYNAMIC
-#error Dynamic compilation is unsupported for this patch.
-#endif
-
-#if defined(IS_GAME_VERSION_P1_COMPATIBLE)
-#define BC_VTABLE 0x8030f6d0
-#elif defined(IS_GAME_VERSION_E1_COMPATIBLE)
-#define BC_VTABLE 0x8030f3d0
-#elif defined(IS_GAME_VERSION_J1_COMPATIBLE)
-#define BC_VTABLE 0x8030f1f0
-#elif defined(IS_GAME_VERSION_K_COMPATIBLE)
-#define BC_VTABLE 0x8031bc10
-#elif defined(IS_GAME_VERSION_W_COMPATIBLE)
-#define BC_VTABLE 0x80319fd0
-#elif defined(IS_GAME_VERSION_C_COMPATIBLE)
-#define BC_VTABLE 0x80313f10
-#else
-#define BC_VTABLE 0
-#endif
+extern void *bc_vtable;
 
 // Drawing helper functions
 void DrawPoint(float x, float y, float z, u8 r, u8 g, u8 b, u8 a) {
@@ -349,7 +331,7 @@ void dCollisionRender_c::drawXlu() {
         while (owner = (dActor_c*)fManager_c::searchBaseByGroupType(2, owner)) {
             // verify if dBc_c vtable is set
             u8 *vtablePtr = ((u8*)owner) + 0x1EC;
-                if (*((u32*)vtablePtr) != BC_VTABLE)
+                if ((void*)*((u32*)vtablePtr) != &bc_vtable)
                     continue;
 
             // Get the color
