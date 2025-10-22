@@ -7,11 +7,21 @@
 
 // message box window
 
-#define BMG_CATEGORY_MESSAGE_BOX_TITLE 0x400
-#define BMG_CATEGORY_MESSAGE_BOX_TEXT  0x401
-
 class dMsgBoxWindow_c : public dBase_c {
 public:
+
+    enum T_PANE_e {
+        T_title_00,
+        T_msg_00,
+        T_msgS_00,
+        T_COUNT
+    };
+
+    enum P_PANE_e {
+        P_button_00,
+        P_COUNT
+    };
+
     enum ANIMS_e {
         ANIM_BOX_APPEAR,
         ANIM_BOX_DISAPPEAR
@@ -40,13 +50,8 @@ public:
     bool mCanCancel;
     int mDelay;
 
-    LytTextBox_c *T_title_00,
-                 *T_msg_00,
-                 *T_msgS_00;
-
-    nw4r::lyt::Picture *P_button_00;
-
-    nw4r::lyt::Window *W_frame_00;
+    LytTextBox_c *mpTextBoxes[T_COUNT];
+    nw4r::lyt::Picture *mpPicturePanes[P_COUNT];
 
     static dMsgBoxWindow_c *m_instance;
     static bool m_isShowing;

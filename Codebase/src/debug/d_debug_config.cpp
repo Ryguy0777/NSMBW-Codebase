@@ -279,7 +279,7 @@ void dDebugConfig_c::loadConfig() {
     // Allocate the necessary space
     size_t size = OSRoundUp32B(dvdHandle.size);
     void* buffer = EGG::Heap::alloc(size, 0x20, mHeap::g_archiveHeap);
-    if (buffer == NULL) {
+    if (buffer == nullptr) {
         OSReport("Failed to allocate buffer, bailing!\n");
         return;
     }
@@ -298,7 +298,7 @@ void dDebugConfig_c::loadConfig() {
 
     // Close the file, free the buffer and return
     DVDClose(&dvdHandle);
-    EGG::Heap::free(buffer, NULL);
+    EGG::Heap::free(buffer, mHeap::g_archiveHeap);
 }
 
 void dDebugConfig_c::setupConfig() {

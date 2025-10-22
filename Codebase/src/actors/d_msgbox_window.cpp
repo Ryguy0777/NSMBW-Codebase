@@ -7,7 +7,7 @@
 #include <game/snd/snd_audio_mgr.hpp>
 #include <game/bases/d_game_key.hpp>
 #include <constants/sound_list.h>
-#include <constants/message_list.h>
+#include <new/constants/message_list.h>
 
 dMsgBoxWindow_c *dMsgBoxWindow_c::m_instance = nullptr;
 bool dMsgBoxWindow_c::m_isShowing = false;
@@ -62,9 +62,8 @@ int dMsgBoxWindow_c::create() {
     mLayout.build("messageBox.brlyt", nullptr);
     mLayout.AnimeResRegister(AnmNameTbl, ARRAY_SIZE(AnmNameTbl));
     mLayout.GroupRegister(GROUP_NAME_DT, ANIME_INDEX_TBL, ARRAY_SIZE(GROUP_NAME_DT));
-    mLayout.TPaneRegister(T_PANE_NAME_TBL, &T_title_00, ARRAY_SIZE(T_PANE_NAME_TBL));
-    mLayout.PPaneRegister(P_PANE_NAME_TBL, &P_button_00, ARRAY_SIZE(P_PANE_NAME_TBL));
-    mLayout.WPaneRegister(W_PANE_NAME_TBL, &W_frame_00, ARRAY_SIZE(W_PANE_NAME_TBL));
+    mLayout.TPaneRegister(T_PANE_NAME_TBL, mpTextBoxes, ARRAY_SIZE(T_PANE_NAME_TBL));
+    mLayout.PPaneRegister(P_PANE_NAME_TBL, mpPicturePanes, ARRAY_SIZE(P_PANE_NAME_TBL));
 
     mLayout.AnimePlay();
     mLayout.calc();
@@ -166,11 +165,11 @@ void dMsgBoxWindow_c::showMessage(unsigned long id, bool canCancel, int delay) {
 
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-    T_title_00->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TITLE, id, 0);
-    T_msg_00->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
-    T_msgS_00->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
+    mpTextBoxes[T_title_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TITLE, id, 0);
+    mpTextBoxes[T_msg_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
+    mpTextBoxes[T_msgS_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
 
-    P_button_00->SetVisible(mCanCancel);
+    mpPicturePanes[P_button_00]->SetVisible(mCanCancel);
 
     mStateMgr.changeState(StateID_BoxAppearWait);
 }

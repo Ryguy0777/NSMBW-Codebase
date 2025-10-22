@@ -162,6 +162,8 @@ public:
         mBits.paletteFormat = format;
     }
 
+    void ReplaceImage(TPLPalette *tpl, unsigned long id, const char*);
+
 private:
     void* mpImage;        // at 0x0
     void* mpPalette;      // at 0x4

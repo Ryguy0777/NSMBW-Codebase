@@ -32,6 +32,10 @@ public:
 
     void entry();
     nw4r::lyt::Pane *getRootPane();
+    nw4r::lyt::Pane *findPaneByName(const char *name);
+    nw4r::lyt::TextBox *findTextBoxByName(const char *name);
+    nw4r::lyt::Picture *findPictureByName(const char *name);
+    nw4r::lyt::Pane *findWindowByName(const char *name);
 
 private:
     nw4r::lyt::Layout mLayout;

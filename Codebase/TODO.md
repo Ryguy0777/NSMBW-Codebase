@@ -24,7 +24,6 @@
 * Region Free utilites !
 * Dynamic Discord RPC (?) !
 * Quick Restart !
-* Newer Pregame !
 * Debug menu scene (?) !
 * Player Script Event
 * Newer bosses (?)
