@@ -25,10 +25,10 @@ These features are complete and should be fully functional.
 * 1-1 Peach's Castle BG removal (togglable)
 * 2-Castle Maze removal (toggleable)
 * Always skip cutscenes with plus
+* NewerSMBW styled pregame (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
-* NewerSMBW styled pregame (togglable)
 * ON/OFF Block sprite
 * SMW Flip Block sprite
 * Classic + GameCube controller support (togglable)

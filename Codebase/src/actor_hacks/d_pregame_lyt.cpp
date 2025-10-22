@@ -95,6 +95,8 @@ ulong pregameGetLevelNumberID(u8 world, u8 level) {
     }
 }
 
+void *pregameTPLbuffer = nullptr;
+
 kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
     LytTextBox_c
         *LevelNumShadow, *LevelNum,
@@ -139,19 +141,23 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
     if (!fileLoaded) return;
 
     // allocate memory
-    void* buffer = EGG::Heap::alloc(dvdHandle.size, 0x20, mHeap::g_archiveHeap);
-    if (buffer == nullptr) return;
+    pregameTPLbuffer = EGG::Heap::alloc(dvdHandle.size, 0x20, mHeap::g_archiveHeap);
+    if (pregameTPLbuffer == nullptr) return;
     
     // read file
-    s32 length = DVDReadPrio(&dvdHandle, buffer, dvdHandle.size, 0, 2);
+    s32 length = DVDReadPrio(&dvdHandle, pregameTPLbuffer, dvdHandle.size, 0, 2);
     if (length > 0) {
-        LevelSample->GetMaterial()->GetTexMapAry()->ReplaceImage((TPLPalette *)buffer, 0, nullptr);
+        LevelSample->GetMaterial()->GetTexMapAry()->ReplaceImage((TPLPalette *)pregameTPLbuffer, 0, nullptr);
     }
 
-    // unload file and free memory
+    // unload file
     DVDClose(&dvdHandle);
-    // TODO: figure out why this causes the preview to break
-    //EGG::Heap::free(buffer, mHeap::g_archiveHeap);
+}
+
+// remove the tpl from memory
+kmBranchDefCpp(0x80b6c580, NULL, bool, dPreGameLyt_c *_this) {
+    EGG::Heap::free(pregameTPLbuffer, mHeap::g_archiveHeap);
+    return _this->mLayout.doDelete();
 }
 
 #endif
