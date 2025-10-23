@@ -17,7 +17,7 @@ const char* heihoArcList[] = {"heiho", NULL};
 const SpriteData heihoSpriteData = {fProfile::EN_HEIHO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
 dCustomProfile_c heihoProfile(&g_profile_EN_HEIHO, "EN_HEIHO", SpriteId::EN_HEIHO, &heihoSpriteData, heihoArcList);
 
-dCc_c::sCcDatNewF l_heiho_cc = {
+sCcDatNewF l_heiho_cc = {
     0.0,                        // mOffsetX
     10.0,                       // mOffsetY
     8.0,                        // mWidth

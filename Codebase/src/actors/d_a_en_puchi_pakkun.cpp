@@ -21,7 +21,7 @@ const char* nipperArcList[] = {"pakkun_puchi", NULL};
 const SpriteData nipperSpriteData = {fProfile::EN_PUCHI_PAKKUN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
 dCustomProfile_c nipperProfile(&g_profile_EN_PUCHI_PAKKUN, "EN_PUCHI_PAKKUN", SpriteId::EN_PUCHI_PAKKUN, &nipperSpriteData, nipperArcList);
 
-dCc_c::sCcDatNewF l_nipper_cc = {
+sCcDatNewF l_nipper_cc = {
     0.0,                        // mOffsetX
     8.0,                        // mOffsetY
     8.0,                        // mWidth

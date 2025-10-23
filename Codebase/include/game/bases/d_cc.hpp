@@ -10,6 +10,48 @@ class dActor_c;
  * It also includes logic that handles collisions
  * within a horizontally looping stage (like 2-C).
  */
+
+class dCc_c;
+
+/// @brief A structure that contains information about a collider.
+struct sCcDatNewF {
+    float mOffsetX; ///< The X offset of the collider.
+    float mOffsetY; ///< The Y offset of the collider.
+
+    /**
+     * @brief The width of the collider.
+     *
+     * Note: This is the distance from the center to the edge, so half the actual width.
+     */
+    float mWidth;
+
+    /**
+     * @brief The height of the collider.
+     *
+     * Note: This is the distance from the center to the edge, so half the actual height.
+     */
+    float mHeight;
+
+    u8 mCategory; ///< The category of this collider. See @ref CC_CATEGORY_e .
+    u8 mAttackCategory; ///< The attack category of this collider. See CC_ATTACK_e .
+    /**
+     * @brief Which categories this collider should be able to collide with.
+     *
+     * This is a bitfield with the bits enumerated by @ref CC_CATEGORY_e .
+     */
+    u32 mCategoryInteract;
+    /**
+     * @brief Which attack categories this collider should be able to receive.
+     *
+     * This is a bitfield with the bits enumerated by CC_ATTACK_e .
+     */
+    u32 mAttackCategoryInteract;
+
+    u16 mFlag; ///< Flags for this collider. See @ref CC_DATA_FLAG_e .
+
+    void (*mCallback)(dCc_c *, dCc_c *); ///< The callback to execute when a collision occurs.
+};
+
 class dCc_c {
 public:
     enum CC_SHAPE_e {
@@ -72,45 +114,6 @@ public:
         ATTACK_YOSHI_FIRE,
         ATTACK_ICE_2,
         ATTACK_SAND_PILLAR
-    };
-
-    /// @brief A structure that contains information about a collider.
-    struct sCcDatNewF {
-        float mOffsetX; ///< The X offset of the collider.
-        float mOffsetY; ///< The Y offset of the collider.
-
-        /**
-         * @brief The width of the collider.
-         *
-         * Note: This is the distance from the center to the edge, so half the actual width.
-         */
-        float mWidth;
-
-        /**
-         * @brief The height of the collider.
-         *
-         * Note: This is the distance from the center to the edge, so half the actual height.
-         */
-        float mHeight;
-
-        u8 mCategory; ///< The category of this collider. See @ref CC_CATEGORY_e .
-        u8 mAttackCategory; ///< The attack category of this collider. See CC_ATTACK_e .
-        /**
-         * @brief Which categories this collider should be able to collide with.
-         *
-         * This is a bitfield with the bits enumerated by @ref CC_CATEGORY_e .
-         */
-        u32 mCategoryInteract;
-        /**
-         * @brief Which attack categories this collider should be able to receive.
-         *
-         * This is a bitfield with the bits enumerated by CC_ATTACK_e .
-         */
-        u32 mAttackCategoryInteract;
-
-        u16 mFlag; ///< Flags for this collider. See @ref CC_DATA_FLAG_e .
-
-        void (*mCallback)(dCc_c *, dCc_c *); ///< The callback to execute when a collision occurs.
     };
 
 private:
@@ -333,6 +336,7 @@ private:
      */
     static hitCheck _hitCheck[4][4];
 
+public:
     static dCc_c *mEntryN; ///< The first collider in the list.
     static dCc_c *mEntryB; ///< The last collider in the list.
 };

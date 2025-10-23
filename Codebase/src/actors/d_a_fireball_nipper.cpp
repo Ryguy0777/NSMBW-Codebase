@@ -32,7 +32,7 @@ bool daFireBall_Nipper_c::initialize() {
 
 extern "C" void ccCallback_BrosFire(dCc_c *, dCc_c *);
 
-dCc_c::sCcDatNewF l_nipper_fire_cc = {
+sCcDatNewF l_nipper_fire_cc = {
     0.0,                        // mOffsetX
     0.0,                        // mOffsetY
     3.0,                        // mWidth

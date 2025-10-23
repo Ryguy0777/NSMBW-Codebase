@@ -822,7 +822,7 @@ public:
     bool checkInsideCrossBg(float);
 
     int getCcLineKind();
-    void initCollision(dCc_c::CcData_s *dat1, dCc_c::CcData_s *dat2);
+    void initCollision(sCcDatNewF *dat1, sCcDatNewF *dat2);
     void releaseCcData();
     void clearCcData();
     void setCcAtBody(int);

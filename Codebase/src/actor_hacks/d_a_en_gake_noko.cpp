@@ -26,7 +26,7 @@ struct daEnGakeNoko_c : public dEn_c {
 	STATE_FUNC_DECLARE(daEnGakeNoko_c, DieFumi);
 };
 
-dCc_c::sCcDatNewF l_gakenoko_cc = {
+sCcDatNewF l_gakenoko_cc = {
     0.0f,  // float xDistToCenter;
     11.0f,  // float yDistToCenter;
     8.0f,  // float xDistToEdge;
