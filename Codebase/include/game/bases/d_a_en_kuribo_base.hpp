@@ -6,23 +6,6 @@
 
 class daEnKuriboBase_c : public dEn_c {
 public:
-    dHeapAllocator_c mAllocator;
-
-    nw4r::g3d::ResFile mResFile;
-    m3d::mdl_c mModel;
-    m3d::anmChr_c mAnmChr;
-    nw4r::g3d::ResAnmTexPat mResPat;
-    m3d::anmTexPat_c mAnmTexPat;
-
-    float mZOffset;
-    u32 mIsFrozen;
-    float mSavedSpeed;
-
-    mEf::levelEffect_c mLevelEffect;
-    mEf::levelOneEffect_c mLevelOneEffect;
-
-    u16 mCheckZoneBoundParam;
-
     // fBase_c overrides
     virtual int create();
     virtual int doDelete();
@@ -50,7 +33,7 @@ public:
     virtual void endFunsui();
     virtual void isFunsui() const;
 
-    // new virtuals
+    // New virtuals
     virtual void initializeState_Walk();
     virtual void executeState_Walk();
     virtual void finalizeState_Walk();
@@ -62,31 +45,48 @@ public:
     virtual void finalizeState_TrplnJump();
 
     virtual void calcModel();
-    virtual void reactFumiProc(dActor_c* killingActor);
-    virtual void vf2ac(); ///< @unofficial
-    virtual void reactSpinFumiProc(dActor_c* killingActor); ///< @unofficial
-    virtual void reactYoshiFumiProc(dActor_c* killingActor); ///< @unofficial
+    virtual void reactFumiProc(dActor_c* player);
+    virtual void reactMameFumiProc(dActor_c* player);
+    virtual void reactSpinFumiProc(dActor_c* player);
+    virtual void reactYoshiFumiProc(dActor_c* yoshi);
 
     virtual void createModel();
-    virtual void loadModel(); ///< @unofficial
-    virtual void loadWingModel(); ///< @unofficial
+    virtual void createBodyModel();
+    virtual void createOtherModel();
     virtual void drawModel();
 
     virtual void initialize();
-    virtual void setTurnState(); ///< @unofficial
-    virtual void vf2d0(dActor_c* collidingActor); ///< @unofficial
+    virtual void setTurnByEnemyHit();
+    virtual void setTurnByPlayerHit(dActor_c* player);
 
     virtual void setWalkSpeed();
-    virtual void playWalkAnim(); ///< @unofficial
-    virtual void updateModel(); ///< @unofficial
+    virtual void setWalkAnm();
+    virtual void playWalkAnm();
     virtual void walkEffect();
 
     virtual bool isWakidashi() const;
-    virtual bool vf2e8(); ///< @unofficial
+    virtual bool isDamageInvalid();
     virtual bool isBgmSync() const;
 
     // states
     STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, Walk);
     STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, Turn);
     STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, TrplnJump);
+
+    dHeapAllocator_c mAllocator;
+
+    nw4r::g3d::ResFile mResFile;
+    m3d::mdl_c mModel;
+    m3d::anmChr_c mAnmChr;
+    nw4r::g3d::ResAnmTexPat mResPat;
+    m3d::anmTexPat_c mAnmTexPat;
+
+    float mZOffset;
+    u32 mIsFrozen;
+    float mSavedSpeed;
+
+    mEf::levelEffect_c mLevelEffect;
+    mEf::levelOneEffect_c mLevelOneEffect;
+
+    u16 mCheckZoneBoundParam;
 };

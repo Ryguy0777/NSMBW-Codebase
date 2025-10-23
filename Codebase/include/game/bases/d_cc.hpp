@@ -1,7 +1,8 @@
 #pragma once
 #include <types.h>
-#include <game/bases/d_base_actor.hpp>
 #include <game/mLib/m_vec.hpp>
+
+class dActor_c;
 
 /**
  * @brief Collider ("Collision Check") class - handles collisions between actors.
@@ -73,11 +74,8 @@ public:
         ATTACK_SAND_PILLAR
     };
 
-    /**
-     * @brief A structure that contains information about a collider.
-     * @unofficial
-     */
-    struct CcData_s {
+    /// @brief A structure that contains information about a collider.
+    struct sCcDatNewF {
         float mOffsetX; ///< The X offset of the collider.
         float mOffsetY; ///< The Y offset of the collider.
 
@@ -96,7 +94,7 @@ public:
         float mHeight;
 
         u8 mCategory; ///< The category of this collider. See @ref CC_CATEGORY_e .
-        u8 mAttackCategory; ///< The attack category of this collider. See @ref CC_ATTACK_e .
+        u8 mAttackCategory; ///< The attack category of this collider. See CC_ATTACK_e .
         /**
          * @brief Which categories this collider should be able to collide with.
          *
@@ -106,7 +104,7 @@ public:
         /**
          * @brief Which attack categories this collider should be able to receive.
          *
-         * This is a bitfield with the bits enumerated by @ref CC_ATTACK_e .
+         * This is a bitfield with the bits enumerated by CC_ATTACK_e .
          */
         u32 mAttackCategoryInteract;
 
@@ -155,7 +153,7 @@ public:
      * @param actor The actor to register.
      * @param collInfo The collider data to set.
      */
-    void registerCc(dBaseActor_c *actor, CcData_s *collInfo);
+    void set(dActor_c *actor, sCcDatNewF *collInfo);
 
     /**
      * @brief Registers an owner actor to this collider and sets the collider data.
@@ -164,10 +162,10 @@ public:
      * @param collInfo The collider data to set.
      * @param nonCollideMask The non-collide mask to set.
      */
-    void registerCc(dBaseActor_c *actor, CcData_s *collInfo, u8 nonCollideMask);
+    void set(dActor_c *actor, sCcDatNewF *collInfo, u8 nonCollideMask);
 
     /// Sets a friend actor for this collider.
-    void setFriendActor(dBaseActor_c *actor) { mFriendActor = actor; }
+    void setFriendActor(dActor_c *actor) { mFriendActor = actor; }
 
     /**
      * @brief Gets the result of a hit check.
@@ -261,8 +259,8 @@ private:
     static bool _hitCheckDaikeiLR(dCc_c *ccTrp, dCc_c *ccBox);
 
 public:
-    dBaseActor_c *mpOwner; ///< The actor this collider belongs to.
-    dBaseActor_c *mFriendActor; ///< A second actor that this collider will not collide with.
+    dActor_c *mpOwner; ///< The actor this collider belongs to.
+    dActor_c *mFriendActor; ///< A second actor that this collider will not collide with.
 
     u32 unk2; ///< [Unused (?)].
 
@@ -271,7 +269,7 @@ public:
 
     u32 unk3; ///< [Unused (?)].
 
-    CcData_s mCcData; ///< The collision data of this collider.
+    sCcDatNewF mCcData; ///< The collision data of this collider.
 
     /**
      * @brief The X or Y offset of the four corners of a trapezoid-shaped collider.
@@ -335,7 +333,6 @@ private:
      */
     static hitCheck _hitCheck[4][4];
 
-public:
     static dCc_c *mEntryN; ///< The first collider in the list.
     static dCc_c *mEntryB; ///< The last collider in the list.
 };

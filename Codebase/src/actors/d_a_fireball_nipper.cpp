@@ -32,7 +32,7 @@ bool daFireBall_Nipper_c::initialize() {
 
 extern "C" void ccCallback_BrosFire(dCc_c *, dCc_c *);
 
-dCc_c::CcData_s l_nipper_fire_cc = {
+dCc_c::sCcDatNewF l_nipper_fire_cc = {
     0.0,                        // mOffsetX
     0.0,                        // mOffsetY
     3.0,                        // mWidth
@@ -46,7 +46,7 @@ dCc_c::CcData_s l_nipper_fire_cc = {
 };
 
 void daFireBall_Nipper_c::setCc() {
-    mCc.registerCc(this, &l_nipper_fire_cc);
+    mCc.set(this, &l_nipper_fire_cc);
     mCc.entry();
 }
 

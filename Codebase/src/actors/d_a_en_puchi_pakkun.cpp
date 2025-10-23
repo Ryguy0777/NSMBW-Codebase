@@ -21,7 +21,7 @@ const char* nipperArcList[] = {"pakkun_puchi", NULL};
 const SpriteData nipperSpriteData = {fProfile::EN_PUCHI_PAKKUN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
 dCustomProfile_c nipperProfile(&g_profile_EN_PUCHI_PAKKUN, "EN_PUCHI_PAKKUN", SpriteId::EN_PUCHI_PAKKUN, &nipperSpriteData, nipperArcList);
 
-dCc_c::CcData_s l_nipper_cc = {
+dCc_c::sCcDatNewF l_nipper_cc = {
     0.0,                        // mOffsetX
     8.0,                        // mOffsetY
     8.0,                        // mWidth
@@ -53,7 +53,7 @@ int daEnPuchiPakkun_c::create() {
     mSpeedMax.y = -4.0;
 
     // register the cc data (hitbox)
-    mCc.registerCc(this, &l_nipper_cc);
+    mCc.set(this, &l_nipper_cc);
     mCc.entry();
 
     mDirection = getPl_LRflag(mPos);

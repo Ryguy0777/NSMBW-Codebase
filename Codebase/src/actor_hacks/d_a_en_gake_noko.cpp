@@ -26,7 +26,7 @@ struct daEnGakeNoko_c : public dEn_c {
 	STATE_FUNC_DECLARE(daEnGakeNoko_c, DieFumi);
 };
 
-dCc_c::CcData_s l_gakenoko_cc = {
+dCc_c::sCcDatNewF l_gakenoko_cc = {
     0.0f,  // float xDistToCenter;
     11.0f,  // float yDistToCenter;
     8.0f,  // float xDistToEdge;
@@ -85,7 +85,7 @@ kmBranchDefCpp(0x80A025A0, NULL, int, daEnGakeNoko_c *self) {
 	}
 
 	// ActivePhysics for 2021
-	self->mCc.registerCc(self, &l_gakenoko_cc);
+	self->mCc.set(self, &l_gakenoko_cc);
 	self->mCc.entry();
 
 	self->mAngle.y = 0x8000;  // Face the wall

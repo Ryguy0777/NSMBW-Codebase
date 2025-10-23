@@ -23,7 +23,7 @@ public:
     virtual void setEatTongue(dActor_c *eatingActor);
     virtual void setEatTongueOff(dActor_c *eatingActor);
 
-    //new vfuncs
+    // New vfuncs
     STATE_VIRTUAL_FUNC_DECLARE(daFireBall_Base_c, Move);
     STATE_VIRTUAL_FUNC_DECLARE(daFireBall_Base_c, Kill);
     STATE_VIRTUAL_FUNC_DECLARE(daFireBall_Base_c, EatIn);
@@ -39,8 +39,8 @@ public:
     virtual void beginYoganSplash(float);
     virtual void beginPoisonSplash(float);
     virtual float getLightRad() const;
-    virtual void vf138(); /// @unofficial
-    virtual void vf13c(); /// @unofficial
+    virtual void entryHIOnode();
+    virtual void retireHIOnode();
 
     void kill();
 
