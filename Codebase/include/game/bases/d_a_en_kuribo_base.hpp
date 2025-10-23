@@ -1,4 +1,5 @@
 #pragma once
+
 #include <game/bases/d_enemy.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
@@ -34,15 +35,9 @@ public:
     virtual void isFunsui() const;
 
     // New virtuals
-    virtual void initializeState_Walk();
-    virtual void executeState_Walk();
-    virtual void finalizeState_Walk();
-    virtual void initializeState_Turn();
-    virtual void executeState_Turn();
-    virtual void finalizeState_Turn();
-    virtual void initializeState_TrplnJump();
-    virtual void executeState_TrplnJump();
-    virtual void finalizeState_TrplnJump();
+    STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, Walk);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, Turn);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, TrplnJump);
 
     virtual void calcModel();
     virtual void reactFumiProc(dActor_c* player);
@@ -67,11 +62,6 @@ public:
     virtual bool isWakidashi() const;
     virtual bool isDamageInvalid();
     virtual bool isBgmSync() const;
-
-    // states
-    STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, Walk);
-    STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, Turn);
-    STATE_VIRTUAL_FUNC_DECLARE(daEnKuriboBase_c, TrplnJump);
 
     dHeapAllocator_c mAllocator;
 

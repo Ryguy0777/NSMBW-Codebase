@@ -1,4 +1,6 @@
-bc_vtable = 0x8030f6d0
+dontFlipNetEnemy=0x80044a60
+
+bc_vtable=0x8030f6d0
 CrsinLoadFiles=0x8091ec50
 
 mainLevelSetup__10dScStage_cFv=0x80925e70

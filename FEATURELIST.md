@@ -26,6 +26,10 @@ These features are complete and should be fully functional.
 * 2-Castle Maze removal (toggleable)
 * Always skip cutscenes with plus
 * NewerSMBW styled pregame (togglable)
+* WATER_LIFT sprite restoration
+* EN_MAME_KURIBO sprite restoration + fixes
+* MANTA_MGR2 sprite restoration + fixes
+* fixed fence climbing koopas giving unlimited coins when frozen
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
