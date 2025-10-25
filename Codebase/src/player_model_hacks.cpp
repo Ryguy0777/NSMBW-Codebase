@@ -44,8 +44,9 @@ class dKinopicoMdl_c : public dKinopioMdl_c {
 public:
     dKinopicoMdl_c(u8 index);
 
-    void setColorType(u8 colorType);
-    void createPlayerModel();
+    virtual void setColorType(u8 colorType);
+    virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate);
+    virtual void createPlayerModel();
 
     m3d::anmTexPat_c* getBodyTexAnm();
     void createAnim(m3d::anmTexPat_c& anm, const char* name, u8 modelIdx);
@@ -54,7 +55,7 @@ public:
 dKinopicoMdl_c::dKinopicoMdl_c(u8 index) : dKinopioMdl_c(index) {
     static ModelData modelData = {
       "Kinopico",
-      "K_rcha",
+      "C_rcha",
       {"CB_model", "SCB_model", "PLCB_model", "PCB_model"},
       {"CH_model", "SCH_model", "PLCH_model", "PCH_model"},
       18.0,
@@ -89,6 +90,88 @@ void dKinopicoMdl_c::createPlayerModel() {
 
     createAnim(mPenguinHeadSwitchAnim, "PH_wait", MODEL_COUNT + MODEL_PENGUIN);
     createAnim(mPenguinBodySwitchAnim, "PKB_switch", MODEL_PENGUIN);
+}
+
+bool dKinopicoMdl_c::vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate) {
+    const char* s = NULL;
+
+    if (mModelIdx == MODEL_PENGUIN) {
+        switch (type) {
+            case WAIT:
+                s = "PCB_wait";
+                break;
+            case STAR_ROLL:
+                s = "PCB_star_roll";
+                break;
+            case GOAL_PUTON_CAP2:
+                s = "PCB_goal_puton_cap";
+                break;
+            default:
+                break;
+        }
+    }
+    if (s == NULL) {
+        if (dPlayerMdl_c::vf60(type, anm, noUpdate)) {
+            return true;
+        }
+        switch (type) {
+            case WAIT:
+                s = "CB_wait";
+                break;
+            case STOOP:
+                s = "CB_stoop";
+                break;
+            case STOOP_START:
+                s = "CB_stoop_start";
+                break;
+            case ROLL_JUMP:
+                s = "CB_roll_jump";
+                break;
+            case MONKEY_START:
+                s = "KB_monkey_start";
+                break;
+            case MONKEY_WAIT_R:
+                s = "KB_monkey_wait_r";
+                break;
+            case MONKEY_WAIT_L:
+                s = "KB_monkey_wait_l";
+                break;
+            case MONKEY_R_TO_L:
+                s = "KB_monkey_r_to_l";
+                break;
+            case MONKEY_L_TO_R:
+                s = "KB_monkey_l_to_r";
+                break;
+            case SJUMPED:
+                s = "CB_Sjumped";
+                break;
+            case STAR_ROLL:
+                s = "CB_star_roll";
+                break;
+            case GOAL_PUTON_CAP:
+                s = "CB_goal_puton_cap";
+                break;
+            case BUSY_WAIT:
+                s = "KB_busy_wait";
+                break;
+            case DEMO_TALK:
+                s = "KB_demo_takl";
+                break;
+            case ENDING_WAIT:
+                s = "KB_ending_wait";
+                break;
+            default:
+                break;
+        }
+    }
+    if (s) {
+        *anm = mAnimResFile.GetResAnmChr(s);
+        if (!noUpdate) {
+            mFlags |= 0x400000;
+        }
+        mFlags2 |= 0x400000;
+    }
+    return !!s;
 }
 
 m3d::anmTexPat_c* dKinopicoMdl_c::getBodyTexAnm() {
@@ -173,8 +256,5 @@ kmBranchDefCpp(0x800d6e00, NULL, void, dPyMdlMng_c *mng, u8 index) {
             break;
     }
 }
-
-kmWritePointer(0x8098c488, "Kinopico");
-kmWritePointer(0x8098C490, "KinopioM");
 
 #endif

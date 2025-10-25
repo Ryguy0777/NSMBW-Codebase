@@ -787,6 +787,7 @@ namespace fProfile {
         AC_PAKKUN_PUCHI_FIRE,
         MSGBOX_WINDOW,
         EN_BLOCK_MESSAGE,
+        EN_BOMBBROS,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

@@ -14,6 +14,45 @@ class dPyMdlBase_c {
 public:
     enum TexAnmType_e { };
 
+    ///< @unofficial
+    enum ChrAnmType_e {
+        WAIT = 0,
+        WALK = 1,
+        RUN = 2,
+        B_DASH = 3,
+        B_DASH2 = 4,
+        JUMP = 5,
+        JUMP2 = 6,
+        JUMPED = 7,
+        _2JMP_C_1 = 8,
+        _2JMP_C_2 = 9,
+        _2JUMPED = 10,
+        ROLL_JUMP = 11,
+        _2JUMP2 = 12,
+        MAME_JUMP2 = 13,
+        TURN = 14,
+        TURNED = 15,
+        HIPSR = 16,
+        HIPAT = 17,
+        HIPED = 18,
+        HIP_TO_STOOP = 19,
+        STOOP = 20,
+        STOOP_START = 21,
+        SLIP = 22,
+        MONKEY_START = 0x2F,
+        MONKEY_WAIT_R = 0x30,
+        MONKEY_WAIT_L = 0x31,
+        MONKEY_R_TO_L = 0x32,
+        MONKEY_L_TO_R = 0x33,
+        GOAL_PUTON_CAP = 0x5A,
+        GOAL_PUTON_CAP2 = 0x5C,
+        STAR_ROLL = 0x75,
+        SJUMPED = 0x78,
+        DEMO_TALK = 0xAB,
+        BUSY_WAIT = 0xAC,
+        ENDING_WAIT = 0xAF,
+    };
+
     virtual ~dPyMdlBase_c();
     virtual int getFaceJointIdx() const;
     virtual void createModel();
@@ -36,7 +75,7 @@ public:
     virtual bool getHeadPropelJointMtx(mMtx_c*);
     virtual void vf58(); ///< @unofficial
     virtual void setAnm(int, float, float, float);
-    virtual s32 vf60(); ///< @unofficial
+    virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate); ///< @unofficial
     virtual void vf64(); ///< @unofficial
     virtual void vf68(); ///< @unofficial
     virtual void copyAnm();
@@ -82,7 +121,8 @@ public:
     int mLastAnim;
     u32 m_15c;
     u32 mFlags;
-    u8 mPad5[0x98];
+    u32 mFlags2;
+    u8 mPad5[0x94];
     mAng3_c m_1fe;
     u32 m_204;
     u32 m_208;

@@ -12,6 +12,15 @@
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>
 
+// Change layout name
+const char *newerPregameName = "preGame_newer/preGame.arc";
+kmBranchDefAsm(0x80b6c074, 0x80b6c078) {
+    lis r4, newerPregameName@h
+    ori r4, r4, newerPregameName@l
+    lwz r4, 0(r4)
+    blr
+}
+
 // longer pregame screen
 kmWrite32(0x8091F144, 0x380000B4);
 

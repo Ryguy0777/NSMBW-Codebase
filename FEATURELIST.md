@@ -29,7 +29,8 @@ These features are complete and should be fully functional.
 * WATER_LIFT sprite restoration
 * EN_MAME_KURIBO sprite restoration + fixes
 * MANTA_MGR2 sprite restoration + fixes
-* fixed fence climbing koopas giving unlimited coins when frozen
+* Fixed fence climbing koopas giving unlimited coins when frozen
+* Player 1 Can Change Character (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -49,7 +50,6 @@ These features are planned to be implemented in the future.
 * RandTiles
 * AnimTiles
 * FlowerTiles
-* Player 1 Can Change Character (togglable)
 * 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss sprite
 * Level Names/Info (togglable)

@@ -49,7 +49,7 @@ public:
     virtual void offStarAnm();
     virtual bool getHeadPropelJointMtx(mMtx_c*);
     virtual void vf58(); ///< @unofficial
-    virtual s32 vf60(); ///< @unofficial
+    virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate); ///< @unofficial
     virtual void copyAnm();
     virtual void vf70(); ///< @unofficial
     virtual void vf74(); ///< @unofficial
@@ -104,18 +104,18 @@ public:
     dMarioMdl_c(u8 index);
     virtual ~dMarioMdl_c();
 
-    void intialize();
-    void play();
-    void _calc();
-    void draw();
-    void setColorType(u8 colorType);
-    s32 vf60(); ///< @unofficial
-    void setTexAnmType(TexAnmType_e);
-    void vfac(); ///< @unofficial
+    virtual void initialize();
+    virtual void play();
+    virtual void _calc();
+    virtual void draw();
+    virtual void setColorType(u8 colorType);
+    virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate); ///< @unofficial
+    virtual void setTexAnmType(TexAnmType_e);
+    virtual void vfac(); ///< @unofficial
 
-    void setCurrentModel(MODEL_e model); ///< @unofficial
-    float vfb4(); ///< @unofficial
-    void createPlayerModel();
+    virtual void setCurrentModel(MODEL_e model); ///< @unofficial
+    virtual float vfb4(); ///< @unofficial
+    virtual void createPlayerModel();
 
     u32 m_00;
     m3d::smdl_c mCapModels[2];
@@ -129,18 +129,18 @@ public:
     dKinopioMdl_c(u8 index);
     virtual ~dKinopioMdl_c();
 
-    void intialize();
-    void play();
-    void _calc();
-    void draw();
-    void setColorType(u8 colorType);
-    s32 vf60(); ///< @unofficial
-    void vf7c(); ///< @unofficial
-    void setTexAnmType(TexAnmType_e);
+    virtual void intialize();
+    virtual void play();
+    virtual void _calc();
+    virtual void draw();
+    virtual void setColorType(u8 colorType);
+    virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate); ///< @unofficial
+    virtual void vf7c(); ///< @unofficial
+    virtual void setTexAnmType(TexAnmType_e);
     
-    void callbackTimingA(nw4r::g3d::ChrAnmResult *, nw4r::g3d::ResNode);
-    float vfb4(); ///< @unofficial
-    void createPlayerModel();
+    virtual void callbackTimingA(nw4r::g3d::ChrAnmResult *, nw4r::g3d::ResNode);
+    virtual float vfb4(); ///< @unofficial
+    virtual void createPlayerModel();
 
     m3d::anmTexPat_c mPropelBodySwitchAnim;
     m3d::anmTexPat_c mPenguinBodySwitchAnim;

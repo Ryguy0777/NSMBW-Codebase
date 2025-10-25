@@ -1,3 +1,14 @@
+DWORD_8093F520=0x8093F520
+returnFrom_CharacterChangeSelectBase_FixIconUpdate_2=0x80773658
+returnFrom_CancelAfterRegisteredFix=0x807A0D6C
+returnFrom_CancelAddDropFix=0x807A0D44
+DWORD_8093CDF0=0x8093CDF0
+WMPlayer_loadSubplayers=0x80902BD0
+
+vf60__12dPlayerMdl_cFQ212dPyMdlBase_c12ChrAnmType_ePQ34nw4r3g3d9ResAnmChrb=0x800D3FE0
+intialize__13dKinopioMdl_cFv=0x800bcd10
+vf60__13dKinopioMdl_cFQ212dPyMdlBase_c12ChrAnmType_ePQ34nw4r3g3d9ResAnmChrb=0x800bd260
+
 dontFlipNetEnemy=0x80044a60
 
 bc_vtable=0x8030f6d0
@@ -31,7 +42,6 @@ vf70__12dPlayerMdl_cFv=0x800D4330
 vf58__12dPlayerMdl_cFv=0x800D4150
 vfb4__13dKinopioMdl_cFv=0x800bd670
 vf7c__13dKinopioMdl_cFv=0x800BD5D0
-vf60__13dKinopioMdl_cFv=0x800bd260
 
 set__16dSwitchFlagMng_cFUiibbbb=0x800E42B0
 
