@@ -1,0 +1,31 @@
+#pragma once
+
+#include <game/bases/d_a_en_kuribo.hpp>
+
+class daEnKaboKuribo_c : public daEnKuribo_c {
+public:
+    // dEn_c overrides
+    virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
+
+    virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
+
+    virtual void FumiScoreSet(dActor_c *actor);
+
+    // daEnKuriboBase_c overrides
+    virtual void executeState_Walk();
+
+    virtual void createBodyModel();
+
+    virtual void initialize();
+
+    virtual void playWalkAnm();
+    virtual void setWalkAnm();
+
+    virtual bool isBgmSync() const;
+
+    bool mNoPumpkin;
+    int mAttackTimer;
+    m3d::anmVis_c mAnmVis;
+
+    mEf::levelEffect_c mBreakEffect;
+};

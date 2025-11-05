@@ -48,49 +48,49 @@ int daEnPuchiPakkun_c::create() {
 
     mAllocator.adjustFrmHeap();
 
-    // set y acceleration and max speed for gravity
+    // Set y acceleration and max speed for gravity
     mAccelY = -0.1875;
     mSpeedMax.y = -4.0;
 
-    // register the cc data (hitbox)
+    // Register the cc data (hitbox)
     mCc.set(this, &l_nipper_cc);
     mCc.entry();
 
     mDirection = getPl_LRflag(mPos);
     mAngle.y = l_nipper_look_angle[mDirection];
 
-    // assign settings variables
+    // Assign settings variables
     mWalks = (mParam >> 17) & 1;
     mJumpHeight = (mParam >> 12) & 0xF;
     mSpitsFire = (mParam >> 1) & 1;
 
     // mCenterOffs is used to set the "center" of the actor
-    // for yoshi tongue and dieFall
+    // For yoshi tongue and dieFall
     mCenterOffs = mVec3_c(0.0, 8.0, 0.0);
 
-    // set size for model culling
+    // Set size for model culling
     mVisibleAreaSize.x = 16.0;
     mVisibleAreaSize.y = 16.0;
     mVisibleAreaOffset.x = 0.0;
     mVisibleAreaOffset.y = 8.0;
 
-    // set yoshi eating behavior
+    // Set yoshi eating behavior
     if (mSpitsFire) {
         mEatBehaviour = EAT_TYPE_FIREBALL;
     } else {
         mEatBehaviour = EAT_TYPE_EAT_PERMANENT;
     }
 
-    // tile sensors
+    // Tile sensors
     static const dBcSensorLine_c below(-4<<12, 4<<12, 0<<12);
     static const dBcSensorPoint_c above(0<<12, 16<<12);
     static const dBcSensorLine_c adjacent(3<<12, 8<<12, 8<<12);
 
     mBc.set(this, (dBcSensor_c*)&below, (dBcSensor_c*)&above, (dBcSensor_c*)&adjacent);
 
-    if (mParam & 1) { //spawn frozen
+    if (mParam & 1) { // Spawn frozen
         changeState(StateID_IceWait);
-        //create an AC_FREEZER at our position and layer
+        // Create an AC_FREEZER at our position and layer
         construct(fProfile::AC_FREEZER, this, 0, &mPos, nullptr, mLayer);
         mCc.release();
     } else {
@@ -117,38 +117,38 @@ int daEnPuchiPakkun_c::draw() {
 }
 
 void daEnPuchiPakkun_c::finalUpdate() {
-    // calculate model
+    // Calculate model
     Mtx someMatrix;
     Mtx thirdMatrix;
 
-    // do screen wrapping for levels with it enabled
+    // Do screen wrapping for levels with it enabled
     dActor_c::changePosAngle(&mPos, &mAngle, 1);
 
-    // set matrix to world position
+    // Set matrix to world position
     PSMTXTrans(mMatrix, mPos.x, mPos.y, mPos.z);
 
-    // apply rotation vector
+    // Apply rotation vector
     mMatrix.YrotM(mAngle.y);
     mMatrix.XrotM(mAngle.x);
     mMatrix.ZrotM(mAngle.z);
     
-    // apply center offsets
+    // Apply center offsets
     PSMTXTrans(someMatrix, 0.0, mCenterOffs.y, 0.0);
     PSMTXConcat(mMatrix, someMatrix, mMatrix);
     PSMTXTrans(thirdMatrix, 0.0, -mCenterOffs.y, 0.0);
     PSMTXConcat(mMatrix, thirdMatrix, mMatrix);
 
-    // set the matrix for the model
+    // Set the matrix for the model
     mNipperModel.setLocalMtx(&mMatrix);
-    // see scale using boyon 
-    mNipperModel.setScale(mBoyon.mScale.x, mBoyon.mScale.y, mBoyon.mScale.z);
+    // Set scale using boyon 
+    mNipperModel.setScale(mBoyoMng.mScale.x, mBoyoMng.mScale.y, mBoyoMng.mScale.z);
     mNipperModel.calc(false);
 
     return;
 }
 
 void daEnPuchiPakkun_c::Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2) {
-    // collisions with other non-player actors
+    // Collisions with other non-player actors
     if ((mDirection != 1) || (cc1->mCollOffsetX[3] <= 0.0)) {
         if (mDirection != 0) {
             return;
@@ -165,18 +165,18 @@ void daEnPuchiPakkun_c::Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2) {
 
 void daEnPuchiPakkun_c::initializeState_Ice() {
     if (!mWalks) {
-        //munchers are slightly smaller when encased in ice, so we replicate that here
+        // Munchers are slightly smaller when encased in ice, so we replicate that here
         mScale = mVec3_c(0.89, 0.89, 0.89);
-        //store x pos
+        // Store x pos
         mStoredIcePos = mPos.x;
-        //set animation to open mouth
+        // Set animation to open mouth
         mAnmChr.setFrame(0.0);
     }
     return dEn_c::initializeState_Ice();
 }
 
 void daEnPuchiPakkun_c::finalizeState_Ice() {
-    //restore everything
+    // Restore everything
     if (!mWalks) {
         mScale = mVec3_c(1.0, 1.0, 1.0);
         mPos.x = mStoredIcePos;
@@ -186,7 +186,7 @@ void daEnPuchiPakkun_c::finalizeState_Ice() {
 }
 
 void daEnPuchiPakkun_c::createIceActor() {
-    // iceinfo is an array so that __destory_arr can be called
+    // Iceinfo is an array so that __destory_arr can be called
     dIceInfo nipperIceInfo[1] = {
         0x1000,                                 // mFlags
         mVec3_c(mPos.x, mPos.y, mPos.z+5.0),    // mPos
@@ -215,7 +215,7 @@ void daEnPuchiPakkun_c::playChrAnim(const char* name, m3d::playMode_e playMode, 
 	mNipperModel.setAnm(mAnmChr, blendFrame);
 	mAnmChr.setRate(rate);
 
-    //sync our animations with other nippers
+    // Sync our animations with other nippers/munchers
     float frame = dScStage_c::m_exeFrame - (dScStage_c::m_exeFrame / int(mAnmChr.mFrameMax)) * int(mAnmChr.mFrameMax);
     mAnmChr.setFrame(frame);
 }
@@ -258,11 +258,11 @@ bool daEnPuchiPakkun_c::checkForLedge(float xOffset) {
 bool daEnPuchiPakkun_c::isPlayerAbove() {
     for (int i = 0; i < 4; i++) {
         dAcPy_c *player = daPyMng_c::getPlayer(i);
-        //grab any active players
+        // Grab any active players
         if (player) {
-            //are we in the same x range as the nipper?
+            // Are we in the same x range as the nipper?
             if (10.0 >= std::fabs(player->mPos.x - mPos.x)) {
-                //are we in the y range?
+                // Are we in the y range?
                 if (mPos.y + 8.0 <= player->mPos.y && player->mPos.y <= mPos.y + 104.0) {
                     return true;
                 }
@@ -344,8 +344,8 @@ void daEnPuchiPakkun_c::executeState_Walk() {
     sLib::chaseAngle((short*)&mAngle.y, l_nipper_look_angle[mDirection], 0x500);
 
     if (!EnBgCheck() & 1) {
-        if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
-            mFootRelated2.x = mFootRelated2.x + m_1eb.x;
+        if (mBc.isFoot() && (mInLiquid == false) && (mSpeed.y <= 0.0f)) {
+            mFootPush2.x = mFootPush2.x + m_1eb.x;
         }
     } else {
         if (checkForLedge(4.0f) == false) {
@@ -358,7 +358,7 @@ void daEnPuchiPakkun_c::executeState_Walk() {
                 changeState(StateID_Turn);
             }
         } else {
-            mFootRelated2.x = 0.0;
+            mFootPush2.x = 0.0;
             mSpeed.y = 1.2;
         }
     }
@@ -391,8 +391,8 @@ void daEnPuchiPakkun_c::executeState_Turn() {
     posMove();
 
     if ((EnBgCheck() & 1) == 0) {
-        if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
-            mFootRelated2.x = mFootRelated2.x + m_1eb.x;
+        if (mBc.isFoot() && (mInLiquid == false) && (mSpeed.y <= 0.0f)) {
+            mFootPush2.x = mFootPush2.x + m_1eb.x;
         }
     } else {
         mSpeed.y = 0.0;
@@ -405,7 +405,7 @@ void daEnPuchiPakkun_c::executeState_Turn() {
 
     killIfTouchingLava(mPos, 1.0);
 
-    // face our new direction, and exit state when finished
+    // Face our new direction, and exit state when finished
     bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_nipper_turn_angle[mDirection], 0x800);
 
     if (doneTurning) {
@@ -468,18 +468,18 @@ void daEnPuchiPakkun_c::finalizeState_IceWait() {}
 void daEnPuchiPakkun_c::executeState_IceWait() {
     u8 fireballState = 0;
     daFreezer_c *freezer;
-    //make sure our AC_FREEZER still exists
+    // Make sure our AC_FREEZER still exists
     for (freezer = (daFreezer_c *)getConnectChild(); freezer != (daFreezer_c *)nullptr; freezer = (daFreezer_c *)freezer->getConnectBrNext()) {
         if (freezer != (daFreezer_c *)nullptr) {
-            //if it does, check if it's melting
+            // If it does, check if it's melting
             fireballState = (freezer->mFireBallState != 0) + 1;
         }
     }
-    //we're MELTING
+    // We're MELTING
     if (fireballState == 2) {
         mScale = mVec3_c(1.0, 1.0, 1.0);
     }
-    //our AC_FREEZER no longer exists, so we've melted
+    // Our AC_FREEZER no longer exists, so we've melted
     if (fireballState == 0) {
         mCc.entry();
         if (mWalks) {

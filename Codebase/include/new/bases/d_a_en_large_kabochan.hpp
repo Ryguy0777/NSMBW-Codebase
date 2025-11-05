@@ -1,0 +1,43 @@
+#pragma once
+
+#include <game/bases/d_a_en_kuribo.hpp>
+
+class daEnLargeKabochan_c : public daEnKuribo_c {
+public:
+    // dEn_c overrides
+    virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
+
+    virtual bool hitCallback_Fire(dCc_c *cc1, dCc_c *cc2);
+    virtual bool hitCallback_Ice(dCc_c *cc1, dCc_c *cc2);
+
+    virtual void setDeathSound_HipAttk();
+
+    virtual void initializeState_DieOther();
+
+    virtual void hipatkEffect(const mVec3_c &pos);
+
+    virtual void fumiSE(dActor_c *actor);
+    virtual void spinfumiSE(dActor_c *actor);
+
+    // daEnKuriboBase_c overrides
+    virtual void reactFumiProc(dActor_c* player);
+    virtual void reactSpinFumiProc(dActor_c* player);
+    virtual void reactYoshiFumiProc(dActor_c* yoshi);
+
+    virtual void createBodyModel();
+
+    virtual void initialize();
+
+    virtual void setWalkSpeed();
+    virtual void playWalkAnm();
+    virtual void setWalkAnm();
+
+    virtual bool isBgmSync() const;
+
+    u8 mCracked;
+    m3d::anmMatClr_c mAnmClr;
+
+    mEf::levelEffect_c mBreakEffect;
+};
+
+const float l_splunkin_speeds[3][2] = {{0.5, -0.5},{0.75, -0.75},{1.0, -1.0}};

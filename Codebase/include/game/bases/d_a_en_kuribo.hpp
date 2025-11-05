@@ -33,7 +33,6 @@ public:
     virtual void setTurnByEnemyHit();
 
     virtual void setWalkSpeed();
-    
     virtual void playWalkAnm();
     virtual void walkEffect();
 

@@ -165,7 +165,9 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
 
 // remove the tpl from memory
 kmBranchDefCpp(0x80b6c580, NULL, bool, dPreGameLyt_c *_this) {
-    EGG::Heap::free(pregameTPLbuffer, mHeap::g_archiveHeap);
+    if (pregameTPLbuffer != nullptr) {
+        EGG::Heap::free(pregameTPLbuffer, mHeap::g_archiveHeap);
+    }
     return _this->mLayout.doDelete();
 }
 

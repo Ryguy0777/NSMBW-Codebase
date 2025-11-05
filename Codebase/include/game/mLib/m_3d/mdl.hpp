@@ -5,7 +5,7 @@
 
 namespace m3d {
     class mdl_c : public smdl_c {
-
+    public:
         class callback_c {
         public:
             virtual ~callback_c();
@@ -35,7 +35,6 @@ namespace m3d {
             mAllocator_c *mpAllocator;
         };
 
-    public:
         mdl_c();
         virtual ~mdl_c();
 

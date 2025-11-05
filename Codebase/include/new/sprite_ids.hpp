@@ -499,6 +499,12 @@ enum Value {
     EN_BLOCK_FLAG,
     EN_PUCHI_PAKKUN,
     EN_BLOCK_MESSAGE,
+    EN_BOMBBROS,
+    AC_FLAG_DANCE,
+    AC_FLAG_INVERT,
+    EN_KABOCHAN,
+    EN_LARGE_KABOCHAN,
+    EN_KABOKURIBO,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT

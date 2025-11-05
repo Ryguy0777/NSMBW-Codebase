@@ -3,7 +3,6 @@
 #include <game/bases/d_actor.hpp>
 
 // an actor that spawns another actor when a target event is triggered.
-// this is currently a test for custom actors.
 
 class daSpawner_c : public dActor_c {
 public:

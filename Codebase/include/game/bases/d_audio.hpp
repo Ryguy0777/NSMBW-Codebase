@@ -46,6 +46,9 @@ public:
 class SndObjctCmnEmy : public NMSndObject<4> {
 public:
     virtual void startSound(unsigned long, const nw4r::math::VEC2 &, unsigned long);
+    virtual void startSound(unsigned long, const nw4r::math::VEC2 &, short, unsigned long);
+    virtual void vf28();
+    virtual void holdSound(unsigned long, int, const nw4r::math::VEC2&, unsigned long);
 };
 
 class SndObjctCmnMap : public NMSndObject<4> {
@@ -81,6 +84,12 @@ namespace dAudio {
         }
         void startSound(unsigned long soundID, const mVec3_c &pos, int remPlayer) {
             SndObjctCmnEmy::startSound(soundID, dAudio::cvtSndObjctPos(pos), remPlayer);
+        }
+        void holdSound(unsigned long soundID, int id, const nw4r::math::VEC2 &pos, int remPlayer) {
+            SndObjctCmnEmy::holdSound(soundID, id, pos, remPlayer);
+        }
+        void holdSound(unsigned long soundID, int id, const mVec3_c &pos, int remPlayer) {
+            SndObjctCmnEmy::holdSound(soundID, id, dAudio::cvtSndObjctPos(pos), remPlayer);
         }
     };
 

@@ -65,12 +65,12 @@ public:
 
     void set(dActor_c *owner, dBcSensor_c *feet, dBcSensor_c *head, dBcSensor_c *wall);
 
-    enum WaterCheckResult_e {
-        R0 = 0,
-        R1 = 1,
-        R2 = 2,
-        R3 = 3,
-        R4 = 4
+    enum WATER_TYPE_e {
+        WATER_CHECK_NONE,
+        WATER_CHECK_WATER,
+        WATER_CHECK_AIR_WATER,
+        WATER_CHECK_YOGAN,
+        WATER_CHECK_POISON
     };
 
     dActor_c *mpOwner;
@@ -96,7 +96,7 @@ public:
     u8 mLayer;
 
     static int checkWaterDepth(float, float, u8, u8, float *);
-    static WaterCheckResult_e checkWater(float, float, u8, float *);
+    static WATER_TYPE_e checkWater(float, float, u8, float *);
     static void checkBg(float, float, u8, u8, unsigned long);
 
     bool isHead()  { return mFlags & 0b00000000000000000000000000010101; }

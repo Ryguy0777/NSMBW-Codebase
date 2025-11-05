@@ -19,9 +19,9 @@ public:
     virtual void finalUpdate();
 
     // dEn_c overrides
-    virtual bool EnDamageCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual bool PlDamageCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual bool YoshiDamageCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2);
 
     virtual void initializeState_DieOther();
     virtual void executeState_DieOther();
@@ -65,7 +65,7 @@ public:
 
     dHeapAllocator_c mAllocator;
 
-    nw4r::g3d::ResFile mResFile;
+    nw4r::g3d::ResFile mRes;
     m3d::mdl_c mModel;
     m3d::anmChr_c mAnmChr;
     nw4r::g3d::ResAnmTexPat mResPat;

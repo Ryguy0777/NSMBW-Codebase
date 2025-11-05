@@ -6,12 +6,10 @@
 
 class daEnBrosBase_c : public dEn_c {
 public:
-    class nodeCallback_c {
+    class nodeCallback_c : public m3d::mdl_c::callback_c {
     public:
         virtual ~nodeCallback_c();
-        virtual void timingA();
-        virtual void timingB();
-        virtual void timingC();
+        virtual void timingA(ulong nodeId, nw4r::g3d::ChrAnmResult *anmRes, nw4r::g3d::ResMdl resMdl);
 
         daEnBrosBase_c *mpOwner;
     };
@@ -28,8 +26,8 @@ public:
     virtual void finalUpdate();
 
     // dEn_c overrides
-    virtual bool PlDamageCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual bool YoshiDamageCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2);
 
     virtual bool hitCallback_Spin(dCc_c *cc1, dCc_c *cc2);
     virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
@@ -52,29 +50,12 @@ public:
     virtual void returnState_Ice();
 
     // New virtuals
-    virtual void initializeState_Move();
-    virtual void executeState_Move();
-    virtual void finalizeState_Move();
-
-    virtual void initializeState_Attack();
-    virtual void executeState_Attack();
-    virtual void finalizeState_Attack();
-
-    virtual void initializeState_JumpSt();
-    virtual void executeState_JumpSt();
-    virtual void finalizeState_JumpSt();
-
-    virtual void initializeState_Jump();
-    virtual void executeState_Jump();
-    virtual void finalizeState_Jump();
-
-    virtual void initializeState_JumpEd();
-    virtual void executeState_JumpEd();
-    virtual void finalizeState_JumpEd();
-
-    virtual void initializeState_AirAttack();
-    virtual void executeState_AirAttack();
-    virtual void finalizeState_AirAttack();
+    STATE_VIRTUAL_FUNC_DECLARE(daEnBrosBase_c, Move);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnBrosBase_c, Attack);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnBrosBase_c, JumpSt);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnBrosBase_c, Jump);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnBrosBase_c, JumpEd);
+    STATE_VIRTUAL_FUNC_DECLARE(daEnBrosBase_c, AirAttack);
 
     virtual double getCreateWeaponFrm() const;
     virtual double getAttackFrm() const;
@@ -99,13 +80,6 @@ public:
     virtual void initType();
     virtual void entryHIO();
     virtual void removeHIO();
-
-    STATE_FUNC_DECLARE(daEnBrosBase_c, Move);
-    STATE_FUNC_DECLARE(daEnBrosBase_c, Attack);
-    STATE_FUNC_DECLARE(daEnBrosBase_c, JumpSt);
-    STATE_FUNC_DECLARE(daEnBrosBase_c, Jump);
-    STATE_FUNC_DECLARE(daEnBrosBase_c, JumpEd);
-    STATE_FUNC_DECLARE(daEnBrosBase_c, AirAttack);
 
     dHeapAllocator_c mAllocator;
 

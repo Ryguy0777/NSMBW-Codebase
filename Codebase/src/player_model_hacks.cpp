@@ -40,16 +40,20 @@ dKinopioMarioMdl_c::dKinopioMarioMdl_c(u8 index) : dKinopioMdl_c(index) {
     mFaceJointIdx = 0xF;
 }
 
-class dKinopicoMdl_c : public dKinopioMdl_c {
+class dKinopicoMdl_c : public dKinopioMdl_c{
 public:
     dKinopicoMdl_c(u8 index);
 
     virtual void setColorType(u8 colorType);
     virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate);
     virtual void createPlayerModel();
+    //virtual float vfb4();
 
     m3d::anmTexPat_c* getBodyTexAnm();
     void createAnim(m3d::anmTexPat_c& anm, const char* name, u8 modelIdx);
+
+    //m3d::anmTexPat_c mPropelBodySwitchAnim;
+    //m3d::anmTexPat_c mPenguinBodySwitchAnim;
 };
 
 dKinopicoMdl_c::dKinopicoMdl_c(u8 index) : dKinopioMdl_c(index) {
@@ -230,6 +234,36 @@ void dKinopicoMdl_c::setColorType(u8 colorType) {
     bodyTexAnm->setFrame(frame, 0);
     bodyMdl->setAnm(*bodyTexAnm);
 }
+
+/* float lengthArray1[] = {1.0, 0.628, 1.0, 1.0};
+float lengthArray2[] = {0.6, 0.377, 0.6, 0.45};
+float lengthArray3[] = {0.15, 0.2, 0.15, 0.37};
+
+float dKinopicoMdl_c::vfb4() {
+    MODEL_e model = mModelIdx;
+    if (mFlags & 0x800000 || mFlags & 0x1000000) {
+        model = MODEL_NORMAL;
+    }
+
+    float length;
+    if (mFlags & 0x400000) {
+        // Big
+        length = lengthArray1[model];
+    } else {
+        // Small
+        length = lengthArray2[model];
+    }
+
+    if (mFlags & 0x8) {
+        length += lengthArray3[model];
+
+        if (mPowerupID == 3) {
+            length -= 0.05;
+        }
+    }
+
+    return length;
+} */
 
 kmBranchDefCpp(0x800d6e00, NULL, void, dPyMdlMng_c *mng, u8 index) {
     switch (index) {

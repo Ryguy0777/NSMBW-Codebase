@@ -30,9 +30,11 @@ public:
     int YoshiEggCreateCheck(int);
     void jumpdai_set();
     void item_ivy_set(u8, u8);
+    void yossy_set(ulong);
     void playItemAppearSound(const mVec3_c *position, int type, char player, int, int); ///< @unofficial
     void shouldSpawnContinuousStar(int *item_type, u8 player_id); ///< @unofficial
     int player_bigmario_check(s8 player_id);
+    int playernumber_set();
 
     static void checkRevFoot(dActor_c*, dActor_c*);
     static void checkRevHead(dActor_c*, dActor_c*);

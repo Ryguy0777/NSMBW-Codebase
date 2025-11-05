@@ -788,6 +788,13 @@ namespace fProfile {
         MSGBOX_WINDOW,
         EN_BLOCK_MESSAGE,
         EN_BOMBBROS,
+        BROS_BOMB,
+        AC_FLAG_DANCE,
+        AC_FLAG_INVERT,
+        EN_KABOCHAN,
+        EN_LARGE_KABOCHAN,
+        EN_KABOKURIBO,
+        AC_KABOKURIBO_FLAME,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

@@ -3,6 +3,9 @@
 
 class daYoshi_c : public daPlBase_c {
 public:
+
+    virtual bool setDamage(dActor_c *, DamageType_e);
+
     u8 mPad[0xa0];
     int m_a0;
 

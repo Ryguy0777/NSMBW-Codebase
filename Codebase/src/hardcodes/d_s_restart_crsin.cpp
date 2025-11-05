@@ -41,7 +41,7 @@ const char *crsinLoadNames[] = {
     "obj_door",
     "obj_kusa",
     "obj_hana",
-    "obj_hana_daishi",
+    "obj_hana_daishizen",
     "block_jump",
     "obj_chikuwa_block",
     "lift_rakka_ashi",

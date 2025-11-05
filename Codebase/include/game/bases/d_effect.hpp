@@ -10,6 +10,8 @@ public:
     u8 m_118;
 };
 
+void createEffect_change(const char*, unsigned long, const mVec3_c*, const mAng3_c*, const mVec3_c*);
+
 void createPlayerEffect(int, char const *, unsigned long, mVec3_c const *, mAng3_c const *, mVec3_c const *);
 void createPlayerEffect_change(int, char const *, unsigned long, mVec3_c const *, mAng3_c const *, mVec3_c const *);
 void createPlayerEffect(int, mEf::levelEffect_c *, char const *, unsigned long, mVec3_c const *, mAng3_c const *, mVec3_c const *);

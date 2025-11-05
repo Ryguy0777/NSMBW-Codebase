@@ -22,7 +22,7 @@ void mameKuribo_Normal_VsPlHitCheck(daEnKuriboBase_c *_this, dCc_c *cc1, dCc_c *
             _this->fumiEffect(player);
         }
         _this->reactFumiProc(player);
-    } else if (hitcheck == 2) {
+    } else if (hitcheck == 3) {
         _this->reactSpinFumiProc(player);
     } else if (hitcheck == 0 && _this->isDamageInvalid() == false) {
         _this->dEn_c::Normal_VsPlHitCheck(cc1, cc2);

@@ -24,7 +24,7 @@ class SpriteImage_MiniGoomba(SLib.SpriteImage_Static):  # 22
         self.offset = (3, 4)
 
         super().dataChanged()
-        
+
 
 class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
     def __init__(self, parent):
@@ -54,7 +54,6 @@ class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
             return SLib.GetTile(tilenum)
 
         return None
-        
 
 
 class SpriteImage_CliffKoopa(SLib.SpriteImage_StaticMultiple):  # 302
@@ -81,7 +80,7 @@ class SpriteImage_CliffKoopa(SLib.SpriteImage_StaticMultiple):  # 302
             self.image = ImageCache['FenceKoopaHG']
 
         super().dataChanged()
-        
+
 
 class SpriteImage_WaterPlatform(SLib.SpriteImage):  # 486
     def __init__(self, parent, scale=1.5):
@@ -102,7 +101,7 @@ class SpriteImage_WaterPlatform(SLib.SpriteImage):  # 486
         painter.drawTiledPixmap(24, 0, int((self.width * 1.5) - 48), int(self.height * 1.5), ImageCache['WoodenPlatformM'])
         painter.drawPixmap(int((self.width - 16) * 1.5), 0, ImageCache['WoodenPlatformR'])
         painter.drawPixmap(0, 0, ImageCache['WoodenPlatformL'])
-        
+
 
 class SpriteImage_Shyguy(SLib.SpriteImage_StaticMultiple):  # 487
     def __init__(self, parent):
@@ -172,7 +171,7 @@ class SpriteImage_FlipBlock(SLib.SpriteImage):  # 488
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         painter.drawPixmap(0, 0, ImageCache['Flipblock'])
         painter.drawPixmap(0, 0, self.image)
-        
+
 
 class SpriteImage_OnOffBlock(SLib.SpriteImage_Static):  # 489
     def __init__(self, parent):
@@ -181,7 +180,7 @@ class SpriteImage_OnOffBlock(SLib.SpriteImage_Static):  # 489
             1.5,
             SLib.GetTile(0x9C),
         )
-        
+
     
 class SpriteImage_NipperPlant(SLib.SpriteImage_StaticMultiple):  # 490
     @staticmethod
@@ -200,7 +199,6 @@ class SpriteImage_NipperPlant(SLib.SpriteImage_StaticMultiple):  # 490
             self.offset = (0, -1)
 
         super().dataChanged()
-        
 
 
 class SpriteImage_MessageBlock(SLib.SpriteImage_Static):  # 491
@@ -210,7 +208,35 @@ class SpriteImage_MessageBlock(SLib.SpriteImage_Static):  # 491
             1.5,
             SLib.GetTile(0x9A),
         )
-        
+    
+
+class SpriteImage_BombBro(SLib.SpriteImage_Static):
+    def __init__(self, parent, scale=1.5):
+        super().__init__(
+            parent,
+            scale,
+            ImageCache['BombBro'],
+            (-4, -21)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('BombBro', 'bombbro.png')
+
+
+class SpriteImage_Splunkin(SLib.SpriteImage_Static):
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['Splunkin'],
+            (-3, -4)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Splunkin', 'splunkin.png')
+
 
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
@@ -221,5 +247,7 @@ ImageClasses = {
     488: SpriteImage_FlipBlock,
     489: SpriteImage_OnOffBlock,
     490: SpriteImage_NipperPlant,
-    491: SpriteImage_MessageBlock
+    491: SpriteImage_MessageBlock,
+    492: SpriteImage_BombBro,
+    495: SpriteImage_Splunkin
 }

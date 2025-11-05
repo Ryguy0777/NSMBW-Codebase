@@ -194,4 +194,64 @@
   <sprite id="491" name="Message Block" notes="A block that the player can hit which will display a custom message. Messages are defined in Message.arc.">
     <value nybble="11-12" title="Message ID" comment="Messages defined in Message.arc." comment2="The category for the title is 400. The category for the text is 401. The ID is the last 2 digits of the message entry."/>
   </sprite> <!-- #491: Message Block -->
+  
+  <sprite id="492" name="Bomb Bro" notes="A standard Brothers enemy that throws bombs at the player.">
+  </sprite> <!-- #492: Bomb Bro -->
+
+  <sprite id="493" name="Event Controller - Bah Activation" notes="This sprite will activate/deactivate an event for every bah in the level music.">
+    <value nybble="3-4" title="Target Event ID" idtype="Target Event"/>
+	<list nybble="12" title="Bah Type" comment="This is a bitfield, so the number of bahs is not the decimal value." comment2="Value 4 is checked by Koopas, figure out what bah type it correlates to.">
+      <entry value="0">No Bahs</entry>
+      <entry value="1">Every Bah</entry>
+      <entry value="2">"Special" Bahs</entry>
+      <entry value="4">Unknown Value 4</entry>
+      <entry value="8">Every Other Bah</entry>
+    </list>
+  </sprite> <!-- #493: Event Controller - Bah Activation--> 
+
+  <sprite id="494" name="Event Controller - Inverter" notes="This sprite will invert the value of the target event when the triggering event is activated.">
+	<value nybble="1-2" title="Triggering Event ID" idtype="Triggering Event"/>
+    <value nybble="3-4" title="Target Event ID" idtype="Target Event"/>
+	<list nybble="12.3-12.4" title="Toggle type">
+		<entry value="0">When event state changes</entry>
+		<entry value="1">When event is enabled</entry>
+		<entry value="2">When event is disabled</entry>
+	</list>
+  </sprite> <!-- #494: Event Controller - Inverter-->
+
+  <sprite id="495" name="Splunkin" notes="A walking pumpkin that takes two stomps to defeat.">
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Splunkin placing it further behind other sprites."/>
+	<list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Splunkin. This is useful for Splunkins within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
+      <entry value="0">Normal</entry>
+      <entry value="1">Tumble</entry>
+      <entry value="2">Small Jump</entry>
+      <entry value="3">Hesitates</entry>
+      <entry value="4">Medium Jump</entry>
+      <entry value="5">Large Jump</entry>
+    </list>
+  </sprite> <!-- #495: Splunkin -->
+
+  <sprite id="496" name="Mega Splunkin" notes="A giant walking pumpkin that takes three stomps to defeat.">
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Mega Splunkin placing it further behind other sprites."/>
+	<list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Splunkin. This is useful for Splunkins within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
+      <entry value="0">Normal</entry>
+      <entry value="1">Tumble</entry>
+      <entry value="2">Small Jump</entry>
+      <entry value="3">Hesitates</entry>
+      <entry value="4">Medium Jump</entry>
+      <entry value="5">Large Jump</entry>
+    </list>
+  </sprite> <!-- #496: Splunkin -->
+
+  <sprite id="497" name="Jack O'Goomba" notes="A Goomba with a pumpkin shield on it's head. It will emit lingering flames occasionally. The pumpkin can only be broken with a spin jump.">
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Jack O'Goomba placing it further behind other sprites."/>
+    <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Jack O'Goomba. This is useful for Jack O'Goomba within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
+      <entry value="0">Normal</entry>
+      <entry value="1">Tumble</entry>
+      <entry value="2">Small Jump</entry>
+      <entry value="3">Hesitates</entry>
+      <entry value="4">Medium Jump</entry>
+      <entry value="5">Large Jump</entry>
+    </list>
+  </sprite> <!-- #497: Jack O'Goomba -->
 </sprites>

@@ -24,23 +24,23 @@ sBgSetInfo l_flipblock_info = {
     &daEnBlockMain_c::callBackW
 };
 
-// we have our own callbackF function to detect player spinjumps
+// We have our own callbackF function to detect player spinjumps
 
 void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
-    // call OG function
+    // Call OG function
     daEnBlockMain_c::callBackF(self, other);
     daEnBlockRotate_c *_this = (daEnBlockRotate_c *)self;
-    // only break if empty and indestructible
+    // Only break if empty and indestructible
     if (_this->mContents == 0 && _this->mIndestructible == false) {
         if (other->mKind == STAGE_ACTOR_PLAYER) {
             daPlBase_c *player = (daPlBase_c *)other;
-            // statuses 0xA9 and 0x2B are only both set when spinjumping
+            // Statuses 0xA9 and 0x2B are only both set when spinjumping
             if (player->isStatus(0xA9) && player->isStatus(daPlBase_c::STATUS_2B)) {
                 if (player->mPowerup != POWERUP_NONE && player->mPowerup != POWERUP_MINI_MUSHROOM) {
                     _this->destroyBlock();
-                    // move player upwards slightly
+                    // Move player upwards slightly
                     float playerSpeedInc;
-                    if (player->mKey.buttonJump()) {
+                    if (player->mKey.buttonTwo()) {
                         playerSpeedInc = 3.0;
                     } else {
                         playerSpeedInc = 2.5;
@@ -53,7 +53,7 @@ void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
 }
 
 int daEnBlockRotate_c::create() {
-    // setup model
+    // Setup model
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
 
     mRes = dResMng_c::m_instance->mRes.getRes("block_rotate", "g3d/block_rotate.brres");
@@ -65,7 +65,7 @@ int daEnBlockRotate_c::create() {
 
     Block_CreateClearSet(mPos.y);
 
-    // set collider
+    // Set collider
     mBg.set(this, &l_flipblock_info, 3, mLayer, nullptr);
     mBg.mFlags = 0x260;
 
@@ -81,7 +81,7 @@ int daEnBlockRotate_c::create() {
 
     mCoinsRemaining = 10;
 
-    // sprite settings
+    // Sprite settings
     mContents = mParam & 0xF;
     mIndestructible = mParam >> 4 & 1;
 
@@ -100,7 +100,7 @@ int daEnBlockRotate_c::execute() {
     mBg.calc();
     Block_ExecuteClearSet();
 
-    // only delete if not flipping
+    // Only delete if not flipping
     if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
         ActorScrOutCheck(0);
     }
@@ -124,19 +124,19 @@ int daEnBlockRotate_c::preDraw() {
 void daEnBlockRotate_c::initialize_upmove() {
     // shouldSpawnContinuousStar sets the contents to either 7 (star) or 1 (coin)
     shouldSpawnContinuousStar(&mContents, mPlayerID);
-    // handle mushroom-if-small
+    // Handle mushroom-if-small
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
         if (isBig) 
             mContents = 1;    
     }
-    // create coin items/propeller on block hit
+    // Create coin items/propeller on block hit
     if (l_early_items[mContents])
         createItem();
 }
 
 void daEnBlockRotate_c::initialize_downmove() {
-    // same as upmove
+    // Same as upmove
     shouldSpawnContinuousStar(&mContents, mPlayerID);
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
@@ -148,19 +148,19 @@ void daEnBlockRotate_c::initialize_downmove() {
 }
 
 void daEnBlockRotate_c::block_upmove() {
-    // call blockWasHit at the end of upmove
+    // Call blockWasHit at the end of upmove
     if (mInitialY >= mPos.y)
         blockWasHit(false);
 }
 
 void daEnBlockRotate_c::block_downmove() {
-    // call blockWasHit at the end of downmove
+    // Call blockWasHit at the end of downmove
     if (mInitialY <= mPos.y)
         blockWasHit(true);
 }
 
 void daEnBlockRotate_c::calcModel() {
-    // calculate model
+    // Calculate model
     dActor_c::changePosAngle(&mPos, &mAngle, 1);
     PSMTXTrans(mMatrix, mPos.x, mPos.y + 8.0, mPos.z);
 
@@ -176,11 +176,11 @@ void daEnBlockRotate_c::calcModel() {
 }
 
 void daEnBlockRotate_c::blockWasHit(bool isDown) {
-    // handle state changes after hitting block
+    // Handle state changes after hitting block
     mPos.y = mInitialY;
 
     if (mContents != 0) {
-        // we've already spawned our coin if we're a 10-coin block, so go back to wait
+        // We've already spawned our coin if we're a 10-coin block, so go back to wait
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
         } else 
@@ -190,8 +190,8 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
 }
 
 bool daEnBlockRotate_c::playerOverlaps() {
-    // check if we're overlapping with a player
-    // used during flip state
+    // Check if we're overlapping with a player
+    // Used during flip state
     dActor_c *player = nullptr;
 
     mVec3_c myBL(mPos.x - 8.0f, mPos.y - 8.0f, 0.0f);
@@ -218,52 +218,52 @@ bool daEnBlockRotate_c::playerOverlaps() {
 }
 
 void daEnBlockRotate_c::createItem() {
-    // spawn block contents
+    // Spawn block contents
     switch (mContents) {
-        case 9: // yoshi egg
+        case 9: // Yoshi egg
             if (YoshiEggCreateCheck(0))
                 return;
             break;
-        case 12: // vine
+        case 12: // Vine
             item_ivy_set(1, m_169);
             break;
-        case 13: // spring
+        case 13: // Spring
             jumpdai_set();
             break;
         case 10: // 10-coin, don't care for the time mechanic
             mCoinsRemaining--;
-        default: // normal items
+        default: // Normal items
             dActor_c::construct(fProfile::EN_ITEM, mPlayerID << 16 | (mIsGroundPound * 3) << 18 | l_item_values[mContents] & 0b11111, &mPos, nullptr, mLayer);
-            // play item spawn sound
+            // Play item spawn sound
             playItemAppearSound(&mPos, l_item_values[mContents], mPlayerID, 0, 0);
             break;
     }
 }
 
 void daEnBlockRotate_c::createEmpty() {
-    // delete block
+    // Delete block
     deleteActor(1);
     
-    // create empty block tile
+    // Create empty block tile
     u16 worldX = ((u16)mPos.x) & 0xFFF0;
 	u16 worldY = ((u16)-(mPos.y + 16.0)) & 0xFFF0;
 
     dBg_c::m_bg_p->BgUnitChange(worldX, worldY, mLayer, 0x0001);
 
-    // spawn item if we haven't already
+    // Spawn item if we haven't already
     if (!l_early_items[mContents])
         createItem();
 }
 
 void daEnBlockRotate_c::destroyBlock() {
-    // delete block
+    // Delete block
     deleteActor(1);
 
-    // play break sound and spawn shard effect
+    // Play break sound and spawn shard effect
     nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(mPos);
     dAudio::g_pSndObjMap->startSound(SE_OBJ_BLOCK_BREAK, soundPos, 0);
 
-    dEffActorMng_c::m_instance->createBlockFragEff(mPos, 0x202, -1);
+    dEffActorMng_c::m_instance->createBlockFragEff(mPos, 0x903, -1);
 }
 
 void daEnBlockRotate_c::initializeState_Wait() {}
@@ -271,16 +271,16 @@ void daEnBlockRotate_c::initializeState_Wait() {}
 void daEnBlockRotate_c::finalizeState_Wait() {}
 
 void daEnBlockRotate_c::executeState_Wait() {
-    // check if the block has been hit
+    // Check if the block has been hit
     int result = ObjBgHitCheck();
 
     if (result == 1) {
-        // hit from below
+        // Hit from below
         mAnotherFlag = 2;
         mIsGroundPound = false;
         changeState(StateID_UpMove);
     } else if (result == 2) {
-        // hit from above
+        // Hit from above
         mAnotherFlag = 1;
         mIsGroundPound = true;
         changeState(StateID_DownMove);
@@ -311,4 +311,29 @@ void daEnBlockRotate_c::executeState_Flipping() {
                 changeState(StateID_Wait);
         }
     }
+}
+
+// Add new Flip Block fragment tiles to dEffBlockFrag_c
+u16 newTableForEffBlockFrag[10][4] = {
+    {0x40, 0x41, 0x42, 0x40}, // Brick Block
+    {0x4C, 0x4D, 0x4E, 0x4C}, // Stone Block
+    {0x49, 0x4A, 0x4B, 0x49}, // Wood Block
+    {0x43, 0x44, 0x45, 0x43}, // ?-Block
+    {0x46, 0x47, 0x48, 0x46}, // Used Block
+    {0x50, 0x51, 0x52, 0x50}, // Red Block
+    {0x46, 0x47, 0x48, 0x46}, // Used Block
+    {0x4F, 0x4F, 0x4F, 0x4F}, // Empty Tile (unused?)
+    {0x2A0, 0x2A2, 0x2A2, 0x2A0}, // Final Battle
+    {0x53, 0x54, 0x55, 0x53}, // Flip Block (new)
+};
+
+// Remove block type validity check
+kmWriteNop(0x800909e0);
+
+// Insert new table
+kmBranchDefAsm(0x80090af0, 0x80090af4) {
+    lis r3, newTableForEffBlockFrag@h
+    ori r3, r3, newTableForEffBlockFrag@l
+    add r21, r3, r0
+    blr
 }

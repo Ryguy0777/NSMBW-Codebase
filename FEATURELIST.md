@@ -23,7 +23,7 @@ These features are complete and should be fully functional.
 * Configuration ini file for debugging
 * Improved exception handler
 * 1-1 Peach's Castle BG removal (togglable)
-* 2-Castle Maze removal (toggleable)
+* 2-Castle Maze removal (togglable)
 * Always skip cutscenes with plus
 * NewerSMBW styled pregame (togglable)
 * WATER_LIFT sprite restoration
@@ -31,22 +31,24 @@ These features are complete and should be fully functional.
 * MANTA_MGR2 sprite restoration + fixes
 * Fixed fence climbing koopas giving unlimited coins when frozen
 * Player 1 Can Change Character (togglable)
+* SMW Flip Block sprite
+* Bomb Bro sprite
+* Removal of stage timer + live counter (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
 * ON/OFF Block sprite
-* SMW Flip Block sprite
 * Classic + GameCube controller support (togglable)
+* Splunkin sprite
+* Jack O' Goomba sprite
 
 ### Planned Features
 These features are planned to be implemented in the future.
 * Switch Blocks (togglable)
 * Magic Platform sprite
 * Shyguy variant sprites
-* Splunkin sprite
 * Goombrat sprite
 * Galoomba sprites
-* Bomb Bro sprite
 * RandTiles
 * AnimTiles
 * FlowerTiles

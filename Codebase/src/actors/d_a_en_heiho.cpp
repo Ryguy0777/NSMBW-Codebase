@@ -167,7 +167,7 @@ void daEnHeiho_c::finalUpdate() {
     // set the matrix for the model
     mHeihoModel.setLocalMtx(&mMatrix);
     // see scale using boyon 
-    mHeihoModel.setScale(mBoyon.mScale.x, mBoyon.mScale.y, mBoyon.mScale.z);
+    mHeihoModel.setScale(mBoyoMng.mScale.x, mBoyoMng.mScale.y, mBoyoMng.mScale.z);
     mHeihoModel.calc(false);
 
     return;
@@ -347,11 +347,11 @@ void daEnHeiho_c::executeState_Walk() {
 
     if ((EnBgCheck() & 1) == 0) { // not touching a tile
         // related to walking speed in water? not sure
-        if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
-            mFootRelated2.x = mFootRelated2.x + m_1eb.x;
+        if (mBc.isFoot() && (mInLiquid == false) && (mSpeed.y <= 0.0f)) {
+            mFootPush2.x = mFootPush2.x + m_1eb.x;
         }
     } else { // touching a tile
-        mFootRelated2.x = 0.0;
+        mFootPush2.x = 0.0;
         mSpeed.y = 0.0;
         if (checkForLedge(2.5f) == false) { // check for ledges
             if (mType == HEIHO_TYPE_WALKER_LEDGE) {
@@ -390,8 +390,8 @@ void daEnHeiho_c::executeState_Turn() {
     posMove();
 
     if ((EnBgCheck() & 1) == 0) {
-        if (mBc.isFoot() && (m49 == false) && (mSpeed.y <= 0.0f)) {
-            mFootRelated2.x = mFootRelated2.x + m_1eb.x;
+        if (mBc.isFoot() && (mInLiquid == false) && (mSpeed.y <= 0.0f)) {
+            mFootPush2.x = mFootPush2.x + m_1eb.x;
         }
     } else {
         mSpeed.y = 0.0;
