@@ -5,8 +5,8 @@
 /// @unofficial
 class daEnCoinAngle_c : public dEn_c {
 public:
-    void rotateCoin(); // 0x809E5660
+    void rotateCoin();
 
-    u8 mUnk[0x5C0];
+    u8 mPad[0x5C0];
     fBaseID_e mControllerUniqueID;
 };
