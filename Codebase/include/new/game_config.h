@@ -19,3 +19,5 @@
 //#define NO_LIFE_DECREMENT
 
 //#define NO_TIMER
+
+//#define NEWER_FILE_SELECT

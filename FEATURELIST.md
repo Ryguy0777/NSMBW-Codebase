@@ -34,6 +34,8 @@ These features are complete and should be fully functional.
 * SMW Flip Block sprite
 * Bomb Bro sprite
 * Removal of stage timer + live counter (togglable)
+* Rotation controlled coin hacks
+* Newer-esque file select (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -58,7 +60,6 @@ These features are planned to be implemented in the future.
 * Triple ? Block sprite
 * Effect/SFX Spawner sprite
 * Hammer Suit/More Powerups (togglable)
-* Rotation controlled coin hacks
 * More Characters (togglable)
 * Region Free utilites (togglable)
 * Dynamic Discord RPC (togglable)
@@ -66,6 +67,5 @@ These features are planned to be implemented in the future.
 * Debug menu scene (togglable)
 * Player Script Event sprite
 * Angry Sun/Moon sprite
-* Newer-esque file select (togglable)
 * Replay recorder
 * Load worldmap scripts from external file 

@@ -229,6 +229,8 @@ public:
     void setIbaraNow(int ibaraNow); ///< Sets the worldmap vine reshuffle counter.
     u8 getIbaraNow() const; ///< Gets the worldmap vine reshuffle counter.
 
+    inline int getCurrentWorld() {return mCurrentWorld;};
+
 private:
     /// @brief Checks that the save data version matches the current one and clears the slot if not.
     void versionUpdate();
