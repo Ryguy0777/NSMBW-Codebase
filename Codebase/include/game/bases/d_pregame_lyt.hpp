@@ -44,8 +44,8 @@ public:
     LytBase_c mLayout;
     nw4r::lyt::Pane* mpRootPane;
 
-    nw4r::lyt::TextBox mpTextBoxes[T_COUNT];
-    nw4r::lyt::Picture mpPicturePanes[P_COUNT];
+    nw4r::lyt::TextBox *mpTextBoxes[T_COUNT];
+    nw4r::lyt::Picture *mpPicturePanes[P_COUNT];
     nw4r::lyt::Pane *mpNullPanes[N_COUNT];
 
     bool mHasLoadedLayout;
