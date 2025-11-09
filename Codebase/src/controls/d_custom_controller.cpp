@@ -4,6 +4,7 @@
 #include <game/snd/snd_scene_manager.hpp>
 #include <game/bases/d_game_key.hpp>
 #include <game/bases/d_ac_py_key.hpp>
+#include <new/lib/revolution/PAD.h>
 
 dCustomController_c *dCustomController_c::m_instance = nullptr;
 PADStatus dCustomController_c::saPadStatus[4];

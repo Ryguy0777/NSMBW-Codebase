@@ -1,4 +1,4 @@
-#include <lib/revolution/SI.h>
+#include <new/lib/revolution/SI.h>
 
 /* 0x803402D0 */
 extern SIControl Si;

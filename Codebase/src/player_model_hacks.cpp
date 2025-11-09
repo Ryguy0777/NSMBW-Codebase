@@ -8,55 +8,23 @@
 #include <game/bases/d_res_mng.hpp>
 #include <game/mLib/m_heap.hpp>
 
-class dKinopioMarioMdl_c : public dKinopioMdl_c {
-public:
-    dKinopioMarioMdl_c(u8 index);
-};
-
-static dPlayerMdl_c::ModelData toadMarioData = {
-    "KinopioM",
-    "K_rcha",
-    {"KB_model", "SKB_model", "PLKB_model", "PKB_model"},
-    {"KH_model", "SKH_model", "PLKH_model", "PKH_model"},
-    18.0,
-    13.0,
-    18.0,
-    18.0,
-};
-
-dKinopioMarioMdl_c::dKinopioMarioMdl_c(u8 index) : dKinopioMdl_c(index) {
-    mpModelData = &toadMarioData;
-    switch (index) {
-        case dPyMdlMng_c::MODEL_LUIGI:
-            OSReport("luig\n");
-            mCharaID = dPyMdlMng_c::MODEL_TOAD_YELLOW;
-            break;
-        
-        default:
-            OSReport("mari\n");
-            mCharaID = dPyMdlMng_c::MODEL_TOAD_BLUE;
-            break;
-    }
-    mFaceJointIdx = 0xF;
-}
-
-class dKinopicoMdl_c : public dKinopioMdl_c{
+class dKinopicoMdl_c : public dPlayerMdl_c {
 public:
     dKinopicoMdl_c(u8 index);
 
     virtual void setColorType(u8 colorType);
     virtual bool vf60(ChrAnmType_e type, nw4r::g3d::ResAnmChr* anm, bool noUpdate);
     virtual void createPlayerModel();
-    //virtual float vfb4();
+    virtual float vfb4();
 
     m3d::anmTexPat_c* getBodyTexAnm();
     void createAnim(m3d::anmTexPat_c& anm, const char* name, u8 modelIdx);
 
-    //m3d::anmTexPat_c mPropelBodySwitchAnim;
-    //m3d::anmTexPat_c mPenguinBodySwitchAnim;
+    m3d::anmTexPat_c mPropelBodySwitchAnim;
+    m3d::anmTexPat_c mPenguinBodySwitchAnim;
 };
 
-dKinopicoMdl_c::dKinopicoMdl_c(u8 index) : dKinopioMdl_c(index) {
+dKinopicoMdl_c::dKinopicoMdl_c(u8 index) : dPlayerMdl_c(index) {
     static ModelData modelData = {
       "Kinopico",
       "C_rcha",
@@ -235,7 +203,7 @@ void dKinopicoMdl_c::setColorType(u8 colorType) {
     bodyMdl->setAnm(*bodyTexAnm);
 }
 
-/* float lengthArray1[] = {1.0, 0.628, 1.0, 1.0};
+float lengthArray1[] = {1.0, 0.628, 1.0, 1.0};
 float lengthArray2[] = {0.6, 0.377, 0.6, 0.45};
 float lengthArray3[] = {0.15, 0.2, 0.15, 0.37};
 
@@ -263,7 +231,7 @@ float dKinopicoMdl_c::vfb4() {
     }
 
     return length;
-} */
+}
 
 kmBranchDefCpp(0x800d6e00, NULL, void, dPyMdlMng_c *mng, u8 index) {
     switch (index) {

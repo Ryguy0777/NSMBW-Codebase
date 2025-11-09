@@ -23,9 +23,15 @@ public:
 
     virtual bool isBgmSync() const;
 
+    void setFlameAnm();
+
+    STATE_FUNC_DECLARE(daEnKaboKuribo_c, Attack);
+
     bool mNoPumpkin;
     int mAttackTimer;
     m3d::anmVis_c mAnmVis;
+    m3d::anmChr_c mAnmChrFlame;
+    m3d::anmChrBlend_c mAnmChrBlend;
 
     mEf::levelEffect_c mBreakEffect;
 };

@@ -1,8 +1,9 @@
 #include <kamek.h>
 #include <new/bases/d_custom_controller.hpp>
-#include <lib/revolution/SI.h>
+#include <new/lib/revolution/SI.h>
 #include <game/bases/d_audio.hpp>
 #include <game/bases/d_actor.hpp>
+#include <new/lib/revolution/PAD.h>
 
 // dRemoconMng_c state
 STATE_DEFINE(dRemoconMng_c::dConnect_c::dExtension_c, Gamecube);

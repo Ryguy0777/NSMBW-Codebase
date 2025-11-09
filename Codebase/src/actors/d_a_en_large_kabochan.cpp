@@ -35,12 +35,14 @@ bool daEnLargeKabochan_c::hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2) {
 }
 
 bool daEnLargeKabochan_c::hitCallback_Fire(dCc_c *cc1, dCc_c *cc2) {
-    fireballInvalid(cc1, cc2);
-    return true;
-}
-
-bool daEnLargeKabochan_c::hitCallback_Ice(dCc_c *cc1, dCc_c *cc2) {
-    iceballInvalid(cc1, cc2);
+    if (mHitByFire) {
+        return dEn_c::hitCallback_Fire(cc1, cc2);
+    } else {
+        mHitByFire = true;
+        boyonBegin();
+        nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(mPos);
+        dAudio::g_pSndObjEmy->startSound(SE_EMY_KURIBO_M_DAMAGE, soundPos, 0);
+    }
     return true;
 }
 
@@ -64,6 +66,22 @@ void daEnLargeKabochan_c::hipatkEffect(const mVec3_c &pos) {
         mVec3_c scale(3.0, 3.0, 3.0);
         dEf::createEffect_change("Wm_en_pumpkinbreak_b", 0, &pos, nullptr, &scale);
     }
+}
+
+void daEnLargeKabochan_c::createIceActor() {
+    dIceInfo splunkinIceInfo[1] = {
+        3,                                      // mFlags
+        mVec3_c(mPos.x, mPos.y-2.0, mPos.z),    // mPos
+        mVec3_c(0.85, 0.87, 1.1),               // mScale
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0
+    };
+    mIceMng.createIce(&splunkinIceInfo[0], 1);
 }
 
 void daEnLargeKabochan_c::fumiSE(dActor_c *actor) {
@@ -169,7 +187,7 @@ void daEnLargeKabochan_c::initialize() {
 }
 
 void daEnLargeKabochan_c::setWalkSpeed() {
-    mSpeed.x = l_splunkin_speeds[mCracked][mDirection];
+    mSpeed.x = l_large_splunkin_speeds[mCracked][mDirection];
     return;
 }
 

@@ -8,13 +8,14 @@ public:
     virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
 
     virtual bool hitCallback_Fire(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Ice(dCc_c *cc1, dCc_c *cc2);
 
     virtual void setDeathSound_HipAttk();
 
     virtual void initializeState_DieOther();
 
     virtual void hipatkEffect(const mVec3_c &pos);
+
+    virtual void createIceActor();
 
     virtual void fumiSE(dActor_c *actor);
     virtual void spinfumiSE(dActor_c *actor);
@@ -35,9 +36,10 @@ public:
     virtual bool isBgmSync() const;
 
     u8 mCracked;
+    bool mHitByFire;
     m3d::anmMatClr_c mAnmClr;
 
     mEf::levelEffect_c mBreakEffect;
 };
 
-const float l_splunkin_speeds[3][2] = {{0.5, -0.5},{0.75, -0.75},{1.0, -1.0}};
+const float l_large_splunkin_speeds[3][2] = {{0.5, -0.5},{0.75, -0.75},{1.0, -1.0}};
