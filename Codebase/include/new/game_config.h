@@ -21,3 +21,5 @@
 //#define NO_TIMER
 
 //#define NEWER_FILE_SELECT
+
+//#define DISABLE_QUICK_SAVE

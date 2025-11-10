@@ -36,6 +36,7 @@ These features are complete and should be fully functional.
 * Removal of stage timer + live counter (togglable)
 * Rotation controlled coin hacks
 * Newer-esque file select (togglable)
+* Removal of Quick Save (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
