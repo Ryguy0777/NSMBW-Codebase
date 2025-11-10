@@ -34,4 +34,5 @@ int getBatteryLevel_ch(CH_e chan); // @unofficial
 void setCurrentChannel(CH_e chan);
 void clearWPADInfo(CH_e chan);
 int getWPADInfoAsync(CH_e chan);
+void setGetWPADInfoInterval(unsigned long);
 } // namespace mPad

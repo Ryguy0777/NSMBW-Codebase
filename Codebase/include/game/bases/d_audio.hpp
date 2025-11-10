@@ -58,10 +58,11 @@ public:
 
 namespace dAudio {
     void requestStartScene(ProfileName sceneProf); ///< Sets up game audio for the given scene.
-    void prepareSceneSnd(); ///< @unofficial
+    void loadSceneSnd();
     void destroySceneSnd(); ///< @unofficial
     void setNextScene(ProfileName prof, unsigned long bgmIndex);
     void pauseOffGameWithReset(); ///< @unofficial
+    bool isLoadedSceneSnd();
 
     int getRemotePlayer(int);
     mVec2_c cvtSndObjctPos(const mVec3_c &);

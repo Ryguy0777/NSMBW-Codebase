@@ -106,5 +106,8 @@ namespace dGameCom {
 
     void initGame();
 
+    bool chkContinue();
+    bool chkCancelButton(int controller);
+
     extern u32 l_gameStop;
 }

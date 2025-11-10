@@ -11,4 +11,6 @@ public:
 
     void enterHBM();
     void exitHBM();
+
+    void closeWorldSelect();
 };

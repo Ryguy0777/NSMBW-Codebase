@@ -91,6 +91,14 @@ public:
     virtual int draw();
     virtual int doDelete();
 
+    inline bool getLayoutLoaded() {return mHasLoadedLayout;};
+    inline void setType(WINDOW_TYPE_e type) {mType = type;};
+    inline bool getIsActive() {return mIsActive;};
+    inline void setIsActive(bool active) {mIsActive = active;};
+    inline int getCursorPos() {return mCursorPos;};
+    inline void setCursorPos(int value) {mCursorPos = value;};
+    inline LytTextBox_c *getTextBox(int n) { return (&T_questionS_00)[n]; }
+
 private:
     /// @brief Fills out the window content according to the settings.
     /// @details This includes:

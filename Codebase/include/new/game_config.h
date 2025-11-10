@@ -22,4 +22,17 @@
 
 //#define NEWER_FILE_SELECT
 
-//#define DISABLE_QUICK_SAVE
+#define DISABLE_QUICK_SAVE
+
+//#define KOOPATLAS_ENABLED
+
+//#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
+
+// Koopatlas Config
+#ifdef KOOPATLAS_ENABLED
+
+#define KP_MUSIC_REPORT
+#define KP_MUSIC_DEBUGPRINT
+//#define KP_PATH_DEBUG
+
+#endif

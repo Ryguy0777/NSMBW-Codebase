@@ -41,6 +41,8 @@ namespace nw4r { namespace snd
 				mSound->SetTrackVolume(trackFlags, volume, fadeFrames);
 		}
 
+		inline void *GetSound() {return mSound;};
+
 	// members
 	private:
 		/* base NonCopyable */			// size 0x00, offset 0x00

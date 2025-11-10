@@ -9,6 +9,12 @@ public:
     virtual ~loader_c();
     virtual void freeHeap();
 
+    void *request(const char *name, unsigned char, EGG::Heap *);
+    bool freeResouce();
+
+    inline void *GetBuffer() {return mpBuffer;};
+    inline u32 getSize() {return mSize;};
+
 private:
     u32 mSize;
     u32 mCommand;

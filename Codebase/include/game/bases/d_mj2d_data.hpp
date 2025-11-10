@@ -230,6 +230,11 @@ public:
     u8 getIbaraNow() const; ///< Gets the worldmap vine reshuffle counter.
 
     inline int getCurrentWorld() {return mCurrentWorld;};
+    inline void setCurrentWorld(int world) {mCurrentWorld = world;};
+
+    inline void setCurrentPathNode(int node) {mCurrentPathNode = node;};
+
+    inline int getGameCompletion() {return mGameCompletion;};
 
 private:
     /// @brief Checks that the save data version matches the current one and clears the slot if not.

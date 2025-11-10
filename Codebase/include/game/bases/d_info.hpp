@@ -56,6 +56,8 @@ public:
     u8 getCourse() const { return m_startGameInfo.mLevel1; }
     u8 getWorld() const { return m_startGameInfo.mWorld1; }
 
+    void startGame(StartGameInfo_s *info);
+
     static dInfo_c *getInstance() {
         return m_instance;
     }
@@ -77,7 +79,9 @@ public:
     u8 pad7[0x8];
     int mCourseSelectPageNum;
     int mCourseSelectIndexInPage;
-    u8 pad8[0x712];
+    u8 pad8[0x710];
+    bool mDrawEffectsForMapLayouts;
+    u8 m_afd;
     bool mFukidashiActionPerformed[4][0x16];
 
     static dInfo_c *m_instance;

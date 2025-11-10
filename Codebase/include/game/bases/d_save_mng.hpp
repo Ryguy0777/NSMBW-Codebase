@@ -12,5 +12,6 @@ public:
     u8 mPad[31];
     dMj2dHeader_c mSave;
 
+    static bool isNandBusy();
     static dSaveMng_c* m_instance;
 };
