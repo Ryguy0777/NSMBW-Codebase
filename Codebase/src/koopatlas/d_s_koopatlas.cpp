@@ -30,11 +30,11 @@
 // Reset "LastPowerupStoreType" after game over
 extern int m_exitMode__10dScStage_c;
 kmBranchDefAsm(0x809216EC, 0x809216F0) {
-	lis r4, m_exitMode__10dScStage_c@h
-	ori r4, r4, m_exitMode__10dScStage_c@l
-	li r5, 0
-	stw r5, 0(r4)
-	blr
+    lis r4, m_exitMode__10dScStage_c@h
+    ori r4, r4, m_exitMode__10dScStage_c@l
+    li r5, 0
+    stw r5, 0(r4)
+    blr
 }
 
 dScKoopatlas_c *dScKoopatlas_c::instance = nullptr;
@@ -70,12 +70,12 @@ STATE_DEFINE(dScKoopatlas_c, QuickSaveEndCloseWait);
 STATE_DEFINE(dScKoopatlas_c, SaveError);
 
 dScKoopatlas_c *dScKoopatlas_c::build() {
-	MapReport("Creating WorldMap\n");
-	dScKoopatlas_c *c = new dScKoopatlas_c;
+    MapReport("Creating WorldMap\n");
+    dScKoopatlas_c *c = new dScKoopatlas_c;
 
-	MapReport("Created WorldMap @ %p\n", c);
-	instance = c;
-	return c;
+    MapReport("Created WorldMap @ %p\n", c);
+    instance = c;
+    return c;
 }
 
 // Replace WORLD_MAP actor
@@ -93,23 +93,23 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void*);
 sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void*);
 
 sPhase_c::phaseMethod *initFunctions[] = {
-	KPInitPhase_LoadSceneSnd,
-	KPInitPhase_LoadKPMusic,
-	KPInitPhase_LoadResources,
-	KPInitPhase_EndLoading,
-	KPInitPhase_LoadResources1,
-	KPInitPhase_LoadResources2,
-	KPInitPhase_ChkLayoutLoad,
-	KPInitPhase_CreateActors,
-	KPInitPhase_ChkChildProcess
+    KPInitPhase_LoadSceneSnd,
+    KPInitPhase_LoadKPMusic,
+    KPInitPhase_LoadResources,
+    KPInitPhase_EndLoading,
+    KPInitPhase_LoadResources1,
+    KPInitPhase_LoadResources2,
+    KPInitPhase_ChkLayoutLoad,
+    KPInitPhase_CreateActors,
+    KPInitPhase_ChkChildProcess
 };
 
 dScKoopatlas_c::dScKoopatlas_c() : mInitChain(initFunctions, 9), mStateMgr(*this, StateID_Normal) {
-	mpPhase = &mInitChain;
+    mpPhase = &mInitChain;
 }
 
 dScKoopatlas_c::~dScKoopatlas_c() {
-	instance = nullptr;
+    instance = nullptr;
 }
 
 
@@ -149,354 +149,354 @@ dScKoopatlas_c::~dScKoopatlas_c() {
 #define CONT_IS_GAMEOVER_SCENE(cont) (*((bool*)(((u32)(cont))+0x2E0)))
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadSceneSnd(void *ptr) {
-	SpammyReport("KPInitPhase_LoadSceneSnd called\n");
+    SpammyReport("KPInitPhase_LoadSceneSnd called\n");
 
-	dAudio::loadSceneSnd();
-	return (sPhase_c::METHOD_RESULT_e)true;
+    dAudio::loadSceneSnd();
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadKPMusic(void *ptr) {
-	SpammyReport("KPInitPhase_LoadKPMusic called\n");
-	//return (sPhase_c::METHOD_RESULT_e)dKPMusic_c::loadInfo();
-	return (sPhase_c::METHOD_RESULT_e)true;
+    SpammyReport("KPInitPhase_LoadKPMusic called\n");
+    //return (sPhase_c::METHOD_RESULT_e)dKPMusic_c::loadInfo();
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void *ptr) {
-	SpammyReport("KPInitPhase_LoadResources called\n");
-	
-	dResMng_c::m_instance->setRes("WorldMap", "SI_kinoko", nullptr);
-	dResMng_c::m_instance->setRes("WorldMap", "SI_fireflower", nullptr);
-	dResMng_c::m_instance->setRes("WorldMap", "SI_iceflower", nullptr);
-	dResMng_c::m_instance->setRes("WorldMap", "SI_penguin", nullptr);
-	dResMng_c::m_instance->setRes("WorldMap", "SI_propeller", nullptr);
-	dResMng_c::m_instance->setRes("WorldMap", "SI_star", nullptr);
+    SpammyReport("KPInitPhase_LoadResources called\n");
+    
+    dResMng_c::m_instance->setRes("WorldMap", "SI_kinoko", nullptr);
+    dResMng_c::m_instance->setRes("WorldMap", "SI_fireflower", nullptr);
+    dResMng_c::m_instance->setRes("WorldMap", "SI_iceflower", nullptr);
+    dResMng_c::m_instance->setRes("WorldMap", "SI_penguin", nullptr);
+    dResMng_c::m_instance->setRes("WorldMap", "SI_propeller", nullptr);
+    dResMng_c::m_instance->setRes("WorldMap", "SI_star", nullptr);
 
-	/*dResMng_c::m_instance->setRes("Object", "cobCourse", nullptr);
-	dResMng_c::m_instance->setRes("Object", "I_kinoko_bundle", nullptr);
-	dResMng_c::m_instance->setRes("Object", "lakitu", nullptr);
-	dResMng_c::m_instance->setRes("Object", "star_coin", nullptr);
-	dResMng_c::m_instance->setRes("Object", "StarRing", nullptr);*/
+    /*dResMng_c::m_instance->setRes("Object", "cobCourse", nullptr);
+    dResMng_c::m_instance->setRes("Object", "I_kinoko_bundle", nullptr);
+    dResMng_c::m_instance->setRes("Object", "lakitu", nullptr);
+    dResMng_c::m_instance->setRes("Object", "star_coin", nullptr);
+    dResMng_c::m_instance->setRes("Object", "StarRing", nullptr);*/
 
-	return (sPhase_c::METHOD_RESULT_e)true;
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_EndLoading(void *ptr) {
-	SpammyReport("KPInitPhase_EndLoading called\n");
+    SpammyReport("KPInitPhase_EndLoading called\n");
 
-	if (dResMng_c::m_instance->mRes.syncAllRes()) {
-		SpammyReport("KPInitPhase_EndLoading returning false\n");
-		return (sPhase_c::METHOD_RESULT_e)false;
-	}
+    if (dResMng_c::m_instance->mRes.syncAllRes()) {
+        SpammyReport("KPInitPhase_EndLoading returning false\n");
+        return (sPhase_c::METHOD_RESULT_e)false;
+    }
 
-	dAudio::isLoadedSceneSnd();
-	SpammyReport("KPInitPhase_EndLoading returning true\n");
-	return (sPhase_c::METHOD_RESULT_e)true;
+    dAudio::isLoadedSceneSnd();
+    SpammyReport("KPInitPhase_EndLoading returning true\n");
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources1(void *ptr) {
-	SpammyReport("KPInitPhase_LoadResources1 returning true\n");
+    SpammyReport("KPInitPhase_LoadResources1 returning true\n");
 
-	dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
+    dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-	//return (sPhase_c::METHOD_RESULT_e)(wm->mMapListLoader.request("/Maps/List.txt", 0, nullptr) != nullptr);
-	return (sPhase_c::METHOD_RESULT_e)true;
+    //return (sPhase_c::METHOD_RESULT_e)(wm->mMapListLoader.request("/Maps/List.txt", 0, nullptr) != nullptr);
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources2(void *ptr) {
-	SpammyReport("KPInitPhase_LoadResources2 returning true\n");
+    SpammyReport("KPInitPhase_LoadResources2 returning true\n");
 
-	dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
+    dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-	/*if (wm->mMapPath == 0) {
-		wm->mMapPath = wm->getMapNameForIndex(wm->mCurrentMapID);
-		if (wm->mMapPath == 0)
-			wm->mMapPath = wm->getMapNameForIndex(0);
-		if (!strcmp(wm->mMapPath, "/Maps/WSEL.kpbin"))
-			wm->mWarpZoneHacks = true;
-		else
-			wm->mWarpZoneHacks = false;
-		OSReport("Load map: %s\n", wm->mMapPath);
-	}*/
+    /*if (wm->mMapPath == 0) {
+        wm->mMapPath = wm->getMapNameForIndex(wm->mCurrentMapID);
+        if (wm->mMapPath == 0)
+            wm->mMapPath = wm->getMapNameForIndex(0);
+        if (!strcmp(wm->mMapPath, "/Maps/WSEL.kpbin"))
+            wm->mWarpZoneHacks = true;
+        else
+            wm->mWarpZoneHacks = false;
+        OSReport("Load map: %s\n", wm->mMapPath);
+    }*/
 
-	/*if (wm->mMapData.load(wm->mMapPath)) {
-		return (sPhase_c::METHOD_RESULT_e)true;
-	} else
-		return (sPhase_c::METHOD_RESULT_e)false;*/
-	return (sPhase_c::METHOD_RESULT_e)true;
+    /*if (wm->mMapData.load(wm->mMapPath)) {
+        return (sPhase_c::METHOD_RESULT_e)true;
+    } else
+        return (sPhase_c::METHOD_RESULT_e)false;*/
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_ChkLayoutLoad(void *ptr) {
-	SpammyReport("KPInitPhase_ChkLayoutLoad called\n");
+    SpammyReport("KPInitPhase_ChkLayoutLoad called\n");
 
-	dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
+    dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-	bool success = true;
-	success &= CSMENU_SETUP_DONE(wm->mpCSMenu);
-	OSReport("success1 %d\n", success);
-	success &= SELC_SETUP_DONE(wm->mpSelectCursor);
-	OSReport("success2 %d\n", success);
-	success &= NPCHG_SETUP_DONE(wm->mpNumPeopleChange);
-	OSReport("success3 %d\n", success);
-	success &= wm->mpYesNoWindow->getLayoutLoaded();
-	OSReport("success4 %d\n", success);
-	success &= CONT_SETUP_DONE(wm->mpContinueObj);
-	OSReport("success5 %d\n", success);
-	//success &= wm->mpStockItem->mHasLayoutLoaded; // todo: figure out why this doesn't work. is the class wrong?
-	OSReport("success6 %d\n", success);
-	success &= wm->mpStockItemShadow->mHasLayoutLoaded;
-	OSReport("success7 %d\n", success);
-	success &= EASYP_SETUP_DONE(wm->mpEasyPairing);
-	OSReport("success8 %d\n", success);
-	return (sPhase_c::METHOD_RESULT_e)success;
+    bool success = true;
+    success &= CSMENU_SETUP_DONE(wm->mpCSMenu);
+    OSReport("success1 %d\n", success);
+    success &= SELC_SETUP_DONE(wm->mpSelectCursor);
+    OSReport("success2 %d\n", success);
+    success &= NPCHG_SETUP_DONE(wm->mpNumPeopleChange);
+    OSReport("success3 %d\n", success);
+    success &= wm->mpYesNoWindow->getLayoutLoaded();
+    OSReport("success4 %d\n", success);
+    success &= CONT_SETUP_DONE(wm->mpContinueObj);
+    OSReport("success5 %d\n", success);
+    //success &= wm->mpStockItem->mHasLayoutLoaded; // todo: figure out why this doesn't work. is the class wrong?
+    OSReport("success6 %d\n", success);
+    success &= wm->mpStockItemShadow->mHasLayoutLoaded;
+    OSReport("success7 %d\n", success);
+    success &= EASYP_SETUP_DONE(wm->mpEasyPairing);
+    OSReport("success8 %d\n", success);
+    return (sPhase_c::METHOD_RESULT_e)success;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
-	SpammyReport("KPInitPhase_CreateActors called\n");
+    SpammyReport("KPInitPhase_CreateActors called\n");
 
-	dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
+    dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-	// Check if we need to handle Continues
-	if (dGameCom::chkContinue()) {
-		SpammyReport("continue is activated\n");
-		wm->mStateMgr.changeState(wm->StateID_ContinueWait);
-	} else {
-		SpammyReport("continue is not activated\n");
-		wm->mStateMgr.changeState(wm->StateID_Normal);
-	}
+    // Check if we need to handle Continues
+    if (dGameCom::chkContinue()) {
+        SpammyReport("continue is activated\n");
+        wm->mStateMgr.changeState(wm->StateID_ContinueWait);
+    } else {
+        SpammyReport("continue is not activated\n");
+        wm->mStateMgr.changeState(wm->StateID_Normal);
+    }
 
-	// Players for StockItem/CharaChange
-	/*for (int i = 0; i < 4; i++) {
-		void *obj = dBaseActor_c::construct(fProfile::WM_2D_PLAYER, wm, i, 0, 0);
-		wm->mpStockItem->mpPlayers[i] = obj;
-		NPCHG_2DPLAYER(wm->mpNumPeopleChange,i) = obj;
-	}
+    // Players for StockItem/CharaChange
+    /*for (int i = 0; i < 4; i++) {
+        void *obj = dBaseActor_c::construct(fProfile::WM_2D_PLAYER, wm, i, 0, 0);
+        wm->mpStockItem->mpPlayers[i] = obj;
+        NPCHG_2DPLAYER(wm->mpNumPeopleChange,i) = obj;
+    }
 
-	// StockItem powerups
-	for (int i = 0; i < 7; i++) {
-		void *obj = dBaseActor_c::construct(fProfile::WM_ITEM, wm, i, 0, 0);
-		wm->mpStockItem->mpItems[i] = obj;
-	}*/
+    // StockItem powerups
+    for (int i = 0; i < 7; i++) {
+        void *obj = dBaseActor_c::construct(fProfile::WM_ITEM, wm, i, 0, 0);
+        wm->mpStockItem->mpItems[i] = obj;
+    }*/
 
-	// need Player before we can set up paths
-	SpammyReport("creating player\n");
-	/*wm->mpPlayer = (daWMPlayer_c*)dBaseActor_c::construct(fProfile::WM_PLAYER, wm, 0, 2);
-	wm->mpPlayer->modelHandler->mdlClass->setPowerup(daPyMng_c::mPlayerMode[0]);
-	wm->mpPlayer->bindPats();
-	wm->mpPlayer->modelHandler->mdlClass->startAnimation(0, 1.2f, 10.0f, 0.0f);
+    // need Player before we can set up paths
+    SpammyReport("creating player\n");
+    /*wm->mpPlayer = (daWMPlayer_c*)dBaseActor_c::construct(fProfile::WM_PLAYER, wm, 0, 2);
+    wm->mpPlayer->modelHandler->mdlClass->setPowerup(daPyMng_c::mPlayerMode[0]);
+    wm->mpPlayer->bindPats();
+    wm->mpPlayer->modelHandler->mdlClass->startAnimation(0, 1.2f, 10.0f, 0.0f);
 
-	// since we've got all the resources, set up the path data too
-	SpammyReport("preparing path manager\n");
-	wm->mPathManager.setup();
+    // since we've got all the resources, set up the path data too
+    SpammyReport("preparing path manager\n");
+    wm->mPathManager.setup();
 
-	// and put the player into position
-	dKPNode_s *cNode = wm->mPathManager.currentNode;
-	wm->mpPlayer->pos = (Vec){cNode->x, -cNode->y, wm->mpPlayer->pos.z};
+    // and put the player into position
+    dKPNode_s *cNode = wm->mPathManager.currentNode;
+    wm->mpPlayer->pos = (Vec){cNode->x, -cNode->y, wm->mpPlayer->pos.z};
 
-	SpammyReport("creating MAP\n");
-	wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
-	SpammyReport("creating HUD\n");
-	wm->mpHud = (dWMHud_c*)fBase_c::createChild(fProfile::WM_HUD, wm, 0, 0);
-	// note: world_camera is not created here
-	// because we require it earlier
-	// it is created in dScKoopatlas_c::onCreate
+    SpammyReport("creating MAP\n");
+    wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
+    SpammyReport("creating HUD\n");
+    wm->mpHud = (dWMHud_c*)fBase_c::createChild(fProfile::WM_HUD, wm, 0, 0);
+    // note: world_camera is not created here
+    // because we require it earlier
+    // it is created in dScKoopatlas_c::onCreate
 
-	SpammyReport("creating SHOP\n");
-	wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);
+    SpammyReport("creating SHOP\n");
+    wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);
 
-	SpammyReport("creating Star Coin Menu\n");
-	wm->mpCoins = (dWMStarCoin_c*)fBase_c::createChild(fProfile::WM_STARCOIN, wm, 0, 0);*/
+    SpammyReport("creating Star Coin Menu\n");
+    wm->mpCoins = (dWMStarCoin_c*)fBase_c::createChild(fProfile::WM_STARCOIN, wm, 0, 0);*/
 
-	SpammyReport("SetupExtra done\n");
-	return (sPhase_c::METHOD_RESULT_e)true;
+    SpammyReport("SetupExtra done\n");
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
-	SpammyReport("KPInitPhase_ChkChildProcess called\n");
+    SpammyReport("KPInitPhase_ChkChildProcess called\n");
 
-	dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
+    dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-	if (wm->checkChildProcessCreateState()) {
-		SpammyReport("KPInitPhase_ChkChildProcess returning false\n");
+    if (wm->checkChildProcessCreateState()) {
+        SpammyReport("KPInitPhase_ChkChildProcess returning false\n");
 // #ifdef WM_SPAMMY_DEBUGGING
 // 		fBase_c *p = wm->findNextUninitialisedProcess();
 // 		SpammyReport("Not done yet: %p [%d]\n", p, p->name);
 // #endif
-		return (sPhase_c::METHOD_RESULT_e)false;
-	}
+        return (sPhase_c::METHOD_RESULT_e)false;
+    }
 
-	SpammyReport("KPInitPhase_ChkChildProcess returning true\n");
-	return (sPhase_c::METHOD_RESULT_e)true;
+    SpammyReport("KPInitPhase_ChkChildProcess returning true\n");
+    return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 
 
 // todo: figure out what i wanna do with savedata
 void dScKoopatlas_c::startMusic() {
-	//dKPMusic_c::play(GetSaveFile()->GetBlock(-1)->currentMapMusic);
-	//dKPMusic_c::play(2);
+    //dKPMusic_c::play(GetSaveFile()->GetBlock(-1)->currentMapMusic);
+    //dKPMusic_c::play(2);
 }
 
 void LoadMapScene() {
-	//todo.
+    //todo.
 }
 
 int dScKoopatlas_c::create() {
-	OSReport("KP scene param: %08x\n", mParam);
+    OSReport("KP scene param: %08x\n", mParam);
 
-	SpammyReport("onCreate() called\n");
+    SpammyReport("onCreate() called\n");
 
-	SpammyReport("Freeing effects\n"); // Opening cutscene loads vs effects for some reason and fragments RAM too much for some maps
-	EffectManager_c::resetResource(EffectManager_c::EFF_VS);
-	EffectManager_c::freeBreff(EffectManager_c::EFF_VS);
-	EffectManager_c::freeBreft(EffectManager_c::EFF_VS);
+    SpammyReport("Freeing effects\n"); // Opening cutscene loads vs effects for some reason and fragments RAM too much for some maps
+    EffectManager_c::resetResource(EffectManager_c::EFF_VS);
+    EffectManager_c::freeBreff(EffectManager_c::EFF_VS);
+    EffectManager_c::freeBreft(EffectManager_c::EFF_VS);
 
-	SpammyReport("LoadMapScene()\n");
-	LoadMapScene();
+    SpammyReport("LoadMapScene()\n");
+    LoadMapScene();
 
-	SpammyReport("Preparing lighting scene\n");
-	//dScGameSetup_c::m_instance->prepareLightScene();
+    SpammyReport("Preparing lighting scene\n");
+    //dScGameSetup_c::m_instance->prepareLightScene();
 
-	SpammyReport("Setting Active Players\n");
-	for (int i = 0; i < 4; i++) {
-		bool isThere = dGameCom::PlayerEnterCheck(i);
-		int id = daPyMng_c::mPlayerType[i];
-		daPyMng_c::mPlayerEntry[i] = isThere ? 1 : 0;
-		if (!isThere) daPyMng_c::mCreateItem[i] = 0;
-	}
+    SpammyReport("Setting Active Players\n");
+    for (int i = 0; i < 4; i++) {
+        bool isThere = dGameCom::PlayerEnterCheck(i);
+        int id = daPyMng_c::mPlayerType[i];
+        daPyMng_c::mPlayerEntry[i] = isThere ? 1 : 0;
+        if (!isThere) daPyMng_c::mCreateItem[i] = 0;
+    }
 
-	SpammyReport("select cursor\n");
-	this->mpSelectCursor = fBase_c::createChild(fProfile::SELECT_CURSOR, this, 0, 0);
+    SpammyReport("select cursor\n");
+    this->mpSelectCursor = fBase_c::createChild(fProfile::SELECT_CURSOR, this, 0, 0);
 
-	SpammyReport("cs menu\n");
-	this->mpCSMenu = fBase_c::createChild(fProfile::COURSE_SELECT_MENU, this, 0, 0);
+    SpammyReport("cs menu\n");
+    this->mpCSMenu = fBase_c::createChild(fProfile::COURSE_SELECT_MENU, this, 0, 0);
 
-	SpammyReport("yes no window\n");
-	this->mpYesNoWindow = (dYesNoWindow_c*)fBase_c::createChild(fProfile::YES_NO_WINDOW, this, 0, 0);
+    SpammyReport("yes no window\n");
+    this->mpYesNoWindow = (dYesNoWindow_c*)fBase_c::createChild(fProfile::YES_NO_WINDOW, this, 0, 0);
 
-	SpammyReport("number of people change\n");
-	this->mpNumPeopleChange = fBase_c::createChild(fProfile::NUMBER_OF_PEOPLE_CHANGE, this, 0, 0);
+    SpammyReport("number of people change\n");
+    this->mpNumPeopleChange = fBase_c::createChild(fProfile::NUMBER_OF_PEOPLE_CHANGE, this, 0, 0);
 
-	for (int i = 0; i < 4; i++) {
-		SpammyReport("ccsb %d\n", i);
-		void *ccsb = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_BASE, this, i, 0);
+    for (int i = 0; i < 4; i++) {
+        SpammyReport("ccsb %d\n", i);
+        void *ccsb = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_BASE, this, i, 0);
 
-		SpammyReport("ccsc %d\n", i);
-		void *ccsc = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_CONTENTS, this, i, 0);
+        SpammyReport("ccsc %d\n", i);
+        void *ccsc = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_CONTENTS, this, i, 0);
 
-		SpammyReport("ccsa %d\n", i);
-		void *ccsa = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_ARROW, this, i, 0);
+        SpammyReport("ccsa %d\n", i);
+        void *ccsa = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_ARROW, this, i, 0);
 
-		SpammyReport("cci %d\n", i);
-		void *cci = fBase_c::createChild(fProfile::CHARACTER_CHANGE_INDICATOR, this, i, 0);
+        SpammyReport("cci %d\n", i);
+        void *cci = fBase_c::createChild(fProfile::CHARACTER_CHANGE_INDICATOR, this, i, 0);
 
-		NPCHG_CCSB(this->mpNumPeopleChange, i) = ccsb;
-		NPCHG_CCSC(this->mpNumPeopleChange, i) = ccsc;
-		NPCHG_CCSA(this->mpNumPeopleChange, i) = ccsa;
-		NPCHG_CCI(this->mpNumPeopleChange, i) = cci;
-	}
+        NPCHG_CCSB(this->mpNumPeopleChange, i) = ccsb;
+        NPCHG_CCSC(this->mpNumPeopleChange, i) = ccsc;
+        NPCHG_CCSA(this->mpNumPeopleChange, i) = ccsa;
+        NPCHG_CCI(this->mpNumPeopleChange, i) = cci;
+    }
 
-	SpammyReport("continue\n");
-	this->mpContinueObj = fBase_c::createChild(fProfile::CONTINUE, this, 0, 0);
+    SpammyReport("continue\n");
+    this->mpContinueObj = fBase_c::createChild(fProfile::CONTINUE, this, 0, 0);
 
-	SpammyReport("stock item\n");
-	this->mpStockItem = (dStockItem_c*)fBase_c::createChild(fProfile::STOCK_ITEM, this, 0, 0);
-	SpammyReport("stock item shadow\n");
-	this->mpStockItemShadow = (dStockItemShadow_c*)fBase_c::createChild(fProfile::STOCK_ITEM_SHADOW, this, 0, 0);
-	mpStockItem->mpShadow = mpStockItemShadow;
+    SpammyReport("stock item\n");
+    this->mpStockItem = (dStockItem_c*)fBase_c::createChild(fProfile::STOCK_ITEM, this, 0, 0);
+    SpammyReport("stock item shadow\n");
+    this->mpStockItemShadow = (dStockItemShadow_c*)fBase_c::createChild(fProfile::STOCK_ITEM_SHADOW, this, 0, 0);
+    mpStockItem->mpShadow = mpStockItemShadow;
 
-	SpammyReport("easy pairing\n");
-	this->mpEasyPairing = fBase_c::createChild(fProfile::EASY_PAIRING, this, 0, 0);
+    SpammyReport("easy pairing\n");
+    this->mpEasyPairing = fBase_c::createChild(fProfile::EASY_PAIRING, this, 0, 0);
 
-	SpammyReport("world camera\n");
-	//fBase_c::createChild(fProfile::WORLD_CAMERA, this, 0, 0);
+    SpammyReport("world camera\n");
+    //fBase_c::createChild(fProfile::WORLD_CAMERA, this, 0, 0);
 
-	SpammyReport("setting NewerMapDrawFunc\n");
-	//dGraph_c::ms_Instance = (dGraph_c*)NewerMapDrawFunc;
+    SpammyReport("setting NewerMapDrawFunc\n");
+    //dGraph_c::ms_Instance = (dGraph_c*)NewerMapDrawFunc;
 
-	SpammyReport("onCreate() completed\n");
-	
-	// Prepare this first
-	dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-	mCurrentMapID = save->getCurrentWorld();
-	mIsFirstPlay = (mCurrentMapID == 0) && (mParam & 0x80000000);
+    SpammyReport("onCreate() completed\n");
+    
+    // Prepare this first
+    dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+    mCurrentMapID = save->getCurrentWorld();
+    mIsFirstPlay = (mCurrentMapID == 0) && (mParam & 0x80000000);
 
-	// Are we coming from Kamek cutscene? If so, then do.. some stuff!
-	mIsAfterKamekCutscene = (mParam & 0x40000000);
-	if (mIsAfterKamekCutscene) {
-		mCurrentMapID = 6; // KoopaPlanet
-		save->setCurrentWorld(6);
-	}
+    // Are we coming from Kamek cutscene? If so, then do.. some stuff!
+    mIsAfterKamekCutscene = (mParam & 0x40000000);
+    if (mIsAfterKamekCutscene) {
+        mCurrentMapID = 6; // KoopaPlanet
+        save->setCurrentWorld(6);
+    }
 
-	/*if (MaybeFinishingLevel[0] == 7 && MaybeFinishingLevel[1] == 24 && save->isCourseDataFlag(7, 24, save->GOAL_NORMAL)) {
-		mCurrentMapID = 7; // KoopaPlanetUnd
-		save->setCurrentWorld(7);
-		mIsAfter8Castle = true;
-	}*/
+    /*if (MaybeFinishingLevel[0] == 7 && MaybeFinishingLevel[1] == 24 && save->isCourseDataFlag(7, 24, save->GOAL_NORMAL)) {
+        mCurrentMapID = 7; // KoopaPlanetUnd
+        save->setCurrentWorld(7);
+        mIsAfter8Castle = true;
+    }*/
 
-	mIsEndingScene = (mParam & 0x20000000);
-	if (mIsEndingScene) {
-		mCurrentMapID = 0;
-		save->setCurrentWorld(0);
-		save->setCurrentPathNode(0);
-	}
+    mIsEndingScene = (mParam & 0x20000000);
+    if (mIsEndingScene) {
+        mCurrentMapID = 0;
+        save->setCurrentWorld(0);
+        save->setCurrentPathNode(0);
+    }
 
-	SndSceneMgr::sInstance->closeWorldSelect();
-	return true;
+    SndSceneMgr::sInstance->closeWorldSelect();
+    return true;
 }
 
 int dScKoopatlas_c::doDelete() {
-	//if (!mKeepMusicPlaying)
-	//	dKPMusic_c::stop();
+    //if (!mKeepMusicPlaying)
+    //	dKPMusic_c::stop();
 
-	m3d::removeLightMgr(0);
-	m3d::removeLightMgr(1);
+    m3d::removeLightMgr(0);
+    m3d::removeLightMgr(1);
 
-	EffectManager_c::courseOut();
-	EffectManager_c::resetResource(EffectManager_c::EFF_MAP);
-	EffectManager_c::freeBreff(EffectManager_c::EFF_MAP);
-	EffectManager_c::freeBreft(EffectManager_c::EFF_MAP);
+    EffectManager_c::courseOut();
+    EffectManager_c::resetResource(EffectManager_c::EFF_MAP);
+    EffectManager_c::freeBreff(EffectManager_c::EFF_MAP);
+    EffectManager_c::freeBreft(EffectManager_c::EFF_MAP);
 
-	dResMng_c::m_instance->mRes.deleteRes("SI_kinoko");
-	dResMng_c::m_instance->mRes.deleteRes("SI_fireflower");
-	dResMng_c::m_instance->mRes.deleteRes("SI_iceflower");
-	dResMng_c::m_instance->mRes.deleteRes("SI_penguin");
-	dResMng_c::m_instance->mRes.deleteRes("SI_propeller");
-	dResMng_c::m_instance->mRes.deleteRes("SI_star");
+    dResMng_c::m_instance->mRes.deleteRes("SI_kinoko");
+    dResMng_c::m_instance->mRes.deleteRes("SI_fireflower");
+    dResMng_c::m_instance->mRes.deleteRes("SI_iceflower");
+    dResMng_c::m_instance->mRes.deleteRes("SI_penguin");
+    dResMng_c::m_instance->mRes.deleteRes("SI_propeller");
+    dResMng_c::m_instance->mRes.deleteRes("SI_star");
 
-	dResMng_c::m_instance->mRes.deleteRes("cobCourse");
-	dResMng_c::m_instance->mRes.deleteRes("I_kinoko_bundle");
-	dResMng_c::m_instance->mRes.deleteRes("lakitu");
-	dResMng_c::m_instance->mRes.deleteRes("star_coin");
-	dResMng_c::m_instance->mRes.deleteRes("StarRing");
+    dResMng_c::m_instance->mRes.deleteRes("cobCourse");
+    dResMng_c::m_instance->mRes.deleteRes("I_kinoko_bundle");
+    dResMng_c::m_instance->mRes.deleteRes("lakitu");
+    dResMng_c::m_instance->mRes.deleteRes("star_coin");
+    dResMng_c::m_instance->mRes.deleteRes("StarRing");
 
-	mMapListLoader.freeResouce();
+    mMapListLoader.freeResouce();
 
-	EffectManager_c::courseOut();
-	return true;
+    EffectManager_c::courseOut();
+    return true;
 }
 
 bool dScKoopatlas_c::canDoStuff() {
-	if (dGameCom::isGameStop(0xFFFFFFFF)) return false;
-	if (IsWarningManagerActive()) return false;
-	if (mStateMgr.getStateID() == &StateID_Limbo) return false;
-	return true;
+    if (dGameCom::isGameStop(0xFFFFFFFF)) return false;
+    if (IsWarningManagerActive()) return false;
+    if (mStateMgr.getStateID() == &StateID_Limbo) return false;
+    return true;
 }
 
 bool dScKoopatlas_c::mapIsRunning() {
-	if (dGameCom::isGameStop(0xFFFFFFFF)) return false;
-	if (IsWarningManagerActive()) return false;
-	if (mStateMgr.getStateID() != &StateID_Normal) return false;
-	return true;
+    if (dGameCom::isGameStop(0xFFFFFFFF)) return false;
+    if (IsWarningManagerActive()) return false;
+    if (mStateMgr.getStateID() != &StateID_Normal) return false;
+    return true;
 }
 
 
 int dScKoopatlas_c::execute() {
-	//dKPMusic_c::execute();
-	if (!canDoStuff()) return true;
+    //dKPMusic_c::execute();
+    if (!canDoStuff()) return true;
 
-	//SpammyReport("Executing mStateMgr: %s\n", mStateMgr.getStateID()->name());
-	mStateMgr.executeState();
-	return true;
+    //SpammyReport("Executing mStateMgr: %s\n", mStateMgr.getStateID()->name());
+    mStateMgr.executeState();
+    return true;
 }
 
 
@@ -506,134 +506,134 @@ void dScKoopatlas_c::finalizeState_Limbo() { }
 
 
 void dScKoopatlas_c::initializeState_ContinueWait() {
-	dInfo_c::m_instance->mDrawEffectsForMapLayouts = true;
-	CONT_ACTIVE(this->mpContinueObj) = true;
-	CONT_WILL_OPEN(this->mpContinueObj) = true;
-	CONT_IS_GAMEOVER_SCENE(this->mpContinueObj) = false;
+    dInfo_c::m_instance->mDrawEffectsForMapLayouts = true;
+    CONT_ACTIVE(this->mpContinueObj) = true;
+    CONT_WILL_OPEN(this->mpContinueObj) = true;
+    CONT_IS_GAMEOVER_SCENE(this->mpContinueObj) = false;
 }
 void dScKoopatlas_c::executeState_ContinueWait() {
-	// Waiting for the Continue anim to finish
-	if (CONT_DONE(this->mpContinueObj)) {
-		CONT_ACTIVE(this->mpContinueObj) = false;
-		CONT_WILL_OPEN(this->mpContinueObj) = false;
-		CONT_IS_GAMEOVER_SCENE(this->mpContinueObj) = false;
+    // Waiting for the Continue anim to finish
+    if (CONT_DONE(this->mpContinueObj)) {
+        CONT_ACTIVE(this->mpContinueObj) = false;
+        CONT_WILL_OPEN(this->mpContinueObj) = false;
+        CONT_IS_GAMEOVER_SCENE(this->mpContinueObj) = false;
 
-		static const int things[] = {0,1,3,2,4};
-		for (int i = 0; i < 4; i++) {
-			int idx = SearchForIndexOfPlayerID(things[i]);
-			daPyMng_c::mRest[daPyMng_c::mPlayerType[idx]] = CONT_LIVES(this->mpContinueObj, i);
-		}
+        static const int things[] = {0,1,3,2,4};
+        for (int i = 0; i < 4; i++) {
+            int idx = SearchForIndexOfPlayerID(things[i]);
+            daPyMng_c::mRest[daPyMng_c::mPlayerType[idx]] = CONT_LIVES(this->mpContinueObj, i);
+        }
 
-		mStateMgr.changeState(StateID_Normal);
-	}
+        mStateMgr.changeState(StateID_Normal);
+    }
 }
 void dScKoopatlas_c::finalizeState_ContinueWait() {
-	dInfo_c::m_instance->mDrawEffectsForMapLayouts = false;
+    dInfo_c::m_instance->mDrawEffectsForMapLayouts = false;
 }
 
 
 void dScKoopatlas_c::initializeState_Normal() { }
 void dScKoopatlas_c::executeState_Normal() {
-	/*if (mPathManager.completionMessagePending) {
-		OSReport("Going to set CompletionMsg\n");
-		mStateMgr.changeState(StateID_CompletionMsg);
-		return;
-	}
+    /*if (mPathManager.completionMessagePending) {
+        OSReport("Going to set CompletionMsg\n");
+        mStateMgr.changeState(StateID_CompletionMsg);
+        return;
+    }
 
-	if (mPathManager.doingThings())
-		return;*/
+    if (mPathManager.doingThings())
+        return;*/
 
-	int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+    int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-	// Nothing related to the menu is going on
-	if (pressed & WPAD_BUTTON_1) {
-		mpStockItem->mIsVisible = true;
-		mStateMgr.changeState(StateID_PowerupsWait);
-		//mpHud->hideAll();
-	} else if (pressed & WPAD_BUTTON_PLUS) {
-		CSMENU_ACTIVE(this->mpCSMenu) = true;
-		mStateMgr.changeState(StateID_CSMenu);
-		//mpHud->hideAll();
+    // Nothing related to the menu is going on
+    if (pressed & WPAD_BUTTON_1) {
+        mpStockItem->mIsVisible = true;
+        mStateMgr.changeState(StateID_PowerupsWait);
+        //mpHud->hideAll();
+    } else if (pressed & WPAD_BUTTON_PLUS) {
+        CSMENU_ACTIVE(this->mpCSMenu) = true;
+        mStateMgr.changeState(StateID_CSMenu);
+        //mpHud->hideAll();
 #ifdef KP_PATH_DEBUG
-	} else if (pressed & WPAD_BUTTON_MINUS) {
-		mPathManager.unlockAllPaths(2);
-	} else if (pressed & WPAD_BUTTON_A) {
-		mPathManager.unlockAllPaths(0);
-		dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-		for (int w = 0; w < WORLD_COUNT; w++)
-			for (int l = 0; l < STAGE_COUNT; l++)
-				save->onCourseDataFlag(w, l, save->GOAL_MASK);
+    } else if (pressed & WPAD_BUTTON_MINUS) {
+        mPathManager.unlockAllPaths(2);
+    } else if (pressed & WPAD_BUTTON_A) {
+        mPathManager.unlockAllPaths(0);
+        dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+        for (int w = 0; w < WORLD_COUNT; w++)
+            for (int l = 0; l < STAGE_COUNT; l++)
+                save->onCourseDataFlag(w, l, save->GOAL_MASK);
 #endif
-	}
+    }
 }
 void dScKoopatlas_c::finalizeState_Normal() { }
 
 void dScKoopatlas_c::initializeState_CSMenu() { }
 void dScKoopatlas_c::executeState_CSMenu() {
-	// The course select menu is currently being shown
+    // The course select menu is currently being shown
 
-	// First off, check to see if it's been hidden
-	if (!CSMENU_ACTIVE(this->mpCSMenu)) {
-		// That means something happened
-		if (CSMENU_CHOICE_OK(this->mpCSMenu)) {
-			// Player pressed a button
-			dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+    // First off, check to see if it's been hidden
+    if (!CSMENU_ACTIVE(this->mpCSMenu)) {
+        // That means something happened
+        if (CSMENU_CHOICE_OK(this->mpCSMenu)) {
+            // Player pressed a button
+            dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
 
-			switch (CSMENU_CURRENT(this->mpCSMenu)) {
-				case 0: // Star Coins
-					//mpCoins->show();
-					mStateMgr.changeState(StateID_CoinsWait);
-					break;
+            switch (CSMENU_CURRENT(this->mpCSMenu)) {
+                case 0: // Star Coins
+                    //mpCoins->show();
+                    mStateMgr.changeState(StateID_CoinsWait);
+                    break;
 
-				case 1: // Add/Drop Players
-					MapReport("Add/Drop Players was pressed\n");
-					mStateMgr.changeState(StateID_PlayerChangeWait);
-					NPCHG_ACTIVE(this->mpNumPeopleChange) = true;
-					mPad::setGetWPADInfoInterval(10);
-					break;
+                case 1: // Add/Drop Players
+                    MapReport("Add/Drop Players was pressed\n");
+                    mStateMgr.changeState(StateID_PlayerChangeWait);
+                    NPCHG_ACTIVE(this->mpNumPeopleChange) = true;
+                    mPad::setGetWPADInfoInterval(10);
+                    break;
 
-				case 2: // Save or Quick Save
-					MapReport("Save or Quick Save was pressed\n");
+                case 2: // Save or Quick Save
+                    MapReport("Save or Quick Save was pressed\n");
 #ifndef DISABLE_QUICK_SAVE
-					if (dSaveMng_c::m_instance->getSaveGame(-1)->getGameCompletion() & 2) {
+                    if (dSaveMng_c::m_instance->getSaveGame(-1)->getGameCompletion() & 2) {
 #endif
-						mStateMgr.changeState(StateID_SaveOpen);
-						mpYesNoWindow->setType(dYesNoWindow_c::SAVE);
-						mpYesNoWindow->setIsActive(true);
+                        mStateMgr.changeState(StateID_SaveOpen);
+                        mpYesNoWindow->setType(dYesNoWindow_c::SAVE);
+                        mpYesNoWindow->setIsActive(true);
 
 #ifndef DISABLE_QUICK_SAVE
-					} else {
-						mStateMgr.changeState(StateID_QuickSaveOpen);
-						mpYesNoWindow->setType(dYesNoWindow_c::QUICK_SAVE);
-						mpYesNoWindow->setIsActive(true);
+                    } else {
+                        mStateMgr.changeState(StateID_QuickSaveOpen);
+                        mpYesNoWindow->setType(dYesNoWindow_c::QUICK_SAVE);
+                        mpYesNoWindow->setIsActive(true);
 
-					}
+                    }
 #endif
-					break;
+                    break;
 
-				case 3: // Title Screen
-					MapReport("Title Screen was pressed\n");
-					mStateMgr.changeState(StateID_TitleConfirmOpenWait);
-					mpYesNoWindow->setIsActive(true);
-					mpYesNoWindow->setType(dYesNoWindow_c::RETURN_TITLE);
-					break;
-			}
+                case 3: // Title Screen
+                    MapReport("Title Screen was pressed\n");
+                    mStateMgr.changeState(StateID_TitleConfirmOpenWait);
+                    mpYesNoWindow->setIsActive(true);
+                    mpYesNoWindow->setType(dYesNoWindow_c::RETURN_TITLE);
+                    break;
+            }
 
-		} else {
-			// Ok, change back to STATE_Normal
-			//mpHud->unhideAll();
-			mStateMgr.changeState(StateID_Normal);
-		}
-	}
+        } else {
+            // Ok, change back to STATE_Normal
+            //mpHud->unhideAll();
+            mStateMgr.changeState(StateID_Normal);
+        }
+    }
 }
 void dScKoopatlas_c::finalizeState_CSMenu() { }
 
 void dScKoopatlas_c::initializeState_TitleConfirmOpenWait() { }
 void dScKoopatlas_c::executeState_TitleConfirmOpenWait() {
-	// Waiting for the "Go to Title Screen" YesNoWindow to finish opening
-	if (!mpYesNoWindow->mIsAnimating) {
-		mStateMgr.changeState(StateID_TitleConfirmSelect);
-	}
+    // Waiting for the "Go to Title Screen" YesNoWindow to finish opening
+    if (!mpYesNoWindow->mIsAnimating) {
+        mStateMgr.changeState(StateID_TitleConfirmSelect);
+    }
 }
 void dScKoopatlas_c::finalizeState_TitleConfirmOpenWait() { }
 
@@ -642,24 +642,24 @@ void dScKoopatlas_c::finalizeState_TitleConfirmOpenWait() { }
 // 	"Go to Title Screen" YesNoWindow.
 void dScKoopatlas_c::initializeState_TitleConfirmSelect() { }
 void dScKoopatlas_c::executeState_TitleConfirmSelect() {
-	int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+    int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-	if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
-		mpYesNoWindow->setCursorPos(1);
-	} else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
-		mpYesNoWindow->setCursorPos(0);
-	} else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
-		mpYesNoWindow->mCancel = true;
-		if (mpYesNoWindow->getCursorPos() != 1)
-			mpYesNoWindow->mKeepOpen = true;
-		mStateMgr.changeState(StateID_TitleConfirmHitWait);
-	} else {
-		if (dGameCom::chkCancelButton(0)) { // Cancel using B or 1
-			mpYesNoWindow->mCancel = true;
-			mpYesNoWindow->setCursorPos(1);
-			mStateMgr.changeState(StateID_TitleConfirmHitWait);
-		}
-	}
+    if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
+        mpYesNoWindow->setCursorPos(1);
+    } else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
+        mpYesNoWindow->setCursorPos(0);
+    } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
+        mpYesNoWindow->mCancel = true;
+        if (mpYesNoWindow->getCursorPos() != 1)
+            mpYesNoWindow->mKeepOpen = true;
+        mStateMgr.changeState(StateID_TitleConfirmHitWait);
+    } else {
+        if (dGameCom::chkCancelButton(0)) { // Cancel using B or 1
+            mpYesNoWindow->mCancel = true;
+            mpYesNoWindow->setCursorPos(1);
+            mStateMgr.changeState(StateID_TitleConfirmHitWait);
+        }
+    }
 
 }
 void dScKoopatlas_c::finalizeState_TitleConfirmSelect() { }
@@ -670,15 +670,15 @@ void dScKoopatlas_c::finalizeState_TitleConfirmSelect() { }
 //  animation to be complete.
 void dScKoopatlas_c::initializeState_TitleConfirmHitWait() { }
 void dScKoopatlas_c::executeState_TitleConfirmHitWait() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		if (mpYesNoWindow->getCursorPos() == 1) {
-			mStateMgr.changeState(StateID_Normal);
-			//mpHud->unhideAll();
-		} else {
-			mStateMgr.changeState(StateID_Limbo);
-			dScRestartCrsin_c::startTitle(false, 0);
-		}
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        if (mpYesNoWindow->getCursorPos() == 1) {
+            mStateMgr.changeState(StateID_Normal);
+            //mpHud->unhideAll();
+        } else {
+            mStateMgr.changeState(StateID_Limbo);
+            dScRestartCrsin_c::startTitle(false, 0);
+        }
+    }
 }
 void dScKoopatlas_c::finalizeState_TitleConfirmHitWait() { }
 
@@ -687,39 +687,39 @@ void dScKoopatlas_c::finalizeState_TitleConfirmHitWait() { }
 // 	Add/Drop Players screen.
 void dScKoopatlas_c::initializeState_PlayerChangeWait() { }
 void dScKoopatlas_c::executeState_PlayerChangeWait() {
-	int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+    int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-	if (NPCHG_READY(this->mpNumPeopleChange)) {
-		if (nowPressed & WPAD_BUTTON_PLUS) {
-			// activate easy pairing. FUN !!
-			NPCHG_HIDE_FOR_EASYP(this->mpNumPeopleChange) = 1;
+    if (NPCHG_READY(this->mpNumPeopleChange)) {
+        if (nowPressed & WPAD_BUTTON_PLUS) {
+            // activate easy pairing. FUN !!
+            NPCHG_HIDE_FOR_EASYP(this->mpNumPeopleChange) = 1;
 
-			for (int i = 0; i < 4; i++) {
-				void *obj = NPCHG_2DPLAYER(this->mpNumPeopleChange, i);
-				void *ccsb = NPCHG_CCSB(this->mpNumPeopleChange, i);
-				void *ccsc = NPCHG_CCSC(this->mpNumPeopleChange, i);
+            for (int i = 0; i < 4; i++) {
+                void *obj = NPCHG_2DPLAYER(this->mpNumPeopleChange, i);
+                void *ccsb = NPCHG_CCSB(this->mpNumPeopleChange, i);
+                void *ccsc = NPCHG_CCSC(this->mpNumPeopleChange, i);
 
-				PLAYER2D_SHOW_EASY_PAIRING(obj) = 1;
-				CCSB_ACTIVE(ccsb) = 1;
-				CCSC_ACTIVE(ccsc) = 1;
-			}
+                PLAYER2D_SHOW_EASY_PAIRING(obj) = 1;
+                CCSB_ACTIVE(ccsb) = 1;
+                CCSC_ACTIVE(ccsc) = 1;
+            }
 
-			EASYP_ACTIVE(this->mpEasyPairing) = 1;
-			mStateMgr.changeState(StateID_EasyPairingWait);
-		}
-	} else {
-		if (!NPCHG_ACTIVE(this->mpNumPeopleChange)) {
-			for (int i = 0; i < 4; i++) {
-				bool isThere = dGameCom::PlayerEnterCheck(i);
-				int id = daPyMng_c::mPlayerType[i];
-				daPyMng_c::mPlayerEntry[i] = isThere ? 1 : 0;
-				if (!isThere) daPyMng_c::mCreateItem[i] = 0;
-			}
+            EASYP_ACTIVE(this->mpEasyPairing) = 1;
+            mStateMgr.changeState(StateID_EasyPairingWait);
+        }
+    } else {
+        if (!NPCHG_ACTIVE(this->mpNumPeopleChange)) {
+            for (int i = 0; i < 4; i++) {
+                bool isThere = dGameCom::PlayerEnterCheck(i);
+                int id = daPyMng_c::mPlayerType[i];
+                daPyMng_c::mPlayerEntry[i] = isThere ? 1 : 0;
+                if (!isThere) daPyMng_c::mCreateItem[i] = 0;
+            }
 
-			mStateMgr.changeState(StateID_Normal);
-			//mpHud->unhideAll();
-		}
-	}
+            mStateMgr.changeState(StateID_Normal);
+            //mpHud->unhideAll();
+        }
+    }
 
 }
 void dScKoopatlas_c::finalizeState_PlayerChangeWait() { }
@@ -728,22 +728,22 @@ void dScKoopatlas_c::finalizeState_PlayerChangeWait() { }
 // STATE_EasyPairingWait : Wait for the user to exit Easy Pairing.
 void dScKoopatlas_c::initializeState_EasyPairingWait() { }
 void dScKoopatlas_c::executeState_EasyPairingWait() {
-	if (!EASYP_ACTIVE(this->mpEasyPairing)) {
-		NPCHG_HIDE_FOR_EASYP(this->mpNumPeopleChange) = 0;
+    if (!EASYP_ACTIVE(this->mpEasyPairing)) {
+        NPCHG_HIDE_FOR_EASYP(this->mpNumPeopleChange) = 0;
 
-		for (int i = 0; i < 4; i++) {
-			void *obj = NPCHG_2DPLAYER(this->mpNumPeopleChange, i);
-			void *ccsb = NPCHG_CCSB(this->mpNumPeopleChange, i);
-			void *ccsc = NPCHG_CCSC(this->mpNumPeopleChange, i);
+        for (int i = 0; i < 4; i++) {
+            void *obj = NPCHG_2DPLAYER(this->mpNumPeopleChange, i);
+            void *ccsb = NPCHG_CCSB(this->mpNumPeopleChange, i);
+            void *ccsc = NPCHG_CCSC(this->mpNumPeopleChange, i);
 
-			PLAYER2D_SHOW_EASY_PAIRING(obj) = 0;
-			CCSB_ACTIVE(ccsb) = 0;
-			CCSC_ACTIVE(ccsc) = 0;
-		}
+            PLAYER2D_SHOW_EASY_PAIRING(obj) = 0;
+            CCSB_ACTIVE(ccsb) = 0;
+            CCSC_ACTIVE(ccsc) = 0;
+        }
 
-		mStateMgr.changeState(StateID_PlayerChangeWait);
-		mPad::setGetWPADInfoInterval(10);
-	}
+        mStateMgr.changeState(StateID_PlayerChangeWait);
+        mPad::setGetWPADInfoInterval(10);
+    }
 }
 void dScKoopatlas_c::finalizeState_EasyPairingWait() { }
 
@@ -751,13 +751,13 @@ void dScKoopatlas_c::finalizeState_EasyPairingWait() { }
 // STATE_PowerupsWait : Wait for the user to exit the Powerups screen.
 void dScKoopatlas_c::initializeState_PowerupsWait() { }
 void dScKoopatlas_c::executeState_PowerupsWait() {
-	if (!mpStockItem->mIsVisible) {
-		//mpPlayer->modelHandler->mdlClass->setPowerup(daPyMng_c::mPlayerType[0]);
-		//mpPlayer->bindPats();
+    if (!mpStockItem->mIsVisible) {
+        //mpPlayer->modelHandler->mdlClass->setPowerup(daPyMng_c::mPlayerType[0]);
+        //mpPlayer->bindPats();
 
-		mStateMgr.changeState(StateID_Normal);
-		//mpHud->unhideAll();
-	}
+        mStateMgr.changeState(StateID_Normal);
+        //mpHud->unhideAll();
+    }
 }
 void dScKoopatlas_c::finalizeState_PowerupsWait() { }
 
@@ -766,10 +766,10 @@ void dScKoopatlas_c::finalizeState_PowerupsWait() { }
 // STATE_ShopWait : Wait for the user to exit the Shop screen.
 void dScKoopatlas_c::initializeState_ShopWait() { }
 void dScKoopatlas_c::executeState_ShopWait() {
-	//if (!mpShop->visible) {
-	//	mStateMgr.changeState(StateID_Normal);
-	//	//mpHud->unhideAll();
-	//}
+    //if (!mpShop->visible) {
+    //	mStateMgr.changeState(StateID_Normal);
+    //	//mpHud->unhideAll();
+    //}
 }
 void dScKoopatlas_c::finalizeState_ShopWait() { }
 
@@ -778,10 +778,10 @@ void dScKoopatlas_c::finalizeState_ShopWait() { }
 // STATE_StarCoin : Wait for the user to exit the Star Coin screen.
 void dScKoopatlas_c::initializeState_CoinsWait() { }
 void dScKoopatlas_c::executeState_CoinsWait() {
-	//if (!mpCoins->visible) {
-	//	mStateMgr.changeState(StateID_Normal);
-	//	mpHud->unhideAll();
-	//}
+    //if (!mpCoins->visible) {
+    //	mStateMgr.changeState(StateID_Normal);
+    //	mpHud->unhideAll();
+    //}
 }
 void dScKoopatlas_c::finalizeState_CoinsWait() { }
 
@@ -790,9 +790,9 @@ void dScKoopatlas_c::finalizeState_CoinsWait() { }
 void dScKoopatlas_c::initializeState_SaveOpen() { }
 void dScKoopatlas_c::finalizeState_SaveOpen() { }
 void dScKoopatlas_c::executeState_SaveOpen() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		mStateMgr.changeState(StateID_SaveSelect);
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        mStateMgr.changeState(StateID_SaveSelect);
+    }
 }
 
 /**********************************************************************/
@@ -801,24 +801,24 @@ void dScKoopatlas_c::executeState_SaveOpen() {
 void dScKoopatlas_c::initializeState_SaveSelect() { }
 void dScKoopatlas_c::finalizeState_SaveSelect() { }
 void dScKoopatlas_c::executeState_SaveSelect() {
-	int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+    int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-	if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
-		mpYesNoWindow->setCursorPos(1);
-	} else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
-		mpYesNoWindow->setCursorPos(0);
-	} else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
-		mpYesNoWindow->mHitButton = true;
-		if (mpYesNoWindow->getCursorPos() != 1)
-			mpYesNoWindow->mHideBG = true;
-		mStateMgr.changeState(StateID_SaveWindowClose);
-	} else { // Cancel using B or 1
-		if (dGameCom::chkCancelButton(0)) {
-			mpYesNoWindow->mCancel = true;
-			mpYesNoWindow->setCursorPos(1);
-			mStateMgr.changeState(StateID_SaveWindowClose);
-		}
-	}
+    if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
+        mpYesNoWindow->setCursorPos(1);
+    } else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
+        mpYesNoWindow->setCursorPos(0);
+    } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
+        mpYesNoWindow->mHitButton = true;
+        if (mpYesNoWindow->getCursorPos() != 1)
+            mpYesNoWindow->mHideBG = true;
+        mStateMgr.changeState(StateID_SaveWindowClose);
+    } else { // Cancel using B or 1
+        if (dGameCom::chkCancelButton(0)) {
+            mpYesNoWindow->mCancel = true;
+            mpYesNoWindow->setCursorPos(1);
+            mStateMgr.changeState(StateID_SaveWindowClose);
+        }
+    }
 }
 
 /**********************************************************************/
@@ -827,15 +827,15 @@ void dScKoopatlas_c::executeState_SaveSelect() {
 void dScKoopatlas_c::initializeState_SaveWindowClose() { }
 void dScKoopatlas_c::finalizeState_SaveWindowClose() { }
 void dScKoopatlas_c::executeState_SaveWindowClose() {
-	if (!mpYesNoWindow->getIsActive()) {
-		if (mpYesNoWindow->getCursorPos() == 1) {
-			mStateMgr.changeState(StateID_Normal);
-			//mpHud->unhideAll();
-		} else {
-			mStateMgr.changeState(StateID_SaveDo);
-			dCourseSelectManager_c::m_instance->saveGame(false);
-		}
-	}
+    if (!mpYesNoWindow->getIsActive()) {
+        if (mpYesNoWindow->getCursorPos() == 1) {
+            mStateMgr.changeState(StateID_Normal);
+            //mpHud->unhideAll();
+        } else {
+            mStateMgr.changeState(StateID_SaveDo);
+            dCourseSelectManager_c::m_instance->saveGame(false);
+        }
+    }
 }
 
 /**********************************************************************/
@@ -843,15 +843,15 @@ void dScKoopatlas_c::executeState_SaveWindowClose() {
 void dScKoopatlas_c::initializeState_SaveDo() { }
 void dScKoopatlas_c::finalizeState_SaveDo() { }
 void dScKoopatlas_c::executeState_SaveDo() {
-	if (!dSaveMng_c::isNandBusy()) {
-		if (dNandThread_c::m_instance->mCurrentError == 0) {
-			mpYesNoWindow->setType(dYesNoWindow_c::SAVED);
-			mpYesNoWindow->setIsActive(true);
-			mStateMgr.changeState(StateID_SaveEndWindow);
-		} else {
-			mStateMgr.changeState(StateID_SaveError);
-		}
-	}
+    if (!dSaveMng_c::isNandBusy()) {
+        if (dNandThread_c::m_instance->mCurrentError == 0) {
+            mpYesNoWindow->setType(dYesNoWindow_c::SAVED);
+            mpYesNoWindow->setIsActive(true);
+            mStateMgr.changeState(StateID_SaveEndWindow);
+        } else {
+            mStateMgr.changeState(StateID_SaveError);
+        }
+    }
 }
 
 /**********************************************************************/
@@ -859,13 +859,13 @@ void dScKoopatlas_c::executeState_SaveDo() {
 void dScKoopatlas_c::initializeState_SaveEndWindow() { }
 void dScKoopatlas_c::finalizeState_SaveEndWindow() { }
 void dScKoopatlas_c::executeState_SaveEndWindow() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
-		if (pressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) {
-			mpYesNoWindow->mHitButton = true;
-			mStateMgr.changeState(StateID_SaveEndCloseWait);
-		}
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+        if (pressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) {
+            mpYesNoWindow->mHitButton = true;
+            mStateMgr.changeState(StateID_SaveEndCloseWait);
+        }
+    }
 }
 
 /**********************************************************************/
@@ -873,10 +873,10 @@ void dScKoopatlas_c::executeState_SaveEndWindow() {
 void dScKoopatlas_c::initializeState_SaveEndCloseWait() { }
 void dScKoopatlas_c::finalizeState_SaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_SaveEndCloseWait() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		mStateMgr.changeState(StateID_Normal);
-		//mpHud->unhideAll();
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        mStateMgr.changeState(StateID_Normal);
+        //mpHud->unhideAll();
+    }
 }
 
 #ifndef DISABLE_QUICK_SAVE
@@ -885,9 +885,9 @@ void dScKoopatlas_c::executeState_SaveEndCloseWait() {
 void dScKoopatlas_c::initializeState_QuickSaveOpen() { }
 void dScKoopatlas_c::finalizeState_QuickSaveOpen() { }
 void dScKoopatlas_c::executeState_QuickSaveOpen() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		mStateMgr.changeState(StateID_QuickSaveSelect);
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        mStateMgr.changeState(StateID_QuickSaveSelect);
+    }
 }
 
 /**********************************************************************/
@@ -896,24 +896,24 @@ void dScKoopatlas_c::executeState_QuickSaveOpen() {
 void dScKoopatlas_c::initializeState_QuickSaveSelect() { }
 void dScKoopatlas_c::finalizeState_QuickSaveSelect() { }
 void dScKoopatlas_c::executeState_QuickSaveSelect() {
-	int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+    int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-	if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
-		mpYesNoWindow->setCursorPos(1);
-	} else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
-		mpYesNoWindow->setCursorPos(0);
-	} else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
-		mpYesNoWindow->mHitButton = true;
-		if (mpYesNoWindow->getCursorPos() != 1)
-			mpYesNoWindow->mHideBG = true;
-		mStateMgr.changeState(StateID_QuickSaveWindowClose);
-	} else { // Cancel using B or 1
-		if (dGameCom::chkCancelButton(0)) {
-			mpYesNoWindow->mCancel = true;
-			mpYesNoWindow->setCursorPos(1);
-			mStateMgr.changeState(StateID_QuickSaveWindowClose);
-		}
-	}
+    if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
+        mpYesNoWindow->setCursorPos(1);
+    } else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
+        mpYesNoWindow->setCursorPos(0);
+    } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
+        mpYesNoWindow->mHitButton = true;
+        if (mpYesNoWindow->getCursorPos() != 1)
+            mpYesNoWindow->mHideBG = true;
+        mStateMgr.changeState(StateID_QuickSaveWindowClose);
+    } else { // Cancel using B or 1
+        if (dGameCom::chkCancelButton(0)) {
+            mpYesNoWindow->mCancel = true;
+            mpYesNoWindow->setCursorPos(1);
+            mStateMgr.changeState(StateID_QuickSaveWindowClose);
+        }
+    }
 }
 
 /**********************************************************************/
@@ -922,15 +922,15 @@ void dScKoopatlas_c::executeState_QuickSaveSelect() {
 void dScKoopatlas_c::initializeState_QuickSaveWindowClose() { }
 void dScKoopatlas_c::finalizeState_QuickSaveWindowClose() { }
 void dScKoopatlas_c::executeState_QuickSaveWindowClose() {
-	if (!mpYesNoWindow->getIsActive()) {
-		if (mpYesNoWindow->getCursorPos() == 1) {
-			mStateMgr.changeState(StateID_Normal);
-			//mpHud->unhideAll();
-		} else {
-			mStateMgr.changeState(StateID_QuickSaveDo);
-			dCourseSelectManager_c::m_instance->saveGame(true);
-		}
-	}
+    if (!mpYesNoWindow->getIsActive()) {
+        if (mpYesNoWindow->getCursorPos() == 1) {
+            mStateMgr.changeState(StateID_Normal);
+            //mpHud->unhideAll();
+        } else {
+            mStateMgr.changeState(StateID_QuickSaveDo);
+            dCourseSelectManager_c::m_instance->saveGame(true);
+        }
+    }
 }
 
 /**********************************************************************/
@@ -938,276 +938,276 @@ void dScKoopatlas_c::executeState_QuickSaveWindowClose() {
 void dScKoopatlas_c::initializeState_QuickSaveDo() { }
 void dScKoopatlas_c::finalizeState_QuickSaveDo() { }
 void dScKoopatlas_c::executeState_QuickSaveDo() {
-	if (!dSaveMng_c::isNandBusy()) {
-		if (dNandThread_c::m_instance->mCurrentError == 0) {
-			mpYesNoWindow->setType(dYesNoWindow_c::QUICK_SAVED);
-			mpYesNoWindow->setIsActive(true);
-			mStateMgr.changeState(StateID_QuickSaveEndWindow);
-		} else {
-			mStateMgr.changeState(StateID_SaveError);
-		}
-	}
+    if (!dSaveMng_c::isNandBusy()) {
+        if (dNandThread_c::m_instance->mCurrentError == 0) {
+            mpYesNoWindow->setType(dYesNoWindow_c::QUICK_SAVED);
+            mpYesNoWindow->setIsActive(true);
+            mStateMgr.changeState(StateID_QuickSaveEndWindow);
+        } else {
+            mStateMgr.changeState(StateID_SaveError);
+        }
+    }
 }
 
 // STATE_QuickSaveEndWindow : Handle the Save End window.
 void dScKoopatlas_c::initializeState_QuickSaveEndWindow() { }
 void dScKoopatlas_c::finalizeState_QuickSaveEndWindow() { }
 void dScKoopatlas_c::executeState_QuickSaveEndWindow() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
-		if (pressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) {
-			mpYesNoWindow->mHitButton = true;
-			mStateMgr.changeState(StateID_QuickSaveEndCloseWait);
-		}
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+        if (pressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) {
+            mpYesNoWindow->mHitButton = true;
+            mStateMgr.changeState(StateID_QuickSaveEndCloseWait);
+        }
+    }
 }
 
 // STATE_QuickSaveEndCloseWait : Wait for Save End window to close
 void dScKoopatlas_c::initializeState_QuickSaveEndCloseWait() { }
 void dScKoopatlas_c::finalizeState_QuickSaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_QuickSaveEndCloseWait() {
-	if (!mpYesNoWindow->mIsAnimating) {
-		if (mpYesNoWindow->getCursorPos() == 1) {
-			mStateMgr.changeState(StateID_Normal);
-			//mpHud->unhideAll();
-		} else {
-			mStateMgr.changeState(StateID_Limbo);
-			dScRestartCrsin_c::startTitle(false, 0);
-		}
-	}
+    if (!mpYesNoWindow->mIsAnimating) {
+        if (mpYesNoWindow->getCursorPos() == 1) {
+            mStateMgr.changeState(StateID_Normal);
+            //mpHud->unhideAll();
+        } else {
+            mStateMgr.changeState(StateID_Limbo);
+            dScRestartCrsin_c::startTitle(false, 0);
+        }
+    }
 }
 #endif
 
 void dScKoopatlas_c::initializeState_SaveError() { }
 void dScKoopatlas_c::finalizeState_SaveError() { }
 void dScKoopatlas_c::executeState_SaveError() {
-	// TODO: Me!
+    // TODO: Me!
 }
 
 
 /*void dScKoopatlas_c::startLevel(dLevelInfo_c::entry_s *entry) {
-	dInfo_c::StartGameInfo_s startInfo;
-	startInfo.mMovieType = 0;
-	startInfo.mEntrance = 0xFF;
-	startInfo.mArea = 0;
-	startInfo.mIsReplay = false;
-	startInfo.mScreenType = 0;
+    dInfo_c::StartGameInfo_s startInfo;
+    startInfo.mMovieType = 0;
+    startInfo.mEntrance = 0xFF;
+    startInfo.mArea = 0;
+    startInfo.mIsReplay = false;
+    startInfo.mScreenType = 0;
 
-	startInfo.mWorld1 = entry->worldSlot;
-	startInfo.mWorld2 = entry->worldSlot;
-	startInfo.mLevel1 = entry->levelSlot;
-	startInfo.mLevel2 = entry->levelSlot;
+    startInfo.mWorld1 = entry->worldSlot;
+    startInfo.mWorld2 = entry->worldSlot;
+    startInfo.mLevel1 = entry->levelSlot;
+    startInfo.mLevel2 = entry->levelSlot;
 
-	dFader_c::setFader(dFader_c::fader_type_e::MARIO);
-	dInfo_c::m_instance->startGame(&startInfo);
+    dFader_c::setFader(dFader_c::fader_type_e::MARIO);
+    dInfo_c::m_instance->startGame(&startInfo);
 }*/
 
 
 u32 dScKoopatlas_c::iterateMapList(u32(*callback)(u32,const char *,int,int), u32 userData, int *ptrIndex) {
-	u8 *ptr = (u8*)mMapListLoader.GetBuffer();
-	u8 *strStart = ptr;
-	u8 *end = ptr + mMapListLoader.getSize();
-	int index = 0;
+    u8 *ptr = (u8*)mMapListLoader.GetBuffer();
+    u8 *strStart = ptr;
+    u8 *end = ptr + mMapListLoader.getSize();
+    int index = 0;
 
-	while (true) {
-		u8 chr = *ptr;
-		if (chr == 13) {
-			*ptr = 0;
-			++ptr;
-			continue;
-		}
+    while (true) {
+        u8 chr = *ptr;
+        if (chr == 13) {
+            *ptr = 0;
+            ++ptr;
+            continue;
+        }
 
-		if (chr == 10 || chr == 0 || ptr >= end) {
-			if (strStart == ptr) {
-				// Blank string, ignore
-				++strStart;
-				++ptr;
-				continue;
-			}
+        if (chr == 10 || chr == 0 || ptr >= end) {
+            if (strStart == ptr) {
+                // Blank string, ignore
+                ++strStart;
+                ++ptr;
+                continue;
+            }
 
-			// Change the linefeed to a NUL so we can use the line as a C string later
-			if (ptr < end)
-				*ptr = 0;
+            // Change the linefeed to a NUL so we can use the line as a C string later
+            if (ptr < end)
+                *ptr = 0;
 
-			u32 ret = callback(userData, (const char*)strStart, ptr - strStart, index);
-			if (ptrIndex)
-				*ptrIndex = index;
-			if (ret > 0)
-				return ret;
+            u32 ret = callback(userData, (const char*)strStart, ptr - strStart, index);
+            if (ptrIndex)
+                *ptrIndex = index;
+            if (ret > 0)
+                return ret;
 
-			strStart = ++ptr;
-			++index;
+            strStart = ++ptr;
+            ++index;
 
-			if (ptr >= end)
-				break;
+            if (ptr >= end)
+                break;
 
-		} else {
-			++ptr;
-		}
-	}
+        } else {
+            ++ptr;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 static u32 _cb_getIndex(u32 userData, const char *str, int size, int index) {
-	if (index == userData)
-		return (u32)str;
-	else
-		return 0;
+    if (index == userData)
+        return (u32)str;
+    else
+        return 0;
 }
 
 static u32 _cb_searchName(u32 userData, const char *str, int size, int index) {
-	if (strncmp(str, (const char*)userData, size) == 0)
-		return (u32)(index+1);
-	else
-		return 0;
+    if (strncmp(str, (const char*)userData, size) == 0)
+        return (u32)(index+1);
+    else
+        return 0;
 }
 
 const char *dScKoopatlas_c::getMapNameForIndex(int index) {
-	return (const char *)iterateMapList(&_cb_getIndex, (u32)index, 0);
+    return (const char *)iterateMapList(&_cb_getIndex, (u32)index, 0);
 }
 
 int dScKoopatlas_c::getIndexForMapName(const char *name) {
-	return ((int)iterateMapList(&_cb_searchName, (u32)name, 0)) - 1;
+    return ((int)iterateMapList(&_cb_searchName, (u32)name, 0)) - 1;
 }
 
 
 void dScKoopatlas_c::showSaveWindow() {
-	//mpHud->hideAll();
-	mStateMgr.changeState(StateID_SaveOpen);
-	mpYesNoWindow->setType(dYesNoWindow_c::SAVE);
-	mpYesNoWindow->setIsActive(true);
+    //mpHud->hideAll();
+    mStateMgr.changeState(StateID_SaveOpen);
+    mpYesNoWindow->setType(dYesNoWindow_c::SAVE);
+    mpYesNoWindow->setIsActive(true);
 }
 
 // added to bmg
 static const wchar_t *completionMsgs[] = {
-	L"The most erudite of Buttocks",
-	L"You've collected all of\nthe \x0B\x014F\xBEEF Star Coins in\n",
-	L"You have gotten every \x0B\x013B\xBEEF exit\nin",
-	L"You have gotten everything\nin",
-	L"You have collected all the\nnecessary \x0B\x014F\xBEEF coins to enter\nthe Special World!",
-	L"You have collected all the \x0B\x014F\xBEEF Star\nCoins in the game!",
-	L"You've found every \x0B\x013B\xBEEF exit in the\ngame!",
-	L"You've completed everything in\nNEWER SUPER MARIO BROS. Wii!\n\nWe present to you a new quest.\nTry pressing \x0B\x0122\xBEEF and \x0B\x0125\xBEEF\n on the Star Coin menu."
+    L"The most erudite of Buttocks",
+    L"You've collected all of\nthe \x0B\x014F\xBEEF Star Coins in\n",
+    L"You have gotten every \x0B\x013B\xBEEF exit\nin",
+    L"You have gotten everything\nin",
+    L"You have collected all the\nnecessary \x0B\x014F\xBEEF coins to enter\nthe Special World!",
+    L"You have collected all the \x0B\x014F\xBEEF Star\nCoins in the game!",
+    L"You've found every \x0B\x013B\xBEEF exit in the\ngame!",
+    L"You've completed everything in\nNEWER SUPER MARIO BROS. Wii!\n\nWe present to you a new quest.\nTry pressing \x0B\x0122\xBEEF and \x0B\x0125\xBEEF\n on the Star Coin menu."
 };
 
 void dScKoopatlas_c::initializeState_CompletionMsg() {
-	//OSReport("CompletionMsg beginning with type %d\n", mPathManager.completionMessageType);
-	static const int ynTypes[8] = {
-		/*NULL*/ -1,
-		/*COINS*/ 14,
-		/*EXITS*/ 7,
-		/*WORLD*/ 8,
-		/*COINS EXC W9*/ 9,
-		/*GLOBAL COINS*/ 11,
-		/*GLOBAL EXITS*/ 27,
-		/*EVERYTHING*/ 21
-	};
-	//mpYesNoWindow->setType(ynTypes[mPathManager.completionMessageType]);
-	mpYesNoWindow->setIsActive(true);
-	mMustFixYesNoText = 10; // hacky shit
+    //OSReport("CompletionMsg beginning with type %d\n", mPathManager.completionMessageType);
+    static const int ynTypes[8] = {
+        /*NULL*/ -1,
+        /*COINS*/ 14,
+        /*EXITS*/ 7,
+        /*WORLD*/ 8,
+        /*COINS EXC W9*/ 9,
+        /*GLOBAL COINS*/ 11,
+        /*GLOBAL EXITS*/ 27,
+        /*EVERYTHING*/ 21
+    };
+    //mpYesNoWindow->setType(ynTypes[mPathManager.completionMessageType]);
+    mpYesNoWindow->setIsActive(true);
+    mMustFixYesNoText = 10; // hacky shit
 }
 
 void dScKoopatlas_c::finalizeState_CompletionMsg() {
-	//mPathManager.completionMessagePending = false;
-	//mPathManager.completionMessageType = 0;
+    //mPathManager.completionMessagePending = false;
+    //mPathManager.completionMessageType = 0;
 }
 
 void dScKoopatlas_c::executeState_CompletionMsg() {
-	// hacky shit
-	/*(if (mMustFixYesNoText > 0) {
-		mMustFixYesNoText--;
+    // hacky shit
+    /*(if (mMustFixYesNoText > 0) {
+        mMustFixYesNoText--;
 
-		int type = mPathManager.completionMessageType;
+        int type = mPathManager.completionMessageType;
 
-		const wchar_t *baseText = completionMsgs[type];
-		// Used when we assemble a dynamic message
-		wchar_t text[512];
+        const wchar_t *baseText = completionMsgs[type];
+        // Used when we assemble a dynamic message
+        wchar_t text[512];
 
-		if (type >= CMP_MSG_COINS && type <= CMP_MSG_WORLD) {
-			// title
-			int w = mPathManager.completionMessageWorldNum;
-			int l = ((w == 5) || (w == 7)) ? 101 : 100;
-			dLevelInfo_c::entry_s *titleEntry = dLevelInfo_c::s_info.searchByDisplayNum(w, l);
-			const char *title = dLevelInfo_c::s_info.getNameForLevel(titleEntry);
+        if (type >= CMP_MSG_COINS && type <= CMP_MSG_WORLD) {
+            // title
+            int w = mPathManager.completionMessageWorldNum;
+            int l = ((w == 5) || (w == 7)) ? 101 : 100;
+            dLevelInfo_c::entry_s *titleEntry = dLevelInfo_c::s_info.searchByDisplayNum(w, l);
+            const char *title = dLevelInfo_c::s_info.getNameForLevel(titleEntry);
 
-			// assemble the string
+            // assemble the string
 
-			wcscpy(text, baseText);
-			int pos = wcslen(text);
+            wcscpy(text, baseText);
+            int pos = wcslen(text);
 
-			text[pos++] = ' ';
+            text[pos++] = ' ';
 
-			while (*title) {
-				char chr = *(title++);
-				if (chr != '-')
-					text[pos++] = chr;
-			}
+            while (*title) {
+                char chr = *(title++);
+                if (chr != '-')
+                    text[pos++] = chr;
+            }
 
-			text[pos++] = '!';
-			text[pos++] = 0;
-			baseText = text;
-		}
+            text[pos++] = '!';
+            text[pos++] = 0;
+            baseText = text;
+        }
 
-		LytTextBox_c *T_questionS_00 = mpYesNoWindow->getTextBox(0);
-		LytTextBox_c *T_question_00 = mpYesNoWindow->getTextBox(1);
-		T_question_00->SetString(baseText, 0);
-		T_questionS_00->SetString(baseText, 0);
-	}
+        LytTextBox_c *T_questionS_00 = mpYesNoWindow->getTextBox(0);
+        LytTextBox_c *T_question_00 = mpYesNoWindow->getTextBox(1);
+        T_question_00->SetString(baseText, 0);
+        T_questionS_00->SetString(baseText, 0);
+    }
 
-	if (!mpYesNoWindow->mIsAnimating) {
-		int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
-		if (pressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) {
-			mpYesNoWindow->mHitButton = true;
-			mStateMgr.changeState(StateID_CompletionMsgHideWait);
-		}
-	}*/
+    if (!mpYesNoWindow->mIsAnimating) {
+        int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+        if (pressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) {
+            mpYesNoWindow->mHitButton = true;
+            mStateMgr.changeState(StateID_CompletionMsgHideWait);
+        }
+    }*/
 }
 
 void dScKoopatlas_c::initializeState_CompletionMsgHideWait() { }
 void dScKoopatlas_c::finalizeState_CompletionMsgHideWait() { }
 void dScKoopatlas_c::executeState_CompletionMsgHideWait() {
-	if (!mpYesNoWindow->getIsActive())
-		mStateMgr.changeState(StateID_Normal);
+    if (!mpYesNoWindow->getIsActive())
+        mStateMgr.changeState(StateID_Normal);
 }
 
 
 void NewerMapDrawFunc() {
-	m3d::reset();
-	m3d::setCurrentCamera(0);
-	//m3d::screenEffectReset(0, &dWorldCamera_c::instance->screen);
-	m3d::drawLightMapTexture(0);
-	m3d::calcWorld(0);
-	m3d::calcView(0);
-	GXSetAlphaUpdate(false);
-	m3d::drawOpa();
-	m3d::drawXlu();
-	m3d::drawDone(0);
-	m2d::defaultSet();
-	m2d::drawBefore(0x81);
-	EffectManager_c::draw(0, 3);
-	EffectManager_c::draw(0, 2);
-	GXDrawDone();
-	m3d::clear();
-	m3d::reset();
-	m3d::setCurrentCamera(1);
-	dBaseActor_c::draw2DActorOnLyt1();
-	m3d::drawLightMapTexture(1);
-	m3d::calcWorld(1);
-	m3d::calcView(1);
-	m3d::calcMaterial();
-	m3d::drawOpa();
-	m3d::drawXlu();
-	m3d::drawDone(1);
-	m3d::setCurrentCamera(0);
-	for (int i = 0; i < 4; i++)
-		EffectManager_c::draw(0, 0xB+i);
-	for (int i = 0; i < 4; i++)
-		EffectManager_c::draw(0, 7+i);
-	GXDrawDone();
-	m2d::drawAfter(0x80);
-	m2d::reset();
-	m3d::setCurrentCamera(0);
+    m3d::reset();
+    m3d::setCurrentCamera(0);
+    //m3d::screenEffectReset(0, &dWorldCamera_c::instance->screen);
+    m3d::drawLightMapTexture(0);
+    m3d::calcWorld(0);
+    m3d::calcView(0);
+    GXSetAlphaUpdate(false);
+    m3d::drawOpa();
+    m3d::drawXlu();
+    m3d::drawDone(0);
+    m2d::defaultSet();
+    m2d::drawBefore(0x81);
+    EffectManager_c::draw(0, 3);
+    EffectManager_c::draw(0, 2);
+    GXDrawDone();
+    m3d::clear();
+    m3d::reset();
+    m3d::setCurrentCamera(1);
+    dBaseActor_c::draw2DActorOnLyt1();
+    m3d::drawLightMapTexture(1);
+    m3d::calcWorld(1);
+    m3d::calcView(1);
+    m3d::calcMaterial();
+    m3d::drawOpa();
+    m3d::drawXlu();
+    m3d::drawDone(1);
+    m3d::setCurrentCamera(0);
+    for (int i = 0; i < 4; i++)
+        EffectManager_c::draw(0, 0xB+i);
+    for (int i = 0; i < 4; i++)
+        EffectManager_c::draw(0, 7+i);
+    GXDrawDone();
+    m2d::drawAfter(0x80);
+    m2d::reset();
+    m3d::setCurrentCamera(0);
 }
 
 #endif

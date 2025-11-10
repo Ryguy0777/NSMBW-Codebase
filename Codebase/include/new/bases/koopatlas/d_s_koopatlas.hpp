@@ -56,95 +56,95 @@ class dWorldCamera_c;
 
 class dScKoopatlas_c : public dScene_c {
 public:
-	dScKoopatlas_c();
-	virtual ~dScKoopatlas_c();
+    dScKoopatlas_c();
+    virtual ~dScKoopatlas_c();
 
-	int create();
-	int doDelete();
-	int execute();
+    int create();
+    int doDelete();
+    int execute();
 
-	void startMusic();
+    void startMusic();
 
-	u32 iterateMapList(u32(*callback)(u32,const char *,int,int), u32 userData, int *ptrIndex = 0);
-	const char *getMapNameForIndex(int index);
-	int getIndexForMapName(const char *name);
+    u32 iterateMapList(u32(*callback)(u32,const char *,int,int), u32 userData, int *ptrIndex = 0);
+    const char *getMapNameForIndex(int index);
+    int getIndexForMapName(const char *name);
 
-	//void startLevel(dLevelInfo_c::entry_s *level);
+    //void startLevel(dLevelInfo_c::entry_s *level);
 
-	bool canDoStuff();
-	bool mapIsRunning();
+    bool canDoStuff();
+    bool mapIsRunning();
 
-	void showSaveWindow();
+    void showSaveWindow();
 
-	sPhase_c mInitChain;
+    sPhase_c mInitChain;
 
-	sFStateMgr_c<dScKoopatlas_c, sStateMethodUsr_FI_c> mStateMgr;
+    sFStateMgr_c<dScKoopatlas_c, sStateMethodUsr_FI_c> mStateMgr;
 
-	STATE_FUNC_DECLARE(dScKoopatlas_c, Limbo);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, ContinueWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, Normal);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsg);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsgHideWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, CSMenu);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmOpenWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmSelect);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmHitWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, PlayerChangeWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, EasyPairingWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, PowerupsWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, ShopWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, CoinsWait);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveOpen);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveSelect);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveWindowClose);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveDo);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveEndWindow);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveEndCloseWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, Limbo);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, ContinueWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, Normal);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsg);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsgHideWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, CSMenu);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmOpenWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmSelect);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmHitWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, PlayerChangeWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, EasyPairingWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, PowerupsWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, ShopWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, CoinsWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveOpen);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveSelect);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveWindowClose);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveDo);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveEndWindow);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveEndCloseWait);
 #ifndef DISABLE_QUICK_SAVE
-	STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveOpen);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveSelect);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveWindowClose);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveDo);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveEndWindow);
-	STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveEndCloseWait);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveOpen);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveSelect);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveWindowClose);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveDo);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveEndWindow);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveEndCloseWait);
 #endif
-	STATE_FUNC_DECLARE(dScKoopatlas_c, SaveError);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SaveError);
 
-	void *mpCSMenu;
-	void *mpSelectCursor;
-	void *mpNumPeopleChange;
-	dYesNoWindow_c *mpYesNoWindow;
-	void *mpContinueObj;
-	dStockItem_c *mpStockItem;
-	dStockItemShadow_c *mpStockItemShadow;
-	void *mpEasyPairing;
+    void *mpCSMenu;
+    void *mpSelectCursor;
+    void *mpNumPeopleChange;
+    dYesNoWindow_c *mpYesNoWindow;
+    void *mpContinueObj;
+    dStockItem_c *mpStockItem;
+    dStockItemShadow_c *mpStockItemShadow;
+    void *mpEasyPairing;
 
 
-	daWMPlayer_c *mpPlayer;
-	dWMHud_c *mpHud;
-	dWMMap_c *mpMap;
-	dWMShop_c *mpShop;
-	dWMStarCoin_c *mpCoins;
+    daWMPlayer_c *mpPlayer;
+    dWMHud_c *mpHud;
+    dWMMap_c *mpMap;
+    dWMShop_c *mpShop;
+    dWMStarCoin_c *mpCoins;
 
-	int mCurrentMapID;
-	const char *mMapPath;
-	//dKPMapData_c mMapData;
-	//dWMPathManager_c mPathManager;
+    int mCurrentMapID;
+    const char *mMapPath;
+    //dKPMapData_c mMapData;
+    //dWMPathManager_c mPathManager;
 
-	dDvd::loader_c mMapListLoader;
+    dDvd::loader_c mMapListLoader;
 
-	bool mIsFirstPlay;
-	bool mIsAfterKamekCutscene;
-	bool mIsAfter8Castle;
-	bool mIsEndingScene;
+    bool mIsFirstPlay;
+    bool mIsAfterKamekCutscene;
+    bool mIsAfter8Castle;
+    bool mIsEndingScene;
 
-	bool mWarpZoneHacks;
+    bool mWarpZoneHacks;
 
-	int mMustFixYesNoText;	
+    int mMustFixYesNoText;	
 
-	bool mKeepMusicPlaying;
+    bool mKeepMusicPlaying;
 
-	static dScKoopatlas_c *build();
-	static dScKoopatlas_c *instance; // TODO: rename to m_instance
+    static dScKoopatlas_c *build();
+    static dScKoopatlas_c *instance; // TODO: rename to m_instance
 };
 #endif
