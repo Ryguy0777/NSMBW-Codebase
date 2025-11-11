@@ -16,6 +16,7 @@ kmWriteNop(0x8077dd2c);
 #include <game/bases/d_date_file.hpp>
 #include <game/bases/d_save_mng.hpp>
 #include <game/bases/d_game_com.hpp>
+#include <new/bases/d_level_info.hpp>
 #include <new/constants/message_list.h>
 
 // Change layout name
@@ -61,6 +62,28 @@ extern "C" FileInfo *GetFileInfo(FileInfo *out, dMj2dGame_c *save) {
     out->mCoinCount = 0;
     out->mExitCount = 0;
 
+#ifdef LEVEL_INFO_ENABLED
+    for (int i = 0; i < dLevelInfo_c::m_instance.sectionCount(); i++) {
+        dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(i);
+
+        for (int j = 0; j < section->mLevelCount; j++) {
+            dLevelInfo_c::entry_s *entry = &section->mLevels[j];
+			if (entry->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL) {
+                u32 cond = save->getCourseDataFlag(entry->mWorldSlot, entry->mLevelSlot);
+                if ((entry->mFlag & 0x10) && (cond & dMj2dGame_c::GOAL_NORMAL))
+                    out->mExitCount++;
+                if ((entry->mFlag & 0x20) && (cond & dMj2dGame_c::GOAL_SECRET))
+                    out->mExitCount++;
+                if (cond & dMj2dGame_c::COIN1_COLLECTED)
+                    out->mCoinCount++;
+                if (cond & dMj2dGame_c::COIN2_COLLECTED)
+                    out->mCoinCount++;
+                if (cond & dMj2dGame_c::COIN3_COLLECTED)
+                    out->mCoinCount++;
+            }
+        }
+    }
+#else
     for (int i = 0; i < WORLD_COUNT; i++) {
         for (int j = 0; j < STAGE_COUNT; j++) {
             if ((j > STAGE_CASTLE_2 && j < STAGE_CANNON) || j == STAGE_COIN_BATTLE || j == STAGE_UNK37 || j > STAGE_DOOMSHIP)
@@ -78,6 +101,7 @@ extern "C" FileInfo *GetFileInfo(FileInfo *out, dMj2dGame_c *save) {
                 out->mCoinCount++;
         }
     }
+#endif
 
     OSReport("Done, got %d coins and %d exits\n", out->mCoinCount, out->mExitCount);
     return out;
