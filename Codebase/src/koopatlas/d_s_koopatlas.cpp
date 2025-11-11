@@ -293,14 +293,14 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     wm->mpPlayer->pos = (Vec){cNode->x, -cNode->y, wm->mpPlayer->pos.z};
 
     SpammyReport("creating MAP\n");
-    wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
+    wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);*/
     SpammyReport("creating HUD\n");
     wm->mpHud = (dWMHud_c*)fBase_c::createChild(fProfile::WM_HUD, wm, 0, 0);
     // note: world_camera is not created here
     // because we require it earlier
     // it is created in dScKoopatlas_c::onCreate
 
-    SpammyReport("creating SHOP\n");
+    /*SpammyReport("creating SHOP\n");
     wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);
 
     SpammyReport("creating Star Coin Menu\n");
@@ -549,11 +549,11 @@ void dScKoopatlas_c::executeState_Normal() {
     if (pressed & WPAD_BUTTON_1) {
         mpStockItem->mIsVisible = true;
         mStateMgr.changeState(StateID_PowerupsWait);
-        //mpHud->hideAll();
+        mpHud->hideAll();
     } else if (pressed & WPAD_BUTTON_PLUS) {
         CSMENU_ACTIVE(this->mpCSMenu) = true;
         mStateMgr.changeState(StateID_CSMenu);
-        //mpHud->hideAll();
+        mpHud->hideAll();
 #ifdef KP_PATH_DEBUG
     } else if (pressed & WPAD_BUTTON_MINUS) {
         mPathManager.unlockAllPaths(2);
@@ -621,7 +621,7 @@ void dScKoopatlas_c::executeState_CSMenu() {
 
         } else {
             // Ok, change back to STATE_Normal
-            //mpHud->unhideAll();
+            mpHud->unhideAll();
             mStateMgr.changeState(StateID_Normal);
         }
     }
@@ -673,7 +673,7 @@ void dScKoopatlas_c::executeState_TitleConfirmHitWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         if (mpYesNoWindow->getCursorPos() == 1) {
             mStateMgr.changeState(StateID_Normal);
-            //mpHud->unhideAll();
+            mpHud->unhideAll();
         } else {
             mStateMgr.changeState(StateID_Limbo);
             dScRestartCrsin_c::startTitle(false, 0);
@@ -717,7 +717,7 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
             }
 
             mStateMgr.changeState(StateID_Normal);
-            //mpHud->unhideAll();
+            mpHud->unhideAll();
         }
     }
 
@@ -756,7 +756,7 @@ void dScKoopatlas_c::executeState_PowerupsWait() {
         //mpPlayer->bindPats();
 
         mStateMgr.changeState(StateID_Normal);
-        //mpHud->unhideAll();
+        mpHud->unhideAll();
     }
 }
 void dScKoopatlas_c::finalizeState_PowerupsWait() { }
@@ -830,7 +830,7 @@ void dScKoopatlas_c::executeState_SaveWindowClose() {
     if (!mpYesNoWindow->getIsActive()) {
         if (mpYesNoWindow->getCursorPos() == 1) {
             mStateMgr.changeState(StateID_Normal);
-            //mpHud->unhideAll();
+            mpHud->unhideAll();
         } else {
             mStateMgr.changeState(StateID_SaveDo);
             dCourseSelectManager_c::m_instance->saveGame(false);
@@ -875,7 +875,7 @@ void dScKoopatlas_c::finalizeState_SaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_SaveEndCloseWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         mStateMgr.changeState(StateID_Normal);
-        //mpHud->unhideAll();
+        mpHud->unhideAll();
     }
 }
 
@@ -925,7 +925,7 @@ void dScKoopatlas_c::executeState_QuickSaveWindowClose() {
     if (!mpYesNoWindow->getIsActive()) {
         if (mpYesNoWindow->getCursorPos() == 1) {
             mStateMgr.changeState(StateID_Normal);
-            //mpHud->unhideAll();
+            mpHud->unhideAll();
         } else {
             mStateMgr.changeState(StateID_QuickSaveDo);
             dCourseSelectManager_c::m_instance->saveGame(true);
@@ -969,7 +969,7 @@ void dScKoopatlas_c::executeState_QuickSaveEndCloseWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         if (mpYesNoWindow->getCursorPos() == 1) {
             mStateMgr.changeState(StateID_Normal);
-            //mpHud->unhideAll();
+            mpHud->unhideAll();
         } else {
             mStateMgr.changeState(StateID_Limbo);
             dScRestartCrsin_c::startTitle(false, 0);
@@ -1073,7 +1073,7 @@ int dScKoopatlas_c::getIndexForMapName(const char *name) {
 
 
 void dScKoopatlas_c::showSaveWindow() {
-    //mpHud->hideAll();
+    mpHud->hideAll();
     mStateMgr.changeState(StateID_SaveOpen);
     mpYesNoWindow->setType(dYesNoWindow_c::SAVE);
     mpYesNoWindow->setIsActive(true);

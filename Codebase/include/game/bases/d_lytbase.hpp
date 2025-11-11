@@ -41,6 +41,8 @@ public:
 
     bool doDelete();
 
+    inline m2d::AnmGroup_c *GetAnimGroup() {return mpAnimGroup;};
+
 private:
     d2d::ResAccMultLoader_c mResAccessorLoader;
 

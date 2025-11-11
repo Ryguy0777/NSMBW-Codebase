@@ -48,10 +48,12 @@ public:
     AnmResV2_c *mpAnmRes;
     GroupAnimTransform_s *mpGroupAnim;
     u8 mFlags;
+    u8 mPad[3];
 };
 
 class AnmGroup_c : public AnmGroupBase_c {
 public:
+    FrameCtrl_c mFrameCtrl;
 };
 
 } // namespace m2d
