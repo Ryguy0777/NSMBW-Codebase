@@ -19,6 +19,9 @@ public:
     virtual void CalcView(const nw4r::math::MTX34 &, unsigned char, nw4r::g3d::ScnRoot *);
     virtual void DoneDraw();
 
+    void LoadScnLightInner(nw4r::g3d::ResAnmScn, float, short, unsigned long);
+    void LoadBlight(nw4r::g3d::ResFile *); ///< @unofficial
+
     char pad[0x10];
     LightTextureManager *ltMgr;
     char pad2[0x10];

@@ -5,6 +5,7 @@
 
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <new/bases/koopatlas/d_kp_music.hpp>
+#include <game/bases/d_3d.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <game/bases/d_audio.hpp>
 #include <game/bases/d_base_actor.hpp>
@@ -308,7 +309,20 @@ void dScKoopatlas_c::startMusic() {
 }
 
 void LoadMapScene() {
-    //todo.
+    d3d::createLightMgr(EGG::Heap::sCurrentHeap, 36, 8, 2, false, 0);
+    EGG::LightManager *lightMgr = m3d::getLightMgr(0);
+
+    nw4r::g3d::ResFile res = dResMng_c::m_instance->mRes.getRes("Env_world", "scene/scene.brres");
+    nw4r::g3d::ResAnmScn anmScn = res.GetResAnmScn("MainSelect");
+    anmScn.Bind(anmScn);
+
+    lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, -3);
+
+    nw4r::g3d::ResFile blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blight");
+    lightMgr->LoadBlight(&blight);
+
+    nw4r::g3d::ResFile blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blmap");
+    lightMgr->ltMgr->LoadBlmap(&blmap);
 }
 
 int dScKoopatlas_c::create() {
@@ -321,11 +335,11 @@ int dScKoopatlas_c::create() {
     EffectManager_c::freeBreff(EffectManager_c::EFF_VS);
     EffectManager_c::freeBreft(EffectManager_c::EFF_VS);
 
-    SpammyReport("LoadMapScene()\n");
+    SpammyReport("Loading lighting\n");
     LoadMapScene();
 
-    SpammyReport("Preparing lighting scene\n");
-    //dScGameSetup_c::m_instance->prepareLightScene();
+    SpammyReport("Preparing lighting scene (1)\n");
+    dScGameSetup_c::m_instance->prepareLightScene();
 
     SpammyReport("Setting Active Players\n");
     for (int i = 0; i < 4; i++) {
