@@ -64,11 +64,11 @@ class dDebugConfig_c {
     public:
         dDebugConfig_c();
 
-        void loadConfig();
+        bool loadConfig();
         void parseConfig(nw4r::ut::CharStrmReader* reader, void* bufferEnd);
         void parseConfigLine(char* key, char* param, int paramSize);
 
-        static void setupConfig();
+        static bool setupConfig();
 
         // Generic
         u8 mLaunchType;

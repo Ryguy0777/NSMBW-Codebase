@@ -56,7 +56,7 @@ public:
     u8 getCourse() const { return m_startGameInfo.mLevel1; }
     u8 getWorld() const { return m_startGameInfo.mWorld1; }
 
-    void startGame(StartGameInfo_s *info);
+    void startGame(const StartGameInfo_s &info);
 
     static dInfo_c *getInstance() {
         return m_instance;

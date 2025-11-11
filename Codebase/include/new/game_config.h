@@ -26,6 +26,8 @@
 
 //#define KOOPATLAS_ENABLED
 
+//#define LEVEL_INFO_ENABLED // MUST be enabled if using Koopatlas
+
 //#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
 
 // Koopatlas Config

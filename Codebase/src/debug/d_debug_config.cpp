@@ -259,13 +259,13 @@ void dDebugConfig_c::parseConfig(nw4r::ut::CharStrmReader* reader, void* bufferE
     } while (reader->GetCurrentPos() < bufferEnd);
 }
 
-void dDebugConfig_c::loadConfig() {
+bool dDebugConfig_c::loadConfig() {
 
     // Locate the file
     int entrynum = DVDConvertPathToEntrynum("config/debug_config.ini");
     if (entrynum == -1) {
         OSReport("Debug config not found, bailing!\n");
-        return;
+        return false;
     }
 
     // Try to load it
@@ -273,7 +273,7 @@ void dDebugConfig_c::loadConfig() {
     bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
     if (!fileLoaded) {
         OSReport("Debug config not loaded, bailing!\n");
-        return;
+        return false;
     }
 
     // Allocate the necessary space
@@ -281,7 +281,7 @@ void dDebugConfig_c::loadConfig() {
     void* buffer = EGG::Heap::alloc(size, 0x20, mHeap::g_archiveHeap);
     if (buffer == nullptr) {
         OSReport("Failed to allocate buffer, bailing!\n");
-        return;
+        return false;
     }
 
     // Read the file
@@ -299,10 +299,11 @@ void dDebugConfig_c::loadConfig() {
     // Close the file, free the buffer and return
     DVDClose(&dvdHandle);
     EGG::Heap::free(buffer, mHeap::g_archiveHeap);
+    return true;
 }
 
-void dDebugConfig_c::setupConfig() {
-    instance.loadConfig();
+bool dDebugConfig_c::setupConfig() {
+    return instance.loadConfig();
 }
 
 extern "C" void CrsinLoadFiles();

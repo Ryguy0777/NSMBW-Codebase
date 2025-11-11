@@ -155,7 +155,6 @@ int dWMHud_c::doDelete() {
     return mLayout.doDelete();
 }
 
-
 int dWMHud_c::execute() {
     if (!mLayoutLoaded) {
         return SUCCEEDED;
@@ -227,34 +226,23 @@ void dWMHud_c::playHideAnim(int id) {
 
 
 void dWMHud_c::loadHeaderInfo() {
-    /*dLevelInfo_c *levelInfo = &dLevelInfo_c::s_info;
+    /*dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
 
-    dLevelInfo_c::entry_s *infEntry = levelInfo->searchBySlot(
-            nodeForHeader->levelNumber[0]-1, nodeForHeader->levelNumber[1]-1);
+    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(
+            mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
 
     if (infEntry == 0) {
-        LevelName->SetString(L"Unknown Level Name!");
-        LevelNameS->SetString(L"Unknown Level Name!");
+        mpTextBoxes[LevelName]->SetString(L"Unknown Level Name!", 0);
+        mpTextBoxes[LevelNameS]->SetString(L"Unknown Level Name!", 0);
         return;
     }
 
     // LEVEL NAME
     wchar_t convertedLevelName[100];
     const char *sourceLevelName = levelInfo->getNameForLevel(infEntry);
-    int charCount = 0;
-    
-    while (*sourceLevelName != 0 && charCount < 99) {
-        convertedLevelName[charCount] = *sourceLevelName;
-        sourceLevelName++;
-        charCount++;
-    }
-    convertedLevelName[charCount] = 0;
 
-    LevelName->SetString(convertedLevelName);
-    LevelNameS->SetString(convertedLevelName);
-
-    // a hack because I don't feel like editing the rlyt
-    LevelName->size.x = LevelNameS->size.x = 400.0f;
+    mpTextBoxes[LevelName]->SetString(convertedLevelName, 0);
+    mpTextBoxes[LevelNameS]->SetString(convertedLevelName, 0);
 
     // LEVEL NUMBER
     wchar_t levelNumber[16];
@@ -378,7 +366,7 @@ void dWMHud_c::loadFooterInfo() {
     bool starVisibility[3];
     starVisibility[0] = false;
 
-    dLevelInfo_c *linfo = &dLevelInfo_c::s_info;
+    dLevelInfo_c *linfo = &dLevelInfo_c::m_instance;
     dLevelInfo_c::entry_s *lastLevel = linfo->searchByDisplayNum(save->newerWorldID, lastLevelIDs[save->newerWorldID]);
     if (lastLevel) {
         starVisibility[0] = (save->GetLevelCondition(lastLevel->worldSlot,lastLevel->levelSlot) & COND_NORMAL);

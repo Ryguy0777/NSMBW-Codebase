@@ -412,7 +412,7 @@ int dScKoopatlas_c::create() {
         save->setCurrentWorld(6);
     }
 
-    /*if (MaybeFinishingLevel[0] == 7 && MaybeFinishingLevel[1] == 24 && save->isCourseDataFlag(7, 24, save->GOAL_NORMAL)) {
+    /*if (MaybeFinishingLevel[0] == 7 && MaybeFinishingLevel[1] == 24 && save->isCourseDataFlag(7, 24, dMj2dGame_c::GOAL_NORMAL)) {
         mCurrentMapID = 7; // KoopaPlanetUnd
         save->setCurrentWorld(7);
         mIsAfter8Castle = true;
@@ -962,7 +962,7 @@ void dScKoopatlas_c::executeState_SaveError() {
 }
 
 
-/*void dScKoopatlas_c::startLevel(dLevelInfo_c::entry_s *entry) {
+void dScKoopatlas_c::startLevel(dLevelInfo_c::entry_s *entry) {
     dInfo_c::StartGameInfo_s startInfo;
     startInfo.mMovieType = 0;
     startInfo.mEntrance = 0xFF;
@@ -970,14 +970,14 @@ void dScKoopatlas_c::executeState_SaveError() {
     startInfo.mIsReplay = false;
     startInfo.mScreenType = 0;
 
-    startInfo.mWorld1 = entry->worldSlot;
-    startInfo.mWorld2 = entry->worldSlot;
-    startInfo.mLevel1 = entry->levelSlot;
-    startInfo.mLevel2 = entry->levelSlot;
+    startInfo.mWorld1 = entry->mWorldSlot;
+    startInfo.mWorld2 = entry->mWorldSlot;
+    startInfo.mLevel1 = entry->mLevelSlot;
+    startInfo.mLevel2 = entry->mLevelSlot;
 
-    dFader_c::setFader(dFader_c::fader_type_e::MARIO);
-    dInfo_c::m_instance->startGame(&startInfo);
-}*/
+    dFader_c::setFader(dFader_c::MARIO);
+    dInfo_c::m_instance->startGame(startInfo);
+}
 
 
 u32 dScKoopatlas_c::iterateMapList(u32(*callback)(u32,const char *,int,int), u32 userData, int *ptrIndex) {
@@ -1092,7 +1092,7 @@ void dScKoopatlas_c::finalizeState_CompletionMsg() {
 
 void dScKoopatlas_c::executeState_CompletionMsg() {
     // hacky shit
-    /*(if (mMustFixYesNoText > 0) {
+    /*if (mMustFixYesNoText > 0) {
         mMustFixYesNoText--;
 
         int type = mPathManager.completionMessageType;
@@ -1105,8 +1105,8 @@ void dScKoopatlas_c::executeState_CompletionMsg() {
             // title
             int w = mPathManager.completionMessageWorldNum;
             int l = ((w == 5) || (w == 7)) ? 101 : 100;
-            dLevelInfo_c::entry_s *titleEntry = dLevelInfo_c::s_info.searchByDisplayNum(w, l);
-            const char *title = dLevelInfo_c::s_info.getNameForLevel(titleEntry);
+            dLevelInfo_c::entry_s *titleEntry = dLevelInfo_c::m_instance.getEntryFromDispID(w, l);
+            const char *title = dLevelInfo_c::m_instance.getLevelName(titleEntry);
 
             // assemble the string
 

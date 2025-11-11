@@ -17,7 +17,7 @@
 // #include <g3dhax.h>
 // #include <sfx.h>
 
-// #include "levelinfo.h"
+#include <new/bases/d_level_info.hpp>
 // #include "koopatlas/mapdata.h"
 // #include "koopatlas/shop.h"
 // #include "koopatlas/starcoin.h"
@@ -71,7 +71,7 @@ public:
     const char *getMapNameForIndex(int index);
     int getIndexForMapName(const char *name);
 
-    //void startLevel(dLevelInfo_c::entry_s *level);
+    void startLevel(dLevelInfo_c::entry_s *level);
 
     bool canDoStuff();
     bool mapIsRunning();

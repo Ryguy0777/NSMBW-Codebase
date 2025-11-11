@@ -14,6 +14,8 @@ public:
 
     static bool IsCourseType(int, int, CourseType_e);
 
+    static void SetCourseType(int world, int level, CourseType_e type);
+
     static void SetCourseTypeForce(int world, int level, CourseType_e type);
 
     static u8 m_WorldNo;

@@ -30,6 +30,8 @@
 		<folder external="Language/TW" disc="/TW" recursive="true" />
 		<folder external="Language/US" disc="/US" recursive="true" />
 		
+		<file external="LevelInfo.bin" disc="/LevelInfo.bin" create="true"/>
+		
 		<memory offset="0x800046E4" valuefile="Code/loader.bin" />
 		<memory offset="0x80004320" value="48001164" />
 	</patch>

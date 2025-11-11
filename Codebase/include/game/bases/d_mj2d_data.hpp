@@ -235,6 +235,7 @@ public:
     inline void setCurrentPathNode(int node) {mCurrentPathNode = node;};
 
     inline int getGameCompletion() {return mGameCompletion;};
+    inline void setGameCompletion(u8 value) {mGameCompletion = value;};
 
 private:
     /// @brief Checks that the save data version matches the current one and clears the slot if not.
