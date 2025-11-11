@@ -5,7 +5,6 @@ KOOPATLAS TODO:
 - Convert file indentations to spaces
 - Go through and figure out what includes can be put in hpp files, and which should just stay in cpp
 - Properly add SaveError state
-- Fix yesNoWindows having swapped DPAD controls
 
 Things that need headers:
 - 
@@ -15,3 +14,4 @@ Others:
 
 Bugs:
 - HUD doesn't scale correctly in 4:3 mode
+- StockItem doesn't set mHasLoadedLayout to true, the class might be incorrect or its failing to set up?

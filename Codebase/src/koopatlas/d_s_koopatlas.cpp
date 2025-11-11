@@ -644,9 +644,9 @@ void dScKoopatlas_c::initializeState_TitleConfirmSelect() { }
 void dScKoopatlas_c::executeState_TitleConfirmSelect() {
     int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-    if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
+    if (nowPressed & WPAD_BUTTON_UP) { // Select "OK!"
         mpYesNoWindow->setCursorPos(1);
-    } else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
+    } else if (nowPressed & WPAD_BUTTON_DOWN) { // Select "Cancel"
         mpYesNoWindow->setCursorPos(0);
     } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
         mpYesNoWindow->mCancel = true;
@@ -803,9 +803,9 @@ void dScKoopatlas_c::finalizeState_SaveSelect() { }
 void dScKoopatlas_c::executeState_SaveSelect() {
     int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-    if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
+    if (nowPressed & WPAD_BUTTON_UP) { // Select "OK!"
         mpYesNoWindow->setCursorPos(1);
-    } else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
+    } else if (nowPressed & WPAD_BUTTON_DOWN) { // Select "Cancel"
         mpYesNoWindow->setCursorPos(0);
     } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
         mpYesNoWindow->mHitButton = true;
@@ -898,9 +898,9 @@ void dScKoopatlas_c::finalizeState_QuickSaveSelect() { }
 void dScKoopatlas_c::executeState_QuickSaveSelect() {
     int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-    if (nowPressed & WPAD_BUTTON_LEFT) { // Select "OK!"
+    if (nowPressed & WPAD_BUTTON_UP) { // Select "OK!"
         mpYesNoWindow->setCursorPos(1);
-    } else if (nowPressed & WPAD_BUTTON_RIGHT) { // Select "Cancel"
+    } else if (nowPressed & WPAD_BUTTON_DOWN) { // Select "Cancel"
         mpYesNoWindow->setCursorPos(0);
     } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
         mpYesNoWindow->mHitButton = true;
