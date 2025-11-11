@@ -2,6 +2,7 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <game/bases/d_course_select_menu.hpp>
 #include <game/bases/d_dvd.hpp>
 #include <game/bases/d_scene.hpp>
 #include <game/bases/d_stock_item.hpp>
@@ -110,7 +111,7 @@ public:
 #endif
     STATE_FUNC_DECLARE(dScKoopatlas_c, SaveError);
 
-    void *mpCSMenu;
+    dCourseSelectMenu_c *mpCourseSelectMenu;
     void *mpSelectCursor;
     void *mpNumPeopleChange;
     dYesNoWindow_c *mpYesNoWindow;

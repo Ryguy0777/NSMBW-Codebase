@@ -119,12 +119,6 @@ dScKoopatlas_c::~dScKoopatlas_c() {
 #define EASYP_SETUP_DONE(ep) (*((bool*)(((u32)(ep))+0x278)))
 #define EASYP_ACTIVE(ep) (*((bool*)(((u32)(ep))+0x279)))
 
-#define CSMENU_SETUP_DONE(csm) (*((bool*)(((u32)(csm))+0x270)))
-#define CSMENU_ACTIVE(csm) (*((bool*)(((u32)(csm))+0x271)))
-#define CSMENU_CHOICE_OK(csm) (*((bool*)(((u32)(csm))+0x272)))
-#define CSMENU_UNK(csm) (*((bool*)(((u32)(csm))+0x273)))
-#define CSMENU_CURRENT(csm) (*((int*)(((u32)(csm))+0x268)))
-
 #define NPCHG_SETUP_DONE(npc) (*((bool*)(((u32)(npc))+0x67C)))
 #define NPCHG_ACTIVE(npc) (*((bool*)(((u32)(npc))+0x67E)))
 #define NPCHG_HIDE_FOR_EASYP(npc) (*((bool*)(((u32)(npc))+0x67F)))
@@ -231,7 +225,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkLayoutLoad(void *ptr) {
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
     bool success = true;
-    success &= CSMENU_SETUP_DONE(wm->mpCSMenu);
+    success &= wm->mpCourseSelectMenu->mHasLayoutLoaded;
     OSReport("success1 %d\n", success);
     success &= SELC_SETUP_DONE(wm->mpSelectCursor);
     OSReport("success2 %d\n", success);
@@ -368,7 +362,7 @@ int dScKoopatlas_c::create() {
     this->mpSelectCursor = fBase_c::createChild(fProfile::SELECT_CURSOR, this, 0, 0);
 
     SpammyReport("cs menu\n");
-    this->mpCSMenu = fBase_c::createChild(fProfile::COURSE_SELECT_MENU, this, 0, 0);
+    this->mpCourseSelectMenu = (dCourseSelectMenu_c*)fBase_c::createChild(fProfile::COURSE_SELECT_MENU, this, 0, 0);
 
     SpammyReport("yes no window\n");
     this->mpYesNoWindow = (dYesNoWindow_c*)fBase_c::createChild(fProfile::YES_NO_WINDOW, this, 0, 0);
@@ -551,7 +545,7 @@ void dScKoopatlas_c::executeState_Normal() {
         mStateMgr.changeState(StateID_PowerupsWait);
         mpHud->hideAll();
     } else if (pressed & WPAD_BUTTON_PLUS) {
-        CSMENU_ACTIVE(this->mpCSMenu) = true;
+        mpCourseSelectMenu->mIsVisible = true;
         mStateMgr.changeState(StateID_CSMenu);
         mpHud->hideAll();
 #ifdef KP_PATH_DEBUG
@@ -573,13 +567,13 @@ void dScKoopatlas_c::executeState_CSMenu() {
     // The course select menu is currently being shown
 
     // First off, check to see if it's been hidden
-    if (!CSMENU_ACTIVE(this->mpCSMenu)) {
+    if (!mpCourseSelectMenu->mIsVisible) {
         // That means something happened
-        if (CSMENU_CHOICE_OK(this->mpCSMenu)) {
+        if (mpCourseSelectMenu->mChoiceMade) {
             // Player pressed a button
             dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
 
-            switch (CSMENU_CURRENT(this->mpCSMenu)) {
+            switch (mpCourseSelectMenu->mCurrentSelection) {
                 case 0: // Star Coins
                     //mpCoins->show();
                     mStateMgr.changeState(StateID_CoinsWait);
