@@ -9,6 +9,11 @@ KOOPATLAS TODO:
 Things that need headers:
 - dNumberOfPeopleChange_c (update kp to use this once 3d rendering is implemented)
 
+Things that could have headers (not needed, but might be helpful later on):
+- dEasyPairing_c
+- dContinue_c
+- dSelectCursor_c
+
 Others:
 - Finish porting music, it needs some dvd stuff and i need to figure out how to use the Stop func with these headers
 

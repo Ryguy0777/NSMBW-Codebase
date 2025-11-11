@@ -4,6 +4,7 @@
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <game/bases/d_course_select_menu.hpp>
 #include <game/bases/d_dvd.hpp>
+#include <game/bases/d_number_of_people_change.hpp>
 #include <game/bases/d_scene.hpp>
 #include <game/bases/d_stock_item.hpp>
 #include <game/bases/d_yes_no_window.hpp>
@@ -113,7 +114,7 @@ public:
 
     dCourseSelectMenu_c *mpCourseSelectMenu;
     void *mpSelectCursor;
-    void *mpNumPeopleChange;
+    dNumberOfPeopleChange_c *mpNumPeopleChange;
     dYesNoWindow_c *mpYesNoWindow;
     void *mpContinueObj;
     dStockItem_c *mpStockItem;

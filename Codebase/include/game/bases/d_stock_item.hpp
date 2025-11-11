@@ -1,5 +1,6 @@
 #pragma once
 
+#include <game/bases/d_a_2d_player.hpp>
 #include <game/bases/d_base.hpp>
 #include <game/bases/d_lytbase.hpp>
 #include <game/bases/d_stock_item_shadow.hpp>
@@ -36,7 +37,7 @@ public:
     nw4r::lyt::Pane *mpNullPanes[N_COUNT];
     nw4r::lyt::Picture *mpPicturePanes[P_COUNT];
 
-    void *mpPlayers[4]; // TODO: da2DPlayer_c
+    da2DPlayer_c *mpPlayers[4];
     void *mpItems[7]; // TODO: daWmItem_c
     dStockItemShadow_c *mpShadow;
 

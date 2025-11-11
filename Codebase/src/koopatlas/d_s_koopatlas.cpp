@@ -119,22 +119,6 @@ dScKoopatlas_c::~dScKoopatlas_c() {
 #define EASYP_SETUP_DONE(ep) (*((bool*)(((u32)(ep))+0x278)))
 #define EASYP_ACTIVE(ep) (*((bool*)(((u32)(ep))+0x279)))
 
-#define NPCHG_SETUP_DONE(npc) (*((bool*)(((u32)(npc))+0x67C)))
-#define NPCHG_ACTIVE(npc) (*((bool*)(((u32)(npc))+0x67E)))
-#define NPCHG_HIDE_FOR_EASYP(npc) (*((bool*)(((u32)(npc))+0x67F)))
-#define NPCHG_READY(npc) (*((bool*)(((u32)(npc))+0x680)))
-#define NPCHG_CCSB(npc,idx) (((void**)(((u32)(npc))+0x74))[(idx)])
-#define NPCHG_CCSC(npc,idx) (((void**)(((u32)(npc))+0x84))[(idx)])
-#define NPCHG_CCSA(npc,idx) (((void**)(((u32)(npc))+0x94))[(idx)])
-#define NPCHG_CCI(npc,idx) (((void**)(((u32)(npc))+0xA4))[(idx)])
-#define NPCHG_2DPLAYER(npc,idx) (((void**)(((u32)(npc))+0x64C))[(idx)])
-
-#define CCSB_ACTIVE(ccsb) (*((bool*)(((u32)(ccsb))+0x29C)))
-
-#define CCSC_ACTIVE(ccsc) (*((bool*)(((u32)(ccsc))+0x2A1)))
-
-#define PLAYER2D_SHOW_EASY_PAIRING(p2d) (*((bool*)(((u32)(p2d))+0x264)))
-
 #define CONT_LIVES(cont,idx) (((int*)(((u32)(cont))+0x2B8))[(idx)])
 #define CONT_SETUP_DONE(cont) (*((bool*)(((u32)(cont))+0x2D4)))
 #define CONT_ACTIVE(cont) (*((bool*)(((u32)(cont))+0x2D5)))
@@ -226,21 +210,14 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkLayoutLoad(void *ptr) {
 
     bool success = true;
     success &= wm->mpCourseSelectMenu->mHasLayoutLoaded;
-    OSReport("success1 %d\n", success);
     success &= SELC_SETUP_DONE(wm->mpSelectCursor);
-    OSReport("success2 %d\n", success);
-    success &= NPCHG_SETUP_DONE(wm->mpNumPeopleChange);
-    OSReport("success3 %d\n", success);
+    success &= wm->mpNumPeopleChange->mHasLayoutLoaded;
     success &= wm->mpYesNoWindow->getLayoutLoaded();
-    OSReport("success4 %d\n", success);
     success &= CONT_SETUP_DONE(wm->mpContinueObj);
-    OSReport("success5 %d\n", success);
     //success &= wm->mpStockItem->mHasLayoutLoaded; // todo: figure out why this doesn't work. is the class wrong?
-    OSReport("success6 %d\n", success);
     success &= wm->mpStockItemShadow->mHasLayoutLoaded;
-    OSReport("success7 %d\n", success);
     success &= EASYP_SETUP_DONE(wm->mpEasyPairing);
-    OSReport("success8 %d\n", success);
+
     return (sPhase_c::METHOD_RESULT_e)success;
 }
 
@@ -260,9 +237,9 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
 
     // Players for StockItem/CharaChange
     /*for (int i = 0; i < 4; i++) {
-        void *obj = dBaseActor_c::construct(fProfile::WM_2D_PLAYER, wm, i, 0, 0);
+        da2DPlayer_c *obj = (da2DPlayer_c*)dBaseActor_c::construct(fProfile::WM_2D_PLAYER, wm, i, 0, 0);
         wm->mpStockItem->mpPlayers[i] = obj;
-        NPCHG_2DPLAYER(wm->mpNumPeopleChange,i) = obj;
+        wm->mpNumPeopleChange->mpPlayers[i] = obj;
     }
 
     // StockItem powerups
@@ -368,14 +345,14 @@ int dScKoopatlas_c::create() {
     this->mpYesNoWindow = (dYesNoWindow_c*)fBase_c::createChild(fProfile::YES_NO_WINDOW, this, 0, 0);
 
     SpammyReport("number of people change\n");
-    this->mpNumPeopleChange = fBase_c::createChild(fProfile::NUMBER_OF_PEOPLE_CHANGE, this, 0, 0);
+    this->mpNumPeopleChange = (dNumberOfPeopleChange_c*)fBase_c::createChild(fProfile::NUMBER_OF_PEOPLE_CHANGE, this, 0, 0);
 
     for (int i = 0; i < 4; i++) {
         SpammyReport("ccsb %d\n", i);
-        void *ccsb = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_BASE, this, i, 0);
+        dCharacterChangeSelectBase_c *ccsb = (dCharacterChangeSelectBase_c*)fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_BASE, this, i, 0);
 
         SpammyReport("ccsc %d\n", i);
-        void *ccsc = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_CONTENTS, this, i, 0);
+        dCharacterChangeSelectContents_c *ccsc = (dCharacterChangeSelectContents_c*)fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_CONTENTS, this, i, 0);
 
         SpammyReport("ccsa %d\n", i);
         void *ccsa = fBase_c::createChild(fProfile::CHARACTER_CHANGE_SELECT_ARROW, this, i, 0);
@@ -383,10 +360,10 @@ int dScKoopatlas_c::create() {
         SpammyReport("cci %d\n", i);
         void *cci = fBase_c::createChild(fProfile::CHARACTER_CHANGE_INDICATOR, this, i, 0);
 
-        NPCHG_CCSB(this->mpNumPeopleChange, i) = ccsb;
-        NPCHG_CCSC(this->mpNumPeopleChange, i) = ccsc;
-        NPCHG_CCSA(this->mpNumPeopleChange, i) = ccsa;
-        NPCHG_CCI(this->mpNumPeopleChange, i) = cci;
+        mpNumPeopleChange->mpSelectBases[i] = ccsb;
+        mpNumPeopleChange->mpSelectContents[i] = ccsc;
+        mpNumPeopleChange->mpSelectArrows[i] = ccsa;
+        mpNumPeopleChange->mpIndicators[i] = cci;
     }
 
     SpammyReport("continue\n");
@@ -582,7 +559,7 @@ void dScKoopatlas_c::executeState_CSMenu() {
                 case 1: // Add/Drop Players
                     MapReport("Add/Drop Players was pressed\n");
                     mStateMgr.changeState(StateID_PlayerChangeWait);
-                    NPCHG_ACTIVE(this->mpNumPeopleChange) = true;
+                    mpNumPeopleChange->mIsVisible = true;
                     mPad::setGetWPADInfoInterval(10);
                     break;
 
@@ -683,26 +660,22 @@ void dScKoopatlas_c::initializeState_PlayerChangeWait() { }
 void dScKoopatlas_c::executeState_PlayerChangeWait() {
     int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
-    if (NPCHG_READY(this->mpNumPeopleChange)) {
+    if (mpNumPeopleChange->mAllowEasyPairing) {
         if (nowPressed & WPAD_BUTTON_PLUS) {
             // activate easy pairing. FUN !!
-            NPCHG_HIDE_FOR_EASYP(this->mpNumPeopleChange) = 1;
+            mpNumPeopleChange->mIsEasyPairingActive = true;
 
             for (int i = 0; i < 4; i++) {
-                void *obj = NPCHG_2DPLAYER(this->mpNumPeopleChange, i);
-                void *ccsb = NPCHG_CCSB(this->mpNumPeopleChange, i);
-                void *ccsc = NPCHG_CCSC(this->mpNumPeopleChange, i);
-
-                PLAYER2D_SHOW_EASY_PAIRING(obj) = 1;
-                CCSB_ACTIVE(ccsb) = 1;
-                CCSC_ACTIVE(ccsc) = 1;
+                mpNumPeopleChange->mpPlayers[i]->mIsEasyPairingActive = true;
+                mpNumPeopleChange->mpSelectBases[i]->mIsEasyPairingActive = true;
+                mpNumPeopleChange->mpSelectContents[i]->mIsEasyPairingActive = true;
             }
 
             EASYP_ACTIVE(this->mpEasyPairing) = 1;
             mStateMgr.changeState(StateID_EasyPairingWait);
         }
     } else {
-        if (!NPCHG_ACTIVE(this->mpNumPeopleChange)) {
+        if (!mpNumPeopleChange->mIsVisible) {
             for (int i = 0; i < 4; i++) {
                 bool isThere = dGameCom::PlayerEnterCheck(i);
                 int id = daPyMng_c::mPlayerType[i];
@@ -723,16 +696,12 @@ void dScKoopatlas_c::finalizeState_PlayerChangeWait() { }
 void dScKoopatlas_c::initializeState_EasyPairingWait() { }
 void dScKoopatlas_c::executeState_EasyPairingWait() {
     if (!EASYP_ACTIVE(this->mpEasyPairing)) {
-        NPCHG_HIDE_FOR_EASYP(this->mpNumPeopleChange) = 0;
+        mpNumPeopleChange->mIsEasyPairingActive = false;
 
         for (int i = 0; i < 4; i++) {
-            void *obj = NPCHG_2DPLAYER(this->mpNumPeopleChange, i);
-            void *ccsb = NPCHG_CCSB(this->mpNumPeopleChange, i);
-            void *ccsc = NPCHG_CCSC(this->mpNumPeopleChange, i);
-
-            PLAYER2D_SHOW_EASY_PAIRING(obj) = 0;
-            CCSB_ACTIVE(ccsb) = 0;
-            CCSC_ACTIVE(ccsc) = 0;
+            mpNumPeopleChange->mpPlayers[i]->mIsEasyPairingActive = false;
+            mpNumPeopleChange->mpSelectBases[i]->mIsEasyPairingActive = false;
+            mpNumPeopleChange->mpSelectContents[i]->mIsEasyPairingActive = false;
         }
 
         mStateMgr.changeState(StateID_PlayerChangeWait);
