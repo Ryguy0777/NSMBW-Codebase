@@ -18,6 +18,7 @@ kmWriteNop(0x8077dd2c);
 #include <game/bases/d_game_com.hpp>
 #include <new/bases/d_level_info.hpp>
 #include <new/constants/message_list.h>
+#include <new/level_info_utils.hpp>
 
 // Change layout name
 const char *newerDateFileName = "dateFile_newer/dateFile.arc";
@@ -110,13 +111,8 @@ extern "C" FileInfo *GetFileInfo(FileInfo *out, dMj2dGame_c *save) {
 void setFileInfo(dDateFile_c *this_, dMj2dGame_c *save) {
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-    ulong id = save->getCurrentWorld()+1;
-    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, id) == nullptr) {
-        // the bmg entry for the world name doesn't exist, go to the fallback
-        id = 0;
-    }
-
-    this_->mpTextBoxes[this_->T_worldNumber_01]->setMessage(msgRes, BMG_CATEGORY_WORLD_NAMES, id, 0);
+    const wchar_t *str = getWorldName(save->getCurrentWorld()+1);
+    this_->mpTextBoxes[this_->T_worldNumber_01]->SetString(str, 0);
 
     // TODO: Implement file colors once a way to store them is decided
 

@@ -539,7 +539,7 @@ void dScKoopatlas_c::executeState_Normal() {
         mpCourseSelectMenu->mIsVisible = true;
         mStateMgr.changeState(StateID_CSMenu);
         mpHud->hideAll();
-#ifdef KP_PATH_DEBUG
+#ifdef KP_PATH_QUICK_UNLOCK
     } else if (pressed & WPAD_BUTTON_MINUS) {
         mPathManager.unlockAllPaths(2);
     } else if (pressed & WPAD_BUTTON_A) {

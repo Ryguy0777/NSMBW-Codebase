@@ -10,6 +10,14 @@
 #include <nw4r/math.h>
 #include <nw4r/ut.h>
 
+/// @unofficial
+struct ExtUserData_s {
+    char mMagic[4];
+    u32 mSize;
+    u16 mEntryCount;
+    u8 mPad[2];
+};
+
 namespace nw4r {
 namespace lyt {
 
@@ -265,6 +273,8 @@ public:
         return mbUserAllocated;
     }
 
+    ExtUserData_s *FindExtUserDataByName(const char *name);
+
 protected:
     Pane* mpParent;              // at 0xC
     PaneList mChildList;         // at 0x10
@@ -279,7 +289,7 @@ protected:
     math::MTX34 mMtx;    // at 0x54
     math::MTX34 mGlbMtx; // at 0x84
 
-    ulong mExtUserDataNum; // at 0xB4
+    ulong mExtUserDataNum; // at 0xB4 
 
     u8 mAlpha;        // at 0xB8
     u8 mGlbAlpha;     // at 0xB9

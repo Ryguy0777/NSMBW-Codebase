@@ -11,6 +11,7 @@
 #include <lib/egg/core/eggMsgRes.h>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>
+#include <new/level_info_utils.hpp>
 
 // Change layout name
 const char *newerPregameName = "preGame_newer/preGame.arc";
@@ -49,60 +50,6 @@ kmWritePointer(0x80B88874, "P_bat_00");
 kmWritePointer(0x80B88878, "P_bat_00");
 kmWritePointer(0x80B888D4, "P_bat_00");
 
-ulong pregameGetLevelNumberID(u8 world, u8 level) {
-    dInfo_c::m_instance->mDisplayCourseWorld = world + 1;
-    dInfo_c::m_instance->mDisplayCourseNum = level + 1;
-    switch (level) {
-        case 20: // ghost house
-            return 2;
-        case 21:  // tower
-        case 22:
-            return 3;
-        case 23: // castle
-        case 24:
-            if (world == 7)
-                return 5;
-            return 4;
-        case 25: // toad houses
-        case 26:
-        case 27:
-        case 28:
-        case 29:
-        case 30:
-        case 31:
-            if (dScWMap_c::IsCourseType(world, level, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
-                return 6; // 1-up house
-            } else if (dScWMap_c::IsCourseType(world, level, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
-                return 7; // star house
-            } else {
-                return 8; // red house
-            }
-        case 32: // ambush
-        case 33:
-        case 34:
-            return 9;
-        case 35: // cannon
-            return 0xA;
-        case 36: // unused? airship
-            return 0xB;
-        case 37: // airship
-            if (dWmLib::isKoopaShipAnchor())
-                return 0xC;
-            return 0xB;
-        case 38: // start point
-            if (dWmLib::isStartPointKinokoHouseStar()) {
-                return 7; // star house
-            } else if (dWmLib::isStartPointKinokoHouseRed) {
-                return 8; // red house
-            } else {
-                return 6; // 1-up house
-            }
-        case 40: // peach's castle
-            return 0xD;
-        default: // normal levels
-            return 1;
-    }
-}
 
 void *pregameTPLbuffer = nullptr;
 
@@ -116,21 +63,14 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
     LevelNameShadow = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelNameShadow");
     LevelName = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelName");
 
-    MsgRes_c *msgRes = dMessage_c::getMesRes();
     // grab names based on world + level number
-    ulong category = BMG_CATEGORY_LEVEL_NAMES + dInfo_c::m_startGameInfo.mWorld1+1;
-    ulong id = dInfo_c::m_startGameInfo.mLevel1+1;
-    
-    if (msgRes->getMsgEntry(category, id) == nullptr) {
-        // the bmg entry for the level name doesn't exist, go to the fallback
-        category = BMG_CATEGORY_LEVEL_NAMES;
-        id = 0;
-    }
+    const wchar_t *name = getLevelName(dInfo_c::m_startGameInfo.mWorld1+1, dInfo_c::m_startGameInfo.mLevel1+1);
+    LevelNameShadow->SetString(name, 0);
+    LevelName->SetString(name, 0);
 
-    LevelNameShadow->setMessage(msgRes, category, id, 0);
-    LevelName->setMessage(msgRes, category, id, 0);
-
-    ulong number = pregameGetLevelNumberID(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1);
+    // grab the level number
+    MsgRes_c *msgRes = dMessage_c::getMesRes();
+    ulong number = getLevelNumberIdx(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1);
 
     LevelNumShadow->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
     LevelNum->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);

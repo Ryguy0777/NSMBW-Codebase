@@ -24,17 +24,23 @@
 
 #define DISABLE_QUICK_SAVE
 
-//#define KOOPATLAS_ENABLED
+//#define LEVEL_INFO_ENABLED
 
-//#define LEVEL_INFO_ENABLED // MUST be enabled if using Koopatlas
+//#define LEVEL_INFO_UTILS_ENABLED
+
+//#define KOOPATLAS_ENABLED
 
 //#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
 
-// Koopatlas Config
-#ifdef KOOPATLAS_ENABLED
+// KOOPATLAS CONFIG
+#ifdef KOOPATLAS_DEV_ENABLED
 
-#define KP_MUSIC_REPORT
-#define KP_MUSIC_DEBUGPRINT
-//#define KP_PATH_DEBUG
+    // Dependencies, do not disable
+    #define LEVEL_INFO_ENABLED
+
+    // Optional
+    #define KP_MUSIC_REPORT
+    #define KP_MUSIC_DEBUGPRINT
+    //#define KP_PATH_QUICK_UNLOCK
 
 #endif

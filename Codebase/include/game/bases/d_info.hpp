@@ -76,7 +76,8 @@ public:
     int mDisplayCourseNum;
     u8 pad6[0x1d];
     bool mExtensionAttached;
-    u8 pad7[0x8];
+    bool mShadowFlag;
+    u8 pad7[0x7];
     int mCourseSelectPageNum;
     int mCourseSelectIndexInPage;
     u8 pad8[0x710];
