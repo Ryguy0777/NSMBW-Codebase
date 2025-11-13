@@ -39,7 +39,7 @@ void collectionCoinDate_loadInfo(dCollectionCoinDate_c *this_) {
     dLevelInfo_c::entry_s *level = dLevelInfo_c::m_instance.getEntryFromSlotID(this_->mWorldNumber, this_->mLevelNumber);
     if (level) {
         const wchar_t *worldName = getWorldNumber(level->mDisplayWorld);
-        ulong number = getLevelNumberIdx(level->mDisplayWorld, level->mDisplayLevel, true);
+        ulong number = getLevelNumberIdx(level->mDisplayWorld, level->mDisplayLevel, level->mWorldSlot, level->mLevelSlot, true);
         MsgRes_c *msgRes = dMessage_c::getMesRes();
 
         this_->mpTextBoxes[dCollectionCoinDate_c::T_worldNum_00]->SetString(worldName, 0);

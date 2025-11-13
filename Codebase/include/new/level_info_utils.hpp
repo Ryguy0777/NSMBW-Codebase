@@ -12,7 +12,7 @@ const wchar_t *getLevelName(int dispWorld, int dispLevel);
 const wchar_t *getWorldNumber(int world);
 const wchar_t *getLevelNumber(int levelNumIdx);
 
-ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, bool doNotUseAnchor);
+ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, u8 worldSlot, u8 levelSlot, bool doNotUseAnchor);
 const wchar_t *getCombinedLevelNumber(int levelNumIdx);
 
 u32 getStartingHouseKind();

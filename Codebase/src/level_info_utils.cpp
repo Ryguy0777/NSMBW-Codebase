@@ -49,7 +49,7 @@ const wchar_t *getLevelNumber(int levelNumIdx) {
         return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_ICONS, 0);
 }
 
-ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, bool doNotUseAnchor) {
+ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, u8 worldSlot, u8 levelSlot, bool doNotUseAnchor) {
     dInfo_c::m_instance->mDisplayCourseWorld = dispWorld;
     dInfo_c::m_instance->mDisplayCourseNum = dispLevel;
     switch (dispLevel) {
@@ -70,9 +70,9 @@ ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, bool doNotUseAnchor) {
         case 30:
         case 31:
         case 32:
-            if (dScWMap_c::IsCourseType(dispWorld, dispLevel, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
+            if (dScWMap_c::IsCourseType(worldSlot, levelSlot, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
                 return 6; // 1-up house
-            } else if (dScWMap_c::IsCourseType(dispWorld, dispLevel, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
+            } else if (dScWMap_c::IsCourseType(worldSlot, levelSlot, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
                 return 7; // star house
             } else {
                 return 8; // red house

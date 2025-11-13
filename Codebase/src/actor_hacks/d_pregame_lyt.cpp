@@ -73,7 +73,7 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
     dLevelInfo_c::entry_s *level = dLevelInfo_c::m_instance.getEntryFromSlotID(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1);
     ulong number;
     if (level) {
-        ulong number = getLevelNumberIdx(level->mDisplayWorld, level->mDisplayLevel, false);
+        number = getLevelNumberIdx(level->mDisplayWorld, level->mDisplayLevel, level->mWorldSlot, level->mLevelSlot, false);
     } else {
         number = 1; // Just print whatever the level slot is
     }
