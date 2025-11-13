@@ -17,27 +17,27 @@ kmBranchDefAsm(0x80794468, 0x807945A8) {
 }
 
 void loadInfo(dModelPlayDate_c *this_) {
-	dLevelInfo_c::entry_s *level = dLevelInfo_c::m_instance.getEntryFromSlotID(this_->mWorldNum, this_->mCourseNum);
-	if (level) {
-		const wchar_t *worldName = getWorldNumber(level->mDisplayWorld);
-		ulong number = getLevelNumberIdx(level->mWorldSlot, level->mLevelSlot, true);
-		MsgRes_c *msgRes = dMessage_c::getMesRes();
+    dLevelInfo_c::entry_s *level = dLevelInfo_c::m_instance.getEntryFromSlotID(this_->mWorldNum, this_->mCourseNum);
+    if (level) {
+        const wchar_t *worldName = getWorldNumber(level->mDisplayWorld);
+        ulong number = getLevelNumberIdx(level->mDisplayWorld, level->mDisplayLevel, true);
+        MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-		this_->mpTextBoxes[dModelPlayDate_c::T_worldNum_00]->SetString(worldName, 0);
-		if (level->mDisplayLevel > 19) {
-			this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetVisible(false);
-			this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->SetVisible(true);
-			this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->setMessage(msgRes, BMG_CATEGORY_LEVEL_ICONS, number, 0);
-		} else {
-			this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->SetVisible(false);
-			this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetVisible(true);
-			this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->setMessage(msgRes, BMG_CATEGORY_LEVEL_ICONS, number, 0);
-		}
-	} else {
-		this_->mpTextBoxes[dModelPlayDate_c::T_worldNum_00]->SetString(getWorldNumber(0), 0);
-		this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->SetVisible(false);
-		this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetVisible(true);
-		this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetString(getLevelNumber(0), 0);
-	}
+        this_->mpTextBoxes[dModelPlayDate_c::T_worldNum_00]->SetString(worldName, 0);
+        if (level->mDisplayLevel > 19) {
+            this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetVisible(false);
+            this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->SetVisible(true);
+            this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->setMessage(msgRes, BMG_CATEGORY_LEVEL_ICONS, number, 0);
+        } else {
+            this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->SetVisible(false);
+            this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetVisible(true);
+            this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->setMessage(msgRes, BMG_CATEGORY_LEVEL_ICONS, number, 0);
+        }
+    } else {
+        this_->mpTextBoxes[dModelPlayDate_c::T_worldNum_00]->SetString(getWorldNumber(0), 0);
+        this_->mpTextBoxes[dModelPlayDate_c::T_pictureFont_00]->SetVisible(false);
+        this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetVisible(true);
+        this_->mpTextBoxes[dModelPlayDate_c::T_worldCourse_00]->SetString(getLevelNumber(0), 0);
+    }
 }
 #endif

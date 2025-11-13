@@ -8,7 +8,6 @@
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>
-#include <new/bases/d_level_info.hpp>
 #include <new/constants/message_list.h>
 #include <new/level_info_utils.hpp>
 
@@ -25,10 +24,10 @@ const wchar_t *getWorldName(int world) {
 }
 
 // Returns the name of a level, uses the display IDs
-const wchar_t *getLevelName(int displayWorld, int displayLevel) {
+const wchar_t *getLevelName(int dispWorld, int dispLevel) {
     EGG::MsgRes *msgRes = dMessage_c::getMesRes();
-    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES+displayWorld, displayLevel) != nullptr)
-        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES+displayWorld, displayLevel);
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES+dispWorld, dispLevel) != nullptr)
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES+dispWorld, dispLevel);
     else
         return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES, 0);
 }
@@ -50,47 +49,47 @@ const wchar_t *getLevelNumber(int levelNumIdx) {
         return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_ICONS, 0);
 }
 
-ulong getLevelNumberIdx(u8 world, u8 level, bool doNotUseAnchor) {
-    dInfo_c::m_instance->mDisplayCourseWorld = world + 1;
-    dInfo_c::m_instance->mDisplayCourseNum = level + 1;
-    switch (level) {
-        case 20: // ghost house
+ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, bool doNotUseAnchor) {
+    dInfo_c::m_instance->mDisplayCourseWorld = dispWorld;
+    dInfo_c::m_instance->mDisplayCourseNum = dispLevel;
+    switch (dispLevel) {
+        case 21: // ghost house
             return 2;
-        case 21:  // tower
-        case 22:
+        case 22:  // tower
+        case 23:
             return 3;
-        case 23: // castle
-        case 24:
-            if (world == 7)
+        case 24: // castle
+        case 25:
+            if (dispWorld == 8)
                 return 5;
             return 4;
-        case 25: // toad houses
-        case 26:
+        case 26: // toad houses
         case 27:
         case 28:
         case 29:
         case 30:
         case 31:
-            if (dScWMap_c::IsCourseType(world, level, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
+        case 32:
+            if (dScWMap_c::IsCourseType(dispWorld, dispLevel, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
                 return 6; // 1-up house
-            } else if (dScWMap_c::IsCourseType(world, level, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
+            } else if (dScWMap_c::IsCourseType(dispWorld, dispLevel, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
                 return 7; // star house
             } else {
                 return 8; // red house
             }
-        case 32: // ambush
-        case 33:
+        case 33: // ambush
         case 34:
+        case 35:
             return 9;
-        case 35: // cannon
+        case 36: // cannon
             return 0xA;
-        case 36: // unused? airship
+        case 37: // unused? airship
             return 0xB;
-        case 37: // airship
+        case 38: // airship
             if (dWmLib::isKoopaShipAnchor() && !doNotUseAnchor)
                 return 0xC;
             return 0xB;
-        case 38: // start point
+        case 39: // start point
             if (dWmLib::isStartPointKinokoHouseStar()) {
                 return 7; // star house
             } else if (dWmLib::isStartPointKinokoHouseRed) {
@@ -98,7 +97,7 @@ ulong getLevelNumberIdx(u8 world, u8 level, bool doNotUseAnchor) {
             } else {
                 return 6; // 1-up house
             }
-        case 40: // peach's castle
+        case 41: // peach's castle
             return 0xD;
         default: // normal levels
             return 1;
@@ -148,15 +147,5 @@ kmBranchDefCpp(0x800B4F90, NULL, int, int worldNum, int levelNum) {
         }
     }
     return STAGE_INVALID;
-}
-
-extern "C" bool isHomeCourseClear(int world); // 800FCB30
-
-u32 getStartingHouseKind() {
-    if (!isHomeCourseClear(dScWMap_c::m_WorldNo)) {
-        return 0;
-    } else {
-        return dWmLib::getStartPointKinokoHouseKindNum();
-    }
 }
 #endif
