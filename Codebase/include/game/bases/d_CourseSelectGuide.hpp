@@ -125,6 +125,7 @@ private:
     /// @unofficial
     void PlayerIconSet();
 
+public:
     /**
      * @brief Updates the textbox that displays the current course.
      * @param type The point type.
@@ -133,6 +134,7 @@ private:
      */
     void CourseSelectSet(dWmLib::PointType_e type);
 
+private:
     bool IsDirectionAllowed(int dir); ///< Returns whether the arrow for direction @p dir should be shown. @unofficial
 
     /**
@@ -216,7 +218,7 @@ private:
     LytTextBox_c *mpTextBoxes[T_COUNT]; ///< The textboxes of the view.
     nw4r::lyt::Picture *mpPicturePanes[P_COUNT]; ///< The picture panes of the view.
 
-    Remocon::EXTENSION_TYPE_e mExtension; ///< The currently attached Wii remote extension.
+    dGameKeyCore_c::EXTENSION_TYPE_e mExtension; ///< The currently attached Wii remote extension.
     int mWorldNo; ///< The current world number.
     int mCourseNo; ///< The current course number. Set to a negative value if it's a course with an icon.
     int mCourseType; ///< The current course type. @todo Document this enum.

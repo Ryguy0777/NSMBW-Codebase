@@ -92,10 +92,12 @@ ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, u8 worldSlot, u8 levelSlot, 
         case 39: // start point
             if (dWmLib::isStartPointKinokoHouseStar()) {
                 return 7; // star house
-            } else if (dWmLib::isStartPointKinokoHouseRed) {
+            } else if (dWmLib::isStartPointKinokoHouseRed()) {
                 return 8; // red house
-            } else {
+            } else if (dWmLib::isStartPointKinokoHouse1up()){
                 return 6; // 1-up house
+            } else {
+                return (dWmLib::getStartPointType()) ? 0xE : 0xF;
             }
         case 41: // peach's castle
             return 0xD;

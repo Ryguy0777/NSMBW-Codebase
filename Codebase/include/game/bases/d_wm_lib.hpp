@@ -55,7 +55,9 @@ namespace dWmLib {
     bool isKoopaShipAnchor();
     u8 getStartPointKinokoHouseKindNum();
     bool isStartPointKinokoHouseStar();
+    bool isStartPointKinokoHouse1up();
     bool isStartPointKinokoHouseRed();
+    int getStartPointType();
     bool IsCourseClear(int world, int course);
     int getPointDir(const mVec3_c &v1, const mVec3_c &v2);
     int GetCurrentPlayResultStatus();
