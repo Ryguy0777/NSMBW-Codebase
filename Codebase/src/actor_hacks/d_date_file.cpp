@@ -111,7 +111,7 @@ extern "C" FileInfo *GetFileInfo(FileInfo *out, dMj2dGame_c *save) {
 void setFileInfo(dDateFile_c *this_, dMj2dGame_c *save) {
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-    const wchar_t *str = getWorldName(save->getCurrentWorld()+1);
+    const wchar_t *str = getWorldName(save->getCurrentWorld());
     this_->mpTextBoxes[this_->T_worldNumber_01]->SetString(str, 0);
 
     // TODO: Implement file colors once a way to store them is decided

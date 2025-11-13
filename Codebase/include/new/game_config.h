@@ -10,6 +10,7 @@
 
 //#define NO_2_CASTLE_MAZE
 
+// Requires LevelInfo and the utils to be enabled
 //#define NEWER_PREGAME
 
 #define NO_SUPER_GUIDE
@@ -20,12 +21,12 @@
 
 //#define NO_TIMER
 
+// Requires LevelInfo and the utils to be enabled
 //#define NEWER_FILE_SELECT
 
 #define DISABLE_QUICK_SAVE
 
 //#define LEVEL_INFO_ENABLED
-
 //#define LEVEL_INFO_UTILS_ENABLED
 
 //#define KOOPATLAS_ENABLED

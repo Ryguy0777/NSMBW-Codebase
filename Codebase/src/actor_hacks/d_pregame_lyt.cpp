@@ -70,7 +70,7 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
 
     // grab the level number
     MsgRes_c *msgRes = dMessage_c::getMesRes();
-    ulong number = getLevelNumberIdx(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1);
+    ulong number = getLevelNumberIdx(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1, false);
 
     LevelNumShadow->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
     LevelNum->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);

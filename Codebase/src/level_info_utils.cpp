@@ -14,85 +14,21 @@
 
 #define STAGE_INVALID 42
 
-static const wchar_t *levelNumbers[] = {
-    //mariofont
-    L"0",
-    L"1",
-    L"2",
-    L"3",
-    L"4",
-    L"5",
-    L"6",
-    L"7",
-    L"8",
-    L"9",
-    L"A", //10
-    L"B", //11
-    L"C", //12
-    L"D", //13
-    L"E", //14
-    L"F", //15
-    L".", //16
-    L":", //17
-    L"!", //18
-    L"?", //19
-    //picturefont
-    L"G", //20, coin
-    L"0", //21, ghost house
-    L"/", //22, tower
-    L"/", //23, tower 2
-    L".", //24, castle
-    L"=", //25, bowser castle
-    L"9", //26, green house
-    L"3", //27, red house
-    L"8", //28, star house
-    L"3", //29, red house
-    L"@", //30, ?-block
-    L"A", //31, red block
-    L"B", //32, outlined block
-    L">", //33, ambush
-    L">", //34, ambush
-    L">", //35, ambush
-    L"1", //36, cannon
-    L"?", //37, anchor
-    L"2", //38, airship
-    L"5", //39, up arrow
-    L"4", //40, right arrow
-    L"7", //41, peach castle
-    L"6", //42, dot
-};
-
-static const wchar_t *worldNumbers[] = {
-    L"0",
-    L"1",
-    L"2",
-    L"3",
-    L"4",
-    L"5",
-    L"6",
-    L"7",
-    L"8",
-    L"9",
-    L"A",
-    L"B",
-    L"C",
-    L"D",
-    L"E",
-    L"F",
-};
-
+// Returns the name of a world
+// Use the internal world number instead of the in-game one
 const wchar_t *getWorldName(int world) {
     EGG::MsgRes *msgRes = dMessage_c::getMesRes();
-    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, world) != nullptr)
-        return dMessage_c::getMsg(BMG_CATEGORY_WORLD_NAMES, world);
+    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, world+1) != nullptr)
+        return dMessage_c::getMsg(BMG_CATEGORY_WORLD_NAMES, world+1);
     else
         return dMessage_c::getMsg(BMG_CATEGORY_WORLD_NAMES, 0);
 }
 
-const wchar_t *getLevelName(int world, int level) {
+// Returns the name of a level, uses the display IDs
+const wchar_t *getLevelName(int displayWorld, int displayLevel) {
     EGG::MsgRes *msgRes = dMessage_c::getMesRes();
-    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES+world, level) != nullptr)
-        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES+world, level);
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES+displayWorld, displayLevel) != nullptr)
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES+displayWorld, displayLevel);
     else
         return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES, 0);
 }
@@ -105,37 +41,16 @@ const wchar_t *getWorldNumber(int world) {
         return dMessage_c::getMsg(BMG_CATEGORY_WORLD_NUMBERS, 0);
 }
 
-const wchar_t *getLevelNumber(int level) {
+// Returns a level number or icon
+const wchar_t *getLevelNumber(int levelNumIdx) {
     EGG::MsgRes *msgRes = dMessage_c::getMesRes();
-    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NUMBERS, level) != nullptr)
-        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NUMBERS, level);
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_ICONS, levelNumIdx) != nullptr)
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_ICONS, levelNumIdx);
     else
-        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NUMBERS, 0);
-
-    // todo: implement
-    /*if ((level >= 39) && (level <= 40)) {
-        switch(getStartingHouseKind()) {
-            case 0: //arrow
-                return levelNumbers[level];
-                break;
-            case 1: //yellow
-            case 4:
-                return levelNumbers[28];
-                break;
-            case 2: //red
-            case 5:
-                return levelNumbers[29];
-                break;
-            case 3: //green
-            case 6:
-                return levelNumbers[26];
-                break;
-        }
-    }
-    return levelNumbers[level];*/
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_ICONS, 0);
 }
 
-ulong getLevelNumberIdx(u8 world, u8 level) {
+ulong getLevelNumberIdx(u8 world, u8 level, bool doNotUseAnchor) {
     dInfo_c::m_instance->mDisplayCourseWorld = world + 1;
     dInfo_c::m_instance->mDisplayCourseNum = level + 1;
     switch (level) {
@@ -172,7 +87,7 @@ ulong getLevelNumberIdx(u8 world, u8 level) {
         case 36: // unused? airship
             return 0xB;
         case 37: // airship
-            if (dWmLib::isKoopaShipAnchor())
+            if (dWmLib::isKoopaShipAnchor() && !doNotUseAnchor)
                 return 0xC;
             return 0xB;
         case 38: // start point
@@ -190,6 +105,7 @@ ulong getLevelNumberIdx(u8 world, u8 level) {
     }
 }
 
+// Returns a combined "World X-X" identifier, used by Newer layouts
 const wchar_t *getCombinedLevelNumber(int levelNumIdx) {
     EGG::MsgRes *msgRes = dMessage_c::getMesRes();
     if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES, levelNumIdx) != nullptr)
