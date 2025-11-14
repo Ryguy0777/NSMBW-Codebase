@@ -37,6 +37,7 @@ These features are complete and should be fully functional.
 * Rotation controlled coin hacks
 * Newer-esque file select (togglable)
 * Removal of Quick Save (togglable)
+* Level Names/Info (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -57,7 +58,6 @@ These features are planned to be implemented in the future.
 * FlowerTiles
 * 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss sprite
-* Level Names/Info (togglable)
 * Triple ? Block sprite
 * Effect/SFX Spawner sprite
 * Hammer Suit/More Powerups (togglable)
