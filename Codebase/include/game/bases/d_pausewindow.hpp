@@ -10,6 +10,7 @@
 /// @ingroup bases
 class Pausewindow_c : public dBase_c {
 public:
+    friend class dLevelInfoUtils_c;
 
     /// @brief The text boxes used in the layout.
     /// @unofficial

@@ -125,7 +125,6 @@ private:
     /// @unofficial
     void PlayerIconSet();
 
-public:
     /**
      * @brief Updates the textbox that displays the current course.
      * @param type The point type.
@@ -134,7 +133,6 @@ public:
      */
     void CourseSelectSet(dWmLib::PointType_e type);
 
-private:
     bool IsDirectionAllowed(int dir); ///< Returns whether the arrow for direction @p dir should be shown. @unofficial
 
     /**
@@ -284,6 +282,8 @@ private:
     bool mShowRestNumber; ///< Whether to update the remaining lives count.
 
 public:
+    friend class dLevelInfoUtils_c;
+
     static dCourseSelectGuide_c *m_instance; ///< The instance of the view.
 
     /// @brief The speed at which the opacity of the remaining lives counter is changed.

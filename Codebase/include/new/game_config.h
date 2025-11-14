@@ -10,9 +10,6 @@
 
 //#define NO_2_CASTLE_MAZE
 
-// Requires LevelInfo and the utils to be enabled
-//#define NEWER_PREGAME
-
 #define NO_SUPER_GUIDE
 
 //#define PLAYER_1_CAN_CHANGE_CHARACTER
@@ -21,13 +18,15 @@
 
 //#define NO_TIMER
 
-// Requires LevelInfo and the utils to be enabled
-//#define NEWER_FILE_SELECT
-
-#define DISABLE_QUICK_SAVE
+//#define DISABLE_QUICK_SAVE
 
 //#define LEVEL_INFO_ENABLED
 //#define LEVEL_INFO_UTILS_ENABLED
+
+// These require LevelInfo and the utils to be enabled
+//#define NEWER_PREGAME
+//#define NEWER_FILE_SELECT
+//#define NEWER_PAUSE_MENU
 
 //#define KOOPATLAS_ENABLED
 
@@ -35,11 +34,6 @@
 
 // KOOPATLAS CONFIG
 #ifdef KOOPATLAS_DEV_ENABLED
-
-    // Dependencies, do not disable
-    #define LEVEL_INFO_ENABLED
-
-    // Optional
     #define KP_MUSIC_REPORT
     #define KP_MUSIC_DEBUGPRINT
     //#define KP_PATH_QUICK_UNLOCK
