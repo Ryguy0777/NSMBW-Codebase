@@ -5,6 +5,7 @@
 
 #include <constants/game_constants.h>
 #include <game/bases/d_message.hpp>
+#include <game/bases/d_game_com.hpp>
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>
@@ -149,5 +150,42 @@ kmBranchDefCpp(0x800B4F90, NULL, int, int worldNum, int levelNum) {
         }
     }
     return STAGE_INVALID;
+}
+
+// MultiCourseSelect helpers
+int getWorldForButton(int page, int button) {
+    dLevelInfo_c::entry_s *liWorld = dLevelInfo_c::m_instance.getEntryFromSlotID(page, 38);
+    if (liWorld) {
+        dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(page);
+        for (int i = 0; i < section->mLevelCount; i++) {
+            dLevelInfo_c::entry_s *level = &section->mLevels[i];
+            if (level->mLevelSlot == dGameCom::getCourseNum(page, button)) {
+                return level->mWorldSlot;
+            }
+        }
+    }
+    return 10;
+}
+
+int getRecommendedWorld(bool getFreeMode, int button) {
+    int secIndex = dLevelInfo_c::m_instance.sectionCount() - (getFreeMode + 1);
+    dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(secIndex);
+    if (section) {
+        dLevelInfo_c::entry_s *level = &section->mLevels[button+2];
+        return (section->mLevelCount <= button+2) ? 10 : level->mWorldSlot;
+    } else {
+        return 10; // Invalid world ID
+    }
+}
+
+int getRecommendedLevel(bool getFreeMode, int button) {
+    int secIndex = dLevelInfo_c::m_instance.sectionCount() - (getFreeMode + 1);
+    dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(secIndex);
+    if (section) {
+        dLevelInfo_c::entry_s *level = &section->mLevels[button+2];
+        return (section->mLevelCount <= button+2) ? 42 : level->mLevelSlot;
+    } else {
+        return 42; // Invalid course ID
+    }
 }
 #endif

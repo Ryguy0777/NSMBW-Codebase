@@ -37,6 +37,8 @@ public:
     nw4r::lyt::Picture *findPictureByName(const char *name);
     nw4r::lyt::Pane *findWindowByName(const char *name);
 
+    inline nw4r::lyt::DrawInfo *GetDrawInfo() {return &mDrawInfo;};
+
 private:
     nw4r::lyt::Layout mLayout;
     nw4r::lyt::DrawInfo mDrawInfo;

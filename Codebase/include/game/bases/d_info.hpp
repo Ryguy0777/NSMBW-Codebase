@@ -1,6 +1,7 @@
 #pragma once
 #include <types.h>
 #include <game/mLib/m_vec.hpp>
+#include <nw4r/lyt/lyt_pane.h>
 #include <constants/game_constants.h>
 
 class dCyuukan_c {
@@ -71,16 +72,20 @@ public:
     u8 pad4[0x2e4];
     int mCharIDs[4];
     bool mIsWorldSelect; ///< Whether the World Select Menu is being displayed.
-    int pad5[7];
+    u8 pad5[0x1f];
     int mDisplayCourseWorld;
     int mDisplayCourseNum;
-    u8 pad6[0x1d];
+    u8 pad6[0xC];
+    int mScissorInfoIdx;
+    u8 pad7[0xD];
     bool mExtensionAttached;
     bool mShadowFlag;
-    u8 pad7[0x7];
+    u8 pad8;
+    nw4r::lyt::Pane *mScissorPane;
+    nw4r::lyt::DrawInfo *mDrawInfo;
     int mCourseSelectPageNum;
     int mCourseSelectIndexInPage;
-    u8 pad8[0x710];
+    u8 pad9[0x710];
     bool mDrawEffectsForMapLayouts;
     u8 m_afd;
     bool mFukidashiActionPerformed[4][0x16];

@@ -25,5 +25,7 @@ const wchar_t *getLevelNumber(int levelNumIdx);
 ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, u8 worldSlot, u8 levelSlot, bool doNotUseAnchor);
 const wchar_t *getCombinedLevelNumber(int levelNumIdx);
 
-u32 getStartingHouseKind();
+int getWorldForButton(int page, int button);
+int getRecommendedWorld(bool getFreeMode, int button);
+int getRecommendedLevel(bool getFreeMode, int button);
 #endif
