@@ -19,7 +19,7 @@
 #include <new/bases/d_level_info.hpp>
 // #include "koopatlas/mapdata.h"
 // #include "koopatlas/shop.h"
-// #include "koopatlas/starcoin.h"
+#include <new/bases/koopatlas/d_wm_star_coin.hpp>
 #include <new/bases/koopatlas/d_wm_hud.hpp>
 // #include "koopatlas/pathmanager.h"
 // #include "koopatlas/mapmusic.h"

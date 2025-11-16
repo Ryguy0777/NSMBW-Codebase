@@ -266,10 +266,10 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     wm->mpHud = (dWMHud_c*)fBase_c::createChild(fProfile::WM_HUD, wm, 0, 0);
 
     /*SpammyReport("creating SHOP\n");
-    wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);
+    wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);*/
 
     SpammyReport("creating Star Coin Menu\n");
-    wm->mpCoins = (dWMStarCoin_c*)fBase_c::createChild(fProfile::WM_STARCOIN, wm, 0, 0);*/
+    wm->mpCoins = (dWMStarCoin_c*)fBase_c::createChild(fProfile::WM_STARCOIN, wm, 0, 0);
 
     SpammyReport("SetupExtra done\n");
     return (sPhase_c::METHOD_RESULT_e)true;
@@ -587,7 +587,7 @@ void dScKoopatlas_c::executeState_CSMenu() {
 
             switch (mpCourseSelectMenu->mCurrentSelection) {
                 case 0: // Star Coins
-                    //mpCoins->show();
+                    mpCoins->show();
                     mStateMgr.changeState(StateID_CoinsWait);
                     break;
 
@@ -776,10 +776,10 @@ void dScKoopatlas_c::finalizeState_ShopWait() { }
 // STATE_StarCoin : Wait for the user to exit the Star Coin screen.
 void dScKoopatlas_c::initializeState_CoinsWait() { }
 void dScKoopatlas_c::executeState_CoinsWait() {
-    //if (!mpCoins->visible) {
-    //	mStateMgr.changeState(StateID_Normal);
-    //	mpHud->unhideAll();
-    //}
+    if (!mpCoins->mIsVisible) {
+    	mStateMgr.changeState(StateID_Normal);
+    	mpHud->unhideAll();
+    }
 }
 void dScKoopatlas_c::finalizeState_CoinsWait() { }
 

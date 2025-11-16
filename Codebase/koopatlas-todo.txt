@@ -11,13 +11,11 @@ Things that need headers:
 - dNumberOfPeopleChange_c (update kp to use this once 3d rendering is implemented)
 
 Things that could have headers (not needed, but might be helpful later on):
-- dEasyPairing_c
-- dContinue_c
-- dSelectCursor_c
+-
 
 Others:
 - Finish porting music, it needs some dvd stuff and i need to figure out how to use the Stop func with these headers
 
 Bugs:
-- HUD doesn't scale correctly in 4:3 mode
-- StockItem doesn't set mHasLoadedLayout to true, the class might be incorrect or its failing to set up?
+- HUD and SCM don't scale correctly in 4:3 mode
+- Closing game while in SCM doesn't do the fade-to-black? (how does this even happen)

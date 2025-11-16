@@ -65,8 +65,8 @@ int dKPCamera_c::create() {
     EGG::Screen::TVModeInfo *tvInfo = &mScreen.sTVModeInfo[mScreen.sTVMode];
     mScreen.mSize.x = tvInfo->width;
     mScreen.mSize.y = tvInfo->height;
-    mScreen.mNearZ = 1.0;
-    mScreen.mFarZ = 20000.0;
+    mScreen.mNearZ = 1.0f;
+    mScreen.mFarZ = 20000.0f;
 
     if (mScreen.mCanvasMode != EGG::Frustum::CANVASMODE_1) {
         mScreen.mFlags |= 1;
@@ -96,7 +96,7 @@ int dKPCamera_c::execute() {
         mCurrentX = (mPanFromX * stepRatio) + (mPanToX * (1.0f - stepRatio));
         mCurrentY = (mPanFromY * stepRatio) + (mPanToY * (1.0f - stepRatio));
         mZoomLevel = (mPanFromZoom * stepRatio) + (mPanToZoom * (1.0f - stepRatio));
-        CameraReport("Calculated: %f, %f with zoom %f\n", currentX, currentY, zoomLevel);
+        CameraReport("Calculated: %f, %f with zoom %f\n", mCurrentX, mCurrentY, mZoomLevel);
 
         mPanCurrentStep += 1.0f;
 
@@ -240,7 +240,7 @@ void dKPCamera_c::doStuff(float camPosZ) {
 
 
 void dKPCamera_c::generateCameraMatrices() {
-    float orthoTop = mScreenLeft * 0.5;
+    float orthoTop = mScreenHeight * 0.5;
     float orthoLeft = -mScreenWidth * 0.5;
     float orthoBottom = -orthoTop;
     float orthoRight = -orthoLeft;

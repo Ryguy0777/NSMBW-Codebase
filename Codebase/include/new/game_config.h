@@ -32,7 +32,7 @@
 
 #define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
 
-// KOOPATLAS CONFIG
+// KOOPATLAS CONFIG (todo - write quick descriptions for all of these)
 #ifdef KOOPATLAS_DEV_ENABLED
     #define KP_MUSIC_REPORT
     #define KP_MUSIC_DEBUGPRINT
