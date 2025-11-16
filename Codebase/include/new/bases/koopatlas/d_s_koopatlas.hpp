@@ -2,20 +2,19 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <game/bases/d_continue.hpp>
 #include <game/bases/d_course_select_menu.hpp>
 #include <game/bases/d_dvd.hpp>
+#include <game/bases/d_easy_pairing.hpp>
 #include <game/bases/d_number_of_people_change.hpp>
 #include <game/bases/d_scene.hpp>
+#include <game/bases/d_select_cursor.hpp>
 #include <game/bases/d_stock_item.hpp>
 #include <game/bases/d_yes_no_window.hpp>
 #include <game/sLib/s_Phase.hpp>
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
-
-// #include <common.h>
-// #include <game.h>
-// #include <g3dhax.h>
-// #include <sfx.h>
+#include <game/snd/snd_audio_mgr.hpp>
 
 #include <new/bases/d_level_info.hpp>
 // #include "koopatlas/mapdata.h"
@@ -49,7 +48,7 @@ int SearchForIndexOfPlayerID(int id);
 #define WM_SHOP WM_TOGEZO
 #define WM_STARCOIN WM_GHOST
 
-class daWMPlayer_c;
+class daKPPlayer_c;
 class dWMMap_c;
 class dWMHud_c;
 class dWMShop_c;
@@ -77,6 +76,10 @@ public:
     bool mapIsRunning();
 
     void showSaveWindow();
+
+    // Lighting
+    void setupScene();
+    void loadScene(int sceneID);
 
     sPhase_c mInitChain;
 
@@ -113,16 +116,16 @@ public:
     STATE_FUNC_DECLARE(dScKoopatlas_c, SaveError);
 
     dCourseSelectMenu_c *mpCourseSelectMenu;
-    void *mpSelectCursor;
+    dSelectCursor_c *mpSelectCursor;
     dNumberOfPeopleChange_c *mpNumPeopleChange;
     dYesNoWindow_c *mpYesNoWindow;
-    void *mpContinueObj;
+    dContinue_c *mpContinue;
     dStockItem_c *mpStockItem;
     dStockItemShadow_c *mpStockItemShadow;
-    void *mpEasyPairing;
+    dEasyPairing_c *mpEasyPairing;
 
 
-    daWMPlayer_c *mpPlayer;
+    daKPPlayer_c *mpPlayer;
     dWMHud_c *mpHud;
     dWMMap_c *mpMap;
     dWMShop_c *mpShop;

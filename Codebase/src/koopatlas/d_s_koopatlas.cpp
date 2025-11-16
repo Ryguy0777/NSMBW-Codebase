@@ -5,6 +5,10 @@
 
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <new/bases/koopatlas/d_kp_music.hpp>
+#include <new/bases/koopatlas/d_kp_camera.hpp>
+#include <new/bases/koopatlas/d_a_kp_player.hpp>
+// #include "music.h"
+
 #include <game/bases/d_3d.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <game/bases/d_audio.hpp>
@@ -21,12 +25,13 @@
 #include <game/bases/d_s_restart_crsin.hpp>
 #include <game/bases/d_save_mng.hpp>
 #include <game/bases/d_effectmanager.hpp>
+#include <game/bases/d_wipe_circle.hpp>
 #include <game/framework/f_profile.hpp>
 #include <game/mLib/m_pad.h>
 #include <game/snd/snd_scene_manager.hpp>
-// #include "koopatlas/camera.h"
-// #include "koopatlas/player.h"
-// #include "music.h"
+
+// remove me later
+#include <game/bases/d_system.hpp>
 
 // Reset "LastPowerupStoreType" after game over
 extern int m_exitMode__10dScStage_c;
@@ -115,18 +120,6 @@ dScKoopatlas_c::~dScKoopatlas_c() {
 
 
 
-#define SELC_SETUP_DONE(sc) (*((bool*)(((u32)(sc))+0xD38)))
-
-#define EASYP_SETUP_DONE(ep) (*((bool*)(((u32)(ep))+0x278)))
-#define EASYP_ACTIVE(ep) (*((bool*)(((u32)(ep))+0x279)))
-
-#define CONT_LIVES(cont,idx) (((int*)(((u32)(cont))+0x2B8))[(idx)])
-#define CONT_SETUP_DONE(cont) (*((bool*)(((u32)(cont))+0x2D4)))
-#define CONT_ACTIVE(cont) (*((bool*)(((u32)(cont))+0x2D5)))
-#define CONT_WILL_OPEN(cont) (*((bool*)(((u32)(cont))+0x2D6)))
-#define CONT_DONE(cont) (*((bool*)(((u32)(cont))+0x2D7)))
-#define CONT_IS_GAMEOVER_SCENE(cont) (*((bool*)(((u32)(cont))+0x2E0)))
-
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadSceneSnd(void *ptr) {
     SpammyReport("KPInitPhase_LoadSceneSnd called\n");
 
@@ -211,13 +204,13 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkLayoutLoad(void *ptr) {
 
     bool success = true;
     success &= wm->mpCourseSelectMenu->mHasLayoutLoaded;
-    success &= SELC_SETUP_DONE(wm->mpSelectCursor);
+    success &= wm->mpSelectCursor->mHasLayoutLoaded;
     success &= wm->mpNumPeopleChange->mHasLayoutLoaded;
     success &= wm->mpYesNoWindow->getLayoutLoaded();
-    success &= CONT_SETUP_DONE(wm->mpContinueObj);
-    //success &= wm->mpStockItem->mHasLayoutLoaded; // todo: figure out why this doesn't work. is the class wrong?
+    success &= wm->mpContinue->mHasLayoutLoaded;
+    success &= wm->mpStockItem->mHasLayoutLoaded;
     success &= wm->mpStockItemShadow->mHasLayoutLoaded;
-    success &= EASYP_SETUP_DONE(wm->mpEasyPairing);
+    success &= wm->mpEasyPairing->mHasLayoutLoaded;
 
     return (sPhase_c::METHOD_RESULT_e)success;
 }
@@ -237,7 +230,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     }
 
     // Players for StockItem/CharaChange
-    /*for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         da2DPlayer_c *obj = (da2DPlayer_c*)dBaseActor_c::construct(fProfile::WM_2D_PLAYER, wm, i, 0, 0);
         wm->mpStockItem->mpPlayers[i] = obj;
         wm->mpNumPeopleChange->mpPlayers[i] = obj;
@@ -247,30 +240,30 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     for (int i = 0; i < 7; i++) {
         void *obj = dBaseActor_c::construct(fProfile::WM_ITEM, wm, i, 0, 0);
         wm->mpStockItem->mpItems[i] = obj;
-    }*/
+    }
 
     // need Player before we can set up paths
     SpammyReport("creating player\n");
-    /*wm->mpPlayer = (daWMPlayer_c*)dBaseActor_c::construct(fProfile::WM_PLAYER, wm, 0, 2);
-    wm->mpPlayer->modelHandler->mdlClass->setPowerup(daPyMng_c::mPlayerMode[0]);
+    wm->mpPlayer = (daKPPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
+    wm->mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[0]);
     wm->mpPlayer->bindPats();
-    wm->mpPlayer->modelHandler->mdlClass->startAnimation(0, 1.2f, 10.0f, 0.0f);
+    wm->mpPlayer->mpPyMdlMng->mpMdl->setAnm(0, 1.2f, 10.0f, 0.0f);
 
     // since we've got all the resources, set up the path data too
-    SpammyReport("preparing path manager\n");
-    wm->mPathManager.setup();
+    /*SpammyReport("preparing path manager\n");
+    wm->mPathManager.setup();*/
 
     // and put the player into position
-    dKPNode_s *cNode = wm->mPathManager.currentNode;
-    wm->mpPlayer->pos = (Vec){cNode->x, -cNode->y, wm->mpPlayer->pos.z};
+    //dKPNode_s *cNode = wm->mPathManager.currentNode;
+    //wm->mpPlayer->mPos = mVec3_c(cNode->x, -cNode->y, wm->mpPlayer->mPos.z);
 
-    SpammyReport("creating MAP\n");
+    wm->mpPlayer->mPos = mVec3_c(250.0f, 100.0f, wm->mpPlayer->mPos.z);
+
+    /*SpammyReport("creating MAP\n");
     wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);*/
+
     SpammyReport("creating HUD\n");
     wm->mpHud = (dWMHud_c*)fBase_c::createChild(fProfile::WM_HUD, wm, 0, 0);
-    // note: world_camera is not created here
-    // because we require it earlier
-    // it is created in dScKoopatlas_c::onCreate
 
     /*SpammyReport("creating SHOP\n");
     wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);
@@ -289,12 +282,19 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
 
     if (wm->checkChildProcessCreateState()) {
         SpammyReport("KPInitPhase_ChkChildProcess returning false\n");
-// #ifdef WM_SPAMMY_DEBUGGING
-// 		fBase_c *p = wm->findNextUninitialisedProcess();
-// 		SpammyReport("Not done yet: %p [%d]\n", p, p->name);
-// #endif
+/*#ifdef WM_SPAMMY_DEBUGGING
+        fBase_c *p = wm->findNextUninitialisedProcess();
+        SpammyReport("Not done yet: %p [%d]\n", p, p->name);
+#endif*/
         return (sPhase_c::METHOD_RESULT_e)false;
     }
+
+    // TODO: Properly focus circle wipe on player, this doesn't work
+    daKPPlayer_c *player = daKPPlayer_c::m_instance;
+
+    dWipeCircle_c::m_instance->mCenterPos.x = player->mPos.x;
+    dWipeCircle_c::m_instance->mCenterPos.y = player->mPos.y;
+    dWipeCircle_c::m_instance->mUseCenterPos = true;
 
     SpammyReport("KPInitPhase_ChkChildProcess returning true\n");
     return (sPhase_c::METHOD_RESULT_e)true;
@@ -308,9 +308,15 @@ void dScKoopatlas_c::startMusic() {
     //dKPMusic_c::play(2);
 }
 
-void LoadMapScene() {
+void dScKoopatlas_c::setupScene() {
     d3d::createLightMgr(EGG::Heap::sCurrentHeap, 36, 8, 2, false, 0);
-    EGG::LightManager *lightMgr = m3d::getLightMgr(0);
+    loadScene(0);
+    d3d::createLightMgr(EGG::Heap::sCurrentHeap, 36, 8, 2, true, 1);
+    loadScene(1);
+}
+
+void dScKoopatlas_c::loadScene(int sceneID) {
+    EGG::LightManager *lightMgr = m3d::getLightMgr(sceneID);
 
     nw4r::g3d::ResFile res = dResMng_c::m_instance->mRes.getRes("Env_world", "scene/scene.brres");
     nw4r::g3d::ResAnmScn anmScn = res.GetResAnmScn("MainSelect");
@@ -318,28 +324,43 @@ void LoadMapScene() {
 
     lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, -3);
 
-    nw4r::g3d::ResFile blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blight");
-    lightMgr->LoadBlight(&blight);
+    if (sceneID == 0) { // Main lighting
+        nw4r::g3d::ResFile blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blight");
+        lightMgr->LoadBlight(&blight);
 
-    nw4r::g3d::ResFile blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blmap");
-    lightMgr->ltMgr->LoadBlmap(&blmap);
+        nw4r::g3d::ResFile blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blmap");
+        lightMgr->ltMgr->LoadBlmap(&blmap);
+
+    } else if (sceneID == 1) { // Layout model lighting
+        nw4r::g3d::ResFile blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blight");
+        lightMgr->LoadBlight(&blight);
+
+        nw4r::g3d::ResFile blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blmap");
+        lightMgr->ltMgr->LoadBlmap(&blmap);
+
+        EGG::FogManager *fogMgr = m3d::getFogMgr(sceneID);
+        nw4r::g3d::ResFile bfog = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.bfog");
+        fogMgr->LoadBfog(&bfog);
+    }
 }
 
 int dScKoopatlas_c::create() {
     OSReport("KP scene param: %08x\n", mParam);
+    SpammyReport("create() called\n");
 
-    SpammyReport("onCreate() called\n");
+    dFader_c::setFader(dFader_c::CIRCLE_SLOW);
+
+    // temp
+    nw4r::ut::Color clr(16, 58, 135, 255);
+    dSys_c::setClearColor(clr);
 
     SpammyReport("Freeing effects\n"); // Opening cutscene loads vs effects for some reason and fragments RAM too much for some maps
     EffectManager_c::resetResource(EffectManager_c::EFF_VS);
     EffectManager_c::freeBreff(EffectManager_c::EFF_VS);
     EffectManager_c::freeBreft(EffectManager_c::EFF_VS);
 
-    SpammyReport("Loading lighting\n");
-    LoadMapScene();
-
-    SpammyReport("Preparing lighting scene (1)\n");
-    dScGameSetup_c::m_instance->prepareLightScene();
+    SpammyReport("Preparing lighting\n");
+    setupScene();
 
     SpammyReport("Setting Active Players\n");
     for (int i = 0; i < 4; i++) {
@@ -350,7 +371,7 @@ int dScKoopatlas_c::create() {
     }
 
     SpammyReport("select cursor\n");
-    this->mpSelectCursor = fBase_c::createChild(fProfile::SELECT_CURSOR, this, 0, 0);
+    this->mpSelectCursor = (dSelectCursor_c*)fBase_c::createChild(fProfile::SELECT_CURSOR, this, 0, 0);
 
     SpammyReport("cs menu\n");
     this->mpCourseSelectMenu = (dCourseSelectMenu_c*)fBase_c::createChild(fProfile::COURSE_SELECT_MENU, this, 0, 0);
@@ -381,7 +402,7 @@ int dScKoopatlas_c::create() {
     }
 
     SpammyReport("continue\n");
-    this->mpContinueObj = fBase_c::createChild(fProfile::CONTINUE, this, 0, 0);
+    this->mpContinue = (dContinue_c*)fBase_c::createChild(fProfile::CONTINUE, this, 0, 0);
 
     SpammyReport("stock item\n");
     this->mpStockItem = (dStockItem_c*)fBase_c::createChild(fProfile::STOCK_ITEM, this, 0, 0);
@@ -390,15 +411,15 @@ int dScKoopatlas_c::create() {
     mpStockItem->mpShadow = mpStockItemShadow;
 
     SpammyReport("easy pairing\n");
-    this->mpEasyPairing = fBase_c::createChild(fProfile::EASY_PAIRING, this, 0, 0);
+    this->mpEasyPairing = (dEasyPairing_c*)fBase_c::createChild(fProfile::EASY_PAIRING, this, 0, 0);
 
     SpammyReport("world camera\n");
-    //fBase_c::createChild(fProfile::WORLD_CAMERA, this, 0, 0);
+    fBase_c::createChild(fProfile::WORLD_CAMERA, this, 0, 0);
 
     SpammyReport("setting NewerMapDrawFunc\n");
-    //dGraph_c::ms_Instance = (dGraph_c*)NewerMapDrawFunc;
+    dGraph_c::ms_Instance->mpDrawFunc = NewerMapDrawFunc;
 
-    SpammyReport("onCreate() completed\n");
+    SpammyReport("create() completed\n");
     
     // Prepare this first
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
@@ -492,21 +513,21 @@ void dScKoopatlas_c::finalizeState_Limbo() { }
 
 void dScKoopatlas_c::initializeState_ContinueWait() {
     dInfo_c::m_instance->mDrawEffectsForMapLayouts = true;
-    CONT_ACTIVE(this->mpContinueObj) = true;
-    CONT_WILL_OPEN(this->mpContinueObj) = true;
-    CONT_IS_GAMEOVER_SCENE(this->mpContinueObj) = false;
+    mpContinue->mIsVisible = true;
+    mpContinue->mWillOpen = true;
+    mpContinue->mIsGameOver = false;
 }
 void dScKoopatlas_c::executeState_ContinueWait() {
     // Waiting for the Continue anim to finish
-    if (CONT_DONE(this->mpContinueObj)) {
-        CONT_ACTIVE(this->mpContinueObj) = false;
-        CONT_WILL_OPEN(this->mpContinueObj) = false;
-        CONT_IS_GAMEOVER_SCENE(this->mpContinueObj) = false;
+    if (mpContinue->mWillClose) {
+        mpContinue->mIsVisible = false;
+        mpContinue->mWillOpen = false;
+        mpContinue->mIsGameOver = false;
 
         static const int things[] = {0,1,3,2,4};
         for (int i = 0; i < 4; i++) {
             int idx = SearchForIndexOfPlayerID(things[i]);
-            daPyMng_c::mRest[daPyMng_c::mPlayerType[idx]] = CONT_LIVES(this->mpContinueObj, i);
+            daPyMng_c::mRest[daPyMng_c::mPlayerType[idx]] = mpContinue->mLives[i];
         }
 
         mStateMgr.changeState(StateID_Normal);
@@ -634,7 +655,7 @@ void dScKoopatlas_c::executeState_TitleConfirmSelect() {
     } else if (nowPressed & WPAD_BUTTON_DOWN) { // Select "Cancel"
         mpYesNoWindow->setCursorPos(0);
     } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
-        mpYesNoWindow->mCancel = true;
+        mpYesNoWindow->mHitButton = true;
         if (mpYesNoWindow->getCursorPos() != 1)
             mpYesNoWindow->mKeepOpen = true;
         mStateMgr.changeState(StateID_TitleConfirmHitWait);
@@ -685,7 +706,7 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
                 mpNumPeopleChange->mpSelectContents[i]->mIsEasyPairingActive = true;
             }
 
-            EASYP_ACTIVE(this->mpEasyPairing) = 1;
+            mpEasyPairing->mIsVisible = true;
             mStateMgr.changeState(StateID_EasyPairingWait);
         }
     } else {
@@ -709,7 +730,7 @@ void dScKoopatlas_c::finalizeState_PlayerChangeWait() { }
 // STATE_EasyPairingWait : Wait for the user to exit Easy Pairing.
 void dScKoopatlas_c::initializeState_EasyPairingWait() { }
 void dScKoopatlas_c::executeState_EasyPairingWait() {
-    if (!EASYP_ACTIVE(this->mpEasyPairing)) {
+    if (!mpEasyPairing->mIsVisible) {
         mpNumPeopleChange->mIsEasyPairingActive = false;
 
         for (int i = 0; i < 4; i++) {
@@ -1148,11 +1169,10 @@ void dScKoopatlas_c::executeState_CompletionMsgHideWait() {
         mStateMgr.changeState(StateID_Normal);
 }
 
-
 void NewerMapDrawFunc() {
     m3d::reset();
     m3d::setCurrentCamera(0);
-    //m3d::screenEffectReset(0, &dWorldCamera_c::instance->screen);
+    m3d::screenEffectReset(0, dKPCamera_c::m_instance->mScreen);
     m3d::drawLightMapTexture(0);
     m3d::calcWorld(0);
     m3d::calcView(0);
@@ -1177,10 +1197,10 @@ void NewerMapDrawFunc() {
     m3d::drawXlu();
     m3d::drawDone(1);
     m3d::setCurrentCamera(0);
-    for (int i = 0; i < 4; i++)
-        EffectManager_c::draw(0, 0xB+i);
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
+        EffectManager_c::draw(0, 11+i);
         EffectManager_c::draw(0, 7+i);
+    }
     GXDrawDone();
     m2d::drawAfter(0x80);
     m2d::reset();

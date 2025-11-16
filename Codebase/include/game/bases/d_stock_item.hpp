@@ -6,7 +6,7 @@
 #include <game/bases/d_stock_item_shadow.hpp>
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
-#include <lib/egg/eggEffect.hpp>
+#include <game/mLib/m_effect.hpp>
 
 /// @unofficial
 class dStockItem_c : public dBase_c {
@@ -48,8 +48,8 @@ public:
     u32 m_324;
     int mItemUsed;
 
-    EGG::Effect mPlayerEffects[4];
-    EGG::Effect mButtonEffect;
+    mEf::effect_c mPlayerEffects[4];
+    mEf::effect_c mButtonEffect;
     int mEffectIDs[4];
 
     int mCurrentSelection;

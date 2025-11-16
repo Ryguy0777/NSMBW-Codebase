@@ -394,7 +394,7 @@ u32 PADRead(PADStatus* status) {
         (abs(abs(status->triggerR) - abs(PAD_AltStatus[i].triggerR))) >=
             thres ||
         status->button != PAD_AltStatus[i].button) {
-      __VIResetSIIdle();
+      __VIDimmingFlag_SI_IDLE = 0;
     }
     memcpy(&PAD_AltStatus[i], status, 0xc);
     if (status->button & 0x2000) {

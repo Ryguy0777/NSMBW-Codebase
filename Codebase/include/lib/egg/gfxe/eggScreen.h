@@ -48,6 +48,8 @@ public:
     static void Initialize(const unsigned short *, const unsigned short *, Screen *);
     static void SetTVModeDefault();
 
+    void CopyToG3D(nw4r::g3d::Camera) const;
+
     const Screen *mParent;
     nw4r::math::VEC2 mPosition;
     nw4r::math::VEC2 field_0x48;

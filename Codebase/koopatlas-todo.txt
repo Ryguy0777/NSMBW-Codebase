@@ -5,6 +5,7 @@ KOOPATLAS TODO:
 - Convert file indentations to spaces
 - Go through and figure out what includes can be put in hpp files, and which should just stay in cpp
 - Properly add SaveError state
+- Make circle wipes be focused on player position
 
 Things that need headers:
 - dNumberOfPeopleChange_c (update kp to use this once 3d rendering is implemented)

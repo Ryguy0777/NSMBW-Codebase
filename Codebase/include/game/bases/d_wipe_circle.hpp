@@ -71,7 +71,11 @@ private:
     LytBase_c mLyt; ///< The layout for the fader.
     nw4r::lyt::Pane *mpRootPane; ///< The root pane of the fader layout.
     nw4r::lyt::Window *mpWnd[W_COUNT]; ///< The window panes of the fader.
+
+public:
     mVec2_c mCenterPos; ///< The screen position of the circle's center point.
+
+private:
     ACTION_e mAction; ///< The action to be performed in ::calc.
     bool mIsCreated; ///< Whether the layout for the fader has been created.
 
@@ -79,6 +83,7 @@ private:
     /// @details If set to @p false, the circle is centered on the screen automatically.
     bool mHasTarget;
 
+public:
     /// @brief Whether ::mCenterPos should be used as the circle's center point.
     /// @details If set to @p false, the circle is centered on the current demo player.
     bool mUseCenterPos;

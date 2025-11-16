@@ -101,7 +101,7 @@ public:
 
     float getFrameMax() { return mAnm.mFrameMax; }
 
-    mAllocator_c mAllocator;
+    mHeapAllocator_c mAllocator;
     daPlBase_c *mpOwner;
     u32 m_20;
     m3d::anmChr_c mAnm;
@@ -122,7 +122,9 @@ public:
     u32 m_15c;
     u32 mFlags;
     u32 mFlags2;
-    u8 mPad5[0x94];
+    u8 mPad5[0x18];
+    u32 mMode;
+    u8 mPad6[0x7E];
     mAng3_c m_1fe;
     u32 m_204;
     u32 m_208;
@@ -184,7 +186,7 @@ public:
     u8 mPad[4];
     dPyMdlBase_c *mpMdl;
 
-    void construct(u8 index);
+    dPyMdlMng_c(ModelType_e type);
 
     void setAnm(int anmID, float rate, float blendDuration, float f) {
         mpMdl->setAnm(anmID, rate, blendDuration, f);
@@ -223,6 +225,11 @@ public:
     }
 
     mVec3_c &getHatPos() const { return mpMdl->mHatPos; }
+
+    void calc(mVec3_c, mAng3_c, mVec3_c);
+    void calc(mMtx_c &);
+    void play();
+    void draw();
 
     static dPyMdlBase_HIO_c m_hio;
 };

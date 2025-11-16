@@ -1,5 +1,4 @@
-#ifndef RVL_SDK_VI_H
-#define RVL_SDK_VI_H
+#pragma once
 #include <types.h>
 
 #include <revolution/GX.h>
@@ -88,14 +87,10 @@ VITVFormat VIGetTvFormat(void);
 VIScanMode VIGetScanMode(void);
 u32 VIGetDTVStatus(void);
 
-extern s32 __VIDimmingFlag_SI_IDLE;
+u32 VIGetNextField();
 
-bool __VIResetSIIdle() {
-    __VIDimmingFlag_SI_IDLE = 0;
-    return true;
-}
+extern s32 __VIDimmingFlag_SI_IDLE;
 
 #ifdef __cplusplus
 }
-#endif
 #endif

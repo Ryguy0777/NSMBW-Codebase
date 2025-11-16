@@ -5,6 +5,11 @@
 #include <nw4r/ut.h>
 
 namespace mHeap {
+    enum AllocOptBit_t {
+        OPT_0 = 0,
+        OPT_4 = 4
+    };
+
     void restoreCurrentHeap();
     EGG::Heap *setCurrentHeap(EGG::Heap *);
     size_t frmHeapCost(size_t, size_t);

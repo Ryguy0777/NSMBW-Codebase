@@ -105,6 +105,8 @@ public:
     void GXSetScissor() const;
     void GXSetScissorBoxOffset() const;
 
+    void SetViewportJitter(ulong);
+
     GXProjectionType GetProjectionType() const {
         return ref().projType;
     }

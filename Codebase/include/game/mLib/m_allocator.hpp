@@ -1,6 +1,7 @@
 #pragma once
 #include <types.h>
 #include <lib/egg/core/eggAllocator.h>
+#include <game/mLib/m_heap.hpp>
 
 /**
  * @brief An allocator class that wraps an EGG:Allocator .
@@ -28,7 +29,7 @@ public:
     virtual ~mHeapAllocator_c(); ///< @brief Destroys the heap allocator.
 
     /// @unofficial
-    bool createHeap(size_t size, EGG::Heap *parent, const char *name, u32 align, u32 opt);
+    bool createFrmHeap(ulong size, EGG::Heap *parent, const char *name, ulong align, mHeap::AllocOptBit_t opt);
 
     /// @unofficial
     bool createHeapRestoreCurrent(size_t size, EGG::Heap *parent, const char *name, u32 align, u32 opt);

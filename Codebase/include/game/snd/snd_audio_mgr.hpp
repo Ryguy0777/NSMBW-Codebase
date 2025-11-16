@@ -1,4 +1,5 @@
 #pragma once
+#include <nw4r/snd.h>
 
 class SndAudioMgr {
 public:

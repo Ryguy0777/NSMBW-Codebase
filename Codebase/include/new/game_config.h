@@ -20,8 +20,8 @@
 
 //#define DISABLE_QUICK_SAVE
 
-//#define LEVEL_INFO_ENABLED
-//#define LEVEL_INFO_UTILS_ENABLED
+#define LEVEL_INFO_ENABLED
+#define LEVEL_INFO_UTILS_ENABLED
 
 // These require LevelInfo and the utils to be enabled
 //#define NEWER_PREGAME
@@ -30,12 +30,13 @@
 
 //#define KOOPATLAS_ENABLED
 
-//#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
+#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
 
 // KOOPATLAS CONFIG
 #ifdef KOOPATLAS_DEV_ENABLED
     #define KP_MUSIC_REPORT
     #define KP_MUSIC_DEBUGPRINT
     //#define KP_PATH_QUICK_UNLOCK
+    //#define KP_CAMERA_REPORT
 
 #endif
