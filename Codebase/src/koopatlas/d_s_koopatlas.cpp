@@ -9,6 +9,7 @@
 #include <new/bases/koopatlas/d_a_kp_player.hpp>
 // #include "music.h"
 
+#include <constants/sound_list.h>
 #include <game/bases/d_3d.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <game/bases/d_audio.hpp>
@@ -553,10 +554,12 @@ void dScKoopatlas_c::executeState_Normal() {
 
     // Nothing related to the menu is going on
     if (pressed & WPAD_BUTTON_1) {
+        SndAudioMgr::sInstance->startSystemSe(SE_SYS_DECIDE, 1);
         mpStockItem->mIsVisible = true;
         mStateMgr.changeState(StateID_PowerupsWait);
         mpHud->hideAll();
     } else if (pressed & WPAD_BUTTON_PLUS) {
+        SndAudioMgr::sInstance->startSystemSe(SE_SYS_PAUSE, 1);
         mpCourseSelectMenu->mIsVisible = true;
         mStateMgr.changeState(StateID_CSMenu);
         mpHud->hideAll();

@@ -25,13 +25,13 @@ public:
     };
 
     enum ANIMS_e {
-        SHOW_ALL = 0,
-        SHOW_SECTION,
-        HIDE_SECTION,
-        SHOW_LEFT_ARROW,
-        HIDE_LEFT_ARROW,
-        SHOW_RIGHT_ARROW,
-        HIDE_RIGHT_ARROW
+        ANIM_SHOW_ALL = 0,
+        ANIM_SHOW_SECTION,
+        ANIM_HIDE_SECTION,
+        ANIM_SHOW_LEFT_ARROW,
+        ANIM_HIDE_LEFT_ARROW,
+        ANIM_SHOW_RIGHT_ARROW,
+        ANIM_HIDE_RIGHT_ARROW
     };
 
     enum _Constants {
@@ -63,7 +63,7 @@ public:
     void setLeftArrowVisible(bool value);
     void setRightArrowVisible(bool value);
 
-    void showSecretMessage(const wchar_t *title, const wchar_t **body, int lineCount, const wchar_t **body2 = 0, int lineCount2 = 0);
+    void showSecretMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2 = 0, int bodyMsgCount2 = 0);
 
     LytBase_c mLayout;
     sFStateMgr_c<dWMStarCoin_c, sStateMethodUsr_FI_c> mStateMgr;

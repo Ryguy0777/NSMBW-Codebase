@@ -13,6 +13,14 @@ enum NEW_BMG_GROUPS_e {
     BMG_CATEGORY_LEVEL_ICONS = 0x602,
 };
 
+// Koopatlas category layout:
+// 0x00 -- Completion messages
+// 0x10 -- Star Coins Menu
+// 0x20/0x30 -- Hard Mode ON / OFF
+// 0x40/0x50 -- Replay ON / OFF
+// 0x60 -- Collision Debug ON
+// 0x80 -- Collision Debug OFF
+
 // level names use format:
 // category: BMG_CATEGORY_LEVEL_NAMES + world number
 // ID: level number

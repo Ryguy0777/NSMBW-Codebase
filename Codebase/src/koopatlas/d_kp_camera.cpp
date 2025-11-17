@@ -16,6 +16,12 @@
 #define CameraReport(...)
 #endif
 
+#ifdef KP_CAMERA_DEBUG
+#define CameraDebug OSReport
+#else
+#define CameraDebug(...)
+#endif
+
 template <typename T>
 inline T max(T a, T b) { return (a > b) ? a : b; }
 
@@ -58,7 +64,7 @@ dKPCamera_c::dKPCamera_c() {
 }
 
 int dKPCamera_c::create() {
-    // Bad Code
+    CameraDebug("Camera creating\n");
     mScreen.mProjType = EGG::Frustum::PROJ_ORTHO;
     mScreen.mFlags |= 1;
 
@@ -67,8 +73,10 @@ int dKPCamera_c::create() {
     mScreen.mSize.y = tvInfo->height;
     mScreen.mNearZ = 1.0f;
     mScreen.mFarZ = 20000.0f;
+    CameraDebug("Screen X:%f, Y:%f\nScreen Near:%f, Far%f\n", mScreen.mSize.x, mScreen.mSize.y, mScreen.mNearZ, mScreen.mFarZ);
 
     if (mScreen.mCanvasMode != EGG::Frustum::CANVASMODE_1) {
+        CameraDebug("CanvasMode is %d, setting it to 1\n", mScreen.mCanvasMode);
         mScreen.mFlags |= 1;
         mScreen.mCanvasMode = EGG::Frustum::CANVASMODE_1;
     }
@@ -82,7 +90,9 @@ int dKPCamera_c::create() {
 #define SMOOTHSTEP(x) ((x) * (x) * (3 - 2 * (x)))
 
 int dKPCamera_c::execute() {
+    CameraDebug("Camera executing\n");
     if (dScKoopatlas_c::instance->mWarpZoneHacks) {
+        CameraDebug("WarpZone active\n");
         mCurrentX = 2040.0f;
         mCurrentY = -1460.0f;
         mZoomLevel = 3.4f;
@@ -108,9 +118,11 @@ int dKPCamera_c::execute() {
             mZoomLevel = mPanToZoom;
         }
     } else if (mFollowPlayer) {
+        CameraDebug("We should be following the player now\n");
         daKPPlayer_c *player = daKPPlayer_c::m_instance;
         mCurrentX = player->mPos.x;
         mCurrentY = player->mPos.y;
+        CameraDebug("Player is at (%f, %f)\n", player->mPos.x, player->mPos.y);
     }
 
     calculateScreenGeometry();
@@ -208,12 +220,14 @@ void dKPCamera_c::panToPosition(float x, float y, float zoom) {
 
 
 int dKPCamera_c::draw() {
+    CameraDebug("Camera drawing\n");
     const GXRenderModeObj *rmode = nw4r::g3d::G3DState::GetRenderModeObj();
 
     nw4r::g3d::Camera cam(m3d::getCamera(0));
     nw4r::g3d::Camera cam2d(m3d::getCamera(1));
 
     if (rmode->field_rendering != 0) {
+        CameraDebug("FieldRendering is %d\n", rmode->field_rendering);
         cam.SetViewportJitter(VIGetNextField());
         cam2d.SetViewportJitter(VIGetNextField());
     }
@@ -223,27 +237,38 @@ int dKPCamera_c::draw() {
 
 
 void dKPCamera_c::calculateScreenGeometry() {
+    CameraDebug("Calculating Screen\n");
     mZoomDivisor = 1.0 / mZoomLevel;
+    CameraDebug("ZoomDivisor:%f, Zoom:%f\n", mZoomDivisor, mZoomLevel);
 
+    CameraDebug("mVideo: W:%f, H:%f\n", mVideo::l_rayoutWidthF, mVideo::l_rayoutHeightF);
     mScreenWidth = mVideo::l_rayoutWidthF / mZoomDivisor;
     mScreenHeight = mVideo::l_rayoutHeightF / mZoomDivisor;
+    CameraDebug("ScreenW/H: (%f, %f)\n", mScreenWidth, mScreenHeight);
 
     mScreenLeft = mCurrentX - (mScreenWidth * 0.5);
     mScreenTop = mCurrentY + (mScreenHeight * 0.5);
+    CameraDebug("Screen Left: %f\n", mScreenLeft);
+    CameraDebug("Screen Top:  %f\n", mScreenTop);
 }
 
 
 void dKPCamera_c::doStuff(float camPosZ) {
+    CameraDebug("Doing \"stuff\"\n");
     mCamTarget = nw4r::math::VEC3(mScreenLeft + (mScreenWidth * 0.5), (mScreenTop - mScreenHeight) + (mScreenHeight * 0.5), 0.0);
     mCamPos = nw4r::math::VEC3(mCamTarget.x, mCamTarget.y, camPosZ);
+    CameraDebug("Target (%f, %f, %f)\n", mCamTarget.x, mCamTarget.y, mCamTarget.z);
+    CameraDebug("Pos (%f, %f, %f)\n", mCamPos.x, mCamPos.y, mCamPos.z);
 }
 
 
 void dKPCamera_c::generateCameraMatrices() {
+    CameraDebug("Generating Matrices\n");
     float orthoTop = mScreenHeight * 0.5;
     float orthoLeft = -mScreenWidth * 0.5;
     float orthoBottom = -orthoTop;
     float orthoRight = -orthoLeft;
+    CameraDebug("T:%f, L:%f, B:%f, R:%f\n", orthoTop, orthoLeft, orthoBottom, orthoRight);
 
     mCamera3D.mCamPos = mCamPos;
     mCamera3D.mTarget = mCamTarget;
@@ -256,6 +281,10 @@ void dKPCamera_c::generateCameraMatrices() {
     nw4r::math::VEC2 screenSize = dScreen::GetScreenSize();
     nw4r::math::VEC3 screenScale = dScreen::GetScreenScale(orthoTop, orthoBottom, orthoLeft, orthoRight);
     mScreen.mPosition.y = dScreen::GetScreenPosY();
+
+    CameraDebug("ScrSize: (%f, %f)\n", screenSize.x, screenSize.y);
+    CameraDebug("ScrScale: (%f, %f, %f)\n", screenScale.x, screenScale.y, screenScale.z);
+    CameraDebug("ScreenPosY %f\n", mScreen.mPosition.y);
 
     mScreen.mSize.x = screenSize.x;
     mScreen.mFlags |= 1;

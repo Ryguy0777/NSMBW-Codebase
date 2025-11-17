@@ -4,6 +4,7 @@
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <new/bases/koopatlas/d_wm_star_coin.hpp>
 #include <new/constants/message_list.h>
+#include <new/level_info_utils.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_game_key.hpp>
@@ -165,7 +166,7 @@ int dWMStarCoin_c::draw() {
 void dWMStarCoin_c::showLeftArrow() {
     if (!mLeftArrowActive) {
         mLeftArrowActive = true;
-        mLayout.AnimeStartSetup(SHOW_LEFT_ARROW, false);
+        mLayout.AnimeStartSetup(ANIM_SHOW_LEFT_ARROW, false);
         mpPicturePanes[DPadLeft]->SetVisible(true);
     }
 }
@@ -173,7 +174,7 @@ void dWMStarCoin_c::showLeftArrow() {
 void dWMStarCoin_c::showRightArrow() {
     if (!mRightArrowActive) {
         mRightArrowActive = true;
-        mLayout.AnimeStartSetup(SHOW_RIGHT_ARROW, false);
+        mLayout.AnimeStartSetup(ANIM_SHOW_RIGHT_ARROW, false);
         mpPicturePanes[DPadRight]->SetVisible(true);
     }
 }
@@ -181,7 +182,7 @@ void dWMStarCoin_c::showRightArrow() {
 void dWMStarCoin_c::hideLeftArrow() {
     if (mLeftArrowActive) {
         mLeftArrowActive = false;
-        mLayout.AnimeStartSetup(HIDE_LEFT_ARROW, false);
+        mLayout.AnimeStartSetup(ANIM_HIDE_LEFT_ARROW, false);
         mpPicturePanes[DPadLeft]->SetVisible(false);
     }
 }
@@ -189,7 +190,7 @@ void dWMStarCoin_c::hideLeftArrow() {
 void dWMStarCoin_c::hideRightArrow() {
     if (mRightArrowActive) {
         mRightArrowActive = false;
-        mLayout.AnimeStartSetup(HIDE_RIGHT_ARROW, false);
+        mLayout.AnimeStartSetup(ANIM_HIDE_RIGHT_ARROW, false);
         mpPicturePanes[DPadRight]->SetVisible(false);
     }
 }
@@ -254,18 +255,19 @@ void dWMStarCoin_c::loadInfo() {
         }
     }
 
-    // if we didn't find the wanted one, use the first one available
+    // If we didn't find the wanted one, use the first one available
     if (mCurrentWorldIndex == -1) {
         mCurrentWorldIndex = 0;
         mCurrentWorld = mWorldIndices[0];
     }
 }
 
-// TODO: Load world names from BMG
+// TODO: Implement second list of world names into BMG, for Koopatlas to use
+// Use the same setup as the Translatable Newer thing ryguy made
 void dWMStarCoin_c::loadSectionInfo() {
     dLevelInfo_c::entry_s *visibleLevels[COLUMN_COUNT][ROW_COUNT];
 
-    // reset everything... everything
+    // Reset everything
     for (int i = 0; i < COLUMN_COUNT; i++) {
         for (int j = 0; j < SHINE_COUNT; j++)
             mpShines[i][j]->SetVisible(false);
@@ -277,50 +279,53 @@ void dWMStarCoin_c::loadSectionInfo() {
 
             for (int k = 0; k < 3; k++) {
                 mpCoinOutlines[i][j][k]->SetVisible(false);
-                mpCoinOutlines[i][j][k]->SetVisible(false);
+                mpCoins[i][j][k]->SetVisible(false);
             }
         }
     }
 
-    // get everything we'll need
+    // Get everything we'll need
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
     dLevelInfo_c *linfo = &dLevelInfo_c::m_instance;
 
     dLevelInfo_c::entry_s *names[COLUMN_COUNT];
-    for (int i = 0; i < COLUMN_COUNT; i++)
+    for (int i = 0; i < COLUMN_COUNT; i++) {
         names[i] = linfo->getEntryFromDispID(mCurrentWorld, 100+i);
+    }
 
-    bool useSubworlds = (COLUMN_COUNT > 1) && names[1];
+    bool usesSubworlds = (COLUMN_COUNT > 1) && names[1];
 
     int currentPosition[COLUMN_COUNT];
-    int currentColumn = 0; // only incremented in single-subworld mode
+    int currentColumn = 0; // Only incremented in single-subworld mode
 
-    for (int i = 0; i < COLUMN_COUNT; i++)
+    for (int i = 0; i < COLUMN_COUNT; i++) {
         currentPosition[i] = 0;
+    }
 
     dLevelInfo_c::section_s *section = linfo->getSection(mCurrentWorld);
 
-    int earnedCoins = 0, earnableCoins = 0;
-    // earnedCoins is calculated later
+    int collectedCoins = 0, totalCoins = 0;
+    // collectedCoins is calculated later
 
     for (int i = 0; i < section->mLevelCount; i++) {
         dLevelInfo_c::entry_s *level = &section->mLevels[i];
 
-        // only pay attention to real levels
-        if (!(level->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL))
+        // Only pay attention to real levels
+        if (!(level->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL)) {
             continue;
+        }
 
-        earnableCoins += 3;
+        totalCoins += 3;
 
-        // is this level unlocked?
-        u32 conds = save->getCourseDataFlag(level->mWorldSlot, level->mLevelSlot);
+        // Is this level unlocked?
+        /*u32 conds = save->getCourseDataFlag(level->mWorldSlot, level->mLevelSlot);
 
         // TODO: implement this
-        //if (!(conds & COND_UNLOCKED))
-        //	continue;
+        if (!(conds & COND_UNLOCKED))
+        	continue;*/
 
-        // well, let's give it a slot
-        if (useSubworlds) {
+        // Give it a slot
+        if (usesSubworlds) {
             currentColumn = (level->mFlag & dLevelInfo_c::FLAG_SECOND_HALF) ? 1 : 0;
         } else {
             if (currentPosition[currentColumn] >= ROW_COUNT)
@@ -330,23 +335,24 @@ void dWMStarCoin_c::loadSectionInfo() {
         visibleLevels[currentColumn][currentPosition[currentColumn]++] = level;
     }
 
-    // if the first column is empty, then move the second one over
-    if (currentPosition[0] == 0 && useSubworlds) {
+    // If the first column is empty, move the second one over
+    if (currentPosition[0] == 0 && usesSubworlds) {
         for (int i = 0; i < currentPosition[1]; i++) {
             visibleLevels[0][i] = visibleLevels[1][i];
             visibleLevels[1][i] = 0;
         }
 
         names[0] = names[1];
-        names[1] = 0;
+        names[1] = nullptr;
     }
 
     // if the second column is empty, remove its name
-    if (currentPosition[1] == 0 && useSubworlds)
-        names[1] = 0;
+    if (currentPosition[1] == 0 && usesSubworlds)
+        names[1] = nullptr;
 
-    // work out the names
-    //WriteAsciiToTextBox(LeftTitle, linfo->getLevelName(names[0]));
+    // Set the names
+    const wchar_t *leftName = getWorldName(mCurrentWorld);
+    mpTextBoxes[LeftTitle]->SetString(leftName, 0);
     //if (names[1])
     //	WriteAsciiToTextBox(RightTitle, linfo->getLevelName(names[1]));
     mpTextBoxes[RightTitle]->SetVisible(names[1] != 0);
@@ -355,8 +361,9 @@ void dWMStarCoin_c::loadSectionInfo() {
     for (int col = 0; col < COLUMN_COUNT; col++) {
         for (int row = 0; row < ROW_COUNT; row++) {
             dLevelInfo_c::entry_s *level = visibleLevels[col][row];
-            if (!level)
+            if (!level) {
                 continue;
+            }
 
             u32 conds = save->getCourseDataFlag(level->mWorldSlot, level->mLevelSlot);
 
@@ -371,24 +378,56 @@ void dWMStarCoin_c::loadSectionInfo() {
 
                 if (conds & (dMj2dGame_c::COIN1_COLLECTED << coin)) {
                     mpCoins[col][row][coin]->SetVisible(true);
-                    earnedCoins++;
+                    collectedCoins++;
                 }
             }
 
             mpLevelNames[col][row]->SetVisible(true);
-            //WriteAsciiToTextBox(LevelName[col][row], linfo->getLevelName(level));
+            const wchar_t *levelName = getLevelName(level->mDisplayWorld, level->mDisplayLevel);
+            mpLevelNames[col][row]->SetString(levelName, 0);
         }
     }
 
-    // set up coin things
-    //WriteNumberToTextBox(&earnedCoins, EarnedCoinCount, false);
-    //WriteNumberToTextBox(&earnableCoins, EarnedCoinMax, false);
+    // Write coin counts
+    dGameCom::LayoutDispNumberDigit(collectedCoins, mpTextBoxes[EarnedCoinCount], false);
+    dGameCom::LayoutDispNumberDigit(totalCoins, mpTextBoxes[EarnedCoinMax], false);
 }
 
+void dWMStarCoin_c::showSecretMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2, int bodyMsgCount2) {
+    MsgRes_c *msgRes = dMessage_c::getMesRes();
+    mpTextBoxes[LeftTitle]->SetVisible(true);
+    mpTextBoxes[RightTitle]->SetVisible(false);
 
-void dWMStarCoin_c::initializeState_Hidden() { }
-void dWMStarCoin_c::executeState_Hidden() { }
-void dWMStarCoin_c::finalizeState_Hidden() { }
+    const wchar_t *titleStr = msgRes->getMsg(BMG_CATEGORY_KOOPATLAS, titleMsg);
+    mpTextBoxes[LeftTitle]->SetString(titleStr, 0);
+
+    // Hide the levelinfo
+    for (int c = 0; c < COLUMN_COUNT; c++) {
+        for (int i = 0; i < SHINE_COUNT; i++)
+            mpShines[c][i]->SetVisible(false);
+        for (int r = 0; r < ROW_COUNT; r++) {
+            mpLevelNames[c][r]->SetVisible(false);
+            for (int i = 0; i < 3; i++) {
+                mpCoinOutlines[c][r][i]->SetVisible(false);
+                mpCoins[c][r][i]->SetVisible(false);
+            }
+        }
+    }
+
+    for (int i = 0; i < bodyMsgCount; i++) {
+        mpLevelNames[0][i]->SetVisible(true);
+        const wchar_t *lineStr = msgRes->getMsg(BMG_CATEGORY_KOOPATLAS, bodyMsgStart+i);
+        mpLevelNames[0][i]->SetString(lineStr, 0);
+    }
+
+    if (bodyMsgStart2 != 0) {
+        for (int i = 0; i < bodyMsgCount2; i++) {
+            mpLevelNames[1][i]->SetVisible(true);
+            const wchar_t *lineStr = msgRes->getMsg(BMG_CATEGORY_KOOPATLAS, bodyMsgStart2+i);
+            mpLevelNames[1][i]->SetString(lineStr, 0);
+        }
+    }
+}
 
 static const int secretCode[] = {
     WPAD_BUTTON_RIGHT,WPAD_BUTTON_RIGHT,WPAD_BUTTON_LEFT,WPAD_BUTTON_LEFT,
@@ -401,27 +440,41 @@ static int minusCount = 0;
 //extern bool enableHardMode;
 //extern bool enableDebugMode;
 //extern u8 isReplayEnabled;
+static bool enableHardMode;
+static bool enableDebugMode;
+static u8 isReplayEnabled;
+
+
+
+void dWMStarCoin_c::initializeState_Hidden() { }
+void dWMStarCoin_c::executeState_Hidden() { }
+void dWMStarCoin_c::finalizeState_Hidden() { }
+
+
 
 void dWMStarCoin_c::initializeState_ShowWait() {
     mIsVisible = true;
     loadInfo();
-    mLayout.AnimeStartSetup(SHOW_ALL, false);
-    mLayout.ReverseAnimeStartSetup(SHOW_SECTION, false);
-    mLayout.ReverseAnimeStartSetup(SHOW_LEFT_ARROW, false);
-    mLayout.ReverseAnimeStartSetup(SHOW_RIGHT_ARROW, false);
+    mLayout.AnimeStartSetup(ANIM_SHOW_ALL, false);
+    mLayout.ReverseAnimeStartSetup(ANIM_SHOW_SECTION, false);
+    mLayout.ReverseAnimeStartSetup(ANIM_SHOW_LEFT_ARROW, false);
+    mLayout.ReverseAnimeStartSetup(ANIM_SHOW_RIGHT_ARROW, false);
+    SndAudioMgr::sInstance->startSystemSe(SE_SYS_DIALOGUE_IN, 1);
 
     secretCodeIndex = 0;
     minusCount = 0;
 }
 void dWMStarCoin_c::executeState_ShowWait() {
-    if (!mLayout.isAnime(SHOW_ALL))
+    if (!mLayout.isAnime(ANIM_SHOW_ALL))
         mStateMgr.changeState(StateID_ShowSectionWait);
 }
 void dWMStarCoin_c::finalizeState_ShowWait() { }
 
+
+
 void dWMStarCoin_c::initializeState_ShowSectionWait() {
-    //loadSectionInfo();
-    mLayout.AnimeStartSetup(SHOW_SECTION, false);
+    loadSectionInfo();
+    mLayout.AnimeStartSetup(ANIM_SHOW_SECTION, false);
 
     if (canScrollLeft())
         showLeftArrow();
@@ -429,75 +482,28 @@ void dWMStarCoin_c::initializeState_ShowSectionWait() {
         showRightArrow();
 }
 void dWMStarCoin_c::executeState_ShowSectionWait() {
-    if (!mLayout.isAnime(SHOW_SECTION))
+    if (!mLayout.isAnime(ANIM_SHOW_SECTION))
         mStateMgr.changeState(StateID_Wait);
 }
 void dWMStarCoin_c::finalizeState_ShowSectionWait() { }
 
-void dWMStarCoin_c::showSecretMessage(const wchar_t *title, const wchar_t **body, int lineCount, const wchar_t **body2, int lineCount2) {
-    return;
-    /*LeftTitle->SetVisible(true);
-    LeftTitle->SetString(title);
-    RightTitle->SetVisible(false);
 
-    for (int c = 0; c < COLUMN_COUNT; c++) {
-        for (int i = 0; i < SHINE_COUNT; i++)
-            Shine[c][i]->SetVisible(false);
-        for (int r = 0; r < ROW_COUNT; r++) {
-            LevelName[c][r]->SetVisible(false);
-            for (int i = 0; i < 3; i++) {
-                CoinOutline[c][r][i]->SetVisible(false);
-                Coin[c][r][i]->SetVisible(false);
-            }
-        }
-    }
-
-    for (int i = 0; i < lineCount; i++) {
-        LevelName[0][i]->SetVisible(true);
-        LevelName[0][i]->SetString(body[i]);
-    }
-
-    if (body2) {
-        for (int i = 0; i < lineCount2; i++) {
-            LevelName[1][i]->SetVisible(true);
-            LevelName[1][i]->SetString(body2[i]);
-        }
-    }*/
-}
 
 void dWMStarCoin_c::initializeState_Wait() { }
 void dWMStarCoin_c::executeState_Wait() {
     int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
     // A and Plus
-    /*if ((dGameKey_c::m_instance->mRemocon[0]->mDownButtons == 0x810) && (pressed & 0x810)) {
-
-        const int lineCountOn = 9, lineCountOff = 2;
-        static const wchar_t *linesOn[lineCountOn] = {
-            L"You've activated Hard Mode!",
-            L" ",
-            L"In Hard Mode, Mario will die",
-            L"any time he takes damage, and",
-            L"the timer will be more strict.",
-            L" ",
-            L"So treasure your Yoshi and",
-            L"hold on to your hat, 'cause",
-            L"you're in for a wild ride!",
-        };
-        static const wchar_t *linesOff[lineCountOff] = {
-            L"Hard Mode has been",
-            L"turned off.",
-        };
-
+    if ((dGameKey_c::m_instance->mRemocon[0]->mDownButtons == 0x810) && (pressed & 0x810)) {
         if (!enableHardMode) {
             enableHardMode = true;
-            OSReport("Hard Mode enabled!\n");
+            MapReport("Hard Mode enabled!\n");
             SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_COURSE_IN_HARD, 1);
-            showSecretMessage(L"Hard Mode", linesOn, lineCountOn);
+            showSecretMessage(0x20, 0x21, 9);
         } else {
             enableHardMode = false;
-            OSReport("Hard Mode disabled!\n");
-            showSecretMessage(L"Classic Mario", linesOff, lineCountOff);
+            MapReport("Hard Mode disabled!\n");
+            showSecretMessage(0x30, 0x31, 2);
         }
         return;
     }
@@ -509,33 +515,15 @@ void dWMStarCoin_c::executeState_Wait() {
             if (secretCode[secretCodeIndex] == 0) {
                 secretCodeIndex = 0;
                 SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_THANK_YOU, 1);
-                //enableDebugMode = !enableDebugMode;
-                //OSReport("Debug mode toggled!\n");
-                const int lineCountOn = 9, lineCountOff = 2;
-                static const wchar_t *linesOn[lineCountOn] = {
-                    L"The experimental Replay",
-                    L"Recording feature has",
-                    L"been enabled. Enjoy!",
-                    L"You'll find your Replays",
-                    L"on your SD or USB, depending",
-                    L"on where Newer's files are.",
-                    L"It might not work, so",
-                    L"save your game before you",
-                    L"play a level!",
-                };
-                static const wchar_t *linesOff[lineCountOff] = {
-                    L"Replay Recording",
-                    L"turned off.",
-                };
 
                 if (isReplayEnabled != 100) {
                     isReplayEnabled = 100;
-                    OSReport("Replay Recording enabled!\n");
-                    showSecretMessage(L"Nice!", linesOn, lineCountOn);
+                    MapReport("Replay Recording enabled!\n");
+                    showSecretMessage(0x40, 0x41, 9);
                 } else {
                     isReplayEnabled = 0;
-                    OSReport("Replay Recording disabled!\n");
-                    showSecretMessage(L"Nice!", linesOff, lineCountOff);
+                    MapReport("Replay Recording disabled!\n");
+                    showSecretMessage(0x50, 0x51, 2);
                 }
             }
             return;
@@ -550,60 +538,15 @@ void dWMStarCoin_c::executeState_Wait() {
             minusCount = 0;
 
             enableDebugMode = !enableDebugMode;
-
             if (enableDebugMode) {
                 SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_GET_PRIZE, 1);
-
-                const int msgCount = 9;
-                static const wchar_t *msg[msgCount] = {
-                    L"You've found the Totally",
-                    L"Secret Collision Debug Mode.",
-                    L"We used this to make the",
-                    L"hitboxes on our custom sprites",
-                    L"and bosses suck less. Awesome,",
-                    L"right?!",
-                    L"Actually, I did it just to waste",
-                    L"some time, but it ended up",
-                    L"being pretty useful!",
-                };
-                const int msgCount2 = 9;
-                static const wchar_t *msg2[msgCount2] = {
-                    L"And yes, I know it doesn't show",
-                    L"a couple of things properly",
-                    L"like round objects and rolling",
-                    L"hills and so on.",
-                    L"Can't have it all, can you?",
-                    L"Wonder if Nintendo had",
-                    L"something like this...",
-                    L"",
-                    L"    Treeki, 9th February 2013",
-                };
-                showSecretMessage(L"Groovy!", msg, msgCount, msg2, msgCount2);
+                showSecretMessage(0x60, 0x61, 9, 0x6A, 9);
             } else {
-                const int msgCount = 6;
-                static const wchar_t *msg[msgCount] = {
-                    L"You've turned off the Totally",
-                    L"Secret Collision Debug Mode.",
-                    L"",
-                    L"... and no, I'm not going to write",
-                    L"another ridiculously long",
-                    L"message to go here. Sorry!",
-                };
-                static const wchar_t *hiddenMsg[] = {
-                    L"If you found these messages by",
-                    L"looking through strings in the DLCode",
-                    L"file, then... that's kind of cheating.",
-                    L"Though I can't say I wouldn't do the",
-                    L"same!",
-                    L"You won't actually see this in game",
-                    L"btw :p So why am I bothering with linebreaks anyway? I dunno. Oh well.",
-                    L"Also, don't put this message on TCRF. Or do! Whatever. :(",
-                };
-                showSecretMessage(L"Groovy!", msg, msgCount, hiddenMsg, 0);
+                showSecretMessage(0x80, 0x81, 6);
             }
         }
-    } else*/ if (pressed & WPAD_BUTTON_1) {
-        SndAudioMgr::sInstance->startSystemSe(SE_SYS_DIALOGUE_OUT_AUTO, 1);
+    } else if (pressed & WPAD_BUTTON_1) {
+        SndAudioMgr::sInstance->startSystemSe(SE_SYS_BACK, 1);
         mWillExit = true;
         mStateMgr.changeState(StateID_HideSectionWait);
     } else if ((pressed & WPAD_BUTTON_UP) && canScrollLeft()) {
@@ -618,18 +561,21 @@ void dWMStarCoin_c::executeState_Wait() {
 }
 void dWMStarCoin_c::finalizeState_Wait() { }
 
+
+
 void dWMStarCoin_c::initializeState_HideSectionWait() {
-    mLayout.AnimeStartSetup(HIDE_SECTION, false);
+    mLayout.AnimeStartSetup(ANIM_HIDE_SECTION, false);
     if (mWillExit) {
         hideLeftArrow();
         hideRightArrow();
     } else {
+        SndAudioMgr::sInstance->startSystemSe(SE_SYS_PAGE, 1);
         setLeftArrowVisible(canScrollLeft());
         setRightArrowVisible(canScrollRight());
     }
 }
 void dWMStarCoin_c::executeState_HideSectionWait() {
-    if (!mLayout.isAnime(HIDE_SECTION)) {
+    if (!mLayout.isAnime(ANIM_HIDE_SECTION)) {
         if (mWillExit)
             mStateMgr.changeState(StateID_HideWait);
         else
@@ -638,12 +584,14 @@ void dWMStarCoin_c::executeState_HideSectionWait() {
 }
 void dWMStarCoin_c::finalizeState_HideSectionWait() { }
 
+
+
 void dWMStarCoin_c::initializeState_HideWait() {
-    mLayout.AnimeStartSetup(SHOW_ALL, true);
-    mLayout.GetAnimGroup()[SHOW_ALL].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
+    mLayout.AnimeStartSetup(ANIM_SHOW_ALL, true);
+    mLayout.GetAnimGroup()[ANIM_SHOW_ALL].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
 }
 void dWMStarCoin_c::executeState_HideWait() {
-    if (!mLayout.isAnime(SHOW_ALL))
+    if (!mLayout.isAnime(ANIM_SHOW_ALL))
         mStateMgr.changeState(StateID_Hidden);
 }
 void dWMStarCoin_c::finalizeState_HideWait() {

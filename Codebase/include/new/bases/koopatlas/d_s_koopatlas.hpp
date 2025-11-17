@@ -24,16 +24,13 @@
 // #include "koopatlas/pathmanager.h"
 // #include "koopatlas/mapmusic.h"
 
-#define WM_DEBUGGING
-#define WM_SPAMMY_DEBUGGING
-
-#ifdef WM_DEBUGGING
+#ifdef KP_MAP_REPORT
 #define MapReport OSReport
 #else
 #define MapReport(...)
 #endif
 
-#ifdef WM_SPAMMY_DEBUGGING
+#ifdef KP_SPAMMY_DEBUG
 #define SpammyReport OSReport
 #else
 #define SpammyReport(...)

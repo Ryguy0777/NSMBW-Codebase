@@ -1,6 +1,7 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/bases/koopatlas/d_s_koopatlas.hpp> // Needed to access MapReport
 #include <new/bases/koopatlas/d_tex_map_colouriser.hpp>
 #include <game/mLib/m_heap.hpp>
 #include <lib/egg/core/eggHeap.h>
@@ -24,12 +25,12 @@ void dTexMapColouriser_c::resetAndClear() {
 }
 
 void dTexMapColouriser_c::setTexMap(nw4r::lyt::TexMap *tm) {
-    OSReport("Colourising TexMap: %p (w:%d h:%d)\n", tm, tm->GetWidth(), tm->GetHeight());
+    MapReport("Colourising TexMap: %p (w:%d h:%d)\n", tm, tm->GetWidth(), tm->GetHeight());
     if (mTexMap)
         resetAndClear();
 
     if (tm->GetTexelFormat() != GX_TF_IA8) {
-        OSReport("Warning: Trying to colourise image whose format is %d not GX_TF_IA8\n", tm->GetTexelFormat());
+        MapReport("Warning: Trying to colourise image whose format is %d not GX_TF_IA8\n", tm->GetTexelFormat());
     }
 
     mTexMap = tm;

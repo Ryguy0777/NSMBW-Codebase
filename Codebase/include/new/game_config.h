@@ -32,11 +32,18 @@
 
 #define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
 
-// KOOPATLAS CONFIG (todo - write quick descriptions for all of these)
+// KOOPATLAS CONFIG
 #ifdef KOOPATLAS_DEV_ENABLED
-    #define KP_MUSIC_REPORT
-    #define KP_MUSIC_DEBUGPRINT
-    //#define KP_PATH_QUICK_UNLOCK
-    //#define KP_CAMERA_REPORT
+
+// DEBUGGING
+    #define KP_MUSIC_REPORT         // Prints music related info to the log
+    #define KP_MUSIC_DEBUGPRINT     // Writes music to the Exception Handler
+    //#define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths
+    //#define KP_CAMERA_REPORT        // Prints camera info to the log
+    #define KP_CAMERA_DEBUG         // Prints camera + screen variables to the log
+    #define KP_MAP_REPORT           // Prints general map info (layouts, texmaps, general data) to the log
+    #define KP_SPAMMY_DEBUG         // Prints map setup and path info to the log, this "spams" the log
+
+// TOGGLABLE FEATURES
 
 #endif
