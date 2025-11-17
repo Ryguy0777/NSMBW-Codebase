@@ -44,6 +44,12 @@ kmBranchDefAsm(0x809216EC, 0x809216F0) {
     blr
 }
 
+// Fixes a crash when equipping stars
+kmWriteNop(0x807B0110);
+
+// Fix star effects on maps
+kmWrite32(0x800D52F0, 0x41820010);
+
 dScKoopatlas_c *dScKoopatlas_c::instance = nullptr;
 
 STATE_DEFINE(dScKoopatlas_c, Limbo);
