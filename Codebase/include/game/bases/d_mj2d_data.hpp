@@ -299,7 +299,17 @@ private:
     u8 mDeathCount[WORLD_COUNT][STAGE_COUNT];
     u8 mDeathCountSwitch; ///< The death count for the worldmap switch variant of World 3-4. See ::mDeathCount.
 
-    u8 pad[0x13]; // [Aligns the data to 32]
+public:
+    union {
+		u8 pad[0x13]; // [Aligns the data to 32]
+		
+        /// @unofficial
+        struct {
+			u8 mWorldInfoIdx; ///< The current world index in the WorldInfo (for Koopatlas).
+            u16 mSpentStarCoins; ///< The number of Star Coins that have been used at a shop.
+		};
+		
+	};
     u32 mChecksum; ///< The CRC32 checksum of the above data.
 
     /// @brief The default character for each player.

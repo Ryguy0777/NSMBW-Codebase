@@ -4,6 +4,7 @@
 #include <game/mLib/m_3d.hpp>
 #include <game/mLib/m_vec.hpp>
 #include <game/bases/d_lyttextBox.hpp>
+#include <game/bases/d_save_mng.hpp>
 
 /// @brief A collection of various functions used throughout the game.
 /// @details Name stands for Game Common.
@@ -110,6 +111,13 @@ namespace dGameCom {
     bool chkCancelButton(int controller);
 
     int getCourseNum(int, int);
+
+    /////////////////////
+    // Unofficial APIs //
+    /////////////////////
+
+    int getUnspentStarCoinCount();
+    int getStarCoinCount();
 
     extern u32 l_gameStop;
 }

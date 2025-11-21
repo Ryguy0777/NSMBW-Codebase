@@ -16,6 +16,7 @@ public:
 
 extern bool disableMessageScaling;
 
+const wchar_t *getKoopatlasWorldName(int messageIdx);
 const wchar_t *getWorldName(int world);
 const wchar_t *getLevelName(int dispWorld, int dispLevel);
 

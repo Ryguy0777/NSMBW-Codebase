@@ -14,6 +14,16 @@
 
 #define STAGE_INVALID 42
 
+// Returns the name of a world (from BMG_CATEGORY_KP_WORLD_NAMES)
+// This uses the messageID from WorldInfo, not the world number
+const wchar_t *getKoopatlasWorldName(int idx) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_KP_WORLD_NAMES, idx) != nullptr)
+        return dMessage_c::getMsg(BMG_CATEGORY_KP_WORLD_NAMES, idx);
+    else
+        return dMessage_c::getMsg(BMG_CATEGORY_KP_WORLD_NAMES, 0);
+}
+
 // Returns the name of a world
 // Use the internal world number instead of the in-game one
 const wchar_t *getWorldName(int world) {

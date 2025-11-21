@@ -17,6 +17,7 @@
 #include <game/snd/snd_audio_mgr.hpp>
 
 #include <new/bases/d_level_info.hpp>
+#include <new/bases/d_world_info.hpp>
 // #include "koopatlas/mapdata.h"
 // #include "koopatlas/shop.h"
 #include <new/bases/koopatlas/d_wm_star_coin.hpp>

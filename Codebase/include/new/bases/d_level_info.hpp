@@ -8,6 +8,9 @@ class dLevelInfo_c {
 public:
     enum ENTRY_FLAG_e {
         FLAG_VALID_LEVEL = 2, // Actual level with Star Coins
+        FLAG_GOAL_NORMAL = 0x10,
+        FLAG_GOAL_SECRET = 0x20,
+        FLAG_GOAL_MASK = 0x30,
         FLAG_SECOND_HALF = 0x400,
     };
 

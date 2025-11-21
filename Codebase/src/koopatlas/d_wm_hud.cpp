@@ -3,6 +3,7 @@
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <new/bases/koopatlas/d_wm_hud.hpp>
+#include <new/level_info_utils.hpp>
 #include <new/constants/message_list.h>
 #include <constants/message_list.h>
 #include <game/bases/d_a_player_manager.hpp>
@@ -109,18 +110,9 @@ int dWMHud_c::create() {
     mLayout.AllAnimeEndSetup();
     mLayout.AnimeStartSetup(ANIM_SHOW_LIVES, false);
 
-    // are these needed?
-    //layout.resetAnim(SHOW_FOOTER);
-    //layout.resetAnim(SHOW_HEADER);
-    //layout.resetAnim(HIDE_ALL);
-
     mHeaderCol.setTexMap(mpPicturePanes[Header_Right]->GetMaterial()->GetTexMapAry());
     mHeaderCol.applyAlso(mpPicturePanes[Header_Centre]->GetMaterial()->GetTexMapAry());
     mFooterCol.setTexMap(mpPicturePanes[Footer]->GetMaterial()->GetTexMapAry());
-
-    //test, remove once header/footer info is done
-    mHeaderCol.colourise(330, 74, -8);
-    mFooterCol.colourise(330, 74, -8);
 
     mLayoutLoaded = true;
     mDispHeader = false;
@@ -139,7 +131,8 @@ void dWMHud_c::loadInitially() {
     mInitalDispComplete = true;
 
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-    //mDispFooter = (save->newerWorldName[0] != 0) && (save->hudHintH != 2000);
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
+    mDispFooter = /*(save->newerWorldName[0] != 0) &&*/ (world->mHudHue != 2000);
 
     //if (!dScKoopatlas_c::instance->mPathManager.isMoving)
     //    enteredNode();
@@ -160,6 +153,7 @@ int dWMHud_c::execute() {
         return SUCCEEDED;
     }
 
+    mDispHeader = true;
     if (mDispHeader && (!(mLayout.isAnime(ANIM_SHOW_HEADER)))) {
         mDispHeader = false;
         loadHeaderInfo();
@@ -176,8 +170,8 @@ int dWMHud_c::execute() {
     setupLives();
     controllerConnectCheck();
 
-    //int scCount = getUnspentStarCoinCount();
-    //WriteNumberToTextBox(&scCount, StarCoinCounter, false);
+    int scCount = dGameCom::getUnspentStarCoinCount();
+    dGameCom::LayoutDispNumberDigit(scCount, mpTextBoxes[StarCoinCounter], false);
 
     mLayout.AnimePlay();
     mLayout.calc();
@@ -226,190 +220,189 @@ void dWMHud_c::playHideAnim(int id) {
 
 
 void dWMHud_c::loadHeaderInfo() {
-    /*dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
+    dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
+    //dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
+    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(3, 21); // Temp
+    MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(
-            mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
-
-    if (infEntry == 0) {
-        mpTextBoxes[LevelName]->SetString(L"Unknown Level Name!", 0);
-        mpTextBoxes[LevelNameS]->SetString(L"Unknown Level Name!", 0);
+    if (infEntry == nullptr) {
+        const wchar_t *dummyName = getLevelName(0, 0);
+        mpTextBoxes[LevelName]->SetString(dummyName, 0);
+        mpTextBoxes[LevelNameS]->SetString(dummyName, 0);
         return;
     }
 
-    // LEVEL NAME
-    wchar_t convertedLevelName[100];
-    const char *sourceLevelName = levelInfo->getNameForLevel(infEntry);
+    // Set the level name
+    const wchar_t *levelName = getLevelName(infEntry->mDisplayWorld, infEntry->mDisplayLevel);
+    mpTextBoxes[LevelName]->SetString(levelName, 0);
+    mpTextBoxes[LevelNameS]->SetString(levelName, 0);
 
-    mpTextBoxes[LevelName]->SetString(convertedLevelName, 0);
-    mpTextBoxes[LevelNameS]->SetString(convertedLevelName, 0);
+    // Set the level number
+    ulong number = getLevelNumberIdx(infEntry->mDisplayWorld, infEntry->mDisplayLevel, infEntry->mWorldSlot, infEntry->mLevelSlot, false);
+    mpTextBoxes[LevelNumber]->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
+    mpTextBoxes[LevelNumberS]->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
 
-    // LEVEL NUMBER
-    wchar_t levelNumber[16];
-    getNewerLevelNumberString(infEntry->displayWorld, infEntry->displayLevel, levelNumber);
+    // Get the level number width (for the dynamic HUD size)
+    nw4r::ut::WideTextWriter tw2;
+    tw2.SetFont(*mpTextBoxes[LevelNumber]->GetFont());
+    nw4r::lyt::Size fontSize = mpTextBoxes[LevelNumber]->GetFontSize();
+    tw2.SetFontSize(fontSize.width, fontSize.height);
+    tw2.SetLineSpace(mpTextBoxes[LevelNumber]->GetLineSpace());
+    tw2.SetCharSpace(mpTextBoxes[LevelNumber]->GetCharSpace());
+    if (mpTextBoxes[LevelNumber]->GetTagProcessor() != nullptr)
+        tw2.SetTagProcessor(mpTextBoxes[LevelNumber]->GetTagProcessor());
 
-    LevelNumber->SetString(levelNumber);
+    const wchar_t *numStrBuf = mpTextBoxes[LevelNumber]->GetStringBuffer();
+    float currentPos = tw2.CalcStringWidth(numStrBuf, wcslen(numStrBuf));
+    nw4r::math::VEC3 trans = mpTextBoxes[LevelNumber]->GetTranslate();
+    currentPos += trans.x + 12.0f;
 
-    // make the picture shadowy
-    int sidx = 0;
-    while (levelNumber[sidx]) {
-        if (levelNumber[sidx] == 11) {
-            levelNumber[sidx+1] = 0x200 | (levelNumber[sidx+1]&0xFF);
-            sidx += 2;
-        }
-        sidx++;
-    }
-    LevelNumberS->SetString(levelNumber);
+    // Setup the clearing flags
+    int w = infEntry->mWorldSlot;
+    int l = infEntry->mLevelSlot;
 
-    nw4r::ut::TextWriter tw2;
-    tw2.font = LevelNumber->font;
-    tw2.SetFontSize(LevelNumber->fontSizeX, LevelNumber->fontSizeY);
-    tw2.lineSpace = LevelNumber->lineSpace;
-    tw2.charSpace = LevelNumber->charSpace;
-    if (LevelNumber->tagProc != 0)
-        tw2.tagProcessor = LevelNumber->tagProc;
-
-    float currentPos = tw2.CalcStringWidth(levelNumber, wcslen(levelNumber));
-    currentPos += LevelNumber->trans.x + 12.0f;
-
-    // INFO
-    int w = nodeForHeader->levelNumber[0] - 1;
-    int l = nodeForHeader->levelNumber[1] - 1;
-
-    u32 conds = GetSaveFile()->GetBlock(-1)->GetLevelCondition(w, l);
+    u32 conds = dSaveMng_c::m_instance->getSaveGame(-1)->getCourseDataFlag(w, l);
     // States: 0 = invisible, 1 = visible, 2 = faded
     int normalState = 0, secretState = 0;
 
-    if ((conds & COND_BOTH_EXITS) && (infEntry->flags & 0x30) == 0x30) {
+    if ((conds & dMj2dGame_c::GOAL_MASK) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_MASK) == 0x30) {
         // If this level has two exits and one of them is already collected,
         // then show the faded flags
         normalState = 2;
         secretState = 2;
     }
 
-    if ((conds & COND_NORMAL) && (infEntry->flags & 0x10))
+    if ((conds & dMj2dGame_c::GOAL_NORMAL) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL))
         normalState = 1;
-    if ((conds & COND_SECRET) && (infEntry->flags & 0x20))
+    if ((conds & dMj2dGame_c::GOAL_SECRET) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET))
         secretState = 1;
 
-    NormalExitFlag->trans.x = currentPos;
-    NormalExitFlag->alpha = (normalState == 2) ? 80 : 255;
-    NormalExitFlag->SetVisible(normalState > 0);
-    if (normalState > 0)
-        currentPos += NormalExitFlag->size.x;
+    mpPicturePanes[NormalExitFlag]->SetSRTElement(0, currentPos);
+    mpPicturePanes[NormalExitFlag]->SetAlpha((normalState == 2) ? 80 : 255);
+    mpPicturePanes[NormalExitFlag]->SetVisible(normalState > 0);
+    if (normalState > 0) {
+        nw4r::lyt::Size size = mpPicturePanes[NormalExitFlag]->GetSize();
+        currentPos += size.width;
+    }
 
-    SecretExitFlag->trans.x = currentPos;
-    SecretExitFlag->alpha = (secretState == 2) ? 80 : 255;
-    SecretExitFlag->SetVisible(secretState > 0);
-    if (secretState > 0)
-        currentPos += SecretExitFlag->size.x;
+    mpPicturePanes[SecretExitFlag]->SetSRTElement(0, currentPos);
+    mpPicturePanes[SecretExitFlag]->SetAlpha((secretState == 2) ? 80 : 255);
+    mpPicturePanes[SecretExitFlag]->SetVisible(secretState > 0);
+    if (secretState > 0) {
+        nw4r::lyt::Size size = mpPicturePanes[SecretExitFlag]->GetSize();
+        currentPos += size.width;
+    }
 
-    // are star coins enabled or not?
-    bool haveSC = (infEntry->flags & 2);
+    // Setup the Star Coins
+    bool haveSC = (infEntry->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL);
 
     for (int i = 0; i < 3; i++) {
-        bool flag = (conds & (COND_COIN1 << i));
-        StarCoinOn[i]->SetVisible(flag);
-        StarCoinOff[i]->SetVisible(haveSC);
+        bool flag = (conds & (dMj2dGame_c::COIN1_COLLECTED << i));
+        mpPicturePanes[StarCoinOn0+i]->SetVisible(flag);
+        mpPicturePanes[StarCoinOff0+i]->SetVisible(haveSC);
         if (haveSC) {
-            StarCoinOff[i]->trans.x = currentPos;
-            currentPos += StarCoinOff[i]->size.x + 4.0f;
+            mpPicturePanes[StarCoinOff0+i]->SetSRTElement(0, currentPos);
+            nw4r::lyt::Size size = mpPicturePanes[StarCoinOff0+i]->GetSize();
+            currentPos += size.width + 4.0f;
         }
     }
 
-    // SIZE THING
-    nw4r::ut::TextWriter tw;
-    tw.font = LevelName->font;
-    tw.SetFontSize(LevelName->fontSizeX, LevelName->fontSizeY);
-    tw.lineSpace = LevelName->lineSpace;
-    tw.charSpace = LevelName->charSpace;
-    if (LevelName->tagProc != 0)
-        tw.tagProcessor = LevelName->tagProc;
+    // Get the width of the level name
+    nw4r::ut::WideTextWriter tw;
+    tw.SetFont(*mpTextBoxes[LevelName]->GetFont());
+    nw4r::lyt::Size nameFontSize = mpTextBoxes[LevelName]->GetFontSize();
+    tw.SetFontSize(nameFontSize.width, nameFontSize.height);
+    tw.SetLineSpace(mpTextBoxes[LevelName]->GetLineSpace());
+    tw.SetCharSpace(mpTextBoxes[LevelName]->GetCharSpace());
+    if (mpTextBoxes[LevelName]->GetTagProcessor() != nullptr)
+        tw.SetTagProcessor(mpTextBoxes[LevelName]->GetTagProcessor());
 
-    float width = tw.CalcStringWidth(convertedLevelName, charCount);
-    float totalWidth = width + LevelName->trans.x - 20.0f;
+    float width = tw.CalcStringWidth(levelName, wcslen(levelName));
+    nw4r::math::VEC3 levelNameTrans = mpTextBoxes[LevelName]->GetTranslate();
+
+    float totalWidth = width + levelNameTrans.x - 20.0f;
+    // If the level name is shorter than the bottom row,
+    // use that instead
     if (totalWidth < currentPos)
         totalWidth = currentPos;
-    Header_Centre->size.x = totalWidth;
-    Header_Right->trans.x = totalWidth;
 
-    SaveBlock *save = GetSaveFile()->GetBlock(-1);
-    mHeaderCol.colourise(save->hudHintH%1000, save->hudHintS, save->hudHintL);*/
+    mpPicturePanes[Header_Centre]->SetSRTElement(8, totalWidth);
+    mpPicturePanes[Header_Right]->SetSRTElement(0, totalWidth);
+
+    u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(worldIdx);
+    mHeaderCol.colourise(world->mHudHue%1000, world->mHudSat, world->mHudLight);
 }
 
 
 void dWMHud_c::loadFooterInfo() {
-    /*SaveBlock *save = GetSaveFile()->GetBlock(-1);
+    dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
+    MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-    wchar_t convertedWorldName[32];
-    int i;
-    for (i = 0; i < 32; i++) {
-        convertedWorldName[i] = save->newerWorldName[i];
-        if (convertedWorldName[i] == 0)
-            break;
-    }
-    convertedWorldName[31] = 0;
+    const wchar_t *worldName = getKoopatlasWorldName(world->mWorldNameMsgID);
+    mpTextBoxes[WorldName]->SetString(worldName, 0);
+    mpTextBoxes[WorldNameS]->SetString(worldName, 0);
 
-    WorldName->SetString(convertedWorldName);
-    WorldNameS->SetString(convertedWorldName);
+    mpTextBoxes[WorldName]->SetTextColor(0, world->mHudTextColors[0]);
+    mpTextBoxes[WorldName]->SetTextColor(1, world->mHudTextColors[1]);
 
-    WorldName->colour1 = save->hudTextColours[0];
-    WorldName->colour2 = save->hudTextColours[1];
+    mFooterCol.colourise(world->mHudHue%1000, world->mHudSat, world->mHudLight);
 
-    mFooterCol.colourise(save->hudHintH%1000, save->hudHintS, save->hudHintL);
-
-    // figure out if stars are needed
-    // Star 0: world is complete
-    // Star 1: all exits complete
-    // Star 2: all star coins obtained
+    // Figure out if stars are needed
+    // Star 0: World is complete
+    // Star 1: All exits complete
+    // Star 2: All star coins obtained
     
     bool starVisibility[3];
     starVisibility[0] = false;
 
     dLevelInfo_c *linfo = &dLevelInfo_c::m_instance;
-    dLevelInfo_c::entry_s *lastLevel = linfo->searchByDisplayNum(save->newerWorldID, lastLevelIDs[save->newerWorldID]);
+    dLevelInfo_c::entry_s *lastLevel = linfo->getEntryFromDispID(world->mLevelInfoID, world->mLastLevelID);
     if (lastLevel) {
-        starVisibility[0] = (save->GetLevelCondition(lastLevel->worldSlot,lastLevel->levelSlot) & COND_NORMAL);
+        starVisibility[0] = (save->getCourseDataFlag(lastLevel->mWorldSlot,lastLevel->mLevelSlot) & dMj2dGame_c::GOAL_NORMAL);
     }
 
-    // now calculate the other two
     starVisibility[1] = true;
     starVisibility[2] = true;
 
-    dLevelInfo_c::section_s *sect = linfo->getSectionByIndex(save->newerWorldID);
+    dLevelInfo_c::section_s *sect = linfo->getSection(world->mLevelInfoID);
 
-    for (int i = 0; i < sect->levelCount; i++) {
-        dLevelInfo_c::entry_s *entry = &sect->levels[i];
+    for (int i = 0; i < sect->mLevelCount; i++) {
+        dLevelInfo_c::entry_s *entry = &sect->mLevels[i];
 
-        if (entry->flags & 2) {
-            u32 conds = save->GetLevelCondition(entry->worldSlot, entry->levelSlot);
+        if (entry->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL) {
+            u32 conds = save->getCourseDataFlag(entry->mWorldSlot, entry->mLevelSlot);
 
-            if (((entry->flags & 0x10) && !(conds & COND_NORMAL)) ||
-                    ((entry->flags & 0x20) && !(conds & COND_SECRET)))
+            if (((entry->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL) && !(conds & dMj2dGame_c::GOAL_NORMAL)) ||
+                    ((entry->mFlag & dLevelInfo_c::dLevelInfo_c::FLAG_GOAL_SECRET) && !(conds & dMj2dGame_c::GOAL_SECRET)))
                         starVisibility[1] = false;
 
-            if ((conds & COND_COIN_ALL) != COND_COIN_ALL)
+            if ((conds & dMj2dGame_c::COIN_MASK) != dMj2dGame_c::COIN_MASK)
                 starVisibility[2] = false;
         }
     }
 
-    if (save->newerWorldID == 15) {
+    // Newer: Disable stars for the unused Cutland map
+    if (world->mLevelInfoID == 15) {
         starVisibility[0] = false;
         starVisibility[1] = false;
         starVisibility[2] = false;
     }
 
-    float startX = Star[0]->trans.x;
+    nw4r::math::VEC3 trans = mpPicturePanes[Star0]->GetTranslate();
+    float startX = trans.x;
     for (int i = 0; i < 3; i++) {
-        Star[i]->SetVisible(starVisibility[i]);
-        Star[i]->trans.x = startX;
+        mpPicturePanes[Star0+i]->SetVisible(starVisibility[i]);
+        mpPicturePanes[Star0+i]->SetSRTElement(0, startX);
         if (starVisibility[i]) {
-            startX += Star[i]->size.x + 4.0f;
+            nw4r::lyt::Size size = mpPicturePanes[Star0+i]->GetSize();
+            startX += size.width + 4.0f;
         }
     }
 
-    WorldName->trans.x = startX + 4.0f;
-    WorldNameS->trans.x = startX + 6.0f;*/
+    mpTextBoxes[WorldName]->SetSRTElement(0,  startX + 4.0f);
+    mpTextBoxes[WorldNameS]->SetSRTElement(0, startX + 6.0f);
 }
 
 
@@ -418,10 +411,10 @@ void dWMHud_c::enteredNode(dKPNode_s *node) {
     /*if (node == 0)
         node = dScKoopatlas_c::instance->mPathManager.currentNode;
 
-    if (node->type == dKPNode_s::LEVEL && mInitalDispComplete) {
+    if (node->type == dKPNode_s::LEVEL && mInitalDispComplete) {*/
         mDispHeader = true;
-        mpHeaderNode = node;
-    }*/
+    //    mpHeaderNode = node;
+    //}
 }
 
 void dWMHud_c::leftNode() {
@@ -490,7 +483,6 @@ void dWMHud_c::controllerConnectCheck() {
     if (type != mControllerType) {
         mControllerType = type;
 
-        //int beef = (type == 0) ? 0 : 1;
         dInfo_c::m_instance->mExtensionAttached = (type == 0) ? 0 : 1;
 
         MsgRes_c *msgRes = dMessage_c::getMesRes();

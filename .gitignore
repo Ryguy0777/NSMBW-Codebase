@@ -10,3 +10,7 @@ Codebase/loader/loader.xml
 Codebase/loader/loader.bin
 /Codebase/_map
 /Codebase/cw/
+
+/Tools/**/.vs
+/Tools/**/bin
+/Tools/**/obj
