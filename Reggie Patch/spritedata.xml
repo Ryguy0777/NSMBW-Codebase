@@ -136,6 +136,16 @@
     <checkbox nybble="11.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Signboard placing it further behind other sprites."/>
   </sprite> <!-- #310: Signboard - Arrow -->
   
+  <sprite id="425" name="Jellybeam" notes="A jellyfish enemy that produces a varying cone of light.">
+    <dependency notes="While it can be used without water, the use of water is still suggested."/>
+    <list nybble="5.3-5.4" title="Delay Before Dropping" comment="This determines the delay before the Jellybeam swims downwards.">
+      <entry value="2">Short</entry>
+      <entry value="0">Normal</entry>
+      <entry value="1">Long</entry>
+    </list>
+    <value nybble="12.3-12.4" title="Distance Dropped" comment="This determines the amount of additional distance the Jellybeam will swim downwards."/>
+  </sprite> <!-- #425: Jellybeam -->
+  
   <sprite id="483" name="Actor Spawner" notes="Spawns an actor on event trigger.">
 	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
 	<value nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>

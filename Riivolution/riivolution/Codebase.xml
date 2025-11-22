@@ -22,6 +22,7 @@
 		<folder external="Object" disc="/Object" create="true" />
 		<folder external="Stage" disc="/Stage" create="true" />
 		<folder external="Stage/Texture" disc="/Stage/Texture" create="true" />
+		<folder external="Sound/new" disc="/Sound/new" create="true" />
 		
 		<folder external="Language/CN" disc="/CN" recursive="true" />
 		<folder external="Language/EU" disc="/EU" recursive="true" />
@@ -31,6 +32,7 @@
 		<folder external="Language/US" disc="/US" recursive="true" />
 		
 		<file external="LevelInfo.bin" disc="/LevelInfo.bin" create="true"/>
+		<file external="MapADPCMInfo.bin" disc="/MapADPCMInfo.bin" create="true"/>
 		<file external="WorldInfo.bin" disc="/WorldInfo.bin" create="true"/>
 		
 		<memory offset="0x800046E4" valuefile="Code/loader.bin" />
