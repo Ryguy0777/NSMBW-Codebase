@@ -242,3 +242,6 @@ public:
 
     mVec2_c mOffset, mSize;
 };
+
+// Official name of mBoundBox?
+class sRangeDataF : public mBoundBox { };

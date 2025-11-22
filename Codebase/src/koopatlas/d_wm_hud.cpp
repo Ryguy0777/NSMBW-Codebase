@@ -153,7 +153,7 @@ int dWMHud_c::execute() {
         return SUCCEEDED;
     }
 
-    mDispHeader = true;
+    mDispHeader = true; // Temp, remove me once the map data is complete
     if (mDispHeader && (!(mLayout.isAnime(ANIM_SHOW_HEADER)))) {
         mDispHeader = false;
         loadHeaderInfo();
@@ -229,6 +229,14 @@ void dWMHud_c::loadHeaderInfo() {
         const wchar_t *dummyName = getLevelName(0, 0);
         mpTextBoxes[LevelName]->SetString(dummyName, 0);
         mpTextBoxes[LevelNameS]->SetString(dummyName, 0);
+
+        mpTextBoxes[LevelNumber]->SetString(L"?-?", 0);
+        mpTextBoxes[LevelNumberS]->SetString(L"?-?", 0);
+
+        // Hide exit flags and Star Coins
+        for (int i = 0; i < 5; i++) {
+            mpPicturePanes[NormalExitFlag+i]->SetVisible(false);
+        }
         return;
     }
 
@@ -300,6 +308,9 @@ void dWMHud_c::loadHeaderInfo() {
         bool flag = (conds & (dMj2dGame_c::COIN1_COLLECTED << i));
         mpPicturePanes[StarCoinOn0+i]->SetVisible(flag);
         mpPicturePanes[StarCoinOff0+i]->SetVisible(haveSC);
+        // Hide outline if we have the coin (it can be seen during anims)
+        mpPicturePanes[StarCoinOff0+i]->SetAlpha((flag) ? 0 : 0xFF);
+
         if (haveSC) {
             mpPicturePanes[StarCoinOff0+i]->SetSRTElement(0, currentPos);
             nw4r::lyt::Size size = mpPicturePanes[StarCoinOff0+i]->GetSize();

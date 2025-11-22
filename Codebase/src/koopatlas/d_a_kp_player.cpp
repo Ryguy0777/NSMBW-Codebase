@@ -70,7 +70,7 @@ int daKPPlayer_c::execute() {
     if (daPyMng_c::mCreateItem[0] & 1) {
         mpPyMdlMng->mpMdl->onStarAnm();
         mpPyMdlMng->mpMdl->onStarEffect();
-        //dKPMusic::playStarMusic();
+        dKPMusic_c::m_instance->playStarSfx();
     }
 
     if (mIsSpinning) {

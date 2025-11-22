@@ -7,7 +7,6 @@
 #include <new/bases/koopatlas/d_kp_music.hpp>
 #include <new/bases/koopatlas/d_kp_camera.hpp>
 #include <new/bases/koopatlas/d_a_kp_player.hpp>
-// #include "music.h"
 
 #include <constants/sound_list.h>
 #include <game/bases/d_3d.hpp>
@@ -136,8 +135,8 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadSceneSnd(void *ptr) {
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadKPMusic(void *ptr) {
     SpammyReport("KPInitPhase_LoadKPMusic called\n");
-    //return (sPhase_c::METHOD_RESULT_e)dKPMusic_c::loadInfo();
-    return (sPhase_c::METHOD_RESULT_e)true;
+    bool result = dKPMusic_c::init();
+    return (sPhase_c::METHOD_RESULT_e)result;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void *ptr) {
@@ -177,7 +176,8 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources1(void *ptr) {
 
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-    //return (sPhase_c::METHOD_RESULT_e)(wm->mMapListLoader.request("/Maps/List.txt", 0, nullptr) != nullptr);
+    //bool result = wm->mMapListLoader.request("/Maps/List.txt", 0, nullptr) != nullptr;
+    //return (sPhase_c::METHOD_RESULT_e)result;
     return (sPhase_c::METHOD_RESULT_e)true;
 }
 
@@ -194,13 +194,11 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources2(void *ptr) {
             wm->mWarpZoneHacks = true;
         else
             wm->mWarpZoneHacks = false;
-        OSReport("Load map: %s\n", wm->mMapPath);
-    }*/
+        MapReport("Loading map: %s\n", wm->mMapPath);
+    }
 
-    /*if (wm->mMapData.load(wm->mMapPath)) {
-        return (sPhase_c::METHOD_RESULT_e)true;
-    } else
-        return (sPhase_c::METHOD_RESULT_e)false;*/
+    bool result = wm->mMapData.load(wm->mMapPath);
+    return (sPhase_c::METHOD_RESULT_e)result;*/
     return (sPhase_c::METHOD_RESULT_e)true;
 }
 
@@ -303,16 +301,19 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
     dWipeCircle_c::m_instance->mCenterPos.y = player->mPos.y;
     dWipeCircle_c::m_instance->mUseCenterPos = true;
 
+    // Temp until pathmanager is complete
+    wm->startMusic();
+
     SpammyReport("KPInitPhase_ChkChildProcess returning true\n");
     return (sPhase_c::METHOD_RESULT_e)true;
 }
 
 
 
-// todo: figure out what i wanna do with savedata
 void dScKoopatlas_c::startMusic() {
-    //dKPMusic_c::play(GetSaveFile()->GetBlock(-1)->currentMapMusic);
-    //dKPMusic_c::play(2);
+    u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
+    int musicID = dWorldInfo_c::m_instance.getWorld(worldIdx)->mMusicID;
+    dKPMusic_c::m_instance->play(musicID);
 }
 
 void dScKoopatlas_c::setupScene() {
@@ -355,6 +356,7 @@ int dScKoopatlas_c::create() {
     OSReport("KP scene param: %08x\n", mParam);
     SpammyReport("create() called\n");
 
+    // note: this should probably be changed to make the scene params control the wipe used
     dFader_c::setFader(dFader_c::CIRCLE_SLOW);
 
     // temp
@@ -458,8 +460,8 @@ int dScKoopatlas_c::create() {
 }
 
 int dScKoopatlas_c::doDelete() {
-    //if (!mKeepMusicPlaying)
-    //	dKPMusic_c::stop();
+    if (!mKeepMusicPlaying)
+    	dKPMusic_c::m_instance->stop();
 
     m3d::removeLightMgr(0);
     m3d::removeLightMgr(1);
@@ -504,13 +506,29 @@ bool dScKoopatlas_c::mapIsRunning() {
 
 
 int dScKoopatlas_c::execute() {
-    //dKPMusic_c::execute();
+    dKPMusic_c::m_instance->execute();
     if (!canDoStuff()) return true;
 
     //SpammyReport("Executing mStateMgr: %s\n", mStateMgr.getStateID()->name());
     mStateMgr.executeState();
     return true;
 }
+
+void dScKoopatlas_c::openMenu(int starSndMode, int soundID) {
+    dKPMusic_c::m_instance->updTrackVolume(true);
+    dKPMusic_c::m_instance->updStarVolume(starSndMode);
+    if (soundID > -1)
+        SndAudioMgr::sInstance->startSystemSe(soundID, 1);
+    mpHud->hideAll();
+}
+
+void dScKoopatlas_c::returnToNormalState() {
+    dKPMusic_c::m_instance->updTrackVolume(false);
+    dKPMusic_c::m_instance->updStarVolume(0);
+    mpHud->unhideAll();
+    mStateMgr.changeState(StateID_Normal);
+}
+
 
 
 void dScKoopatlas_c::initializeState_Limbo() { }
@@ -560,15 +578,13 @@ void dScKoopatlas_c::executeState_Normal() {
 
     // Nothing related to the menu is going on
     if (pressed & WPAD_BUTTON_1) {
-        SndAudioMgr::sInstance->startSystemSe(SE_SYS_DECIDE, 1);
+        openMenu(2, SE_SYS_DECIDE);
         mpStockItem->mIsVisible = true;
         mStateMgr.changeState(StateID_PowerupsWait);
-        mpHud->hideAll();
     } else if (pressed & WPAD_BUTTON_PLUS) {
-        SndAudioMgr::sInstance->startSystemSe(SE_SYS_PAUSE, 1);
+        openMenu(1, SE_SYS_PAUSE);
         mpCourseSelectMenu->mIsVisible = true;
         mStateMgr.changeState(StateID_CSMenu);
-        mpHud->hideAll();
 #ifdef KP_PATH_QUICK_UNLOCK
     } else if (pressed & WPAD_BUTTON_MINUS) {
         mPathManager.unlockAllPaths(2);
@@ -579,6 +595,10 @@ void dScKoopatlas_c::executeState_Normal() {
             for (int l = 0; l < STAGE_COUNT; l++)
                 save->onCourseDataFlag(w, l, save->GOAL_MASK);
 #endif
+    } else if (pressed & WPAD_BUTTON_A) {
+        dKPMusic_c::m_instance->play(2);
+    } else if (pressed & WPAD_BUTTON_MINUS) {
+        dKPMusic_c::m_instance->play(1);
     }
 }
 void dScKoopatlas_c::finalizeState_Normal() { }
@@ -636,8 +656,7 @@ void dScKoopatlas_c::executeState_CSMenu() {
 
         } else {
             // Ok, change back to STATE_Normal
-            mpHud->unhideAll();
-            mStateMgr.changeState(StateID_Normal);
+            returnToNormalState();
         }
     }
 }
@@ -687,8 +706,7 @@ void dScKoopatlas_c::initializeState_TitleConfirmHitWait() { }
 void dScKoopatlas_c::executeState_TitleConfirmHitWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            mStateMgr.changeState(StateID_Normal);
-            mpHud->unhideAll();
+            returnToNormalState();
         } else {
             mStateMgr.changeState(StateID_Limbo);
             dScRestartCrsin_c::startTitle(false, 0);
@@ -727,8 +745,7 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
                 if (!isThere) daPyMng_c::mCreateItem[i] = 0;
             }
 
-            mStateMgr.changeState(StateID_Normal);
-            mpHud->unhideAll();
+            returnToNormalState();
         }
     }
 
@@ -762,8 +779,7 @@ void dScKoopatlas_c::executeState_PowerupsWait() {
         //mpPlayer->modelHandler->mdlClass->setPowerup(daPyMng_c::mPlayerType[0]);
         //mpPlayer->bindPats();
 
-        mStateMgr.changeState(StateID_Normal);
-        mpHud->unhideAll();
+        returnToNormalState();
     }
 }
 void dScKoopatlas_c::finalizeState_PowerupsWait() { }
@@ -774,8 +790,7 @@ void dScKoopatlas_c::finalizeState_PowerupsWait() { }
 void dScKoopatlas_c::initializeState_ShopWait() { }
 void dScKoopatlas_c::executeState_ShopWait() {
     //if (!mpShop->visible) {
-    //	mStateMgr.changeState(StateID_Normal);
-    //	//mpHud->unhideAll();
+    //    returnToNormalState();
     //}
 }
 void dScKoopatlas_c::finalizeState_ShopWait() { }
@@ -786,8 +801,7 @@ void dScKoopatlas_c::finalizeState_ShopWait() { }
 void dScKoopatlas_c::initializeState_CoinsWait() { }
 void dScKoopatlas_c::executeState_CoinsWait() {
     if (!mpCoins->mIsVisible) {
-    	mStateMgr.changeState(StateID_Normal);
-    	mpHud->unhideAll();
+    	returnToNormalState();
     }
 }
 void dScKoopatlas_c::finalizeState_CoinsWait() { }
@@ -836,8 +850,7 @@ void dScKoopatlas_c::finalizeState_SaveWindowClose() { }
 void dScKoopatlas_c::executeState_SaveWindowClose() {
     if (!mpYesNoWindow->getIsActive()) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            mStateMgr.changeState(StateID_Normal);
-            mpHud->unhideAll();
+            returnToNormalState();
         } else {
             mStateMgr.changeState(StateID_SaveDo);
             dCourseSelectManager_c::m_instance->saveGame(false);
@@ -881,8 +894,7 @@ void dScKoopatlas_c::initializeState_SaveEndCloseWait() { }
 void dScKoopatlas_c::finalizeState_SaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_SaveEndCloseWait() {
     if (!mpYesNoWindow->mIsAnimating) {
-        mStateMgr.changeState(StateID_Normal);
-        mpHud->unhideAll();
+        returnToNormalState();
     }
 }
 
@@ -931,8 +943,7 @@ void dScKoopatlas_c::finalizeState_QuickSaveWindowClose() { }
 void dScKoopatlas_c::executeState_QuickSaveWindowClose() {
     if (!mpYesNoWindow->getIsActive()) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            mStateMgr.changeState(StateID_Normal);
-            mpHud->unhideAll();
+            returnToNormalState();
         } else {
             mStateMgr.changeState(StateID_QuickSaveDo);
             dCourseSelectManager_c::m_instance->saveGame(true);
@@ -975,8 +986,7 @@ void dScKoopatlas_c::finalizeState_QuickSaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_QuickSaveEndCloseWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            mStateMgr.changeState(StateID_Normal);
-            mpHud->unhideAll();
+            returnToNormalState();
         } else {
             mStateMgr.changeState(StateID_Limbo);
             dScRestartCrsin_c::startTitle(false, 0);
@@ -1175,7 +1185,7 @@ void dScKoopatlas_c::initializeState_CompletionMsgHideWait() { }
 void dScKoopatlas_c::finalizeState_CompletionMsgHideWait() { }
 void dScKoopatlas_c::executeState_CompletionMsgHideWait() {
     if (!mpYesNoWindow->getIsActive())
-        mStateMgr.changeState(StateID_Normal);
+        returnToNormalState();
 }
 
 void NewerMapDrawFunc() {

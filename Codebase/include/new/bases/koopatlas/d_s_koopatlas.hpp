@@ -23,7 +23,7 @@
 #include <new/bases/koopatlas/d_wm_star_coin.hpp>
 #include <new/bases/koopatlas/d_wm_hud.hpp>
 // #include "koopatlas/pathmanager.h"
-// #include "koopatlas/mapmusic.h"
+#include <new/bases/koopatlas/d_kp_music.hpp>
 
 #ifdef KP_MAP_REPORT
 #define MapReport OSReport
@@ -55,6 +55,17 @@ class dWorldCamera_c;
 
 class dScKoopatlas_c : public dScene_c {
 public:
+    // Param bits used as behavior flags
+    enum PARAM_FLAGS_e {
+        AFTER_FORTRESS  = 0x20000,    ///< Is after a fortress stage.
+        CHECK_AUTOWALK  = 0x40000,    ///< Check if the player should auto-walk to the next node.
+        REQUEST_SAVE    = 0x80000,    ///< Should the game prompt the player to save?
+        CHANGE_NODE     = 0x10000000, ///< Map is being entered from a CHANGE node.
+        ENDING_SCENE    = 0x20000000, ///< Is the ending scene where the W9 warp appears.
+        AFTER_KAMEK_CS  = 0x40000000, ///< Is after the Kamek cutscene. (Unused)
+        IS_FIRST_PLAY   = 0x80000000  ///< Is the first load of the map.
+    };
+
     dScKoopatlas_c();
     virtual ~dScKoopatlas_c();
 
@@ -72,6 +83,9 @@ public:
 
     bool canDoStuff();
     bool mapIsRunning();
+
+    void openMenu(int starSndMode, int soundID);
+    void returnToNormalState();
 
     void showSaveWindow();
 

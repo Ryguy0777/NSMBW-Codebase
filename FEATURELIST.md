@@ -39,6 +39,7 @@ These features are complete and should be fully functional.
 * Removal of Quick Save (togglable)
 * Level Names/Info (togglable)
 * NewerSMBW styled pause menu (togglable)
+* Jellybeam lightmask fixes
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.

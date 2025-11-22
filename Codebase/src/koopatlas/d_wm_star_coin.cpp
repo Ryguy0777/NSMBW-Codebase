@@ -217,19 +217,19 @@ bool dWMStarCoin_c::canScrollRight() const {
 }
 
 void dWMStarCoin_c::loadInfo() {
-    /*int unspentCoins = getUnspentStarCoinCount();
-    int coins = getStarCoinCount();
+    int unspentCoins = dGameCom::getUnspentStarCoinCount();
+    int coins = dGameCom::getStarCoinCount();
 
-    WriteNumberToTextBox(&unspentCoins, UnspentCoinCount, false);
-    WriteNumberToTextBox(&coins, TotalCoinCount, false);*/
+    dGameCom::LayoutDispNumberDigit(unspentCoins, mpTextBoxes[UnspentCoinCount], false);
+    dGameCom::LayoutDispNumberDigit(coins, mpTextBoxes[TotalCoinCount], false);
 
     mCurrentWorld = -1;
     mCurrentWorldIndex = -1;
     mOpenWorldCount = 0;
 
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-    //int wantedSection = save->newerWorldID;
-    int wantedSection = 0;
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
+    int wantedSection = world->mLevelInfoID-1;
 
     // Figure out which sections should be available
     for (int i = 0; i < dLevelInfo_c::m_instance.sectionCount(); i++) {
@@ -262,8 +262,7 @@ void dWMStarCoin_c::loadInfo() {
     }
 }
 
-// TODO: Implement second list of world names into BMG, for Koopatlas to use
-// Use the same setup as the Translatable Newer thing ryguy made
+// TODO: Add byte to WorldInfo that contains the world idx of the related subworld
 void dWMStarCoin_c::loadSectionInfo() {
     dLevelInfo_c::entry_s *visibleLevels[COLUMN_COUNT][ROW_COUNT];
 
@@ -318,11 +317,11 @@ void dWMStarCoin_c::loadSectionInfo() {
         totalCoins += 3;
 
         // Is this level unlocked?
-        /*u32 conds = save->getCourseDataFlag(level->mWorldSlot, level->mLevelSlot);
+        u32 conds = save->getCourseDataFlag(level->mWorldSlot, level->mLevelSlot);
 
-        // TODO: implement this
-        if (!(conds & COND_UNLOCKED))
-        	continue;*/
+        // Newer-exclusive condition
+        //if (!(conds & 0x200))
+        //	continue;
 
         // Give it a slot
         if (usesSubworlds) {

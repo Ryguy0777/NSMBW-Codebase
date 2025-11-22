@@ -17,6 +17,8 @@ isHomeCourseClear=0x800FCB30
 returnFromMessageScaleHack=0x800C9D94
 colorTitleText__20dMultiCourseSelect_cFii=0x807999E0
 __vt__Q23EGG10BaseCamera=0x803503b8
+AxVoice_SetADPCM=0x80262FD0
+Voice_SetADPCMLoop=0x80281A90
 
 __vt__12daEnKuribo_c=0x80af7de8
 __dt__12daEnKuribo_cFv=0x80a575f0

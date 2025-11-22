@@ -13,8 +13,14 @@ public:
         LOOP_COUNT,
     };
 
-    char pad[0x119a];
+    char pad[0x1198];
+    u8 mCurrWorld;
+    u8 mCurrLevel;
+
     u8 mCurrCourse;
+    u8 mCurrArea;
+    u8 mCurrLayer;
+    u8 mCurrEntrance;
 
     static float getLoopPosX(float x);
 

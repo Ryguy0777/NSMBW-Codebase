@@ -1,13 +1,36 @@
 #pragma once
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_ENABLED
+#ifdef KOOPATLAS_DEV_ENABLED
+#include <new/custom_music.hpp>
+#include <nw4r/snd.h>
+
 class dKPMusic_c {
 public:
-	static bool loadInfo();
-	static void play(int id);
-	static void execute();
-	static void stop();
-	static void playStarMusic();
+	dKPMusic_c();
+
+	void execute();
+
+	void play(int id);
+	void pause();
+	void stop();
+
+	void updTrackVolume(bool isOpenMenu);
+
+	void playStarSfx();
+	void updStarVolume(int);
+
+	bool mIsPlaying;
+	bool mIsStarPlaying;
+
+	int mCurrentSongID;
+	int mNextSongID;
+
+	int mSwitchDelay;
+	int mFadeInDelay;
+
+	static bool init();
+
+	static dKPMusic_c *m_instance;
 };
 #endif

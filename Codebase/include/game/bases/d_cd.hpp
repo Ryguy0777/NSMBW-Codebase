@@ -17,6 +17,14 @@ struct AreaBoundU16 {
 class dCdArea_c {
 public:
     AreaBoundU16 bound;
+    u16 mColorObj;
+    u16 mColorBG;
+    u8  mAreaID;
+    u8  mScroll;
+    u8  mZoomType;
+    u8  mZoom;
+    u8  mZoomChange;
+    u8  mMaskNo;
 };
 
 /// @unofficial
@@ -74,10 +82,11 @@ public:
 
     u8 getAreaID(u8);
     u8 getAreaScroll(u8);
+    u8 getAreaBgm(u8 zoneID);
     u8 getAreaNo(mVec3_c *);
     dScrollData_c *getScrlAreaDataP(u8 scrollID);
     dScrollData_c *getScrollDataP(u8 scrollID);
-    dCdArea_c *getAreaP(u8 zoneID, mBoundBox *bound);
+    dCdArea_c *getAreaDataP(u8 zoneID, sRangeDataF *bound);
 
     dBgThingCollection_c *getBgThings() { return mBgThings; }
 };
