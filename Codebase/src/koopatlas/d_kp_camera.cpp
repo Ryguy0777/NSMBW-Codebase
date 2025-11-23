@@ -68,7 +68,7 @@ int dKPCamera_c::create() {
     mScreen.mProjType = EGG::Frustum::PROJ_ORTHO;
     mScreen.mFlags |= 1;
 
-    EGG::Screen::TVModeInfo *tvInfo = &mScreen.sTVModeInfo[mScreen.sTVMode];
+    EGG::Screen::TVModeInfo *tvInfo = &EGG::Screen::sTVModeInfo[EGG::Screen::sTVMode];
     mScreen.mSize.x = tvInfo->width;
     mScreen.mSize.y = tvInfo->height;
     mScreen.mNearZ = 1.0f;
@@ -303,12 +303,12 @@ void dKPCamera_c::generateCameraMatrices() {
 
 
 void dKPCamera_c::updateCameras() {
-    nw4r::g3d::Camera cam0(m3d::getCamera(0));
-    mCamera3D.setG3DCamera(cam0);
-    mScreen.CopyToG3D(cam0);
+    //nw4r::g3d::Camera cam0(m3d::getCamera(0));
+    //mCamera3D.setG3DCamera(cam0);
+    //mScreen.CopyToG3D(cam0);
 
-    nw4r::g3d::Camera cam1(m3d::getCamera(1));
-    mOrthoData2D.setG3DCamera(cam1);
-    mCamera2D.setG3DCamera(cam1);
+    //nw4r::g3d::Camera cam1(m3d::getCamera(1));
+    //mOrthoData2D.setG3DCamera(cam1);
+    //mCamera2D.setG3DCamera(cam1);
 }
 #endif

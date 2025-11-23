@@ -252,7 +252,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     wm->mpPlayer = (daKPPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
     wm->mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[0]);
     wm->mpPlayer->bindPats();
-    wm->mpPlayer->mpPyMdlMng->mpMdl->setAnm(0, 1.2f, 10.0f, 0.0f);
+    wm->mpPlayer->mpPyMdlMng->mpMdl->setAnm(dPyMdlBase_c::WAIT, 1.2f, 10.0f, 0.0f);
 
     // since we've got all the resources, set up the path data too
     /*SpammyReport("preparing path manager\n");
@@ -262,7 +262,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     //dKPNode_s *cNode = wm->mPathManager.currentNode;
     //wm->mpPlayer->mPos = mVec3_c(cNode->x, -cNode->y, wm->mpPlayer->mPos.z);
 
-    wm->mpPlayer->mPos = mVec3_c(250.0f, 100.0f, wm->mpPlayer->mPos.z);
+    wm->mpPlayer->mPos = mVec3_c(0.0f, 0.0f, wm->mpPlayer->mPos.z);
 
     /*SpammyReport("creating MAP\n");
     wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);*/
@@ -333,22 +333,22 @@ void dScKoopatlas_c::loadScene(int sceneID) {
     lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, -3);
 
     if (sceneID == 0) { // Main lighting
-        nw4r::g3d::ResFile blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blight");
-        lightMgr->LoadBlight(&blight);
+        void *blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blight", nullptr, nullptr);
+        lightMgr->LoadBlight(blight);
 
-        nw4r::g3d::ResFile blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blmap");
-        lightMgr->ltMgr->LoadBlmap(&blmap);
+        void *blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blmap", nullptr, nullptr);
+        lightMgr->ltMgr->LoadBlmap(blmap);
 
     } else if (sceneID == 1) { // Layout model lighting
-        nw4r::g3d::ResFile blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blight");
-        lightMgr->LoadBlight(&blight);
+        void *blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blight", nullptr, nullptr);
+        lightMgr->LoadBlight(blight);
 
-        nw4r::g3d::ResFile blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blmap");
-        lightMgr->ltMgr->LoadBlmap(&blmap);
+        void *blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blmap", nullptr, nullptr);
+        lightMgr->ltMgr->LoadBlmap(blmap);
 
         EGG::FogManager *fogMgr = m3d::getFogMgr(sceneID);
-        nw4r::g3d::ResFile bfog = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.bfog");
-        fogMgr->LoadBfog(&bfog);
+        void *bfog = dResMng_c::m_instance->mRes.getRes("Env_world", "fog/Layout3D.bfog", nullptr, nullptr);
+        fogMgr->LoadBfog(bfog);
     }
 }
 
@@ -426,7 +426,7 @@ int dScKoopatlas_c::create() {
     fBase_c::createChild(fProfile::WORLD_CAMERA, this, 0, 0);
 
     SpammyReport("setting NewerMapDrawFunc\n");
-    dGraph_c::ms_Instance->mpDrawFunc = NewerMapDrawFunc;
+    dGraph_c::ms_Instance->mpDrawFunc = KoopatlasDrawFunc;
 
     SpammyReport("create() completed\n");
     
@@ -748,7 +748,6 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
             returnToNormalState();
         }
     }
-
 }
 void dScKoopatlas_c::finalizeState_PlayerChangeWait() { }
 
@@ -1188,7 +1187,7 @@ void dScKoopatlas_c::executeState_CompletionMsgHideWait() {
         returnToNormalState();
 }
 
-void NewerMapDrawFunc() {
+void KoopatlasDrawFunc() {
     m3d::reset();
     m3d::setCurrentCamera(0);
     m3d::screenEffectReset(0, dKPCamera_c::m_instance->mScreen);

@@ -16,7 +16,7 @@ public:
     void Calc();
     void CopyToG3D(nw4r::g3d::ScnRoot *) const;
 
-    void LoadBfog(nw4r::g3d::ResFile *); ///< @unofficial
+    void LoadBfog(void *); ///< @unofficial
 
     u8 state;
     char pad[8];

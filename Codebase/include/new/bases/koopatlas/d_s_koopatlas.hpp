@@ -37,7 +37,7 @@
 #define SpammyReport(...)
 #endif
 
-void NewerMapDrawFunc();
+void KoopatlasDrawFunc();
 
 extern "C" bool IsWarningManagerActive(); // 0x8076DB90, Newer calls this CheckIfWeCantDoStuff
 int SearchForIndexOfPlayerID(int id);
@@ -51,7 +51,7 @@ class dWMMap_c;
 class dWMHud_c;
 class dWMShop_c;
 class dWMStarCoin_c;
-class dWorldCamera_c;
+class dKPCamera_c;
 
 class dScKoopatlas_c : public dScene_c {
 public:

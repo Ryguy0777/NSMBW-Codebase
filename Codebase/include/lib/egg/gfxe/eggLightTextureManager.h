@@ -10,7 +10,7 @@ public:
     int getTextureIndex(char const *) const;
     bool replaceModelTexture(int, EGG::ModelEx *) const;
 
-    void LoadBlmap(nw4r::g3d::ResFile *); ///< @unofficial
+    void LoadBlmap(void *); ///< @unofficial
 };
 
 } // namespace EGG

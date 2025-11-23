@@ -62,6 +62,4 @@ public:
     static dKPCamera_c *build();
     static dKPCamera_c *m_instance;
 };
-
 #endif
-

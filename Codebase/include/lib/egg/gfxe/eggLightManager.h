@@ -20,7 +20,7 @@ public:
     virtual void DoneDraw();
 
     void LoadScnLightInner(nw4r::g3d::ResAnmScn, float, short, unsigned long);
-    void LoadBlight(nw4r::g3d::ResFile *); ///< @unofficial
+    void LoadBlight(void *); ///< @unofficial
 
     char pad[0x10];
     LightTextureManager *ltMgr;
