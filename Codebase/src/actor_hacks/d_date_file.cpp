@@ -17,6 +17,7 @@ kmWriteNop(0x8077dd2c);
 #include <game/bases/d_save_mng.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <new/bases/d_level_info.hpp>
+#include <new/bases/d_world_info.hpp>
 #include <new/constants/message_list.h>
 #include <new/level_info_utils.hpp>
 
@@ -104,17 +105,37 @@ extern "C" FileInfo *GetFileInfo(FileInfo *out, dMj2dGame_c *save) {
     }
 #endif
 
-    OSReport("Done, got %d coins and %d exits\n", out->mCoinCount, out->mExitCount);
+    //OSReport("Done, got %d coins and %d exits\n", out->mCoinCount, out->mExitCount);
     return out;
 }
 
 void setFileInfo(dDateFile_c *this_, dMj2dGame_c *save) {
-    MsgRes_c *msgRes = dMessage_c::getMesRes();
+#ifdef KOOPATLAS_DEV_ENABLED
+    int worldIdx = save->mWorldInfoIdx;
+#else
+    int worldIdx = save->getCurrentWorld();
+#endif
 
-    const wchar_t *str = getWorldName(save->getCurrentWorld());
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(worldIdx);
+
+#ifdef KOOPATLAS_DEV_ENABLED 
+    const wchar_t *str = getKoopatlasWorldName(world->mWorldNameMsgID);
+#else
+    const wchar_t *str = getWorldName(worldIdx);
+#endif
     this_->mpTextBoxes[this_->T_worldNumber_01]->SetString(str, 0);
 
-    // TODO: Implement file colors once a way to store them is decided
+    this_->mpTextBoxes[this_->T_worldNumber_01]->SetTextColor(0, world->mFileTextColors[0]);
+    this_->mpTextBoxes[this_->T_worldNumber_01]->SetTextColor(1, world->mFileTextColors[1]);
+
+    // Recolor the background
+    nw4r::lyt::Picture *Picture_00;
+    Picture_00 = this_->mLayout.findPictureByName("Picture_00");
+
+    for (int i = 0; i < 2; i++) {
+        Picture_00->SetVtxColor(0+i, world->mFileHintColors[0]);
+        Picture_00->SetVtxColor(2+i, world->mFileHintColors[1]);
+    }
 
     FileInfo info;
     GetFileInfo(&info, save);

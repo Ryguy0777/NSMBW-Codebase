@@ -1,7 +1,6 @@
 #pragma once
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_DEV_ENABLED
 #include <revolution/GX/GXTypes.h>
 
 class dWorldInfo_c {
@@ -51,4 +50,3 @@ public:
 
     static dWorldInfo_c m_instance;
 };
-#endif

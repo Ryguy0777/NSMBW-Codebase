@@ -19,8 +19,6 @@ kmBranchDefCpp(0x8015bd74, NULL, bool, bool ret) {
 #ifdef LEVEL_INFO_ENABLED
     ret &= dLevelInfo_c::loadLevelInfo();
 #endif
-#ifdef KOOPATLAS_DEV_ENABLED
     ret &= dWorldInfo_c::loadWorldInfo();
-#endif
     return ret;
 }

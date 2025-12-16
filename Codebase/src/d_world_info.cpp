@@ -2,7 +2,6 @@
 #include <new/bases/d_world_info.hpp>
 #include <game/bases/d_dvd.hpp>
 
-#ifdef KOOPATLAS_DEV_ENABLED
 dDvd::loader_c s_worldInfoLoader;
 bool s_worldInfoLoaded = false;
 
@@ -21,4 +20,3 @@ bool dWorldInfo_c::loadWorldInfo() {
 
     return false;
 }
-#endif
