@@ -36,6 +36,7 @@ protected:
     /// "dBaseActor_c::construct".
     static dWmActor_c *construct(ProfileName profName, dBase_c *base, unsigned long param, const mVec3_c *position, const mAng3_c *rotation);
 
+public:
     static void setSoftLight_Map(m3d::bmdl_c &mdl); ///< @copydoc dGameCom::SetSoftLight_Map
     static void setSoftLight_MapObj(m3d::bmdl_c &mdl); ///< @copydoc dGameCom::SetSoftLight_MapObj
     static void setSoftLight_Enemy(m3d::bmdl_c &mdl); ///< @copydoc dGameCom::SetSoftLight_Enemy
