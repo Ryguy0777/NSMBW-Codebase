@@ -3,5 +3,8 @@
 #include <types.h>
 
 class dWmMapModel_c {
-    u8 mPad[0xbf8];
+public:
+    u8 mPad[0x8];
+    m3d::bmdl_c mModel;
+    u8 mPad2[0xbe4];
 };

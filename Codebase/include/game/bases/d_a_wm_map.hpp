@@ -3,10 +3,16 @@
 #include <game/bases/d_wm_demo_actor.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_wm_map_model.hpp>
+#include <game/bases/d_wm_csv_data.hpp>
+#include <game/bases/d_wm_connect.hpp>
+
+#include <new/bases/d_wm_cull_csv_data.hpp>
 
 class daWmMap_c : public dWmDemoActor_c {
 public:
     int GetNodeCount(int); ///< @unofficial
+    void SetCullNodeIndex(); /// < @unofficial
+    void GetNodePos(long, mVec3_c &);
 
     dHeapAllocator_c mAllocator;
     dWmMapModel_c mModels[4];
@@ -15,6 +21,15 @@ public:
     u8 mPad2[0x4];
     dCsvData_c mCsvData[4];
     dWmConnect_c mWmConnect[4];
+    u8 mPad3[0x4C];
+
+    mSphere_c mCullSphere;
+    int mCullNodeIdx[30];
+
+    u8 mPad4[0x28];
+
+    // New
+    dWmCullCsvData_c *mpCullData;
 
     static daWmMap_c *m_instance;
 };

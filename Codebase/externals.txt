@@ -37,6 +37,8 @@ returnFrom_CancelAddDropFix=0x807A0D44
 DWORD_8093CDF0=0x8093CDF0
 WMPlayer_loadSubplayers=0x80902BD0
 
+cullNode__Q23m3d6bmdl_cFibb=0x800E0020
+
 vf60__12dPlayerMdl_cFQ212dPyMdlBase_c12ChrAnmType_ePQ34nw4r3g3d9ResAnmChrb=0x800D3FE0
 intialize__13dKinopioMdl_cFv=0x800bcd10
 vf60__13dKinopioMdl_cFQ212dPyMdlBase_c12ChrAnmType_ePQ34nw4r3g3d9ResAnmChrb=0x800bd260
@@ -6174,6 +6176,7 @@ GetPointFromIndex__12dWmConnect_cFi=0x800F3400
 GetDir__12dWmConnect_cFii=0x800F3440
 __sinit_\d_wm_connect_cpp=0x800F34E0
 __arraydtor$53530=0x800F3550
+read__FPcPCci=0x800F3570
 __dt__10dCsvData_cFv=0x800F3610
 initialize__10dCsvData_cFii=0x800F36B0
 RouteInfoInit__10dCsvData_cFv=0x800F36F0

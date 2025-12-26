@@ -26,6 +26,8 @@ namespace m3d {
         void setTevKColor(ulong idx, _GXTevKColorID colID, _GXColor color, bool markDirty);
         void setTevKColorAll(_GXTevKColorID colID, _GXColor color, bool markDirty);
 
+        void cullNode(int index, bool isVisible, bool); ///< @unofficial
+
     protected:
         banm_c *mpAnm;
     };
