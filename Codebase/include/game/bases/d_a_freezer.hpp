@@ -1,8 +1,8 @@
 #pragma once
-
 #include <game/bases/d_actor_state.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
+#include <game/bases/d_bg_ctr.hpp>
 
 class daFreezer_c : public dActorState_c {
 public:

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <game/bases/d_base_actor.hpp>
+#include <game/sLib/s_RangeData.hpp>
 #include <game/mLib/m_3d.hpp>
 #include <game/bases/d_cc.hpp>
 #include <game/bases/d_bc.hpp>
 #include <game/bases/d_rc.hpp>
-#include <game/bases/d_bg_ctr.hpp>
 
 class dAcPy_c;
 class dPropelParts_c;
@@ -46,7 +46,7 @@ public:
         STAGE_ACTOR_GENERIC, ///< A generic stage actor (default).
         STAGE_ACTOR_PLAYER, ///< The @ref dAcPy_c "player actor".
         STAGE_ACTOR_YOSHI, ///< The @ref daYoshi_c "Yoshi actor".
-        STAGE_ACTOR_ENTITY, ///< An interactable entity actor.
+        STAGE_ACTOR_ENEMY, ///< An enemy actor.
     };
 
     /// @brief The possible carry actions.
@@ -58,9 +58,9 @@ public:
     /// @brief The collision directions that an actor can respond to.
     enum BG_COLL_FLAG_e {
         COLL_NONE = BIT_FLAG(-1), ///< The actor does not collide with any surface.
-        COLL_HEAD = BIT_FLAG(0), ///< The actor can collide with ceilings.
+        COLL_WALL_R = BIT_FLAG(0), ///< The actor can collide with walls on its right.
         COLL_WALL_L = BIT_FLAG(1), ///< The actor can collide with walls on its left.
-        COLL_WALL_R = BIT_FLAG(2), ///< The actor can collide with walls on its right.
+        COLL_HEAD = BIT_FLAG(2), ///< The actor can collide with ceilings.
         COLL_FOOT = BIT_FLAG(3), ///< The actor can collide with the ground.
     };
 
@@ -102,7 +102,7 @@ public:
     virtual void block_hit_init(); ///< Callback for when a block directly beneath the actor is hit.
 
     virtual bool vf68(dBg_ctr_c *collider) { return true; } ///< Unknown, related to collision. @unofficial
-    virtual s8 *getPlrNo() { return &mPlayerNo; } ///< Gets the player number associated with the actor. See ::mPlayerNo.
+    virtual s8 *getPlrNo() { return &mPlayerNo; } ///< Gets the player number associated with the actor. See #mPlayerNo.
     virtual mVec2_c getLookatPos() const; ///< Gets the position players look to when focused on the actor.
 
     /// @brief Returns whether the actor can be carried.
@@ -194,10 +194,10 @@ public:
     /// @param bound The actor's bounding box.
     /// @param areaID The actor's zone ID.
     /// @return Whether the actor should be culled.
-    bool areaCullCheck(const mVec3_c &pos, const mBoundBox &bound, u8 areaID) const;
+    bool areaCullCheck(const mVec3_c &pos, const sRangeDataF &bound, u8 areaID) const;
 
     /// @brief Checks if the actor is out of gameplay and optionally deletes it.
-    /// @param flags The flags to control which actions to perform. Value is a ::SCREEN_OUT_e.
+    /// @param flags The flags to control which actions to perform. Value is a SCREEN_OUT_e.
     /// @return Whether the actor is out of gameplay.
     bool ActorScrOutCheck(u16 flags);
 
@@ -209,11 +209,10 @@ public:
     /// @param destroyBound The actor's deletion bounding box.
     /// @param areaID The actor's zone ID (unused).
     /// @return Whether the actor should be culled.
-    static bool screenCullCheck(const mVec3_c &pos, const mBoundBox &visibleBound, mBoundBox destroyBound, u8 areaID);
+    static int screenCullCheck(const mVec3_c &pos, const sRangeDataF &visibleBound, sRangeDataF destroyBound, u8 areaID);
 
     /// @brief Returns whether the actor is colliding with any enabled collision sides.
-    /// @unofficial
-    bool checkBgColl();
+    bool HasamareBgCheck();
 
     /// @brief Checks if the prompt for the given action should be displayed for each player.
     /// @param fukidashiAction The action to be checked.
@@ -261,18 +260,18 @@ public:
     /// @param pos The position to use for the search.
     /// @return The closest player, or @p nullptr .
     typedef dAcPy_c *(*searchNearPlayerFunc)(mVec2_c &delta, const mVec2_c &pos);
-    static dAcPy_c *searchNearPlayer_Main(mVec2_c &delta, const mVec2_c &pos); ///< See ::searchNearPlayerFunc.
-    static dAcPy_c *searchNearPlayerNormal(mVec2_c &delta, const mVec2_c &pos); ///< See ::searchNearPlayerFunc.
-    static dAcPy_c *searchNearPlayerLoop(mVec2_c &delta, const mVec2_c &pos); ///< See ::searchNearPlayerFunc.
+    static dAcPy_c *searchNearPlayer_Main(mVec2_c &delta, const mVec2_c &pos); ///< See searchNearPlayerFunc.
+    static dAcPy_c *searchNearPlayerNormal(mVec2_c &delta, const mVec2_c &pos); ///< See searchNearPlayerFunc.
+    static dAcPy_c *searchNearPlayerLoop(mVec2_c &delta, const mVec2_c &pos); ///< See searchNearPlayerFunc.
 
     /// @brief Gets the direction the target position is in, from the source position's viewpoint.
     /// @param trgX The target X position.
     /// @param srcX The source X position.
     /// @return The direction the target is in.
     typedef bool (*getTrgToSrcDirFunc)(float trgX, float srcX);
-    static bool getTrgToSrcDir_Main(float trgX, float srcX); ///< See ::getTrgToSrcDirFunc.
-    static bool getTrgToSrcDirNormal(float trgX, float srcX); ///< See ::getTrgToSrcDirFunc.
-    static bool getTrgToSrcDirLoop(float trgX, float srcX); ///< See ::getTrgToSrcDirFunc.
+    static bool getTrgToSrcDir_Main(float trgX, float srcX); ///< See getTrgToSrcDirFunc.
+    static bool getTrgToSrcDirNormal(float trgX, float srcX); ///< See getTrgToSrcDirFunc.
+    static bool getTrgToSrcDirLoop(float trgX, float srcX); ///< See getTrgToSrcDirFunc.
 
     /// @brief Adjusts the actor's position to account for looping stages.
     /// @param pos The position to be updated.
@@ -296,7 +295,7 @@ public:
     /// @param loopType The loop type. See dScStage_c::LOOP_TYPE_e.
     static void setLoopFunc(int loopType);
 
-    void setKind(u8 kind); ///< Sets the actor's kind. See ::STAGE_ACTOR_KIND_e.
+    void setKind(u8 kind); ///< Sets the actor's kind. See STAGE_ACTOR_KIND_e.
 
     /// @brief Sets temporary data to be used for the next actor's construction.
     /// @param layer The actor's layer.
@@ -331,9 +330,9 @@ public:
 
     u8 m_00; ///< Seems to be a player bit flag. @unused
     u32 mCarryFukidashiPlayerNo; ///< The player for whom an action prompt related to the actor is being displayed. @p -1 if no players meet this criteria.
-    CARRY_ACTION_e mCarryingFlags; ///< The actor's carry actions.
-    u32 mThrowDirection; ///< The actor's direction when thrown or dropped after carrying.
-    u32 mComboMultiplier; ///< The current combo multiplier obtained by the actor by colliding with other actors.
+    u32 mCarryingFlags; ///< The actor's carry actions. See CARRY_ACTION_e.
+    u8 mThrowDirection; ///< The actor's direction when thrown or dropped after carrying.
+    int mComboMultiplier; ///< The current combo multiplier obtained by the actor by colliding with other actors.
     u8 m_13; ///< @unused
     u32 m_17; ///< @unused
     float m_1b; ///< @unused
@@ -347,24 +346,24 @@ public:
 
     mVec2_c mVisibleAreaSize; ///< The size of the area inside which the actor is visible.
     mVec2_c mVisibleAreaOffset; ///< The offset applied to the area size.
-    mBoundBox mMaxBound; ///< @todo Figure out the exact purpose of this field.
-    mBoundBox mDestroyBound; ///< @todo Figure out the exact purpose of this field.
+    sRangeDataF mMaxBound; ///< @todo Figure out the exact purpose of this field.
+    sRangeDataF mDestroyBound; ///< @todo Figure out the exact purpose of this field.
     u8 mDirection; ///< The actor's facing direction.
     u8 mAreaNo; ///< The actor's zone ID.
     u8 mBgCollFlags; ///< The collision directions that the actor can respond to.
 
-    u8 *mpSpawnFlags; ///< The spawn flags for the actor. See ::ACTOR_SPAWN_FLAG_e.
+    u8 *mpSpawnFlags; ///< The spawn flags for the actor. See ACTOR_SPAWN_FLAG_e.
     u16 *mpDeleteVal; ///< @unused
     u16 mEventNums; ///< The event IDs the actor is tracking.
-    u64 mEventMask; ///< The event mask, generated from ::mEventNums.
+    u64 mEventMask; ///< The event mask, generated from #mEventNums.
 
     u32 m_23b; ///< @todo Figure out the purpose of this field.
     u16 mSpriteSpawnFlags; ///< The spawn flags from the sprite data entry.
     bool mBlockHit; ///< Whether a block below the actor was hit.
 
-    u32 mEatenByID; ///< The @ref fBase_c::mUniqueID "unique identifier" of the eating actor.
-    u8 mEatState; ///< The actor's eat state. Value is a ::EAT_STATE_e.
-    u8 mEatBehaviour; ///< The actor's eat behaviour. Value is a ::EAT_BEHAVIOR_e.
+    fBaseID_e mEatenByID; ///< The @ref fBase_c::mUniqueID "unique identifier" of the eating actor.
+    u8 mEatState; ///< The actor's eat state. Value is a EAT_STATE_e.
+    u8 mEatBehaviour; ///< The actor's eat behaviour. Value is a EAT_BEHAVIOR_e.
     mVec3_c mPreEatScale; ///< The actor's scale before being eaten.
 
     EAT_POINTS_e mEatPoints; ///< @copydoc EAT_POINTS_e
@@ -372,21 +371,18 @@ public:
     u32 mAttentionFlags; ///< @todo Document this field and its values.
 
     dPropelParts_c *mPropelParts; ///< The actor's propeller effect manager.
-    u8 mKind; ///< The actor's kind. Value is a ::STAGE_ACTOR_KIND_e.
+    u8 mKind; ///< The actor's kind. Value is a STAGE_ACTOR_KIND_e.
     s8 mPlayerNo; ///< The player associated with the actor, @p -1 if not associated to any player.
     u8 mExecStopMask; ///< The mask required to disable the @p execute operation for the actor.
     u8 mLayer; ///< The actor's layer.
     bool mNoRespawn; ///< Whether the actor should not respawn after being deleted.
-    bool mBackFence; ///< Whether the actor is on the back side of chainlink fences.
+    u8 mAmiLayer; ///< The actor's layer for chainlink fences.
 
-    mBoundBox getDestroyBound() { return mDestroyBound; }
+    sRangeDataF getDestroyBound() { return mDestroyBound; }
 
     void setDefaultMaxBound() {
         mMaxBound.set(smc_CULL_XLIMIT, smc_CULL_YLIMIT, smc_CULL_AREA_XLIMIT, smc_CULL_AREA_YLIMIT);
     }
-
-    float getCenterX() { return getCenterPos().x; }
-    float getCenterY() { return getCenterPos().y; }
 
     u8 getKindMask() { return 1 << mKind; }
 
@@ -402,20 +398,20 @@ public:
     static u8 mDrawStop; ///< The actor kinds for which the @p draw operation is currently disabled.
     static searchNearPlayerFunc mSearchNearPlayerFunc; ///< The player search function.
     static getTrgToSrcDirFunc mGetTrgToSrcDirFunc; ///< The direction detection function.
-    static u8 m_tmpCtLayerNo; ///< Temporary storage for the next constructed actor's layer. See ::mLayer.
+    static u8 m_tmpCtLayerNo; ///< Temporary storage for the next constructed actor's layer. See #mLayer.
 
-    /// @brief Temporary storage for the next created sprite actor's spawn flags. See ::mpSpawnFlags. @unofficial
-    static u8* m_tmpCtSpawnFlags;
+    /// @brief Temporary storage for the next created sprite actor's spawn flags. See #mpSpawnFlags.
+    static u8* m_read_p_keep;
 
-    /// @brief Temporary storage for the next created sprite actor's tracked event IDs. See ::mEventNums. @unofficial
-    static u16 m_tmpCtEventNums;
+    /// @brief Temporary storage for the next created sprite actor's tracked event IDs. See #mEventNums.
+    static u16 m_flag_keep;
 
-    /// @brief Temporary storage for the next created sprite actor's event mask. See ::mEventMask. @unofficial
-    static u64 m_tmpCtEventMask;
+    /// @brief Temporary storage for the next created sprite actor's event mask. See #mEventMask.
+    static u64 m_flagbit_keep;
 
-    /// @brief Temporary storage for the next created sprite actor's layer. See ::mLayer. @unofficial
-    static u8 m_tmpCtSpriteLayerNo;
+    /// @brief Temporary storage for the next created sprite actor's layer. See #mLayer.
+    static u8 m_mbgchoice_keep;
 };
 
-extern const u8 l_Ami_Line[2]; ///< The sub-layer for each side of chainlink fences.
-extern const float l_Ami_Zpos[2]; ///< The additional Z offset for each side of chainlink fences.
+extern const u8 l_Ami_Line[]; ///< The sub-layer for each side of chainlink fences.
+extern const float l_Ami_Zpos[]; ///< The additional Z offset for each side of chainlink fences.

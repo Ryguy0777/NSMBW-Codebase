@@ -5,14 +5,14 @@
 
 CUSTOM_ACTOR_PROFILE(AC_FLAG_INVERT, daFlagInvert_c, fProfile::AC_FLAGON, fProfile::DRAW_ORDER::AC_FLAGON, 0);
 
-const SpriteData eventInverterSpriteData = {fProfile::AC_FLAG_INVERT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x2};
-dCustomProfile_c eventInverterProfile(&g_profile_AC_FLAG_INVERT, "AC_FLAG_INVERT", SpriteId::AC_FLAG_INVERT, &eventInverterSpriteData);
+const SpriteData c_FLAG_INVERT_spritedata = {fProfile::AC_FLAG_INVERT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x2};
+dCustomProfile_c l_FLAG_INVERT_profile(&g_profile_AC_FLAG_INVERT, "AC_FLAG_INVERT", SpriteId::AC_FLAG_INVERT, &c_FLAG_INVERT_spritedata);
 
 int daFlagInvert_c::execute() {
-    u8 eventId1 = (mEventNums & 0xFF)-1;
-    u8 eventId2 = (mEventNums >> 8 & 0xFF)-1;
-	bool target = checkEvent(eventId2);
-	bool flagActiveState = checkEvent(eventId1);
+    u8 eventId1 = (mEventNums >> 8 & 0xFF)-1;
+    u8 eventId2 = (mEventNums & 0xFF)-1;
+	bool target = dSwitchFlagMng_c::checkEvent(eventId2);
+	bool flagActiveState = dSwitchFlagMng_c::checkEvent(eventId1);
 	if (target != mPreviousFlagState) {
         switch (mParam & 0b11) {
             default:

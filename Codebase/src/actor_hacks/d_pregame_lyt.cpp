@@ -21,14 +21,14 @@ kmBranchDefAsm(0x80b6c074, 0x80b6c078) {
     blr
 }
 
-// longer pregame screen
+// Longer pregame screen
 kmWrite32(0x8091F144, 0x380000B4);
 
-// fix pane visibility? not sure
+// Fix pane visibility? not sure
 kmWrite32(0x80b6c1cc, 0x48000238);
 kmWrite32(0x80b6c404, 0x7F83E378);
 
-// dummy out now-removed panes
+// Dummy out now-removed panes
 kmWritePointer(0x80B88658, "T_x_00");
 kmWritePointer(0x80B8865C, "T_x_00");
 kmWritePointer(0x80B88660, "T_x_00");
@@ -53,17 +53,17 @@ ulong pregameGetLevelNumberID(u8 world, u8 level) {
     dInfo_c::m_instance->mDisplayCourseWorld = world + 1;
     dInfo_c::m_instance->mDisplayCourseNum = level + 1;
     switch (level) {
-        case 20: // ghost house
+        case 20: // Ghost house
             return 2;
-        case 21:  // tower
+        case 21:  // Tower
         case 22:
             return 3;
-        case 23: // castle
+        case 23: // Castle
         case 24:
             if (world == 7)
                 return 5;
             return 4;
-        case 25: // toad houses
+        case 25: // Toad houses
         case 26:
         case 27:
         case 28:
@@ -73,56 +73,56 @@ ulong pregameGetLevelNumberID(u8 world, u8 level) {
             if (dScWMap_c::IsCourseType(world, level, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
                 return 6; // 1-up house
             } else if (dScWMap_c::IsCourseType(world, level, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
-                return 7; // star house
+                return 7; // Star house
             } else {
-                return 8; // red house
+                return 8; // Red house
             }
-        case 32: // ambush
+        case 32: // Ambush
         case 33:
         case 34:
             return 9;
-        case 35: // cannon
+        case 35: // Cannon
             return 0xA;
-        case 36: // unused? airship
+        case 36: // Treasure ship (unused)
             return 0xB;
-        case 37: // airship
+        case 37: // Airship
             if (dWmLib::isKoopaShipAnchor())
                 return 0xC;
             return 0xB;
-        case 38: // start point
+        case 38: // Start point
             if (dWmLib::isStartPointKinokoHouseStar()) {
-                return 7; // star house
+                return 7; // Star house
             } else if (dWmLib::isStartPointKinokoHouseRed) {
-                return 8; // red house
+                return 8; // Red house
             } else {
                 return 6; // 1-up house
             }
-        case 40: // peach's castle
+        case 40: // Peach's castle
             return 0xD;
-        default: // normal levels
+        default: // Normal levels
             return 1;
     }
 }
 
 void *pregameTPLbuffer = nullptr;
 
-kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
+kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *this_) {
     LytTextBox_c
         *LevelNumShadow, *LevelNum,
         *LevelNameShadow, *LevelName;
 
-    LevelNumShadow = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelNumShadow");
-    LevelNum = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelNum");
-    LevelNameShadow = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelNameShadow");
-    LevelName = (LytTextBox_c *)_this->mLayout.findTextBoxByName("LevelName");
+    LevelNumShadow = (LytTextBox_c *)this_->mLayout.findTextBoxByName("LevelNumShadow");
+    LevelNum = (LytTextBox_c *)this_->mLayout.findTextBoxByName("LevelNum");
+    LevelNameShadow = (LytTextBox_c *)this_->mLayout.findTextBoxByName("LevelNameShadow");
+    LevelName = (LytTextBox_c *)this_->mLayout.findTextBoxByName("LevelName");
 
     MsgRes_c *msgRes = dMessage_c::getMesRes();
-    // grab names based on world + level number
+    // Grab names based on world + level number
     ulong category = BMG_CATEGORY_LEVEL_NAMES + dInfo_c::m_startGameInfo.mWorld1+1;
     ulong id = dInfo_c::m_startGameInfo.mLevel1+1;
     
     if (msgRes->getMsgEntry(category, id) == nullptr) {
-        // the bmg entry for the level name doesn't exist, go to the fallback
+        // The bmg entry for the level name doesn't exist, go to the fallback
         category = BMG_CATEGORY_LEVEL_NAMES;
         id = 0;
     }
@@ -136,39 +136,39 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *_this) {
     LevelNum->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
 
     nw4r::lyt::Picture *LevelSample;
-    LevelSample = _this->mLayout.findPictureByName("LevelSample");
+    LevelSample = this_->mLayout.findPictureByName("LevelSample");
 
-    // get preview name
+    // Get preview name
     char tplName[64];
     sprintf(tplName, "/LevelSamples/%02d-%02d.tpl", dInfo_c::m_startGameInfo.mWorld1+1, dInfo_c::m_startGameInfo.mLevel1+1);
     int entrynum = DVDConvertPathToEntrynum(tplName);
     if (entrynum == -1) return;
 
-    // load the file
+    // Load the file
     DVDFileInfo dvdHandle;
     bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
     if (!fileLoaded) return;
 
-    // allocate memory
+    // Allocate memory
     pregameTPLbuffer = EGG::Heap::alloc(dvdHandle.size, 0x20, mHeap::g_archiveHeap);
     if (pregameTPLbuffer == nullptr) return;
     
-    // read file
+    // Read file
     s32 length = DVDReadPrio(&dvdHandle, pregameTPLbuffer, dvdHandle.size, 0, 2);
     if (length > 0) {
         LevelSample->GetMaterial()->GetTexMapAry()->ReplaceImage((TPLPalette *)pregameTPLbuffer, 0, nullptr);
     }
 
-    // unload file
+    // Unload file
     DVDClose(&dvdHandle);
 }
 
-// remove the tpl from memory
-kmBranchDefCpp(0x80b6c580, NULL, bool, dPreGameLyt_c *_this) {
+// Remove the tpl from memory
+kmBranchDefCpp(0x80b6c580, NULL, bool, dPreGameLyt_c *this_) {
     if (pregameTPLbuffer != nullptr) {
         EGG::Heap::free(pregameTPLbuffer, mHeap::g_archiveHeap);
     }
-    return _this->mLayout.doDelete();
+    return this_->mLayout.doDelete();
 }
 
 #endif

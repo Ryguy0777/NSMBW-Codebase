@@ -11,7 +11,7 @@
 /*
  * A tiny patch to make the Nvidia Shield port of NSMBW work.
  * 
- * NOTE: We use 0x90000000 addresses because Kamek has no way of patching addresses
+ * NOTE: We use 0x90000000 addresses because our build system has no way of patching addresses
  * for certain regions only, in order to prevent C addresses from being treated as PAL addresses
  * and going through a PAL->C address translation
  */
@@ -134,7 +134,7 @@ kmBranchDefCpp(0x901007E0, NULL, float, char *section, char *key, float defaultV
     return defaultValue;
 }
 
-// quick fix to daLiftRemoconSeesaw_c
+// Quick fix to daLiftRemoconSeesaw_c
 extern "C" void useWiimoteTilt(void);
 kmBranchDefAsm(0x90844188, 0x90844194) {
     nofralloc

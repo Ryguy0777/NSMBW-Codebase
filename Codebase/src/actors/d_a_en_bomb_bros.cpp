@@ -6,22 +6,22 @@
 
 CUSTOM_ACTOR_PROFILE(EN_BOMBBROS, daEnBombBros_c, fProfile::EN_HAMMERBROS, fProfile::DRAW_ORDER::EN_HAMMERBROS, 0x12);
 
-const char* bombBroArcList [] = {"bros_bombhei", "bros", NULL};
-const SpriteData bombBroSpriteData = {fProfile::EN_BOMBBROS, 8, -16, 0, 16, 8, 16, 0, 0, 0, 0, 0};
-dCustomProfile_c bombBroProfile(&g_profile_EN_BOMBBROS, "EN_BOMBBROS", SpriteId::EN_BOMBBROS, &bombBroSpriteData, bombBroArcList);
+const char* l_BOMBBROS_res [] = {"bros_bombhei", "bros", NULL};
+const SpriteData c_BOMBROS_spritedata = {fProfile::EN_BOMBBROS, 8, -16, 0, 16, 8, 16, 0, 0, 0, 0, 0};
+dCustomProfile_c l_BOMBBROS_profile(&g_profile_EN_BOMBBROS, "EN_BOMBBROS", SpriteId::EN_BOMBBROS, &c_BOMBROS_spritedata, l_BOMBBROS_res);
 
 daEnBombBros_c::daEnBombBros_c() : daEnBrosBase_c() {
     mNodeCallback.mpOwner = this;
 }
 
-bool daEnBombBros_c::hitCallback_Rolling(dCc_c *cc1, dCc_c *cc2) {
-    if (cc2->mpOwner->mProfName == fProfile::BROS_BOMB) {
-        daBombProjectile_c *bomb = (daBombProjectile_c *)cc2->mpOwner;
+bool daEnBombBros_c::hitCallback_Rolling(dCc_c *self, dCc_c *other) {
+    if (other->mpOwner->mProfName == fProfile::BROS_BOMB) {
+        daBombProjectile_c *bomb = (daBombProjectile_c *)other->mpOwner;
         if (!bomb->mPlayerBomb) {
             return true;
         }
     }
-    return dEn_c::hitCallback_Rolling(cc1, cc2);
+    return dEn_c::hitCallback_Rolling(self, other);
 }
 
 void daEnBombBros_c::initializeState_Ice() {
@@ -37,21 +37,21 @@ double daEnBombBros_c::getCreateWeaponFrm() const {
 }
 
 double daEnBombBros_c::getAttackFrm() const {
-    return 30;
+    return 30.0;
 }
 
 void daEnBombBros_c::setSpeed() {
-    mSpeed.x = (mFacingDirection) ? -0.6 : 0.6;
-    mSpeed.y = 0.0;
+    mSpeed.x = (mFacingDirection) ? -0.6f : 0.6f;
+    mSpeed.y = 0.0f;
 }
 
 int daEnBombBros_c::checkAtkArea() {
     float bgParameterY = dBgParameter_c::ms_Instance_p->mPos.y;
     float bgParameterX = dBgParameter_c::ms_Instance_p->mPos.x;
-    if (bgParameterY - 16.0 < mPos.y) {
+    if (bgParameterY - 16.0f < mPos.y) {
         return false;
     }
-    if ((mPos.y + (mVisibleAreaSize.y * 16.0)) < (bgParameterY - dBgParameter_c::ms_Instance_p->mSize.y - 32.0)) {
+    if ((mPos.y + (mVisibleAreaSize.y * 16.0f)) < (bgParameterY - dBgParameter_c::ms_Instance_p->mSize.y - 32.0f)) {
         return false;
     }
     if ((mPos.x + mVisibleAreaSize.x) < (bgParameterX)) {
@@ -86,14 +86,14 @@ void daEnBombBros_c::weaponAttack() {
 int bombBroCountdown[8] = {10, 20, 30, 50, 40, 30, 50, 60};
 
 void daEnBombBros_c::setJumpCnt() {
-    mJumpTimer = (bombBroCountdown[dGameCom::rndInt(8)] + 0x3c);
+    mJumpTimer = (bombBroCountdown[dGameCom::rndInt(8)] + 60);
 }
 
 void daEnBombBros_c::setJump() {
     if (dGameCom::rndInt(7) == 0) {
-        mSpeed.y = 3.5;
+        mSpeed.y = 3.5f;
     } else {
-        mSpeed.y = 2.5;
+        mSpeed.y = 2.5f;
     }
 }
 

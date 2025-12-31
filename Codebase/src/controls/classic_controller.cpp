@@ -25,7 +25,7 @@ void dRemoconMng_c::dConnect_c::dExtension_c::executeState_Classic() {
     return;
 }
 
-// controller mappings
+// Controller mappings
 void dCustomController_c::mapClassicButtons(EGG::CoreController *controller, int controllerID) {
     KPADStatus *kStatus = controller->maStatus;
     KPADEXStatus_cl *cStatus = &controller->maStatus->ex_status.cl;
@@ -38,7 +38,7 @@ void dCustomController_c::mapClassicButtons(EGG::CoreController *controller, int
 
     clearWiimotedata(kStatus);
 
-    // convert to sideways Wii Remote buttons
+    // Convert to sideways Wii Remote buttons
     if (cStatus->hold & WPAD_BUTTON_CL_LEFT) {
         kStatus->hold |= WPAD_BUTTON_UP;
     }
@@ -74,17 +74,17 @@ void dCustomController_c::mapClassicButtons(EGG::CoreController *controller, int
         kStatus->hold |= WPAD_BUTTON_HOME;
     }
 
-    // map stick to D-pad
-    if (cStatus->lstick.x < -0.5 && !(kStatus->hold & WPAD_BUTTON_DOWN)) {
+    // Map stick to D-pad
+    if (cStatus->lstick.x < -0.5f && !(kStatus->hold & WPAD_BUTTON_DOWN)) {
         kStatus->hold |= WPAD_BUTTON_UP;
     }
-    if (cStatus->lstick.x > 0.5 && !(kStatus->hold & WPAD_BUTTON_UP)) {
+    if (cStatus->lstick.x > 0.5f && !(kStatus->hold & WPAD_BUTTON_UP)) {
         kStatus->hold |= WPAD_BUTTON_DOWN;
     }
-    if (cStatus->lstick.y < -0.5 && !(kStatus->hold & WPAD_BUTTON_RIGHT)) {
+    if (cStatus->lstick.y < -0.5f && !(kStatus->hold & WPAD_BUTTON_RIGHT)) {
         kStatus->hold |= WPAD_BUTTON_LEFT;
     }
-    if (cStatus->lstick.y > 0.5 && !(kStatus->hold & WPAD_BUTTON_LEFT)) {
+    if (cStatus->lstick.y > 0.5f && !(kStatus->hold & WPAD_BUTTON_LEFT)) {
         kStatus->hold |= WPAD_BUTTON_RIGHT;
     }
 
@@ -94,7 +94,7 @@ void dCustomController_c::mapClassicButtons(EGG::CoreController *controller, int
 
     customController->mLastPressed = kStatus->hold;
 
-    // for in-game but not for use in menus
+    // For in-game but not for use in menus
     if (cStatus->hold & WPAD_BUTTON_CL_B) {
         kStatus->hold |= WPAD_BUTTON_2;
     }
@@ -108,8 +108,8 @@ void dCustomController_c::mapClassicButtons(EGG::CoreController *controller, int
         kStatus->hold |= WPAD_BUTTON_A;
     }
 
-    // default tilt behavior
-    // some actors are programmed to not use this value directly!
+    // Default tilt behavior
+    // Some actors are programmed to not use this value directly!
     float tilt = cStatus->ltrigger;
     tilt -= cStatus->rtrigger;
 
@@ -117,13 +117,13 @@ void dCustomController_c::mapClassicButtons(EGG::CoreController *controller, int
     kStatus->acc_vertical.y = -tilt;
 }
 
-// enable use of the classic controller in the homebutton menu
+// Enable use of the classic controller in the home button menu
 kmWriteNop(0x80109c78);
 kmWriteNop(0x80109c7c);
 kmWriteNop(0x80109c80);
 kmWriteNop(0x80109c84);
 
-static const f32 stickMoveCoefficent = 2048.0f/72.0f;
+static const f32 scStickMoveCoefficent = 2048.0f/72.0f;
 
 static f32 AbsClamp(f32 val, f32 max) {
     return ((val > max) ? max : (val < -max) ? -max : val);
@@ -132,9 +132,9 @@ static f32 AbsClamp(f32 val, f32 max) {
 void mapStickToPosHBM(int channel, Vec2 *pos) {
     KPADEXStatus_cl *cStatus = &mPad::g_core[channel]->maStatus->ex_status.cl;
     Vec2 stick;
-    stick.x = cStatus->lstick.x / stickMoveCoefficent;
-    stick.y = cStatus->lstick.y / stickMoveCoefficent;
-    // don't let cursor go off screen edge
+    stick.x = cStatus->lstick.x / scStickMoveCoefficent;
+    stick.y = cStatus->lstick.y / scStickMoveCoefficent;
+    // Don't let cursor go off screen edge
     pos->x = AbsClamp(pos->x + stick.x, 1.0f);
     pos->y = AbsClamp(pos->y - stick.y, 1.0f);
 }

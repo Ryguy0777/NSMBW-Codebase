@@ -4,7 +4,7 @@
 
 //#define DEBUG_PROFILE_CALL
 
-// sprites
+// Sprites
 
 extern SpriteData spriteDataTable[SPRITE_COUNT];
 SpriteData customSpriteDataTable[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
@@ -12,7 +12,7 @@ SpriteData customSpriteDataTable[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
 extern const char** spriteFiles[SPRITE_COUNT];
 const char** customSpriteFiles[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
 
-// profiles
+// Profiles
 
 extern fProfile::fProfilePtr_c* profileList[fProfile::PROFILE_COUNT];
 fProfile::fProfilePtr_c* customProfileList[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
@@ -20,20 +20,20 @@ fProfile::fProfilePtr_c* customProfileList[fProfile::TOTAL_ACTOR_COUNT - fProfil
 extern const char* profileNames[fProfile::PROFILE_COUNT];
 const char* customProfileNames[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
 
-// custom profile ctors
+// Custom profile ctors
 
-// stage actor with sprite
+// Stage actor with sprite
 dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files) {
 #ifdef DEBUG_PROFILE_CALL
     OSReport("Profile Setter: Sprite, %p, %s, %d, %d, %p, %p\n", profile, name, spriteData->profileId, spriteId, spriteData, files);
 #endif
-    // store profile in the class
+    // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
     mProfile.mActorProperties = profile->mActorProperties;
 
-    // store sprite data
+    // Store sprite data
     ProfileName profileId = spriteData->profileId;
     if (spriteId < SPRITE_COUNT) {
         spriteDataTable[spriteId] = *spriteData;
@@ -43,7 +43,7 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const cha
         customSpriteFiles[spriteId - SPRITE_COUNT] = files;
     }
 
-    // store profile data
+    // Store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
         profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
         profileNames[profileId] = name;
@@ -53,18 +53,18 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const cha
     }
 }
 
-// stage actor without sprite
+// Stage actor without sprite
 dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, ProfileName profileId) {
 #ifdef DEBUG_PROFILE_CALL
     OSReport("Profile Setter: Actor, %p, %s, %d\n", profile, name, profileId);
 #endif
-    // store profile in the class
+    // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
     mProfile.mActorProperties = profile->mActorProperties;
 
-    // store profile data
+    // Store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
         profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
         profileNames[profileId] = name;
@@ -74,17 +74,17 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const cha
     }
 }
 
-// non-stage actors
+// Non-stage actors
 dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId) {
 #ifdef DEBUG_PROFILE_CALL
     OSReport("Profile Setter: Base, %p, %s, %d\n", profile, name, profileId);
 #endif
-    // store profile in the class
+    // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
 
-    // store profile data
+    // Store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
         profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
         profileNames[profileId] = name;

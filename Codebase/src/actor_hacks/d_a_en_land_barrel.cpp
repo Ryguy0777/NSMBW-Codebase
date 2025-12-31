@@ -4,14 +4,14 @@
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
 
-// change daEnLandBarrel_c's break effect from brick shards to the barrel break effect
+// Change daEnLandBarrel_c's break effect from brick shards to the barrel break effect
 
 kmBranchDefCpp(0x80a590d0, NULL, void, dActor_c *this_) {
-    // get effect scale & position
+    // Get effect scale & position
     mVec3_c effPos(this_->mPos.x, this_->mPos.y + this_->mCenterOffs.y, this_->mPos.z);
     mVec3_c effScale(0.6f, 0.6f, 0.6f);
     mVec3_c effScale2(0.4f, 0.4f, 0.4f);
-    mAng3_c effAng(0, 0, 0);
+    mAng3_c effAng(0.0f, 0.0f, 0.0f);
 
     mEf::createEffect("Wm_ob_cmnboxsmoke", 0, &effPos, &effAng, &effScale);
     mEf::createEffect("Wm_ob_cmnboxgrain", 0, &effPos, &effAng, &effScale2);

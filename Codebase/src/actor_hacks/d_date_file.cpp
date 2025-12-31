@@ -2,8 +2,8 @@
 
 #include <new/game_config.h>
 
-// disable the disabling of the fileselect stars
-// if the player has died more than 8 times in a level
+// Disable the disabling of the fileselect stars
+// If the player has died more than 8 times in a level
 
 #ifdef NO_SUPER_GUIDE
 kmWriteNop(0x8077dd2c);
@@ -88,7 +88,7 @@ void setFileInfo(dDateFile_c *this_, dMj2dGame_c *save) {
 
     ulong id = save->getCurrentWorld()+1;
     if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, id) == nullptr) {
-        // the bmg entry for the world name doesn't exist, go to the fallback
+        // The bmg entry for the world name doesn't exist, go to the fallback
         id = 0;
     }
 

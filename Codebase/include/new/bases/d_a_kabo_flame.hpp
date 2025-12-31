@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_actor_state.hpp>
 #include <game/mLib/m_effect.hpp>
 

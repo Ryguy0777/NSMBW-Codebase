@@ -87,7 +87,7 @@ namespace dGameCom {
     bool PlayerEnterCheck(int);
     void Player1upColor(LytTextBox_c *, int);
     void getGlbPosToLyt(mVec3_c &);
-    bool someCheck(mVec3_c *a, mBoundBox *b); ///< @unofficial
+    // bool someCheck(mVec3_c *a, sRangeDataF *b); ///< @unofficial
 
     bool checkRectangleOverlap(mVec3_c *, mVec3_c *, mVec3_c *, mVec3_c *, float); ///< @unofficial
 
@@ -105,6 +105,8 @@ namespace dGameCom {
     void WindowPaneColorSet(nw4r::lyt::Window *, int);
 
     void initGame();
+
+    bool chkCancelButton(int);
 
     extern u32 l_gameStop;
 }

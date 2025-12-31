@@ -3,19 +3,19 @@
 #include <game/mLib/m_vec.hpp>
 #include <game/bases/d_bc.hpp>
 
-typedef void (*checkF)(dActor_c* self, dActor_c* other);
-typedef void (*checkH)(dActor_c* self, dActor_c* other);
-typedef void (*checkW)(dActor_c* self, dActor_c* other, u8 direction);
-
 typedef void (*callbackF)(dActor_c* self, dActor_c* other);
 typedef void (*callbackH)(dActor_c* self, dActor_c* other);
 typedef void (*callbackW)(dActor_c* self, dActor_c* other, u8 direction);
 
+typedef bool (*checkF)(dActor_c* self, dActor_c* other);
+typedef bool (*checkH)(dActor_c* self, dActor_c* other);
+typedef bool (*checkW)(dActor_c* self, dActor_c* other, u8 direction);
+
 struct sBgSetInfo {
-    mVec2_c pos1, pos2;
-    checkF belowCheck;
-    checkH aboveCheck;
-    checkW adjCheck;
+    mVec2_c mLeftTop, mRightBottom;
+    callbackF mBelowCallback;
+    callbackH mAboveCallback;
+    callbackW mAdjCallback;
 };
 
 class dBg_ctr_c {
@@ -24,7 +24,15 @@ public:
     void release();
     void calc();
 
-    void set(dActor_c*, const sBgSetInfo*, unsigned char, unsigned char, mVec3_c*);
+    void set_common(dActor_c*, callbackF, callbackH, callbackW, u8, u8);
+
+    void set(dActor_c*, float, float, float, float, callbackF, callbackH, callbackW, u8, u8, mVec3_c*);
+    void set(dActor_c*, mVec2_c, mVec2_c, callbackF, callbackH, callbackW, u8, u8, mVec3_c*);
+    void set(dActor_c*, const sBgSetInfo*, u8, u8, mVec3_c*);
+
+    void set_circle(dActor_c*, float, float, float, callbackF, callbackH, callbackW, u8, u8);
+
+    void setAngleY3(short*);
 
     dActor_c* mpOwner;
 
@@ -41,13 +49,13 @@ public:
 
     u32 mIsCalced;
 
-    callbackF mBelowCallback;
-    callbackH mAboveCallback;
-    callbackW mAdjCallback;
-
     checkF mBelowCheckFunc;
     checkH mAboveCheckFunc;
     checkW mAdjCheckFunc;
+
+    callbackF mBelowCallback;
+    callbackH mAboveCallback;
+    callbackW mAdjCallback;
 
     mVec2_c mLastPos;
     mVec2_c mCalcedPos[4];

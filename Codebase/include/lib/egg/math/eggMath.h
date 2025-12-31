@@ -9,6 +9,10 @@ namespace EGG {
     public:
         static T sqrt(T v);
 
+        static T sin(T v);
+
+        static T cos(T v);
+
         static T abs(T v) {
             return v < 0 ? -v : v;
         }

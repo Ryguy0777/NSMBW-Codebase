@@ -19,9 +19,9 @@ public:
     virtual void finalUpdate();
 
     // dEn_c overrides
-    virtual void Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual void Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsEnHitCheck(dCc_c *self, dCc_c *other);
+    virtual void Normal_VsPlHitCheck(dCc_c *self, dCc_c *other);
+    virtual void Normal_VsYoshiHitCheck(dCc_c *self, dCc_c *other);
 
     virtual void initializeState_DieOther();
     virtual void executeState_DieOther();
@@ -62,6 +62,8 @@ public:
     virtual bool isWakidashi() const;
     virtual bool isDamageInvalid();
     virtual bool isBgmSync() const;
+
+    bool isOnEnLiftRemoconTrpln(); ///< @unofficial
 
     dHeapAllocator_c mAllocator;
 

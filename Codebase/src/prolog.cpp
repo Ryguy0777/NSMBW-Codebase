@@ -12,6 +12,6 @@ kmBranchDefCpp(0x8015bd74, NULL, bool, bool ret) {
     OSReport("NSMBW Custom Codebase - Hacks by Ryguy\n");
     PADInit();
     dCustomController_c::makeInstance();
-    dDebugConfig_c::setupConfig();
+    ret &= dDebugConfig_c::setupConfig();
     return ret;
 }

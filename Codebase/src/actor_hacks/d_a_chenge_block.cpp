@@ -1,4 +1,4 @@
-// source: https://github.com/CLF78/NSMASR-v2/blob/master/game/sprites/tilegod.cpp
+// Source: https://github.com/CLF78/NSMASR-v2/blob/master/game/sprites/tilegod.cpp
 #include <kamek.h>
 #include <game/mLib/m_effect.hpp>
 #include <game/bases/d_eff_actor_manager.hpp>

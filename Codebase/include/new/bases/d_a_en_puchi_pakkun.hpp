@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_enemy.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
@@ -15,12 +14,12 @@ public:
     virtual void finalUpdate();
 
     // dEn_c overrides
-    virtual void Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsEnHitCheck(dCc_c *self, dCc_c *other);
 
     virtual void initializeState_Ice();
     virtual void finalizeState_Ice();
 
-    virtual void createIceActor();
+    virtual bool createIceActor();
 
     void playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate);
     void updateModel();
@@ -53,8 +52,9 @@ public:
     bool mWalks;
     bool mSpitsFire;
     int mJumpHeight;
+
+    static const float smc_WALK_SPEED;
 };
 
-const s16 l_nipper_look_angle[2] = {0x4000, -0x4000};
-const s16 l_nipper_turn_angle[2] = {0x3999, -0x3999};
-const float l_nipper_walk_speed[2] = {0.5, -0.5};
+extern const s16 l_nipper_angleY[];
+extern const s16 l_nipper_turn_angleY[];

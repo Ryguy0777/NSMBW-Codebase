@@ -1,5 +1,5 @@
 // NSMBW only has a partial Pad library. We use the mkw decomp's pad library to restore the rest of it.
-// source: https://github.com/riidefi/mkw/blob/master/lib/rvl/pad/pad.h
+// source: https://github.com/doldecomp/mkw/blob/main/lib/rvl/pad/pad.h
 
 #pragma once
 

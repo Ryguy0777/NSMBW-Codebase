@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_a_en_bros_base.hpp>
 #include <new/bases/d_a_bomb_projectile.hpp>
 
@@ -7,7 +6,7 @@ class daEnBombBros_c : public daEnBrosBase_c {
 public:
     daEnBombBros_c();
 
-    virtual bool hitCallback_Rolling(dCc_c *cc1, dCc_c *cc2);
+    virtual bool hitCallback_Rolling(dCc_c *self, dCc_c *other);
 
     virtual void initializeState_Ice();
 

@@ -40,7 +40,7 @@ const DebugKey keys[] = {
 };
 
 static dDebugConfig_c instance;
-dDebugConfig_c* dDebugConfig_c::m_instance = &instance;
+dDebugConfig_c* dDebugConfig_c::m_instance = nullptr;
 
 dDebugConfig_c::dDebugConfig_c() {
     // Initialize the values to sane defaults
@@ -259,13 +259,13 @@ void dDebugConfig_c::parseConfig(nw4r::ut::CharStrmReader* reader, void* bufferE
     } while (reader->GetCurrentPos() < bufferEnd);
 }
 
-void dDebugConfig_c::loadConfig() {
+bool dDebugConfig_c::loadConfig() {
 
     // Locate the file
     int entrynum = DVDConvertPathToEntrynum("config/debug_config.ini");
     if (entrynum == -1) {
         OSReport("Debug config not found, bailing!\n");
-        return;
+        return false;
     }
 
     // Try to load it
@@ -273,7 +273,7 @@ void dDebugConfig_c::loadConfig() {
     bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
     if (!fileLoaded) {
         OSReport("Debug config not loaded, bailing!\n");
-        return;
+        return false;
     }
 
     // Allocate the necessary space
@@ -281,7 +281,7 @@ void dDebugConfig_c::loadConfig() {
     void* buffer = EGG::Heap::alloc(size, 0x20, mHeap::g_archiveHeap);
     if (buffer == nullptr) {
         OSReport("Failed to allocate buffer, bailing!\n");
-        return;
+        return false;
     }
 
     // Read the file
@@ -299,15 +299,20 @@ void dDebugConfig_c::loadConfig() {
     // Close the file, free the buffer and return
     DVDClose(&dvdHandle);
     EGG::Heap::free(buffer, mHeap::g_archiveHeap);
+    m_instance = &instance;
+    return true;
 }
 
-void dDebugConfig_c::setupConfig() {
-    instance.loadConfig();
+bool dDebugConfig_c::setupConfig() {
+    if (dDebugConfig_c::m_instance == nullptr) {
+        return instance.loadConfig();
+    }
+    return false;
 }
 
 extern "C" void CrsinLoadFiles();
 
-// process launch type
+// Process launch type
 kmBranchDefCpp(0x8015D850, NULL, void, void) {
     // If launch type is 0, do the original call and nothing else
     u8 launchType = instance.mLaunchType;

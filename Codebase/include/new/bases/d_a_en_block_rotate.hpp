@@ -44,22 +44,22 @@ public:
 };
 
 const u32 l_item_values[16] = {
-    0xF,				// empty
-    2,					// mushroom
-    0,					// fire
-    0,					// fire
-    0x15,				// propeller
-    0x11,				// penguin
-    0x19,				// mini
-    1,					// star
-    0x1B,				// mushroom
-    0xC,				// mushroom
-    4,					// coin 2
-    7,					// 1up
-    0xA,				// mushroom
-    0xD,				// mushroom
-    8,					// mushroom
-    0xE					// ice
+    0xF,				// Empty
+    2,					// Mushroom
+    0,					// Fire
+    0,					// Fire
+    0x15,				// Propeller
+    0x11,				// Penguin
+    0x19,				// Mini
+    1,					// Star
+    0x1B,				// Mushroom
+    0xC,				// Mushroom
+    4,					// Coin 2
+    7,					// 1-up
+    0xA,				// Mushroom
+    0xD,				// Mushroom
+    8,					// Mushroom
+    0xE					// Ice
 };
 
 const bool l_early_items[16] = {

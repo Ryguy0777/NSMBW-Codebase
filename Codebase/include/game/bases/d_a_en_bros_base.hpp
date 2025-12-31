@@ -26,13 +26,13 @@ public:
     virtual void finalUpdate();
 
     // dEn_c overrides
-    virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual void Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsPlHitCheck(dCc_c *self, dCc_c *other);
+    virtual void Normal_VsYoshiHitCheck(dCc_c *self, dCc_c *other);
 
-    virtual bool hitCallback_Spin(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Ice(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_YoshiBullet(dCc_c *cc1, dCc_c *cc2);
+    virtual bool hitCallback_Spin(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_HipAttk(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Ice(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_YoshiBullet(dCc_c *self, dCc_c *other);
 
     virtual void initializeState_DieFumi();
     virtual void executeState_DieFumi();
@@ -44,7 +44,7 @@ public:
     
     virtual void setDamage(dActor_c *actor);
 
-    virtual void createIceActor();
+    virtual bool createIceActor();
     virtual void setIceAnm();
 
     virtual void returnState_Ice();

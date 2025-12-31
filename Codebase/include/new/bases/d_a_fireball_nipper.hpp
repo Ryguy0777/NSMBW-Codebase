@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_a_fireball_base.hpp>
 
 class daFireBall_Nipper_c : public daFireBall_Base_c {

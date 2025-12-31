@@ -2,7 +2,7 @@
 #include <game/bases/d_a_en_coin_angle.hpp>
 #include <lib/MSL/math.h>
 
-// Add additional rotation settings to roation-controlled coins
+// Add additional rotation settings to rotation-controlled coins
 
 kmBranchDefCpp(0x809E5248, 0x809E524C, void, daEnCoinAngle_c *this_) {
     this_->rotateCoin();

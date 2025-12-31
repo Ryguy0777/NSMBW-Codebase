@@ -273,3 +273,7 @@ u32 SIDecodeType(u32 type) {
 
     return SI_ERROR_UNKNOWN;
 }
+
+u32 SIProbe(s32 chan) {
+    return SIDecodeType(SIGetType(chan));
+}

@@ -74,6 +74,9 @@ public:
     static const ulong BLACK = 0x000000FF;
     static const ulong GRAY  = 0x808080FF;
     static const ulong WHITE = 0xFFFFFFFF;
+
+    static const u32 ELEMENT_MIN = 0x00000000;
+    static const u32 ELEMENT_MAX = 0xFFFFFFFF;
     // clang-format on
 } ALIGN(4);
 

@@ -36,6 +36,9 @@ These features are complete and should be fully functional.
 * Removal of stage timer + live counter (togglable)
 * Rotation controlled coin hacks
 * Newer-esque file select (togglable)
+* Fake Star Coin sprite
+* Effect/SFX Spawner sprite
+* Galoomba sprites
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -43,14 +46,13 @@ These features are implemented, but not complete or not fully functional.
 * Classic + GameCube controller support (togglable)
 * Splunkin sprite
 * Jack O' Goomba sprite
+* Goombrat sprite
 
 ### Planned Features
 These features are planned to be implemented in the future.
 * Switch Blocks (togglable)
 * Magic Platform sprite
 * Shyguy variant sprites
-* Goombrat sprite
-* Galoomba sprites
 * RandTiles
 * AnimTiles
 * FlowerTiles
@@ -58,7 +60,6 @@ These features are planned to be implemented in the future.
 * Petey Pirahna Boss sprite
 * Level Names/Info (togglable)
 * Triple ? Block sprite
-* Effect/SFX Spawner sprite
 * Hammer Suit/More Powerups (togglable)
 * More Characters (togglable)
 * Region Free utilites (togglable)

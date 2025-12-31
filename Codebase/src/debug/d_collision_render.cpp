@@ -1,8 +1,9 @@
-// source: https://github.com/CLF78/NSMASR-v2/blob/master/game/debug/collisionRender.cpp
+// Source: https://github.com/CLF78/NSMASR-v2/blob/master/game/debug/collisionRender.cpp
 #include <kamek.h>
 #include <new/bases/d_collision_render.hpp>
 #include <game/bases/d_actor.hpp>
-#include <game/bases/d_ride_circle.hpp>
+#include <game/bases/d_rc.hpp>
+#include <game/bases/d_bg_ctr.hpp>
 #include <nw4r/g3d/g3d_camera.h>
 #include <nw4r/math/math_triangular.h>
 #include <revolution/GX.h>
@@ -231,7 +232,7 @@ void dCollisionRender_c::drawXlu() {
         while (currCc) {
 
             // Make sure the actor isn't dead and that its owner exists
-            if (currCc->mFlag != dCc_c::CC_DISABLE) {
+            if (currCc->mInfo != CC_NO_HIT) {
 
                 u32 uptr = (u32)currCc;
                 u8 r = (uptr >> 16) & 0xFF;
@@ -241,12 +242,12 @@ void dCollisionRender_c::drawXlu() {
 
                 float centreX = currCc->getCenterPosX();
                 float centreY = currCc->getCenterPosY();
-                float edgeDistX = currCc->mCcData.mWidth;
-                float edgeDistY = currCc->mCcData.mHeight;
+                float edgeDistX = currCc->mCcData.mSize.x;
+                float edgeDistY = currCc->mCcData.mSize.y;
                 u8 collType = currCc->mShape;
 
                 // Call DrawCircle for circles
-                if (collType == dCc_c::CC_SHAPE_CIRCLE)
+                if (collType == CC_SHAPE_CIRCLE)
                     DrawCircle(centreX, centreY, edgeDistX, edgeDistY, 9000.0f, r, g, b, a);
 
                 // Else call DrawQuad
@@ -256,7 +257,7 @@ void dCollisionRender_c::drawXlu() {
 
                     // Use trapezoidDist for Y coordinates if collType is 2
                     // Else edge distance
-                    if (collType == dCc_c::CC_SHAPE_DAIKEI_UD) {
+                    if (collType == CC_SHAPE_DAIKEI_UD) {
                         tlY = centreY + currCc->mTrpOffsets[0];
                         trY = centreY + currCc->mTrpOffsets[2];
                         blY = centreY + currCc->mTrpOffsets[1];
@@ -271,7 +272,7 @@ void dCollisionRender_c::drawXlu() {
 
                     // Use trapezoidDist for X coordinates if collType is 3
                     // Else edge distance
-                    if (collType == dCc_c::CC_SHAPE_DAIKEI_LR) {
+                    if (collType == CC_SHAPE_DAIKEI_LR) {
                         tlX = centreX + currCc->mTrpOffsets[0];
                         trX = centreX + currCc->mTrpOffsets[1];
                         blX = centreX + currCc->mTrpOffsets[2];
@@ -329,7 +330,7 @@ void dCollisionRender_c::drawXlu() {
     if (flags & (1 << ColliderDisplayFlags::Sensors)) {
         dActor_c *owner = nullptr;
         while (owner = (dActor_c*)fManager_c::searchBaseByGroupType(2, owner)) {
-            // verify if dBc_c vtable is set
+            // Verify if dBc_c vtable is set
             u8 *vtablePtr = ((u8*)owner) + 0x1EC;
                 if ((void*)*((u32*)vtablePtr) != &bc_vtable)
                     continue;
@@ -341,7 +342,7 @@ void dCollisionRender_c::drawXlu() {
             u8 b = (uptr & 0xFF) + 0x80;
             u8 a = 0xFF;
 
-            // grab bc pointer
+            // Grab dBc_c pointer
             dBc_c *currBc = &owner->mBc;
 
             // Get the actor's position
@@ -349,13 +350,13 @@ void dCollisionRender_c::drawXlu() {
             float ownerPosY = owner->mPos.y;
 
             // Make an array of sensors
-            dBcSensor_c* sensors[4] = {currBc->mpSensorFoot, currBc->mpSensorHead, currBc->mpSensorWall, currBc->mpSensorWall};
+            sBcSensorBase *sensors[4] = {currBc->mpSensorFoot, currBc->mpSensorHead, currBc->mpSensorWall, currBc->mpSensorWall};
 
             // Draw the sensors
             for (int i = 0; i < 4; i++) {
 
                 // Check if the sensor exists
-                dBcSensor_c* sensor = sensors[i];
+                sBcSensorBase *sensor = sensors[i];
                 if (sensor == nullptr)
                     continue;
 
@@ -365,7 +366,7 @@ void dCollisionRender_c::drawXlu() {
                 bool isLine = sensor->mFlags & 1;
 
                 if (isLine == false) {
-                    dBcSensorPoint_c* pointSensor = (dBcSensorPoint_c*)sensor;
+                    sBcSensorPoint *pointSensor = (sBcSensorPoint *)sensor;
 
                     x1 = ownerPosX + (float)(mult * pointSensor->mX / 4096);
                     y1 = ownerPosY + (float)(pointSensor->mY / 4096);
@@ -373,7 +374,7 @@ void dCollisionRender_c::drawXlu() {
                     DrawPoint(x1, y1, 8005.0f, r, g, b, a);
 
                 } else {
-                    dBcSensorLine_c* lineSensor = (dBcSensorLine_c*)sensor;
+                    sBcSensorLine *lineSensor = (sBcSensorLine *)sensor;
 
                     if (i < 2) {
                         x1 = ownerPosX + (float)(lineSensor->mLineA / 4096);
@@ -413,8 +414,8 @@ void dCollisionRender_c::drawXlu() {
                 dRideCircle_c* currCircle = (dRideCircle_c*)currRide;
 
                 // Get centre and radius
-                float centreX = currCircle->mpOwner->mPos.x + currCircle->mCentreOffset.x;
-                float centreY = currCircle->mpOwner->mPos.y + currCircle->mCentreOffset.y;
+                float centreX = currCircle->mpOwner->mPos.x + currCircle->mCenterOffset.x;
+                float centreY = currCircle->mpOwner->mPos.y + currCircle->mCenterOffset.y;
                 float radius = currCircle->mRadius;
 
                 // If the circle is full, use the regular circle method
