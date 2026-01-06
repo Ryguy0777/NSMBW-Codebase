@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_actor_state.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>

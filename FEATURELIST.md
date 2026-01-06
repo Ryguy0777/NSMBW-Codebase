@@ -40,6 +40,9 @@ These features are complete and should be fully functional.
 * Level Names/Info (togglable)
 * NewerSMBW styled pause menu (togglable)
 * Jellybeam lightmask fixes
+* Fake Star Coin sprite
+* Effect/SFX Spawner sprite
+* Galoomba sprites
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -47,21 +50,19 @@ These features are implemented, but not complete or not fully functional.
 * Classic + GameCube controller support (togglable)
 * Splunkin sprite
 * Jack O' Goomba sprite
+* Goombrat sprite
 
 ### Planned Features
 These features are planned to be implemented in the future.
 * Switch Blocks (togglable)
 * Magic Platform sprite
 * Shyguy variant sprites
-* Goombrat sprite
-* Galoomba sprites
 * RandTiles
 * AnimTiles
 * FlowerTiles
 * 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss sprite
 * Triple ? Block sprite
-* Effect/SFX Spawner sprite
 * Hammer Suit/More Powerups (togglable)
 * More Characters (togglable)
 * Region Free utilites (togglable)

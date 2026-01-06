@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_remocon_mng.hpp>
 #include <game/bases/d_s_stage.hpp>
 
@@ -17,11 +16,11 @@ typedef struct CONTROLLER_TYPE_e {
     };
 };
 
-// these aren't real
-#define WPAD_DEV_GAMECUBE               30 // gamecube controller
-#define WPAD_DEV_GCN_FUTURE             31 // invalid gc device
+// These aren't officially a part of WPAD
+#define WPAD_DEV_GAMECUBE               30 // Gamecube controller
+#define WPAD_DEV_GCN_FUTURE             31 // Invalid gc device
 
-// created on game boot and stays in memory constantly until game shutdown
+// Created on game boot and stays in memory constantly until game shutdown
 
 #define CCFLAG_HAS_CUSTOM           0x01
 #define CCFLAG_NO_AUTOCONNECT       0x02

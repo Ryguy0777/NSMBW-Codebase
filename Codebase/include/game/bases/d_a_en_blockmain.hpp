@@ -1,5 +1,6 @@
 #pragma once
 #include <game/bases/d_enemy.hpp>
+#include <game/bases/d_bg_ctr.hpp>
 
 class daEnBlockMain_c : public dEn_c {
 public:
@@ -36,9 +37,10 @@ public:
     int player_bigmario_check(s8 player_id);
     int playernumber_set();
 
-    static void checkRevFoot(dActor_c*, dActor_c*);
-    static void checkRevHead(dActor_c*, dActor_c*);
-    static void checkRevWall(dActor_c*, dActor_c*, u8);
+    static bool checkRevFoot(dActor_c*, dActor_c*);
+    static bool checkRevHead(dActor_c*, dActor_c*);
+    static bool checkRevWall(dActor_c*, dActor_c*, u8);
+
     static void callBackF(dActor_c*, dActor_c*);
     static void callBackH(dActor_c*, dActor_c*);
     static void callBackW(dActor_c*,dActor_c*, u8);

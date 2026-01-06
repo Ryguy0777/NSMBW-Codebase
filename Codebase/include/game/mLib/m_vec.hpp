@@ -4,6 +4,18 @@
 #include <lib/egg/math/eggVector.h>
 #include <game/cLib/c_math.hpp>
 
+/// A plain-old-data structure version of mVec2_c.
+/// @unofficial
+struct mVec2_POD_c {
+    void set(float fx, float fy) {
+        x = fx;
+        y = fy;
+    }
+    
+    float x;
+    float y;
+};
+
 /// @brief A two-dimensional floating point vector.
 /// @ingroup mlib
 class mVec2_c : public EGG::Vector2f {
@@ -210,38 +222,3 @@ public:
     static mVec3_c Ey; ///< The unit vector for the Y axis.
     static mVec3_c Ez; ///< The unit vector for the Z axis.
 };
-
-/// @unofficial
-class mBoundBox {
-public:
-    mBoundBox() {}
-
-    mBoundBox(float t, float b, float l, float r) {
-        set(t, b, l, r);
-    }
-
-    mBoundBox(const mBoundBox &b) {
-        set(b.mOffset.x, b.mOffset.y, b.mSize.x, b.mSize.y);
-    }
-
-    void set(float t, float b, float l, float r) {
-        mOffset.set(t, b);
-        mSize.set(l, r);
-    }
-
-    mVec2_c withPos(const mVec3_c &pos) const {
-        mVec2_c res;
-        res.x = pos.x + mOffset.x - mSize.x;
-        res.y = pos.y + mOffset.y + mSize.y;
-        return res;
-    }
-
-    mVec2_c getSize() const {
-        return mSize;
-    }
-
-    mVec2_c mOffset, mSize;
-};
-
-// Official name of mBoundBox?
-class sRangeDataF : public mBoundBox { };

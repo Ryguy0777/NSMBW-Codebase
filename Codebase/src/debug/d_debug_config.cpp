@@ -40,7 +40,7 @@ const DebugKey keys[] = {
 };
 
 static dDebugConfig_c instance;
-dDebugConfig_c* dDebugConfig_c::m_instance = &instance;
+dDebugConfig_c* dDebugConfig_c::m_instance = nullptr;
 
 dDebugConfig_c::dDebugConfig_c() {
     // Initialize the values to sane defaults
@@ -299,16 +299,20 @@ bool dDebugConfig_c::loadConfig() {
     // Close the file, free the buffer and return
     DVDClose(&dvdHandle);
     EGG::Heap::free(buffer, mHeap::g_archiveHeap);
+    m_instance = &instance;
     return true;
 }
 
 bool dDebugConfig_c::setupConfig() {
-    return instance.loadConfig();
+    if (dDebugConfig_c::m_instance == nullptr) {
+        return instance.loadConfig();
+    }
+    return false;
 }
 
 extern "C" void CrsinLoadFiles();
 
-// process launch type
+// Process launch type
 kmBranchDefCpp(0x8015D850, NULL, void, void) {
     // If launch type is 0, do the original call and nothing else
     u8 launchType = instance.mLaunchType;

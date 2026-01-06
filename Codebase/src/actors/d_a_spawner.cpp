@@ -39,7 +39,7 @@ int daSpawner_c::execute() {
     }
     #endif
     // If triggering event id is set
-    if (checkEvent(mEventID)) {
+    if (dSwitchFlagMng_c::checkEvent(mEventID)) {
         if (mProfName == fProfile::AC_SPAWNER) {
             // Regular spawner
             if (mHasChild == false) {
@@ -69,8 +69,9 @@ int daSpawner_c::execute() {
         if (mProfName == fProfile::AC_SPAWNER_PAIRED) {
             // Delete the child actor now that the event is disabled
             dActor_c *child = (dActor_c *)fManager_c::searchBaseByID(mChildID);
-            if (child)
+            if (child) {
                 child->deleteActor(0);
+            }
         }
         mHasChild = false;
         mTimer = 0;

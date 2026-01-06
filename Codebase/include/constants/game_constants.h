@@ -11,11 +11,15 @@
 
 #define CHECKPOINT_COUNT 2 ///< The maximum number of checkpoints supported.
 
+#define COURSE_FILE_COUNT 4 ///< The number of files in a course.
+
 #define HINT_MOVIE_COUNT 70 ///< The total hint movie count.
 
 #define MAX_LIVES 99 ///< The maximum life count.
 
 #define MAX_STOCK_ITEM 99 ///< The maximum inventory amount per item.
+
+#define MAX_EXTRA_MODE_SCORE 1000000 ///< The maximum possible score in Free Mode and Coin Battle.
 
 #define SAVE_SLOT_COUNT 3 ///< The total save slot count.
 
@@ -44,8 +48,8 @@ enum PATH_DIRECTION_e {
     PATH_DIR_INITIAL,
 };
 
-/// @brief The identifiers for each character.
-enum PLAYER_CHARACTER_e {
+/// @brief The identifiers for each player type.
+enum PLAYER_TYPE_e {
     PLAYER_MARIO,
     PLAYER_LUIGI,
     PLAYER_YELLOW_TOAD,

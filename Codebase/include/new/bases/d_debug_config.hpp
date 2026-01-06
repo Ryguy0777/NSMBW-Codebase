@@ -1,5 +1,4 @@
 #pragma once
-
 #include <nw4r/ut/ut_charStrmReader.h>
 
 // debugging config ini from NSMASRv2

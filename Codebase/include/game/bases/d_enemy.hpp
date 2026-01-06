@@ -23,11 +23,9 @@ struct sDeathInfoData {
 /// @unofficial
 class dDeathInfo_c {
 public:
-    dDeathInfo_c() {
-        mIsDead = false;
-    }
+    dDeathInfo_c() : mIsDead(false) {}
 
-    void set(const sDeathInfoData &other) {
+    dDeathInfo_c &operator=(const sDeathInfoData &other) {
         mIsDead = true;
         mSpeed.set(other.mXSpeed, other.mYSpeed);
         mMaxYSpeed = other.mMaxYSpeed;
@@ -37,6 +35,7 @@ public:
         m_18 = other.m_18;
         mDirection = other.mDirection;
         mKilledBy = other.mKilledBy;
+        return *this;
     }
 
     float getXSpeed() const {
@@ -90,8 +89,10 @@ class dEn_c : public dActorMultiState_c {
 public:
     /// @unofficial
     enum FLAGS_e {
-        FLAG_1 = BIT_FLAG(1),
-        FLAG_24 = BIT_FLAG(24)
+        EN_IS_SHELL = BIT_FLAG(0),
+        EN_IS_HARD = BIT_FLAG(1),
+        EN_FLAG_16 = BIT_FLAG(16),
+        EN_FLAG_24 = BIT_FLAG(24)
     };
 
     dEn_c(); ///< Constructs a new enemy actor.
@@ -119,31 +120,31 @@ public:
 
     // New virtual functions
 
-    virtual bool EnDamageCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual bool PlDamageCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual bool YoshiDamageCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual bool EtcDamageCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual bool EnDamageCheck(dCc_c *self, dCc_c *other);
+    virtual bool PlDamageCheck(dCc_c *self, dCc_c *other);
+    virtual bool YoshiDamageCheck(dCc_c *self, dCc_c *other);
+    virtual bool EtcDamageCheck(dCc_c *self, dCc_c *other);
 
-    virtual void Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual void Normal_VsPlHitCheck(dCc_c *cc1, dCc_c *cc2);
-    virtual void Normal_VsYoshiHitCheck(dCc_c *cc1, dCc_c *cc2);
+    virtual void Normal_VsEnHitCheck(dCc_c *self, dCc_c *other);
+    virtual void Normal_VsPlHitCheck(dCc_c *self, dCc_c *other);
+    virtual void Normal_VsYoshiHitCheck(dCc_c *self, dCc_c *other);
 
-    virtual bool hitCallback_Star(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Slip(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Large(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Spin(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Rolling(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_WireNet(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_YoshiHipAttk(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Screw(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_PenguinSlide(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Cannon(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Shell(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Fire(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_Ice(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_YoshiBullet(dCc_c *cc1, dCc_c *cc2);
-    virtual bool hitCallback_YoshiFire(dCc_c *cc1, dCc_c *cc2);
+    virtual bool hitCallback_Star(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Slip(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Large(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Spin(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Rolling(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_WireNet(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_HipAttk(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_YoshiHipAttk(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Screw(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_PenguinSlide(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Cannon(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Shell(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Fire(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_Ice(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_YoshiBullet(dCc_c *self, dCc_c *other);
+    virtual bool hitCallback_YoshiFire(dCc_c *self, dCc_c *other);
 
     virtual void setDeathInfo_Other(dActor_c *killedBy);
     virtual void setDeathInfo_Quake(int);
@@ -155,7 +156,7 @@ public:
     void setDeathInfo_SpinFumi(dActor_c *killedBy, int);
 
     virtual bool isQuakeDamage();
-    virtual void hitYoshiEat(dCc_c *cc1, dCc_c *cc2);
+    virtual void hitYoshiEat(dCc_c *self, dCc_c *other);
 
     virtual void setDeathSound_HipAttk();
     virtual void setDeathSound_Fire();
@@ -191,14 +192,14 @@ public:
     virtual void boyonBegin();
     virtual void calcBoyonScale();
 
-    virtual void createIceActor();
+    virtual bool createIceActor();
     virtual void setIceAnm();
     virtual void returnAnm_Ice();
     virtual void returnState_Ice();
 
-    virtual void isFunsui() const;
-    virtual void endFunsui();
     virtual void beginFunsui();
+    virtual void endFunsui();
+    virtual void isFunsui() const;
 
     virtual bool checkComboClap(int max);
 
@@ -226,10 +227,10 @@ public:
 
     void hitdamageEffect(const mVec3_c &pos);
 
-    void checkWallAndBg(); ///< @unofficial
-    int Enfumi_check(dCc_c *cc1, dCc_c *cc2, int step);
+    u32 checkWallAndBg(); ///< @unofficial
+    int Enfumi_check(dCc_c *self, dCc_c *other, int step);
     u32 EnBgCheck();
-    bool EnBgCheckFoot();
+    u32 EnBgCheckFoot();
     u32 EnBgCheckWall();
     bool LineBoundaryCheck(dActor_c *actor);
 
@@ -252,17 +253,17 @@ public:
     void posMove();
     bool turnangle_calc(const short *target, const short *delta);
 
-    void fireballInvalid(dCc_c *cc1, dCc_c *cc2);
-    void iceballInvalid(dCc_c *cc1, dCc_c *cc2);
-
-    void killIfTouchingLava(const mVec3_c &, float);
+    void fireballInvalid(dCc_c *self, dCc_c *other);
+    void iceballInvalid(dCc_c *self, dCc_c *other);
 
     void setNicePoint_Death();
     void setDeadMode(dActor_c *actor, int);
     void killIce();
 
-    static void normal_collcheck(dCc_c *cc1, dCc_c *cc2);
+    static void normal_collcheck(dCc_c *self, dCc_c *other);
     static bool CeilCheck(float y, dCc_c *cc);
+
+    int getIceMode() const { return 0; }
 
     u8 getDeathFallDirection() const { return mDeathFallDirection; }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-// defines to toggle certain code modules should be defined here.
+// Defines to toggle certain code modules should be defined here.
 
 //#define PLAYER_MODEL_HACKS
 

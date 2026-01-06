@@ -1,8 +1,7 @@
 #pragma once
-
 #include <game/mLib/m_3d.hpp>
 
-// collision debug rendering
+// Collision debug rendering
 
 class dCollisionRender_c : public m3d::proc_c {
     public:

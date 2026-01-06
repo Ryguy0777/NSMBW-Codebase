@@ -8,40 +8,6 @@
 #include <game/mLib/m_vec.hpp>
 #include <game/mLib/m_3d.hpp>
 
-struct dBgCheckUnit {
-    // dBgCheckUnit() {}
-    // float x, y;
-    unsigned long long a;
-    // u8 a, b, c;
-    // int d;
-    // u8 test[8];
-    // u32 flags[2];
-
-    // bool checkBit(int bit) {
-    //     if (bit > 32) {
-    //         return flags[1] & (1 << (bit - 32));
-    //     } else {
-    //         return flags[0] & (1 << bit);
-    //     }
-    // }
-    // void setBit(int bit) {
-    //     if (bit > 32) {
-    //         flags[1] |= (1 << (bit - 32));
-    //     } else {
-    //         flags[0] |= (1 << bit);
-    //     }
-    // }
-    // void clearBit(int bit) {
-    //     if (bit > 32) {
-    //         flags[0] &= (1 << (bit - 32));
-    //         flags[1] &= ~0;
-    //     } else {
-    //         flags[0] &= ~0;
-    //         flags[1] &= (1 << bit);
-    //     }
-    // }
-};
-
 class dProcShareProc_c : public d3d::proc_c {
 public:
     dProcShareProc_c() : idk(0) {}
@@ -70,6 +36,13 @@ struct dBgScrollLimit_c {
 class dBgBound_c {
 public:
     dBgBound_c() : mLeft(0.0f), mRight(0.0f), mUp(0.0f), mDown(0.0f) {}
+
+    float getR() const { return mRight; }
+    float getL() const { return mLeft; }
+    float getU() const { return mUp; }
+    float getD() const { return mDown; }
+    float getW() const { return getR() - getL(); }
+    float getH() const { return getU() - getD(); }
 
     float mLeft, mRight, mUp, mDown;
 };
@@ -105,6 +78,14 @@ public:
     size_t mSize;
 };
 
+struct sBgThing {
+    u16 m_00;
+    u16 m_02;
+    int m_04;
+    int m_08;
+    int m_0c;
+};;
+
 class dBg_c : public dBase_c {
     class dBg_autoScroll_c {
     public:
@@ -127,7 +108,7 @@ public:
 
     void CreateBgCheckBuffer();
 
-    unsigned long long fn_800774A0(u16);
+    unsigned long long CvtBgCheckFromUnitNo(u16);
     static unsigned long long fn_80081960(unsigned long long, int);
     dBgUnit_c *fn_80077520(u16 param_2, u16 param_3, u8 param_4, int *param_5, bool b);
 
@@ -148,8 +129,8 @@ public:
     void RemoveBgTex();
 
     bgTex_c *__createBgTex(int, u16, u16, u16, u16, int, int);
-    void fn_80078250(u16, u16, u16, u32);
-    void fn_80078300();
+    void EntryWakuCoin(ulong, u16, u16, int);
+    void SetWakuCoin();
     void fn_80077860(u16, u16, int, u16);
     void setWaterInWave(float, float, u8);
     void setBubble(float, float, u8, u8);
@@ -161,7 +142,7 @@ public:
 
     static u16 dBg_getUpLimitScroll(u8);
     static int dBg_getScrlAreaDataSize(u8);
-    static dScrollData_c *dBg_getScrlAreaDataP(u8, u8);
+    static sScrollAreaData *dBg_getScrlAreaDataP(u8, u8);
     bool dBg_isFlyPlayer();
     int dBg_isCloudFlyPlayer();
     int dBg_isCloudFlyPlayerMulti(); // [Not static? bruh]
@@ -183,6 +164,10 @@ public:
 
     float calcDispScale(float bgVal, float tmp1) {
         return (1.0f / getZoomTargetMin()) + bgVal * (1.0f / tmp1 - (1.0f / getZoomTargetMin()));
+    }
+
+    float invZoomTargetMin() {
+        return 1.0f / getZoomTargetMin();
     }
 
     float getZoomSpreadLine();
@@ -215,7 +200,7 @@ public:
     void fn_8007cd70(dBgSomeInfo_c *, dBgSomeInfo_c *, int); ///< @unofficial
 
     u8 freeUpScrollLimit(const dBgScrollLimit_c &scrollLimit, int group, int area); ///< @unofficial
-    u8 freeUpScrollLimit2(dBgScrollLimit_c *scrollLimit, int group, int area); ///< @unofficial
+    u8 freeUpScrollLimit2(const dBgScrollLimit_c &scrollLimit, int group, int area); ///< @unofficial
 
     void setScrollLimit(dBgScrollLimit_c *scrollLimit, int areaNo, int type, int group); ///< @unofficial
 
@@ -230,6 +215,30 @@ public:
 
     float getScaleFactor() { return 1.0f / mDispScale; }
 
+    float getL() { return mL; }
+    float getU() { return mU; }
+    float getD() { return mD; }
+    float getR() { return mR; }
+    u16 cvtL() { return getL(); }
+    u16 cvtR() { return getR(); }
+    u16 cvtU() { return getU(); }
+    u16 cvtD() { return getD(); }
+    u16 cvtW() { return getR() - getL(); }
+    u16 cvtH() { return getU() - getD(); }
+
+    float getLimitD() { return mDLimit; }
+    float getLimitU() { return mULimit; }
+
+    float getSomePosX() { return mSomePos.x; }
+    float getSomePosY() { return mSomePos.y; }
+    float getSomeSizeX() { return mSomeSize.x; }
+    float getSomeSizeY() { return mSomeSize.y; }
+
+    float getLoopOffsetX() { return mLoopOffsetX; }
+
+    float get_900ac() { return m_900ac; }
+    float get_900b0() { return m_900b0; }
+
     dBgScrollLimit_c *getScrLim(int area, int group, int idx) { return &mScrLimit[area][group][idx]; }
     dBgSubstruct2_c * getData2(int idx, int i) { return &mData2[idx][i]; }
 
@@ -237,7 +246,7 @@ public:
 
     unsigned long long *mBgCheckBuffer;
     int mBgThingsRelated;
-    dBgThing_c mBgThings[256];
+    sBgThing mBgThings[256];
     dBgScrollLimit_c mScrLimit[64][8][16];
     dBgSubstruct2_c mData2[64][20];
     int mGrassCount;
@@ -262,7 +271,8 @@ public:
     float mMoreFloats7[7];
     float mWaveRelated[80];
     float mDispScale;
-    float mMoreFloats3[4];
+    float mSomeScale;
+    float mMoreFloats3[3];
     u8 mU8s[6];
     float mZoomDenom;
     u8 m_8ffbc;

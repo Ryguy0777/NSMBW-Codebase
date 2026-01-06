@@ -8,13 +8,13 @@
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
 
-void BombProjectileCollcheck(dCc_c *cc1, dCc_c *cc2) {
-    daBombProjectile_c *bomb = (daBombProjectile_c *)cc1->mpOwner;
-    dActor_c *other = cc2->mpOwner;
-    u32 otherKind = other->mKind;
+void BombProjectileCollcheck(dCc_c *self, dCc_c *other) {
+    daBombProjectile_c *bomb = (daBombProjectile_c *)self->mpOwner;
+    dActor_c *ac = other->mpOwner;
+    u32 otherKind = ac->mKind;
     if (bomb->mPlayerBomb) {
         // If we've been spat by a yoshi
-        if (otherKind == dActor_c::STAGE_ACTOR_ENTITY) {
+        if (otherKind == dActor_c::STAGE_ACTOR_ENEMY) {
             // Colliding with something
             bomb->mStateMgr.changeState(daBombProjectile_c::StateID_Explode);
         }
@@ -23,13 +23,13 @@ void BombProjectileCollcheck(dCc_c *cc1, dCc_c *cc2) {
         if (otherKind == dActor_c::STAGE_ACTOR_PLAYER) {
             // Touching player
             bomb->mStateMgr.changeState(daBombProjectile_c::StateID_Explode);
-        } else if (otherKind == 2) {
+        } else if (otherKind == dActor_c::STAGE_ACTOR_YOSHI) {
             // Touching yoshi
-            if (cc2->mCcData.mAttackCategory == dCc_c::ATTACK_YOSHI_EAT) {
+            if (other->mCcData.mAttack == CC_ATTACK_YOSHI_EAT) {
                 // If we're colliding with yoshi's tounge
                 bomb->mStateMgr.changeState(daBombProjectile_c::StateID_EatWait);
             } else {
-                s8 *playerNum = other->getPlrNo();
+                s8 *playerNum = ac->getPlrNo();
                 if (*playerNum > -1) {
                     // Yoshi has a player on him
                     bomb->mStateMgr.changeState(daBombProjectile_c::StateID_Explode);
@@ -39,12 +39,12 @@ void BombProjectileCollcheck(dCc_c *cc1, dCc_c *cc2) {
     }
 };
 
-void BombExplosionCollcheck(dCc_c *cc1, dCc_c *cc2) {
-    daBombProjectile_c *bomb = (daBombProjectile_c *)cc1->mpOwner;
-    dActor_c *other = cc2->mpOwner;
+void BombExplosionCollcheck(dCc_c *self, dCc_c *other) {
+    daBombProjectile_c *bomb = (daBombProjectile_c *)self->mpOwner;
+    dActor_c *ac = other->mpOwner;
     if (!bomb->mPlayerBomb) {
         // Only collide with players if we've been thrown by a bro
-        u32 otherKind = other->mKind;
+        u32 otherKind = ac->mKind;
         if (otherKind == dActor_c::STAGE_ACTOR_PLAYER) {
             daPlBase_c *pl = (daPlBase_c *)other;
             pl->setDamage(bomb, daPlBase_c::DAMAGE_NONE);
@@ -60,34 +60,37 @@ void BombExplosionCollcheck(dCc_c *cc1, dCc_c *cc2) {
 
 CUSTOM_ACTOR_PROFILE(BROS_BOMB, daBombProjectile_c, fProfile::EN_BOMHEI, fProfile::DRAW_ORDER::EN_BOMHEI, 0x22);
 
-dCustomProfile_c bombProjectileProfile(&g_profile_BROS_BOMB, "BROS_BOMB", fProfile::BROS_BOMB);
-
 STATE_DEFINE(daBombProjectile_c, ThrowWait);
 STATE_DEFINE(daBombProjectile_c, EatWait);
 STATE_DEFINE(daBombProjectile_c, Throw);
 STATE_DEFINE(daBombProjectile_c, Explode);
 
-sCcDatNewF l_bombproj_cc = {
-    0.0,                        // mOffsetX
-    8.0,                        // mOffsetY
-    8.0,                        // mWidth
-    8.0,                        // mHeight
-    dCc_c::CAT_ENTITY,          // mCategory
-    0,                          // mAttackCategory
-    0x4F,                       // mCategoryInteract
-    0x8000,                     // mAttackCategoryInteract     
-    0,                          // mFlag
-    &BombProjectileCollcheck,   // mCallback
+dCustomProfile_c l_BROS_BOMB_profile(&g_profile_BROS_BOMB, "BROS_BOMB", fProfile::BROS_BOMB);
+
+const sBcSensorPoint l_bombproj_head = { 0, 0x0, 0x10000 };
+const sBcSensorLine l_bombproj_foot = { 1, -0x3000, 0x3000, 0 };
+const sBcSensorPoint l_bombproj_wall = { 0, 0x6000, 0x6000 };
+
+const sCcDatNewF l_bombproj_cc = {
+    {0.0f, 8.0f},
+    {8.0f, 8.0f},
+    CC_KIND_ENEMY,
+    CC_ATTACK_NONE,
+    BIT_FLAG(CC_KIND_PLAYER) | BIT_FLAG(CC_KIND_PLAYER_ATTACK) | BIT_FLAG(CC_KIND_YOSHI) |
+    BIT_FLAG(CC_KIND_ENEMY) | BIT_FLAG(CC_KIND_TAMA),
+    0x8000,
+    CC_STATUS_NONE,
+    &BombProjectileCollcheck,
 };
 
 int daBombProjectile_c::create() {
     // Setup model
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
 
-    mRes = dResMng_c::m_instance->mRes.getRes("bros_bombhei", "g3d/bros_bombhei.brres");
+    mRes = dResMng_c::m_instance->getRes("bros_bombhei", "g3d/bros_bombhei.brres");
     mResMdl = mRes.GetResMdl("bombhei");
     mModel.create(mResMdl, &mAllocator, 0x108, 1, nullptr);
-    dActor_c::setSoftLight_Enemy(mModel);
+    setSoftLight_Enemy(mModel);
 
     mResClr = mRes.GetResAnmClr("bombhei");
 	mAnmClr.create(mResMdl, mResClr, &mAllocator, 0, 1);
@@ -97,29 +100,23 @@ int daBombProjectile_c::create() {
     mAllocator.adjustFrmHeap();
 
     // Collider
-    mCc.set(this, &l_bombproj_cc);
+    mCc.set(this, (sCcDatNewF *)&l_bombproj_cc);
 
     mOwnerID = (fBaseID_e)mParam;
 
     // mCenterOffs is used to set the "center" of the actor
     // For yoshi tongue and dieFall
-    mCenterOffs = mVec3_c(0.0, 8.0, 0.0);
+    mCenterOffs.set(0.0f, 8.0f, 0.0f);
 
     // Set size for model culling
-    mVisibleAreaSize.x = 16.0;
-    mVisibleAreaSize.y = 16.0;
-    mVisibleAreaOffset.x = 0.0;
-    mVisibleAreaOffset.y = 8.0;
+    mVisibleAreaSize.set(16.0f, 16.0f);
+    mVisibleAreaOffset.set(0.0f, 8.0f);
 
     // Set yoshi eating behavior
     mEatBehaviour = EAT_TYPE_EAT;
 
-    // Tile collider
-    static const dBcSensorLine_c below(-4<<12, 4<<12, 0<<12);
-	static const dBcSensorPoint_c above(0<<12, 16<<12);
-    static const dBcSensorLine_c adjacent(6<<12, 8<<12, 7<<12);
-
-	mBc.set(this, (dBcSensor_c*)&below, (dBcSensor_c*)&above, (dBcSensor_c*)&adjacent);
+    // Tile sensors
+    mBc.set(this, l_bombproj_foot, l_bombproj_head, l_bombproj_wall);
 
     dActor_c *owner = getParent();
 
@@ -132,7 +129,7 @@ int daBombProjectile_c::create() {
     } else {
         mDirection = getPlayerDirection();
     }
-    mAngle.y = (mDirection) ? 0xE000 : 0x2000;
+    mAngle.y = l_base_angleY[mDirection];
 
     if (owner->mProfName == fProfile::EN_BOMBBROS) {
         // Wait for the bro to release us
@@ -146,7 +143,7 @@ int daBombProjectile_c::create() {
 
 int daBombProjectile_c::execute() {
     mStateMgr.executeState();
-    ActorScrOutCheck(0);
+    ActorScrOutCheck(SKIP_NONE);
     return SUCCEEDED;
 }
 
@@ -172,9 +169,9 @@ void daBombProjectile_c::finalUpdate() {
     mMatrix.ZrotM(mAngle.z);
     
     // Apply center offsets
-    PSMTXTrans(someMatrix, 0.0, mCenterOffs.y, 0.0);
+    PSMTXTrans(someMatrix, 0.0f, mCenterOffs.y, 0.0f);
     PSMTXConcat(mMatrix, someMatrix, mMatrix);
-    PSMTXTrans(thirdMatrix, 0.0, -mCenterOffs.y, 0.0);
+    PSMTXTrans(thirdMatrix, 0.0f, -mCenterOffs.y, 0.0f);
     PSMTXConcat(mMatrix, thirdMatrix, mMatrix);
 
     // Set the matrix for the model
@@ -194,9 +191,9 @@ void daBombProjectile_c::finalUpdate() {
 bool daBombProjectile_c::setEatSpitOut(dActor_c *eatingActor) {
     // Coming out of yoshi's mouth
 	mDirection = eatingActor->mDirection;
-    mPos.y += 3.0;
-    mPos.z = 5750.0;
-    mCc.mCcData.mAttackCategoryInteract = 0;
+    mPos.y += 3.0f;
+    mPos.z = 5750.0f;
+    mCc.mCcData.mVsDamage = 0;
     // We own the bomb now
     mPlayerBomb = true;
     mOwnerID = eatingActor->mUniqueID;
@@ -205,30 +202,33 @@ bool daBombProjectile_c::setEatSpitOut(dActor_c *eatingActor) {
 }
 
 float tileXOffsets[9] = {
-    -16.0, 0.0, 16.0,
-    -16.0, 0.0, 16.0,
-    -16.0, 0.0, 16.0
+    -16.0f, 0.0f, 16.0f,
+    -16.0f, 0.0f, 16.0f,
+    -16.0f, 0.0f, 16.0f
 };
 
 float tileYOffsets[9] = {
-    16.0, 16.0, 16.0,
-    0.0, 0.0, 0.0,
-    -16.0, -16.0, -16.0
+    16.0f, 16.0f, 16.0f,
+    0.0f, 0.0f, 0.0f,
+    -16.0f, -16.0f, -16.0f
 };
 
 void daBombProjectile_c::explodeTiles() {
     Vec2 tileToCheck;
     if (mExplosionTimer < 9) {
-        tileToCheck.x = (mPos.x * 0.0625) * 16.0 + tileXOffsets[mExplosionTimer];
-        tileToCheck.y = (mPos.y * 0.0625) * 16.0 + tileYOffsets[mExplosionTimer];
+        tileToCheck.x = (mPos.x * 0.0625f) * 16.0f + tileXOffsets[mExplosionTimer];
+        tileToCheck.y = (mPos.y * 0.0625f) * 16.0f + tileYOffsets[mExplosionTimer];
     } else {
-        tileToCheck.x = 0.0;
-        tileToCheck.y = 0.0;
+        tileToCheck.x = 0.0f;
+        tileToCheck.y = 0.0f;
     }
     for (int i = 0; i < 2; i++) {
         u32 type = dBc_c::getUnitType(tileToCheck.x, tileToCheck.y, mLayer);
-        if (type & (UnitType::QuestionBlock|UnitType::ExplodableBlock|UnitType::BreakableBlock)) {
-            dBg_c::m_bg_p->BgUnitChange((int)tileToCheck.x & 0xffff, (int)-tileToCheck.y & 0xffff, mLayer, 0);
+        if (type & 0x1c) {
+            short x, y;
+            y = -tileToCheck.y;
+            x = tileToCheck.x;
+            dBg_c::m_bg_p->BgUnitChange(x, y, mLayer, 0);
         }
     }
 }
@@ -240,15 +240,15 @@ dActor_c *daBombProjectile_c::getParent() {
 bool daBombProjectile_c::getPlayerDirection() {
     mVec2_c deltaPos;
     dAcPy_c *player = searchNearPlayer(deltaPos);
-    return player != nullptr && deltaPos.x < 0.0;
+    return player != nullptr && deltaPos.x < 0.0f;
 }
 
 void daBombProjectile_c::initializeState_ThrowWait() {
-    mScale = mVec3_c(0.5, 0.5, 0.5);
+    mScale.set(0.5f, 0.5f, 0.5f);
 }
 
 void daBombProjectile_c::finalizeState_ThrowWait() {
-    mScale = mVec3_c(1.0, 1.0, 1.0);
+    mScale.set(1.0f, 1.0f, 1.0f);
 }
 
 void daBombProjectile_c::executeState_ThrowWait() {
@@ -257,10 +257,10 @@ void daBombProjectile_c::executeState_ThrowWait() {
     owner->mMtx1.multVecZero(handPos);
     mPos = handPos;
     mAngle.y = owner->mAngle.y;
-    if (mScale.x < 1.0) {
-        mScale.x += 0.02;
-        mScale.y += 0.02;
-        mScale.z += 0.02;
+    if (mScale.x < 1.0f) {
+        mScale.x += 0.02f;
+        mScale.y += 0.02f;
+        mScale.z += 0.02f;
     }
     if (mReadyToThrow) {
         mStateMgr.changeState(StateID_Throw);
@@ -268,8 +268,8 @@ void daBombProjectile_c::executeState_ThrowWait() {
 }
 
 void daBombProjectile_c::initializeState_EatWait() {
-    mAnmClr.setFrame(0.0, 0);
-    mAnmClr.setRate(0.0, 0);
+    mAnmClr.setFrame(0.0f, 0);
+    mAnmClr.setRate(0.0f, 0);
     mCc.release();
 }
 
@@ -278,30 +278,30 @@ void daBombProjectile_c::finalizeState_EatWait() {}
 void daBombProjectile_c::executeState_EatWait() {}
 
 void daBombProjectile_c::initializeState_Throw() {
-    mAngle.y = (mDirection) ? 0xE000 : 0x2000;
+    mAngle.y = l_base_angleY[mDirection];
     // Now we're adding our physics
     mCc.entry();
 
-    mAnmClr.setRate(1.0, 0);
+    mAnmClr.setRate(1.0f, 0);
 
     dActor_c *owner = getParent();
 
     if (!mPlayerBomb) {
-        mSpeed.x = (mDirection) ? -2.1 : 2.1;
-        mSpeed.y = 3.5;
-        mSpeedMax.y = -6.0;
-        mAccelY = -0.2;
+        mSpeed.x = (mDirection) ? -2.1f : 2.1f;
+        mSpeed.y = 3.5f;
+        mSpeedMax.y = -6.0f;
+        mAccelY = -0.2f;
         if (owner) {
-            mSpeed.x = mSpeed.x + owner->mPosDelta.x * 1.1;
+            mSpeed.x = mSpeed.x + owner->mPosDelta.x * 1.1f;
         }
     } else {
-        mSpeed.x = owner->mSpeed.x * 0.5 + ((mDirection) ? -3.85 : 3.85);
-        mSpeed.y = 2.8;
-        mAccelY = -0.225;
-        mSpeedMax.x = (mDirection) ? -2.9: 2.9;
-        mMaxFallSpeed = -4.0;
-        mSpeedMax.y = -4.0;
-        mAccelF = 0.04;
+        mSpeed.x = owner->mSpeed.x * 0.5f + ((mDirection) ? -3.85f : 3.85f);
+        mSpeed.y = 2.8f;
+        mAccelY = -0.225f;
+        mSpeedMax.x = (mDirection) ? -2.9f : 2.9f;
+        mMaxFallSpeed = -4.0f;
+        mSpeedMax.y = -4.0f;
+        mAccelF = 0.04f;
     }
 }
 
@@ -328,21 +328,20 @@ void daBombProjectile_c::executeState_Throw() {
     }
 
     if (mShouldExplode) {
-        mStateMgr.changeState(StateID_Explode);
+        changeState(StateID_Explode);
     }
 }
 
-sCcDatNewF l_explode_cc = {
-    0.0,                        // mOffsetX
-    8.0,                        // mOffsetY
-    18.0,                       // mWidth
-    18.0,                       // mHeight
-    dCc_c::CAT_ENTITY,          // mCategory
-    dCc_c::ATTACK_SHELL,        // mAttackCategory
-    0xEF,                       // mCategoryInteract
-    0,                          // mAttackCategoryInteract     
-    1,                          // mFlag
-    &BombExplosionCollcheck,    // mCallback
+const sCcDatNewF l_explode_cc = {
+    {0.0f, 8.0f},
+    {18.0f, 18.0f},
+    CC_KIND_ENEMY,
+    CC_ATTACK_SHELL,
+    BIT_FLAG(CC_KIND_PLAYER) | BIT_FLAG(CC_KIND_PLAYER_ATTACK) | BIT_FLAG(CC_KIND_YOSHI) |
+    BIT_FLAG(CC_KIND_ENEMY) | BIT_FLAG(CC_KIND_TAMA) | BIT_FLAG(CC_KIND_KILLER),
+    0,    
+    CC_STATUS_NONE,
+    &BombExplosionCollcheck,
 };
 
 void daBombProjectile_c::initializeState_Explode() {
@@ -352,10 +351,10 @@ void daBombProjectile_c::initializeState_Explode() {
 
     mVec2_c soundPos = dAudio::cvtSndObjctPos(mPos);
     dAudio::g_pSndObjEmy->startSound(SE_EMY_BH_BOMB, soundPos, 0);
-    
-    mScale = mVec3_c(0.0, 0.0, 0.0);
 
-    mCc.set(this, &l_explode_cc);
+    mScale.set(0.0f, 0.0f, 0.0f);
+
+    mCc.set(this, (sCcDatNewF *)&l_explode_cc);
     mCc.entry();
 
     mExplosionTimer = 0;

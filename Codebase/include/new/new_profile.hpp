@@ -4,8 +4,8 @@
 #include <new/sprite_ids.hpp>
 #include <game/framework/f_profile.hpp>
 
-// all the neccessary code for profile/actor expansion
-// check d_a_spawner.cpp for a usage example
+// All the neccessary code for profile/actor expansion
+// Check d_a_spawner.cpp for a usage example
 
 typedef u16 SpriteName;
 
@@ -28,11 +28,11 @@ struct SpriteData {
 
 class dCustomProfile_c {
 public:
-    // stage actor with sprite
+    // Stage actor with sprite
     dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files=NULL);
-    // stage actor without sprite
+    // Stage actor without sprite
     dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, ProfileName profileId);
-    // non-stage actors (scenes, bases, etc)
+    // Non-stage actors (scenes, bases, etc)
     dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId);
 
     fProfile::fActorProfile_c mProfile;

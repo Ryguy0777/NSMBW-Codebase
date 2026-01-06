@@ -2,7 +2,7 @@
 #include <game/bases/d_a_en_blockmain.hpp>
 #include <game/bases/d_bg.hpp>
 
-// message block from SMW
+// Message block from SMW
 
 class daEnBlockMessage_c : public daEnBlockMain_c {
 public:

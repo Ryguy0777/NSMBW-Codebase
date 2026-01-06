@@ -1,5 +1,4 @@
 #pragma once
-
 #include <game/bases/d_actor.hpp>
 
 class daFlagDance_c : public dActor_c {

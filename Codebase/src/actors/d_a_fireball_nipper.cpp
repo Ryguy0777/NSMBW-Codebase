@@ -6,7 +6,7 @@
 
 CUSTOM_ACTOR_PROFILE(AC_PAKKUN_PUCHI_FIRE, daFireBall_Nipper_c, fProfile::PAKKUN_FIREBALL, fProfile::DRAW_ORDER::PAKKUN_FIREBALL, 0x22);
 
-dCustomProfile_c nipperFireProfile(&g_profile_AC_PAKKUN_PUCHI_FIRE, "AC_PAKKUN_PUCHI_FIRE", fProfile::AC_PAKKUN_PUCHI_FIRE);
+dCustomProfile_c l_PAKKUN_PUCHI_FIRE_profile(&g_profile_AC_PAKKUN_PUCHI_FIRE, "AC_PAKKUN_PUCHI_FIRE", fProfile::AC_PAKKUN_PUCHI_FIRE);
 
 void daFireBall_Nipper_c::executeState_Move() {
     calcSpeedY();
@@ -24,25 +24,24 @@ bool daFireBall_Nipper_c::initialize() {
     int distance = mParam >> 4 & 0xF;
     float baseXSpeed = l_nipper_fire_speeds[distance];
     mSpeed.x = (mDirection) ? -baseXSpeed : baseXSpeed;
-    mSpeed.y = 3.0;
-    mAccelY = -0.1875;
-    mSpeedMax.y = -4.0;
+    mSpeed.y = 3.0f;
+    mAccelY = -0.1875f;
+    mSpeedMax.y = -4.0f;
     return true;
 }
 
 extern "C" void ccCallback_BrosFire(dCc_c *, dCc_c *);
 
 sCcDatNewF l_nipper_fire_cc = {
-    0.0,                        // mOffsetX
-    0.0,                        // mOffsetY
-    3.0,                        // mWidth
-    3.0,                        // mHeight
-    dCc_c::CAT_ENTITY,          // mCategory
-    0,                          // mAttackCategory
-    0xF,                        // mCategoryInteract
-    0x8800,                     // mAttackCategoryInteract     
-    0,                          // mFlag
-    &ccCallback_BrosFire,       // mCallback
+    {0.0f, 0.0f},
+    {3.0f, 3.0f},
+    CC_KIND_ENEMY,
+    CC_ATTACK_NONE,
+    BIT_FLAG(CC_KIND_PLAYER) | BIT_FLAG(CC_KIND_PLAYER_ATTACK) | BIT_FLAG(CC_KIND_YOSHI) |
+    BIT_FLAG(CC_KIND_ENEMY),
+    0x8800,    
+    CC_STATUS_NONE,
+    &ccCallback_BrosFire,
 };
 
 void daFireBall_Nipper_c::setCc() {

@@ -41,7 +41,7 @@ sCcDatNewF l_gakenoko_cc = {
 
 kmBranchDefCpp(0x80A025A0, NULL, int, daEnGakeNoko_c *self) {
 	self->mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], 0, 0x20);
-	self->mRes = dResMng_c::m_instance->mRes.getRes("nokonokoB", "g3d/nokonokoB.brres");
+	self->mRes = dResMng_c::m_instance->getRes("nokonokoB", "g3d/nokonokoB.brres");
 
 	nw4r::g3d::ResMdl resMdl = self->mRes.GetResMdl("nokonokoB");
 	self->mModel.create(resMdl, &self->mAllocator, 0x7FFF, 1, 0);
