@@ -304,10 +304,11 @@ bool dDebugConfig_c::loadConfig() {
 }
 
 bool dDebugConfig_c::setupConfig() {
-    if (dDebugConfig_c::m_instance == nullptr) {
-        return instance.loadConfig();
+    if (dDebugConfig_c::m_instance != nullptr) {
+        return true;
     }
-    return false;
+
+    return instance.loadConfig();
 }
 
 extern "C" void CrsinLoadFiles();

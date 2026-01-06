@@ -35,6 +35,18 @@ public:
 
 class dPyMdlMng_c {
 public:
+    enum ModelType_e {
+        MODEL_NONE = -1,
+        MODEL_MARIO = 0,
+        MODEL_LUIGI = 1,
+        MODEL_TOAD_BLUE = 2,
+        MODEL_TOAD_YELLOW = 3,
+        MODEL_TOAD_RED = 4,
+        MODEL_YOSHI = 5,
+    };
+
+    dPyMdlMng_c(ModelType_e playerType);
+
     virtual ~dPyMdlMng_c();
 
     void setAnm(int anmID, float rate, float blendDuration, float f) {
@@ -80,6 +92,11 @@ public:
     }
 
     mVec3_c &getHatPos() const { return mpMdl->mHatPosMaybe; }
+
+    void calc(mVec3_c, mAng3_c, mVec3_c);
+    void calc(mMtx_c &);
+    void play();
+    void draw();
 
     dPyMdlBase_c *mpMdl;
 

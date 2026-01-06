@@ -15,7 +15,7 @@ kmBranchDefCpp(0x80A2EDF0, NULL, void, void *this_) {
         u8 areaIdx = dScStage_c::m_instance->mCurrArea;
 
 		// only draw lightmask if we're in darkness
-        u8 mask = dCd_c::m_instance->courses[courseIdx].getAreaDataP(areaIdx, nullptr)->mMaskNo;
+        u8 mask = dCd_c::m_instance->mFiles[courseIdx].getAreaDataP(areaIdx, nullptr)->mMaskNo;
 		if (mask & 0x20) {
 			lightMask->entry();
 		}

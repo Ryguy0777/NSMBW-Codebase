@@ -27,7 +27,7 @@ int daKPPlayer_c::create() {
     mpPyMdlMng = new dPyMdlMng_c(dPyMdlMng_c::MODEL_MARIO);
     dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
 
-    pyMdl->mMode = 1;
+    pyMdl->mSceneType = 1;
     pyMdl->mPlayerID = 0;
     pyMdl->mAllocator.createFrmHeap(0xC000, mHeap::g_gameHeaps[0], 0, 0x20, mHeap::OPT_0);
     pyMdl->createModel();

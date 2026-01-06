@@ -33,7 +33,7 @@
 // remove me later
 #include <game/bases/d_system.hpp>
 
-// Reset "LastPowerupStoreType" after game over
+// Reset stage exit mode after a Game Over
 extern int m_exitMode__10dScStage_c;
 kmBranchDefAsm(0x809216EC, 0x809216F0) {
     lis r4, m_exitMode__10dScStage_c@h
@@ -82,10 +82,10 @@ STATE_DEFINE(dScKoopatlas_c, QuickSaveEndCloseWait);
 STATE_DEFINE(dScKoopatlas_c, SaveError);
 
 dScKoopatlas_c *dScKoopatlas_c::build() {
-    MapReport("Creating WorldMap\n");
+    MapReport("Creating Koopatlas\n");
     dScKoopatlas_c *c = new dScKoopatlas_c;
 
-    MapReport("Created WorldMap @ %p\n", c);
+    MapReport("Created Koopatlas @ %p\n", c);
     instance = c;
     return c;
 }
@@ -161,7 +161,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void *ptr) {
 sPhase_c::METHOD_RESULT_e KPInitPhase_EndLoading(void *ptr) {
     SpammyReport("KPInitPhase_EndLoading called\n");
 
-    if (dResMng_c::m_instance->mRes.syncAllRes()) {
+    if (dResMng_c::m_instance->syncAllRes()) {
         SpammyReport("KPInitPhase_EndLoading returning false\n");
         return (sPhase_c::METHOD_RESULT_e)false;
     }
@@ -326,30 +326,31 @@ void dScKoopatlas_c::setupScene() {
 void dScKoopatlas_c::loadScene(int sceneID) {
     EGG::LightManager *lightMgr = m3d::getLightMgr(sceneID);
 
-    nw4r::g3d::ResFile res = dResMng_c::m_instance->mRes.getRes("Env_world", "scene/scene.brres");
+    nw4r::g3d::ResFile res = dResMng_c::m_instance->getRes("Env_world", "scene/scene.brres");
     nw4r::g3d::ResAnmScn anmScn = res.GetResAnmScn("MainSelect");
     anmScn.Bind(anmScn);
 
     lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, -3);
 
-    if (sceneID == 0) { // Main lighting
-        void *blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blight", nullptr, nullptr);
+    // TODO: Figure out how to load res now that this doesn't return a void*
+    /*if (sceneID == 0) { // Main lighting
+        void *blight = dResMng_c::m_instance->getRes("Env_world", "light/W8.blight", nullptr, nullptr);
         lightMgr->LoadBlight(blight);
 
-        void *blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/W8.blmap", nullptr, nullptr);
+        void *blmap = dResMng_c::m_instance->getRes("Env_world", "light/W8.blmap", nullptr, nullptr);
         lightMgr->ltMgr->LoadBlmap(blmap);
 
     } else if (sceneID == 1) { // Layout model lighting
-        void *blight = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blight", nullptr, nullptr);
+        void *blight = dResMng_c::m_instance->getRes("Env_world", "light/Layout3D.blight", nullptr, nullptr);
         lightMgr->LoadBlight(blight);
 
-        void *blmap = dResMng_c::m_instance->mRes.getRes("Env_world", "light/Layout3D.blmap", nullptr, nullptr);
+        void *blmap = dResMng_c::m_instance->getRes("Env_world", "light/Layout3D.blmap", nullptr, nullptr);
         lightMgr->ltMgr->LoadBlmap(blmap);
 
         EGG::FogManager *fogMgr = m3d::getFogMgr(sceneID);
-        void *bfog = dResMng_c::m_instance->mRes.getRes("Env_world", "fog/Layout3D.bfog", nullptr, nullptr);
+        void *bfog = dResMng_c::m_instance->getRes("Env_world", "fog/Layout3D.bfog", nullptr, nullptr);
         fogMgr->LoadBfog(bfog);
-    }
+    }*/
 }
 
 int dScKoopatlas_c::create() {
@@ -471,18 +472,18 @@ int dScKoopatlas_c::doDelete() {
     EffectManager_c::freeBreff(EffectManager_c::EFF_MAP);
     EffectManager_c::freeBreft(EffectManager_c::EFF_MAP);
 
-    dResMng_c::m_instance->mRes.deleteRes("SI_kinoko");
-    dResMng_c::m_instance->mRes.deleteRes("SI_fireflower");
-    dResMng_c::m_instance->mRes.deleteRes("SI_iceflower");
-    dResMng_c::m_instance->mRes.deleteRes("SI_penguin");
-    dResMng_c::m_instance->mRes.deleteRes("SI_propeller");
-    dResMng_c::m_instance->mRes.deleteRes("SI_star");
+    dResMng_c::m_instance->getResP()->deleteRes("SI_kinoko");
+    dResMng_c::m_instance->getResP()->deleteRes("SI_fireflower");
+    dResMng_c::m_instance->getResP()->deleteRes("SI_iceflower");
+    dResMng_c::m_instance->getResP()->deleteRes("SI_penguin");
+    dResMng_c::m_instance->getResP()->deleteRes("SI_propeller");
+    dResMng_c::m_instance->getResP()->deleteRes("SI_star");
 
-    dResMng_c::m_instance->mRes.deleteRes("cobCourse");
-    dResMng_c::m_instance->mRes.deleteRes("I_kinoko_bundle");
-    dResMng_c::m_instance->mRes.deleteRes("lakitu");
-    dResMng_c::m_instance->mRes.deleteRes("star_coin");
-    dResMng_c::m_instance->mRes.deleteRes("StarRing");
+    dResMng_c::m_instance->getResP()->deleteRes("cobCourse");
+    dResMng_c::m_instance->getResP()->deleteRes("I_kinoko_bundle");
+    dResMng_c::m_instance->getResP()->deleteRes("lakitu");
+    dResMng_c::m_instance->getResP()->deleteRes("star_coin");
+    dResMng_c::m_instance->getResP()->deleteRes("StarRing");
 
     mMapListLoader.freeResouce();
 

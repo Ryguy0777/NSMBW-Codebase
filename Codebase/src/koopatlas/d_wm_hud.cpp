@@ -100,11 +100,11 @@ int dWMHud_c::create() {
     // Adjust layout position and clip for 4:3
     mLayout.getRootPane()->SetSRTElement(0, -112.0f);
     if (!dGameCom::GetAspectRatio()) {
-        mLayout.mClipSettings.mEnabled = true;
-        mLayout.mClipSettings.mPos.x = 0;
-        mLayout.mClipSettings.mPos.y = 52;
-        mLayout.mClipSettings.mSize.x = 640;
-        mLayout.mClipSettings.mSize.y = 352;
+        mLayout.mScissorMask.mEnabled = true;
+        mLayout.mScissorMask.mPos.x = 0;
+        mLayout.mScissorMask.mPos.y = 52;
+        mLayout.mScissorMask.mSize.x = 640;
+        mLayout.mScissorMask.mSize.y = 352;
     }
 
     mLayout.AllAnimeEndSetup();
