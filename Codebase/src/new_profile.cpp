@@ -271,8 +271,8 @@ kmCallDefAsm(0x8091FD3C) {
     sub r0, r0, r12
 
     // Override table address
-    lis r21, custom_s_table@h
-    ori r21, r21, custom_s_table@l
+    lis r21, l_custom_actor_file_tbl@h
+    ori r21, r21, l_custom_actor_file_tbl@l
 
     // Modified original instruction
     notCustom:
