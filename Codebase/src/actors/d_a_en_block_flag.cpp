@@ -9,7 +9,7 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_FLAG, daEnBlockFlag_c, fProfile::EN_BLOCK_SOROBAN,
 
 STATE_DEFINE(daEnBlockFlag_c, Wait);
 
-const dActorData_c c_BLOCK_FLAG_actor_data = {fProfile::EN_BLOCK_FLAG, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, 0x8};
+const dActorData_c c_BLOCK_FLAG_actor_data = {fProfile::EN_BLOCK_FLAG, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
 dCustomProfile_c l_BLOCK_FLAG_profile(&g_profile_EN_BLOCK_FLAG, "EN_BLOCK_FLAG", SpriteId::EN_BLOCK_FLAG, &c_BLOCK_FLAG_actor_data);
 
 sBgSetInfo l_eventblock_bgc_info = {

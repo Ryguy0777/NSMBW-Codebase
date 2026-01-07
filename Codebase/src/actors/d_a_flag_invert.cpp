@@ -5,7 +5,7 @@
 
 CUSTOM_ACTOR_PROFILE(AC_FLAG_INVERT, daFlagInvert_c, fProfile::AC_FLAGON, fProfile::DRAW_ORDER::AC_FLAGON, 0);
 
-const dActorData_c c_FLAG_INVERT_actor_data = {fProfile::AC_FLAG_INVERT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x2};
+const dActorData_c c_FLAG_INVERT_actor_data = {fProfile::AC_FLAG_INVERT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
 dCustomProfile_c l_FLAG_INVERT_profile(&g_profile_AC_FLAG_INVERT, "AC_FLAG_INVERT", SpriteId::AC_FLAG_INVERT, &c_FLAG_INVERT_actor_data);
 
 int daFlagInvert_c::execute() {

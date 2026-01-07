@@ -13,7 +13,7 @@ STATE_DEFINE(daEnBlockRotate_c, Wait);
 STATE_DEFINE(daEnBlockRotate_c, Flipping);
 
 const char* l_BLOCK_ROTATE_res[] = {"block_rotate", NULL};
-const dActorData_c c_BLOCK_ROTATE_actor_data = {fProfile::EN_BLOCK_ROTATE, 8, -16, 8, 0, 16, 16, 0, 0, 0, 0, 0x8};
+const dActorData_c c_BLOCK_ROTATE_actor_data = {fProfile::EN_BLOCK_ROTATE, 8, -16, 8, 0, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
 dCustomProfile_c l_BLOCK_ROTATE_profile(&g_profile_EN_BLOCK_ROTATE, "EN_BLOCK_ROTATE", SpriteId::EN_BLOCK_ROTATE, &c_BLOCK_ROTATE_actor_data, l_BLOCK_ROTATE_res);
 
 sBgSetInfo l_flipblock_bgc_info = {
