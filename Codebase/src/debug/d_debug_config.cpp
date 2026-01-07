@@ -37,6 +37,11 @@ const DebugKey keys[] = {
     {DebugKey::DrawRideableColliders, "DrawRideableColliders"},
     {DebugKey::MovieId, "MovieId"},
     {DebugKey::ActorLog, "ActorLog"},
+    {DebugKey::DrawSpawnRange, "DrawSpawnRange"},
+    {DebugKey::DrawSpawnRangeMargins, "DrawSpawnRangeMargins"},
+    {DebugKey::DrawVisibleArea, "DrawVisibleArea"},
+    {DebugKey::DrawEnemySpawnRange, "DrawEnemySpawnRange"},
+    {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"}
 };
 
 static dDebugConfig_c instance;
@@ -59,6 +64,8 @@ dDebugConfig_c::dDebugConfig_c() {
     mHintMovieType = 0;
     mShowPregame = false;
     mCollisionDebugFlags = ColliderDisplayFlags::None;
+    mSpawnRangeDebugFlags = SpawnRangeDisplayFlags::None;
+    mSpawnRangeModeFlags = SpawnRangeDisplayMode::None;
 
     mMovieId = 1;
 
@@ -172,6 +179,26 @@ void dDebugConfig_c::parseConfigLine(char* key, char* param, int paramSize) {
 
         case DebugKey::DrawRideableColliders:
             mCollisionDebugFlags |= ((decodedParam & 1) << ColliderDisplayFlags::RideableColliders);
+            break;
+
+        case DebugKey::DrawSpawnRange:
+            mSpawnRangeDebugFlags |= ((decodedParam & 1) << SpawnRangeDisplayFlags::NoMargins);
+            break;
+
+        case DebugKey::DrawSpawnRangeMargins:
+            mSpawnRangeDebugFlags |= ((decodedParam & 1) << SpawnRangeDisplayFlags::Margins);
+            break;
+
+        case DebugKey::DrawVisibleArea:
+            mSpawnRangeDebugFlags |= ((decodedParam & 1) << SpawnRangeDisplayFlags::VisibleArea);
+            break;
+        
+        case DebugKey::DrawEnemySpawnRange:
+            mSpawnRangeModeFlags |= ((decodedParam & 1) << SpawnRangeDisplayMode::Enemy);
+            break;
+        
+        case DebugKey::DrawMapObjSpawnRange:
+            mSpawnRangeModeFlags |= ((decodedParam & 1) << SpawnRangeDisplayMode::MapObj);
             break;
 
         case DebugKey::MovieId:
