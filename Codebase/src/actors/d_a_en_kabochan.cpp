@@ -8,8 +8,8 @@
 CUSTOM_ACTOR_PROFILE(EN_KABOCHAN, daEnKabochan_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 
 const char* l_KABOCHAN_res [] = {"kabochan", NULL};
-const SpriteData c_KABOCHAN_spritedata = {fProfile::EN_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KABOCHAN_profile(&g_profile_EN_KABOCHAN, "EN_KABOCHAN", SpriteId::EN_KABOCHAN, &c_KABOCHAN_spritedata, l_KABOCHAN_res);
+const dActorData_c c_KABOCHAN_actor_data = {fProfile::EN_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_KABOCHAN_profile(&g_profile_EN_KABOCHAN, "EN_KABOCHAN", SpriteId::EN_KABOCHAN, &c_KABOCHAN_actor_data, l_KABOCHAN_res);
 
 bool daEnKabochan_c::hitCallback_HipAttk(dCc_c *self, dCc_c *other) {
     daPlBase_c *player = (daPlBase_c *)other->mpOwner;

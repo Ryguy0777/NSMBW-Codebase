@@ -307,7 +307,7 @@ bool dDebugConfig_c::setupConfig() {
     if (dDebugConfig_c::m_instance == nullptr) {
         return instance.loadConfig();
     }
-    return false;
+    return true;
 }
 
 extern "C" void CrsinLoadFiles();
@@ -338,7 +338,7 @@ kmBranchDefCpp(0x8015D850, NULL, void, void) {
 
         for (int i = 0; i <= instance.mPlayerCount; i++) {
             daPyMng_c::mPlayerEntry[i] = 1;
-            daPyMng_c::mPlayerType[i] = i;
+            daPyMng_c::mPlayerType[i] = (PLAYER_TYPE_e)i;
             daPyMng_c::mPlayerMode[i] = instance.mPowerUp;
             daPyMng_c::mCreateItem[i] = instance.mStar;
         }
@@ -350,7 +350,7 @@ kmBranchDefCpp(0x8015D850, NULL, void, void) {
                 dInfo_c::mGameFlag |= dInfo_c::GAME_FLAG_IS_COIN_COURSE;
 
             case LaunchGameMode::FreePlay:
-                dInfo_c::mGameFlag |= dInfo_c::GAME_FLAG_IS_EXTRA_MODE;
+                dInfo_c::mGameFlag |= dInfo_c::GAME_FLAG_4;
                 break;
 
             case LaunchGameMode::SuperGuideReplay:

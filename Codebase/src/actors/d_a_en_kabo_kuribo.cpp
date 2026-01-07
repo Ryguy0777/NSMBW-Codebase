@@ -10,8 +10,8 @@ STATE_DEFINE(daEnKaboKuribo_c, Attack);
 CUSTOM_ACTOR_PROFILE(EN_KABOKURIBO, daEnKaboKuribo_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 
 const char* l_KABOKURIBO_res [] = {"kabokuribo", NULL};
-const SpriteData c_KABOKURIBO_spritedata = {fProfile::EN_KABOKURIBO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KABOKURIBO_profile(&g_profile_EN_KABOKURIBO, "EN_KABOKURIBO", SpriteId::EN_KABOKURIBO, &c_KABOKURIBO_spritedata, l_KABOKURIBO_res);
+const dActorData_c c_KABOKURIBO_actor_data = {fProfile::EN_KABOKURIBO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_KABOKURIBO_profile(&g_profile_EN_KABOKURIBO, "EN_KABOKURIBO", SpriteId::EN_KABOKURIBO, &c_KABOKURIBO_actor_data, l_KABOKURIBO_res);
 
 void daEnKaboKuribo_c::Normal_VsPlHitCheck(dCc_c *self, dCc_c *other) {
     dActor_c *player = other->mpOwner;

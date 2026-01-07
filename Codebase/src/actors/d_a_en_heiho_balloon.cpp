@@ -11,8 +11,8 @@ STATE_DEFINE(daEnHeihoBalloon_c, Balloon);
 STATE_DEFINE(daEnHeihoBalloon_c, BalloonFall);
 
 const char* l_HEIHO_BALLOON_res[] = {"heiho", "obj_balloon", NULL};
-const SpriteData c_HEIHO_BALLOON_spritedata = {fProfile::EN_HEIHO_BALLOON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_HEIHO_BALLOON_profile(&g_profile_EN_HEIHO_BALLOON, "EN_HEIHO_BALLOON", SpriteId::EN_HEIHO_BALLOON, &c_HEIHO_BALLOON_spritedata, l_HEIHO_BALLOON_res);
+const dActorData_c c_HEIHO_BALLOON_actor_data = {fProfile::EN_HEIHO_BALLOON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_HEIHO_BALLOON_profile(&g_profile_EN_HEIHO_BALLOON, "EN_HEIHO_BALLOON", SpriteId::EN_HEIHO_BALLOON, &c_HEIHO_BALLOON_actor_data, l_HEIHO_BALLOON_res);
 
 int daEnHeihoBalloon_c::create() {
     mIsFloating = true;

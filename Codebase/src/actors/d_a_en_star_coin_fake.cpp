@@ -10,8 +10,8 @@
 CUSTOM_ACTOR_PROFILE(EN_STAR_COIN_FAKE, daEnStarCoinFake_c, fProfile::EN_STAR_COIN, fProfile::DRAW_ORDER::EN_STAR_COIN, 0x2);
 
 const char* l_STAR_COIN_FAKE_res[] = {"star_coin", NULL};
-const SpriteData c_STAR_COIN_FAKE_spritedata = {fProfile::EN_STAR_COIN_FAKE, 0, 0, 0, 0, 32, 32, 0, 0, 0, 0, 8};
-dCustomProfile_c l_STAR_COIN_FAKE_profile(&g_profile_EN_STAR_COIN_FAKE, "EN_STAR_COIN_FAKE", SpriteId::EN_STAR_COIN_FAKE, &c_STAR_COIN_FAKE_spritedata, l_STAR_COIN_FAKE_res);
+const dActorData_c c_STAR_COIN_FAKE_actor_data = {fProfile::EN_STAR_COIN_FAKE, 0, 0, 0, 0, 32, 32, 0, 0, 0, 0, 8};
+dCustomProfile_c l_STAR_COIN_FAKE_profile(&g_profile_EN_STAR_COIN_FAKE, "EN_STAR_COIN_FAKE", SpriteId::EN_STAR_COIN_FAKE, &c_STAR_COIN_FAKE_actor_data, l_STAR_COIN_FAKE_res);
 
 const sCcDatNewF l_fakeStarCoin_cc = {
     {0.0f, -3.0f},

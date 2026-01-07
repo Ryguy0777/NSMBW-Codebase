@@ -7,8 +7,8 @@
 CUSTOM_ACTOR_PROFILE(EN_BOMBBROS, daEnBombBros_c, fProfile::EN_HAMMERBROS, fProfile::DRAW_ORDER::EN_HAMMERBROS, 0x12);
 
 const char* l_BOMBBROS_res [] = {"bros_bombhei", "bros", NULL};
-const SpriteData c_BOMBROS_spritedata = {fProfile::EN_BOMBBROS, 8, -16, 0, 16, 8, 16, 0, 0, 0, 0, 0};
-dCustomProfile_c l_BOMBBROS_profile(&g_profile_EN_BOMBBROS, "EN_BOMBBROS", SpriteId::EN_BOMBBROS, &c_BOMBROS_spritedata, l_BOMBBROS_res);
+const dActorData_c c_BOMBROS_actor_data = {fProfile::EN_BOMBBROS, 8, -16, 0, 16, 8, 16, 0, 0, 0, 0, 0};
+dCustomProfile_c l_BOMBBROS_profile(&g_profile_EN_BOMBBROS, "EN_BOMBBROS", SpriteId::EN_BOMBBROS, &c_BOMBROS_actor_data, l_BOMBBROS_res);
 
 daEnBombBros_c::daEnBombBros_c() : daEnBrosBase_c() {
     mNodeCallback.mpOwner = this;

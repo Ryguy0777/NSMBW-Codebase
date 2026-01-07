@@ -7,8 +7,8 @@
 
 CUSTOM_ACTOR_PROFILE(AC_EFFECT_SPAWNER, daEffectSpawner_c, fProfile::LIFT_TORIDE_ROLL, fProfile::DRAW_ORDER::LIFT_TORIDE_ROLL, 0);
 
-const SpriteData c_EFFECT_SPAWNER_spritedata = {fProfile::AC_EFFECT_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
-dCustomProfile_c l_EFFECT_SPAWNER_profile(&g_profile_AC_EFFECT_SPAWNER, "AC_EFFECT_SPAWNER", SpriteId::AC_EFFECT_SPAWNER, &c_EFFECT_SPAWNER_spritedata);
+const dActorData_c c_EFFECT_SPAWNER_actor_data = {fProfile::AC_EFFECT_SPAWNER, 8, -16, 0, 0, 24, 24, 0, 0, 0, 0, 0};
+dCustomProfile_c l_EFFECT_SPAWNER_profile(&g_profile_AC_EFFECT_SPAWNER, "AC_EFFECT_SPAWNER", SpriteId::AC_EFFECT_SPAWNER, &c_EFFECT_SPAWNER_actor_data);
 
 int daEffectSpawner_c::create() {
     mPlayEffect = (mParam >> 16) & 1;
@@ -24,7 +24,7 @@ int daEffectSpawner_c::create() {
 }
 
 int daEffectSpawner_c::execute() {
-    if (dSwitchFlagMng_c::checkEvent((mEventNums & 0xFF)-1)) {
+    if (dSwitchFlagMng_c::checkEvent(mEventNums[1]-1)) {
         if (mTimer == mDelay) {
             if (mPlayEffect == 0) {
                 mVec2_c soundPos = dAudio::cvtSndObjctPos(mPos);
