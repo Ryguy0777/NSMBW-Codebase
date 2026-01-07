@@ -7,8 +7,8 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_MESSAGE, daEnBlockMessage_c, fProfile::EN_BLOCK, f
 
 STATE_DEFINE(daEnBlockMessage_c, Wait);
 
-const SpriteData c_BLOCK_MESSAGE_spritedata = {fProfile::EN_BLOCK_MESSAGE, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, 0x8};
-dCustomProfile_c l_BLOCK_MESSAGE_profile(&g_profile_EN_BLOCK_MESSAGE, "EN_BLOCK_MESSAGE", SpriteId::EN_BLOCK_MESSAGE, &c_BLOCK_MESSAGE_spritedata);
+const dActorData_c c_BLOCK_MESSAGE_actor_data = {fProfile::EN_BLOCK_MESSAGE, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
+dCustomProfile_c l_BLOCK_MESSAGE_profile(&g_profile_EN_BLOCK_MESSAGE, "EN_BLOCK_MESSAGE", SpriteId::EN_BLOCK_MESSAGE, &c_BLOCK_MESSAGE_actor_data);
 
 sBgSetInfo l_msgblock_bgc_info = {
     mVec2_c(-8, 8),

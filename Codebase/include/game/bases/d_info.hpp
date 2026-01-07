@@ -1,26 +1,9 @@
 #pragma once
 #include <types.h>
+#include <game/bases/d_cyuukan.hpp>
 #include <game/mLib/m_vec.hpp>
 #include <nw4r/lyt/lyt_pane.h>
 #include <constants/game_constants.h>
-
-class dCyuukan_c {
-public:
-    virtual ~dCyuukan_c();
-
-    bool isCyuukanStart(int, u8, u8);
-
-    int mActivatingPlayer;
-    mVec3_c mPlayerSetPos;
-    u32 mIsAmbush;
-    u8 mWorldNo;
-    u8 mCourseNo;
-    u8 mAreaNo;
-    u8 mEntranceNo;
-    u32 mIsKinopioInChukan;
-    int mCoinCollection[3];
-    int mPlayerType[2];
-};
 
 class dInfo_c {
 public:
@@ -37,8 +20,11 @@ public:
         u8 mLevel2;
     };
 
+    /// @unofficial
+    /// @todo Fill out this enum.
     enum GAME_FLAG_e {
-        GAME_FLAG_IS_EXTRA_MODE = BIT_FLAG(4),
+        GAME_FLAG_0 = BIT_FLAG(0),
+        GAME_FLAG_4 = BIT_FLAG(4),
         GAME_FLAG_IS_COIN_COURSE = BIT_FLAG(6)
     };
 
@@ -49,19 +35,19 @@ public:
         bool m_0c;
     };
 
-    dCyuukan_c *getCyuukan() { return &mCyuukan; }
+    dInfo_c();
+
     void GetMapEnemyInfo(int, int, enemy_s &);
     void SetMapEnemyInfo(int, int, int, int);
     void FUN_800bbc40(int, int, int);
 
     u8 getCourse() const { return m_startGameInfo.mLevel1; }
     u8 getWorld() const { return m_startGameInfo.mWorld1; }
+    dCyuukan_c *getCyuukan() { return &mCyuukan; }
 
     void startGame(const StartGameInfo_s &info);
 
-    static dInfo_c *getInstance() {
-        return m_instance;
-    }
+    static dInfo_c *getInstance() { return m_instance; }
 
     char pad1[0x8];
     dCyuukan_c mCyuukan;
@@ -72,25 +58,26 @@ public:
     u8 pad4[0x2e4];
     int mCharIDs[4];
     bool mIsWorldSelect; ///< Whether the World Select Menu is being displayed.
-    u8 pad5[0x1f];
+    u8 pad5[30];
+    bool mClearCyuukan; ///< Clear the checkpoint data if this is @p true. [Used for the backdoor entrance of 7-C]
     int mDisplayCourseWorld;
     int mDisplayCourseNum;
-    u8 pad6[0xC];
-    int mScissorInfoIdx;
-    u8 pad7[0xD];
+    u8 pad6[0x14];
+    int mTextBoxMessageID;
+    int mTextBoxMessageGroup;
+    u8 pad7[0x1];
     bool mExtensionAttached;
-    bool mShadowFlag;
-    u8 pad8;
-    nw4r::lyt::Pane *mScissorPane;
-    nw4r::lyt::DrawInfo *mDrawInfo;
+    u8 m_3da;
+    u8 pad8[0x7];
     int mCourseSelectPageNum;
     int mCourseSelectIndexInPage;
     u8 pad9[0x710];
     bool mDrawEffectsForMapLayouts;
     u8 m_afd;
     bool mFukidashiActionPerformed[4][0x16];
+    u32 pad10;
 
     static dInfo_c *m_instance;
-    static unsigned int mGameFlag; ///< See @p ::GAME_FLAG_e
+    static unsigned int mGameFlag; ///< See GAME_FLAG_e
     static StartGameInfo_s m_startGameInfo;
 };

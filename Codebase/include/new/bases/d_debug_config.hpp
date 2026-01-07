@@ -33,6 +33,23 @@ struct ColliderDisplayFlags {
     };
 };
 
+struct SpawnRangeDisplayFlags {
+    enum Value {
+        None,
+        NoMargins,
+        Margins,
+        VisibleArea,
+    };
+};
+
+struct SpawnRangeDisplayMode {
+    enum Value {
+        None,
+        Enemy,
+        MapObj,
+    };
+};
+
 struct DebugKey {
     enum KeyId {
         LaunchType,
@@ -53,6 +70,11 @@ struct DebugKey {
         DrawRideableColliders,
         MovieId,
         ActorLog,
+        DrawSpawnRange,
+        DrawSpawnRangeMargins,
+        DrawVisibleArea,
+        DrawEnemySpawnRange,
+        DrawMapObjSpawnRange,
     };
 
     KeyId keyId;
@@ -85,6 +107,8 @@ class dDebugConfig_c {
         u8 mHintMovieType;
         bool mShowPregame;
         u8 mCollisionDebugFlags;
+        u8 mSpawnRangeDebugFlags;
+        u8 mSpawnRangeModeFlags;
 
         // Movie only
         u8 mMovieId;

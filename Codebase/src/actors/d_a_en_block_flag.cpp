@@ -9,8 +9,8 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_FLAG, daEnBlockFlag_c, fProfile::EN_BLOCK_SOROBAN,
 
 STATE_DEFINE(daEnBlockFlag_c, Wait);
 
-const SpriteData c_BLOCK_FLAG_spritedata = {fProfile::EN_BLOCK_FLAG, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, 0x8};
-dCustomProfile_c l_BLOCK_FLAG_profile(&g_profile_EN_BLOCK_FLAG, "EN_BLOCK_FLAG", SpriteId::EN_BLOCK_FLAG, &c_BLOCK_FLAG_spritedata);
+const dActorData_c c_BLOCK_FLAG_actor_data = {fProfile::EN_BLOCK_FLAG, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
+dCustomProfile_c l_BLOCK_FLAG_profile(&g_profile_EN_BLOCK_FLAG, "EN_BLOCK_FLAG", SpriteId::EN_BLOCK_FLAG, &c_BLOCK_FLAG_actor_data);
 
 sBgSetInfo l_eventblock_bgc_info = {
     mVec2_c(-8, 8),
@@ -71,8 +71,8 @@ int daEnBlockFlag_c::execute() {
 
     // Assign event IDs
     // Done here instead of create because mEventNums aren't set during creation
-    mEventID1 = (mEventNums >> 8 & 0xFF)-1;
-    mEventID2 = (mEventNums & 0xFF)-1;
+    mEventID1 = mEventNums[0]-1;
+    mEventID2 = mEventNums[1]-1;
 
     // Update tile collider
     mTile.setPos(mPos.x-8, -(8+mPos.y), mPos.z);

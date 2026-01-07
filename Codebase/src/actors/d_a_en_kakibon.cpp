@@ -5,8 +5,8 @@
 CUSTOM_ACTOR_PROFILE(EN_KAKIBON, daEnKakibon_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 
 const char* l_KAKIBON_res [] = {"kakibon", NULL};
-const SpriteData c_KAKIBON_spritedata = {fProfile::EN_KAKIBON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KAKIBON_profile(&g_profile_EN_KAKIBON, "EN_KAKIBON", SpriteId::EN_KAKIBON, &c_KAKIBON_spritedata, l_KAKIBON_res);
+const dActorData_c c_KAKIBON_actor_data = {fProfile::EN_KAKIBON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_KAKIBON_profile(&g_profile_EN_KAKIBON, "EN_KAKIBON", SpriteId::EN_KAKIBON, &c_KAKIBON_actor_data, l_KAKIBON_res);
 
 void daEnKakibon_c::executeState_Walk() {
     // Update model & do speed calculations

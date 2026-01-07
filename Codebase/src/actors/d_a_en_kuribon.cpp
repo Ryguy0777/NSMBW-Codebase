@@ -16,8 +16,8 @@ STATE_DEFINE(daEnKuribon_c, Kick);
 STATE_DEFINE(daEnKuribon_c, Recover);
 
 const char* l_KURIBON_res[] = {"kuribon", NULL};
-const SpriteData c_KURIBON_spritedata = {fProfile::EN_KURIBON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KURIBON_profile(&g_profile_EN_KURIBON, "EN_KURIBON", SpriteId::EN_KURIBON, &c_KURIBON_spritedata, l_KURIBON_res);
+const dActorData_c c_KURIBON_actor_data = {fProfile::EN_KURIBON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_KURIBON_profile(&g_profile_EN_KURIBON, "EN_KURIBON", SpriteId::EN_KURIBON, &c_KURIBON_actor_data, l_KURIBON_res);
 
 const float daEnKuribon_c::smc_WALK_SPEED = 0.5f;
 const float daEnKuribon_c::smc_THROW_SPEED_X = 4.0f;

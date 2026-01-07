@@ -15,8 +15,8 @@ STATE_DEFINE(daEnHeiho_c, Dizzy);
 STATE_DEFINE(daEnHeiho_c, Idle);
 
 const char* l_HEIHO_res[] = {"heiho", NULL};
-const SpriteData c_HEIHO_spritedata = {fProfile::EN_HEIHO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_HEIHO_profile(&g_profile_EN_HEIHO, "EN_HEIHO", SpriteId::EN_HEIHO, &c_HEIHO_spritedata, l_HEIHO_res);
+const dActorData_c c_HEIHO_actor_data = {fProfile::EN_HEIHO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_HEIHO_profile(&g_profile_EN_HEIHO, "EN_HEIHO", SpriteId::EN_HEIHO, &c_HEIHO_actor_data, l_HEIHO_res);
 
 const float daEnHeiho_c::smc_WALK_SPEED = 0.6f;
 

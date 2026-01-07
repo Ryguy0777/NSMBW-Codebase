@@ -173,7 +173,7 @@ void DrawPartialCircle(float centreX, float centreY, float radius, float z, u16 
     }
 }
 
-static dCollisionRender_c m_instance;
+dCollisionRender_c dCollisionRender_c::m_instance;
 
 dCollisionRender_c::dCollisionRender_c() {
     create(nullptr, nullptr);
@@ -433,10 +433,4 @@ void dCollisionRender_c::drawXlu() {
             currRide = currRide->mpNext;
         }
     }
-}
-
-// Schedule renderer for drawing
-kmBranchDefCpp(0x80830BD8, NULL, int, void) {
-    m_instance.entry();
-    return 1;
 }
