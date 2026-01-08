@@ -29,7 +29,7 @@ kmBranchDefCpp(0x800C9BF0, NULL, void, nw4r::lyt::Pane *this_) {
     // PictureFont button shadow
     usd = this_->FindExtUserDataByName("shadow");
     if (usd != nullptr) {
-        dInfo_c::m_instance->mShadowFlag = true;
+        dInfo_c::m_instance->mTextBoxShadowMode = true;
     }
 
     // New: Ignore X-scale message flag

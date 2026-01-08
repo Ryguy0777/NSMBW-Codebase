@@ -62,13 +62,16 @@ public:
     bool mClearCyuukan; ///< Clear the checkpoint data if this is @p true. [Used for the backdoor entrance of 7-C]
     int mDisplayCourseWorld;
     int mDisplayCourseNum;
-    u8 pad6[0x14];
+    u8 pad6[0xC];
+    int mScissorDataIdx;
+    int mPlayerCount;
     int mTextBoxMessageID;
     int mTextBoxMessageGroup;
     u8 pad7[0x1];
     bool mExtensionAttached;
-    u8 m_3da;
-    u8 pad8[0x7];
+    bool mTextBoxShadowMode;
+    nw4r::lyt::Pane *mpScissorMask;
+    nw4r::lyt::DrawInfo *mpDrawInfo;
     int mCourseSelectPageNum;
     int mCourseSelectIndexInPage;
     u8 pad9[0x710];

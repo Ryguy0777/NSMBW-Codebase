@@ -29,9 +29,9 @@ void dMultiCourseSelect_c::loadTitleFromLI(int tb, int type) {
 
 // Update page titles
 kmBranchDefCpp(0x80799B30, NULL, void, dMultiCourseSelect_c *this_, int tb) {
-    dInfo_c::m_instance->mScissorPane = this_->mpNullPanes[this_->N_scissor_00];
-    dInfo_c::m_instance->mDrawInfo = this_->mLayout.GetDrawInfo();
-    dInfo_c::m_instance->mScissorInfoIdx = (tb != 1) ? 2 : 1;
+    dInfo_c::m_instance->mpScissorMask = this_->mpNullPanes[this_->N_scissor_00];
+    dInfo_c::m_instance->mpDrawInfo = this_->mLayout.GetDrawInfo();
+    dInfo_c::m_instance->mScissorDataIdx = (tb != 1) ? 2 : 1;
     int textBoxIdx = tb != 1;
     int page = this_->mCurrentPage;
     int type = 0;
