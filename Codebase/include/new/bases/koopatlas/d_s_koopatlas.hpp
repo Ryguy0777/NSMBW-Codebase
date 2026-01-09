@@ -48,7 +48,7 @@ int SearchForIndexOfPlayerID(int id);
 
 // Forward declarations
 class daKPPlayer_c;
-class dWMMap_c;
+class dKPMap_c;
 class dKPHud_c;
 class dWMShop_c;
 class dKPStarCoinMenu_c;
@@ -141,7 +141,7 @@ public:
 
     daKPPlayer_c *mpPlayer;
     dKPHud_c *mpHud;
-    dWMMap_c *mpMap;
+    dKPMap_c *mpMap;
     dWMShop_c *mpShop;
     dKPStarCoinMenu_c *mpCoins;
     dKPDirector_c *mpDirector;

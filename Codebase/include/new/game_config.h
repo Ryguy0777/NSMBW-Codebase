@@ -36,13 +36,16 @@
 #ifdef KOOPATLAS_DEV_ENABLED
 
 // DEBUGGING
-    #define KP_MUSIC_REPORT         // Prints music related info to the log
-    //#define KP_MUSIC_DEBUGPRINT     // Writes music to the Exception Handler
-    //#define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths
-    //#define KP_CAMERA_REPORT        // Prints camera info to the log
-    //#define KP_CAMERA_DEBUG         // Prints camera + screen variables to the log
     #define KP_MAP_REPORT           // Prints general map info (layouts, texmaps, general data) to the log
     #define KP_SPAMMY_DEBUG         // Prints map setup and path info to the log, this "spams" the log
+    //#define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths
+    #define KP_MUSIC_REPORT         // Prints music related info to the log
+    //#define KP_MUSIC_DEBUGPRINT     // Writes music to the Exception Handler
+    //#define KP_CAMERA_REPORT        // Prints camera info to the log
+    //#define KP_CAMERA_DEBUG         // Prints camera + screen variables to the log
+    #define KP_MAP_TILE_REPORT      // Prints tile info to the log
+    #define KP_MAP_BOUND_REPORT     // Prints rendering bound info to the log
+    #define KP_MAP_DOODAD_REPORT    // Prints doodad info to the log
 
 // TOGGLABLE FEATURES
 

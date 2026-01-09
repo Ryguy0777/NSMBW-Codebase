@@ -1,6 +1,7 @@
 #pragma once
 
 #include <game/mLib/m_3d/scn_leaf.hpp>
+#include <game/mLib/m_allocator.hpp>
 
 class dWmEffectProc_c : public m3d::scnLeaf_c {
 public:

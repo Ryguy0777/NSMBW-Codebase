@@ -256,7 +256,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     }
 
     // Need Player before we can set up paths
-    SpammyReport("creating player\n");
+    SpammyReport("Creating player\n");
     wm->mpPlayer = (daKPPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
     wm->mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[0]);
     wm->mpPlayer->bindPats();
@@ -273,8 +273,8 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     // Temp
     wm->mpPlayer->mPos = mVec3_c(0.0f, 0.0f, wm->mpPlayer->mPos.z);
 
-    /*SpammyReport("Creating MAP\n");
-    wm->mpMap = (dWMMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);*/
+    SpammyReport("Creating MAP\n");
+    wm->mpMap = (dKPMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
 
     SpammyReport("Creating HUD\n");
     wm->mpHud = (dKPHud_c*)fBase_c::createChild(fProfile::KP_HUD, wm, 0, 0);
