@@ -151,7 +151,7 @@ int dKPStarCoinMenu_c::execute() {
 
 int dKPStarCoinMenu_c::draw() {
     if (mIsVisible)
-        mLayout.draw();
+        mLayout.entry();
     return true;
 }
 

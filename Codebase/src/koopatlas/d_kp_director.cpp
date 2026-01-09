@@ -52,18 +52,15 @@ int dKPDirector_c::draw() {
     // Create the capture
     if (mDoRenderCapture) {
         mpSimpleCapture->entry();
-        mpSimpleCapture->drawOpa();
     }
 
     if (!dInfo_c::m_instance->mIsWorldSelect) {
         if (mpEffectProc != nullptr) {
             mpEffectProc->entry();
-            mpEffectProc->drawXlu();
         }
     } else {
         mpSimpleCaptureDraw->mpCaptureTexture = mpSimpleCapture->mpCaptureTexture;
         mpSimpleCaptureDraw->entry();
-        mpSimpleCaptureDraw->drawOpa();
     }
     return true;
 }

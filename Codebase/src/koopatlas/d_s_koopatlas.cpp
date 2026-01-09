@@ -737,11 +737,12 @@ void dScKoopatlas_c::executeState_Normal() {
 #endif
     } else if (pressed & WPAD_BUTTON_A) {
         //dKPMusic_c::m_instance->play(2);
-        //mpDirector->toggleCaptureDisp(true);
+        mpDirector->toggleCaptureDisp(true);
         completionMsgIdx++;
         if (completionMsgIdx > 7) completionMsgIdx = 7;
         OSReport("Inc message to %d\n", completionMsgIdx);
     } else if (pressed & WPAD_BUTTON_B) {
+        mpDirector->toggleCaptureDisp(false);
         completionMsgIdx--;
         if (completionMsgIdx < 0) completionMsgIdx = 0;
         OSReport("Dec message to %d\n", completionMsgIdx);

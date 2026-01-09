@@ -15,7 +15,6 @@ Others:
 
 Bugs:
 - HUD and SCM don't scale correctly in 4:3 mode
-- Closing game while in SCM doesn't do the fade-to-black? (how does this even happen)
 
 Planned Features/TODO:
 - Add support for "back entrances" where a course will auto-begin when walking onto the node
