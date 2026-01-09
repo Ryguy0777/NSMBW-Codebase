@@ -89,14 +89,14 @@ int daKPPlayer_c::execute() {
     PSMTXScale(myMatrix, mScale.x, mScale.y, mScale.z);
     myMatrix.trans(mPos.x, mPos.y + mJumpOffset, mPos.z);
     if (dScKoopatlas_c::m_instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED))
-        myMatrix.trans(0, 0, 600.0f);	
+        myMatrix.trans(0, 0, 600.0f);
     myMatrix.XrotM(mAngle.x);
     myMatrix.YrotM(mAngle.y);
     // Z is unused for now
     mpPyMdlMng->calc(myMatrix);
 
     if (dScKoopatlas_c::m_instance->chkMapIdleState()) {
-        if (mHasEffect) { 
+        if (mHasEffect) {
             mVec3_c effPos(mPos.x, mPos.y, 3300.0f);
             mEffect.createEffect(mpEffectName, 0, &effPos, &mAngle, &mScale);
         }

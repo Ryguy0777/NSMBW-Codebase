@@ -220,19 +220,19 @@ void dKPMusic_c::updTrackVolume(bool isOpenMenu) {
  * 2: in stockItem, make it loud
 */
 void dKPMusic_c::updStarVolume(int type) {
-	if (!sStarHandle.IsAttachedSound())
-		return;
+    if (!sStarHandle.IsAttachedSound())
+        return;
 
-	float volume = 1.5f;
-	switch (type) {
-		case 1:
-			volume = 0.0f;
-			break;
-		case 2:
-			volume = 4.0f;
-			break;
-	};
+    float volume = 1.5f;
+    switch (type) {
+        case 1:
+            volume = 0.0f;
+            break;
+        case 2:
+            volume = 4.0f;
+            break;
+    };
 
-	sStarHandle.SetVolume(volume, 15);
+    sStarHandle.SetVolume(volume, 15);
 }
 #endif

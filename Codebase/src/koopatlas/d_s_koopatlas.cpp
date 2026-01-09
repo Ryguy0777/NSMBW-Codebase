@@ -150,7 +150,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadKPMusic(void *ptr) {
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void *ptr) {
     SpammyReport("KPInitPhase_LoadResources called\n");
-    
+
     dResMng_c::m_instance->setRes("WorldMap", "SI_kinoko", nullptr);
     dResMng_c::m_instance->setRes("WorldMap", "SI_fireflower", nullptr);
     dResMng_c::m_instance->setRes("WorldMap", "SI_iceflower", nullptr);
@@ -431,7 +431,7 @@ int dScKoopatlas_c::create() {
 
 int dScKoopatlas_c::doDelete() {
     if (!mMusicPersist)
-    	dKPMusic_c::m_instance->stop();
+        dKPMusic_c::m_instance->stop();
 
     m3d::removeLightMgr(0);
     m3d::removeLightMgr(1);
@@ -814,7 +814,7 @@ void dScKoopatlas_c::finalizeState_MenuSelect() { }
 // finish opening
 void dScKoopatlas_c::initializeState_TitleConfirmOpenWait() { }
 void dScKoopatlas_c::executeState_TitleConfirmOpenWait() {
-    // 
+    //
     if (!mpYesNoWindow->mIsAnimating) {
         mStateMgr.changeState(StateID_TitleConfirmSelect);
     }
@@ -948,7 +948,7 @@ void dScKoopatlas_c::finalizeState_ShopWait() { }
 void dScKoopatlas_c::initializeState_CoinsWait() { }
 void dScKoopatlas_c::executeState_CoinsWait() {
     if (!mpCoins->mIsVisible) {
-    	returnToNormalState();
+        returnToNormalState();
     }
 }
 void dScKoopatlas_c::finalizeState_CoinsWait() { }
@@ -1160,14 +1160,14 @@ void dScKoopatlas_c::finalizeState_SaveError() { }
 
 // TODO: Move into PathManager once ported
 enum CompletionType_e {
-	CMP_MSG_NULL = 0,
-	CMP_MSG_COINS,
-	CMP_MSG_EXITS,
-	CMP_MSG_WORLD,
-	CMP_MSG_GLOBAL_COINS_EXC_W9,
-	CMP_MSG_GLOBAL_COINS,
-	CMP_MSG_GLOBAL_EXITS,
-	CMP_MSG_EVERYTHING
+    CMP_MSG_NULL = 0,
+    CMP_MSG_COINS,
+    CMP_MSG_EXITS,
+    CMP_MSG_WORLD,
+    CMP_MSG_GLOBAL_COINS_EXC_W9,
+    CMP_MSG_GLOBAL_COINS,
+    CMP_MSG_GLOBAL_EXITS,
+    CMP_MSG_EVERYTHING
 };
 
 /**********************************************************************/

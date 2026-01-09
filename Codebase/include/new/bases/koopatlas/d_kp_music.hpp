@@ -7,29 +7,29 @@
 
 class dKPMusic_c {
 public:
-	dKPMusic_c();
+    dKPMusic_c();
 
-	void start(int id);
-	void startStarSe();
+    void start(int id);
+    void startStarSe();
 
-	void execute();
-	void pause();
-	void stop();
+    void execute();
+    void pause();
+    void stop();
 
-	void updTrackVolume(bool isOpenMenu);
-	void updStarVolume(int);
+    void updTrackVolume(bool isOpenMenu);
+    void updStarVolume(int);
 
-	static bool init();
+    static bool init();
 
-	bool mIsPlaying;
-	bool mIsStarPlaying;
+    bool mIsPlaying;
+    bool mIsStarPlaying;
 
-	int mCurrentSongID;
-	int mNextSongID;
+    int mCurrentSongID;
+    int mNextSongID;
 
-	int mSwitchDelay;
-	int mFadeInDelay;
+    int mSwitchDelay;
+    int mFadeInDelay;
 
-	static dKPMusic_c *m_instance;
+    static dKPMusic_c *m_instance;
 };
 #endif

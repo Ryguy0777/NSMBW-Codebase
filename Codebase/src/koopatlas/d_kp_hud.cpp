@@ -293,7 +293,7 @@ void dKPHud_c::loadFooterInfo() {
     // Star 0: World is complete
     // Star 1: All exits complete
     // Star 2: All star coins obtained
-    
+
     bool starVisibility[3];
     starVisibility[0] = false;
 

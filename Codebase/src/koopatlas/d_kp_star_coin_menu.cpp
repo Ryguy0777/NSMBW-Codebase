@@ -68,7 +68,7 @@ int dKPStarCoinMenu_c::create() {
     };
 
     static const char *T_PANE_NAME_TBL[] = {
-        "LeftTitle", "RightTitle", 
+        "LeftTitle", "RightTitle",
         "TotalCoinCount", "UnspentCoinCount",
         "EarnedCoinCount", "EarnedCoinMax",
         "BtnBackText"

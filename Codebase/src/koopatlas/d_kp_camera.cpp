@@ -129,7 +129,7 @@ int dKPCamera_c::execute() {
     calcScreenGeometry();
     setPosAndTarget(10000.0);
     calcCameras();
-    updateCameras(); 
+    updateCameras();
     return true;
 }
 
