@@ -37,7 +37,7 @@
 
 // DEBUGGING
     #define KP_MUSIC_REPORT         // Prints music related info to the log
-    #define KP_MUSIC_DEBUGPRINT     // Writes music to the Exception Handler
+    //#define KP_MUSIC_DEBUGPRINT     // Writes music to the Exception Handler
     //#define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths
     //#define KP_CAMERA_REPORT        // Prints camera info to the log
     //#define KP_CAMERA_DEBUG         // Prints camera + screen variables to the log

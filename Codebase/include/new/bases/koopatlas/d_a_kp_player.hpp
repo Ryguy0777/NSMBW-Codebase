@@ -3,7 +3,6 @@
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <game/bases/d_player_model.hpp>
-//#include <playerAnim.h>
 
 class daKPPlayer_c : public dBaseActor_c {
 public:
@@ -12,8 +11,8 @@ public:
     int execute();
     int draw();
 
-    void bindPats();
     void startAnimation(int id, float frame, float unk, float updateRate);
+    void bindPats();
 
     void setTargetRotY(s16 value) {
         mTargetRotY = value;
@@ -47,7 +46,6 @@ public:
     bool mStep;
     bool mIsSpinning;
 
-    static daKPPlayer_c *build();
     static daKPPlayer_c *m_instance;
 };
 #endif

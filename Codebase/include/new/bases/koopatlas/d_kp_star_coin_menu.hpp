@@ -9,7 +9,7 @@
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
 
-class dWMStarCoin_c : public dBase_c {
+class dKPStarCoinMenu_c : public dBase_c {
 public:
     enum P_PANE_e {
         DPadLeft, DPadRight,
@@ -41,32 +41,35 @@ public:
         MAX_SECTION_COUNT = 16,
     };
 
-    dWMStarCoin_c();
+    dKPStarCoinMenu_c();
 
     int create();
     int doDelete();
     int execute();
     int draw();
 
-    void show();
+    void dispMenu();
 
     bool canScrollLeft() const;
     bool canScrollRight() const;
+
+    void leftArrowDisp(bool value);
+    void rightArrowDisp(bool value);
+
     void loadInfo();
     void loadSectionInfo();
 
-    void showLeftArrow();
-    void showRightArrow();
-    void hideLeftArrow();
-    void hideRightArrow();
+    void displayMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2 = 0, int bodyMsgCount2 = 0);
 
-    void setLeftArrowVisible(bool value);
-    void setRightArrowVisible(bool value);
-
-    void showSecretMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2 = 0, int bodyMsgCount2 = 0);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Hidden);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, ShowWait);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, ShowSectionWait);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Wait);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, HideSectionWait);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, HideWait);
 
     LytBase_c mLayout;
-    sFStateMgr_c<dWMStarCoin_c, sStateMethodUsr_FI_c> mStateMgr;
+    sFStateMgr_c<dKPStarCoinMenu_c, sStateMethodUsr_FI_c> mStateMgr;
 
     nw4r::lyt::Picture *mpShines[COLUMN_COUNT][SHINE_COUNT];
     nw4r::lyt::Picture *mpCoinOutlines[COLUMN_COUNT][ROW_COUNT][3];
@@ -74,13 +77,6 @@ public:
     nw4r::lyt::Picture *mpPicturePanes[P_COUNT];
     LytTextBox_c *mpLevelNames[COLUMN_COUNT][ROW_COUNT];
     LytTextBox_c *mpTextBoxes[T_COUNT];
-
-    STATE_FUNC_DECLARE(dWMStarCoin_c, Hidden);
-    STATE_FUNC_DECLARE(dWMStarCoin_c, ShowWait);
-    STATE_FUNC_DECLARE(dWMStarCoin_c, ShowSectionWait);
-    STATE_FUNC_DECLARE(dWMStarCoin_c, Wait);
-    STATE_FUNC_DECLARE(dWMStarCoin_c, HideSectionWait);
-    STATE_FUNC_DECLARE(dWMStarCoin_c, HideWait);
 
     int mCurrentWorld;
     int mCurrentWorldIndex;
@@ -93,7 +89,6 @@ public:
     bool mRightArrowActive;
     bool mWillExit;
 
-    static dWMStarCoin_c *build();
-    static dWMStarCoin_c *m_instance;
+    static dKPStarCoinMenu_c *m_instance;
 };
 #endif

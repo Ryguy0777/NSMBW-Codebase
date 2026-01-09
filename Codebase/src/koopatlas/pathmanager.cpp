@@ -40,7 +40,7 @@ int getPressedDir(int buttons) {
 }
 
 void dWMPathManager_c::setup() {
-	dScKoopatlas_c *wm = dScKoopatlas_c::instance;
+	dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
 
 	isMoving = false;
 	isJumping = false;
@@ -482,7 +482,7 @@ void dWMPathManager_c::unlockPaths() {
 	cachedTotalStarCoinCount = getStarCoinCount();
 	cachedUnspentStarCoinCount = cachedTotalStarCoinCount - save->spentStarCoins;
 
-	u8 *in = (u8*)dScKoopatlas_c::instance->mapData.data->unlockData;
+	u8 *in = (u8*)dScKoopatlas_c::m_instance->mapData.data->unlockData;
 	SpammyReport("UNLOCKING PATHS: Unlock data @ %p\n", in);
 
 	int cmdID = 0;
@@ -537,7 +537,7 @@ void dWMPathManager_c::unlockPaths() {
 	newlyAvailablePaths = 0;
 	newlyAvailableNodes = 0;
 
-	dScKoopatlas_c *wm = dScKoopatlas_c::instance;
+	dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
 	bool forceFlag = (wm->isAfter8Castle || wm->isAfterKamekCutscene);
 
 	if (!wm->isEndingScene && (oldPathAvData || forceFlag)) {
@@ -715,7 +715,7 @@ bool dWMPathManager_c::doingThings() {
 			panningCameraToPaths || panningCameraFromPaths ||
 			(waitBeforePanBack > 0) || !initialLoading ||
 			(countdownToFadeIn > 0) || (unlockingAlpha != -1) ||
-			dScKoopatlas_c::instance->isEndingScene)
+			dScKoopatlas_c::m_instance->isEndingScene)
 		return true;
 
 	if (isMoving)
@@ -725,13 +725,13 @@ bool dWMPathManager_c::doingThings() {
 }
 
 void dWMPathManager_c::execute() {
-	dScKoopatlas_c *wm = dScKoopatlas_c::instance;
+	dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
 
 	if (isEnteringLevel) {
 		if (levelStartWait > 0) {
 			levelStartWait--;
 			if (levelStartWait == 0) {
-				dScKoopatlas_c::instance->startLevel(enteredLevel);
+				dScKoopatlas_c::m_instance->startLevel(enteredLevel);
 			}
 		}
 		return;
@@ -749,7 +749,7 @@ void dWMPathManager_c::execute() {
 				PlaySoundWithFunctionB4(SoundRelatedClass, &something, SE_VOC_MA_CS_COURSE_MISS, 1);
 			} else if (mustPlayAfterWinAnim) {
 				daWMPlayer_c::instance->visible = true;
-				if (dScKoopatlas_c::instance->isAfter8Castle) {
+				if (dScKoopatlas_c::m_instance->isAfter8Castle) {
 					waitAfterInitialPlayerAnim = 1;
 				} else {
 					daWMPlayer_c::instance->startAnimation(dm_surp_wait, 1.0f, 0.0f, 0.0f);
@@ -914,7 +914,7 @@ void dWMPathManager_c::execute() {
 		return;
 	}
 
-	if (dScKoopatlas_c::instance->isEndingScene) {
+	if (dScKoopatlas_c::m_instance->isEndingScene) {
 		// WE GO NO FURTHER
 		if (!waitingForEndingTransition) {
 			if (!savingForEnding) {
@@ -973,13 +973,13 @@ void dWMPathManager_c::execute() {
 	}
 
 	if (shouldRequestSave) {
-		dScKoopatlas_c::instance->showSaveWindow();
+		dScKoopatlas_c::m_instance->showSaveWindow();
 		shouldRequestSave = false;
 		return;
 	}
 
 	if (!initialLoading) {
-		dScKoopatlas_c::instance->startMusic();
+		dScKoopatlas_c::m_instance->startMusic();
 		dWMHud_c::instance->loadInitially();
 		initialLoading = true;
 		return;
@@ -1355,7 +1355,7 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 			// Quick check: do we *actually* need to stop on this node?
 			// If it's a junction with more than two exits, but only two are open,
 			// take the opposite open one
-			if (!dScKoopatlas_c::instance->warpZoneHacks && to->getExitCount() > 2 && to->getAvailableExitCount() == 2)
+			if (!dScKoopatlas_c::m_instance->warpZoneHacks && to->getExitCount() > 2 && to->getAvailableExitCount() == 2)
 				reallyStop = false;
 			else
 				reallyStop = true;
@@ -1366,7 +1366,7 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 			SaveBlock *save = GetSaveFile()->GetBlock(-1);
 
 			OSReport("Activating world change %d\n", to->worldID);
-			const dKPWorldDef_s *world = dScKoopatlas_c::instance->mapData.findWorldDef(to->worldID);
+			const dKPWorldDef_s *world = dScKoopatlas_c::m_instance->mapData.findWorldDef(to->worldID);
 			if (world) {
 				bool visiblyChange = true;
 				if (strncmp(save->newerWorldName, world->name, 32) == 0) {
@@ -1378,7 +1378,7 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 				copyWorldDefToSave(world);
 
 				bool wzHack = false;
-				if (dScKoopatlas_c::instance->warpZoneHacks) {
+				if (dScKoopatlas_c::m_instance->warpZoneHacks) {
 					save->hudHintH += 1000;
 
 					if (world->worldID > 0) {
@@ -1438,11 +1438,11 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 
 			SaveBlock *save = GetSaveFile()->GetBlock(-1);
 			SpammyReport("node: %x, %s", to->destMap, to->destMap);
-			save->current_world = dScKoopatlas_c::instance->getIndexForMapName(to->destMap);
+			save->current_world = dScKoopatlas_c::m_instance->getIndexForMapName(to->destMap);
 
 			SpammyReport("Change to map ID %d (%s), entrance ID %d\n", save->current_world, to->destMap, to->foreignID);
 
-			dScKoopatlas_c::instance->keepMusicPlaying = true;
+			dScKoopatlas_c::m_instance->mMusicPersist = true;
 			ActivateWipe(to->transition);
 			u32 saveFlag = (shouldRequestSave ? 0x80000 : 0);
 			saveFlag |= (checkedForMoveAfterEndLevel ? 0x40000 : 0);
@@ -1527,7 +1527,7 @@ void dWMPathManager_c::activatePoint() {
 		if (l == 98) {
 			dWMShop_c::instance->show(w);
 			dWMHud_c::instance->hideAll();
-			dScKoopatlas_c::instance->state.setState(&dScKoopatlas_c::instance->StateID_ShopWait);
+			dScKoopatlas_c::m_instance->state.setState(&dScKoopatlas_c::m_instance->StateID_ShopWait);
 			return;
 		}
 
@@ -1598,7 +1598,7 @@ void dWMPathManager_c::unlockAllPaths(char type) {
 
 
 void dWMPathManager_c::findCameraBoundsForUnlockedPaths() {
-	dKPMapData_c *data = &dScKoopatlas_c::instance->mapData;
+	dKPMapData_c *data = &dScKoopatlas_c::m_instance->mapData;
 
 	camMinX = 10000;
 	camMaxX = 0;

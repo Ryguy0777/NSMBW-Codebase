@@ -32,7 +32,7 @@ public:
     bool createFrmHeap(ulong size, EGG::Heap *parent, const char *name, ulong align, mHeap::AllocOptBit_t opt);
 
     /// @unofficial
-    bool createHeapRestoreCurrent(size_t size, EGG::Heap *parent, const char *name, u32 align, u32 opt);
+    bool createFrmHeapToCurrent(ulong size, EGG::Heap *parent, const char *name, ulong align, mHeap::AllocOptBit_t opt);
 
     void destroyHeap(); ///< @brief destroys the underlying heap and replaces it with the dummy heap;
     size_t adjustFrmHeap();

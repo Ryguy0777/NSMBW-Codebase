@@ -617,7 +617,7 @@ void dWMShop_c::buyItem(int item) {
 		if (block->powerups_available[i] > 99)
 			block->powerups_available[i] = 99;
 
-		dScKoopatlas_c::instance->stockItem->newCounts[i] = block->powerups_available[i];
+		dScKoopatlas_c::m_instance->stockItem->newCounts[i] = block->powerups_available[i];
 	}
 
 	// Apply lives to everyone

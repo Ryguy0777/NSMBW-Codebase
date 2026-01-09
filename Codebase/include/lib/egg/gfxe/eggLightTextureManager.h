@@ -10,7 +10,7 @@ public:
     int getTextureIndex(char const *) const;
     bool replaceModelTexture(int, EGG::ModelEx *) const;
 
-    void LoadBlmap(void *); ///< @unofficial
+    void LoadBinary(void *); ///< @unofficial
 };
 
 } // namespace EGG

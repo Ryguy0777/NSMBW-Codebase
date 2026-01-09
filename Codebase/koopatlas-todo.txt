@@ -1,17 +1,14 @@
 KOOPATLAS TODO:
-
 - Rename all members and files and stuff
 - Remove any hammer suit hacks
 - Convert file indentations to spaces
-- Go through and figure out what includes can be put in hpp files, and which should just stay in cpp
-- Properly add SaveError state
 - Make circle wipes be focused on player position
 
-Things that need headers:
-- dNumberOfPeopleChange_c (update kp to use this once 3d rendering is implemented)
-
-Things that could have headers (not needed, but might be helpful later on):
--
+Other TODO:
+- Implement internal-font portion of MoreFonts, then use that for Newer's pause menu layout
+- Add support for overiding the BMG font via userdata
+- Move pane_userdata hacks to whatever the right place is
+- Revamp Star Coins Menu arrows to have idle animations and look more like the retail arrow layouts
 
 Others:
 - Finish porting music, it needs some dvd stuff and i need to figure out how to use the Stop func with these headers
@@ -19,3 +16,16 @@ Others:
 Bugs:
 - HUD and SCM don't scale correctly in 4:3 mode
 - Closing game while in SCM doesn't do the fade-to-black? (how does this even happen)
+
+Planned Features/TODO:
+- Add support for "back entrances" where a course will auto-begin when walking onto the node
+- Support for P1 being other characters
+- Subplayer support (maybe)
+- Map View (togglable)
+- World Select (rsm's, not retail)
+- Retail styled HUD (maybe, togglable)
+- CLR anims for Course Nodes
+- Freeze map when displaying a warning screen
+- Make player shrink when opening a menu
+- Togglable option for level nodes to not render (specifically to de-hardcode that one node in the W1 map)
+- Dehardcoded effect/model positions (maybe)

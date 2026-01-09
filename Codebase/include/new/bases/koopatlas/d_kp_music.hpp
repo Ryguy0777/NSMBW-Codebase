@@ -9,16 +9,17 @@ class dKPMusic_c {
 public:
 	dKPMusic_c();
 
-	void execute();
+	void start(int id);
+	void startStarSe();
 
-	void play(int id);
+	void execute();
 	void pause();
 	void stop();
 
 	void updTrackVolume(bool isOpenMenu);
-
-	void playStarSfx();
 	void updStarVolume(int);
+
+	static bool init();
 
 	bool mIsPlaying;
 	bool mIsStarPlaying;
@@ -28,8 +29,6 @@ public:
 
 	int mSwitchDelay;
 	int mFadeInDelay;
-
-	static bool init();
 
 	static dKPMusic_c *m_instance;
 };

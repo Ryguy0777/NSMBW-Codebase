@@ -1,10 +1,6 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <kamek.h>
-
-// "Disable retail world map music" (Unused)
-//kmWrite32(0x800696CC, 0x38600020);
 
 #include <constants/sound_list.h>
 #include <game/bases/d_dvd.hpp>
@@ -34,6 +30,9 @@ static dDvd::loader_c s_adpcmInfoLoader;
 #define FADE_IN_LEN 30
 #define BUFFER_CLEAR_DELAY 60
 
+extern "C" void AxVoice_SetADPCM(void *axVoice, void *adpcm);
+extern "C" void Voice_SetADPCMLoop(void *voice, int channel, void *adpcmLoop);
+
 u8 hijackMusicWithSongName(const char *songName, int themeID, bool hasFast, int channelCount, int trackCount, int *wantRealStreamID);
 
 dKPMusic_c *dKPMusic_c::m_instance = nullptr;
@@ -54,7 +53,7 @@ dKPMusic_c::dKPMusic_c() {
     mFadeInDelay = -1;
 }
 
-void dKPMusic_c::play(int id) {
+void dKPMusic_c::start(int id) {
     if (mIsPlaying) {
         // Switch track
         MusicReport("Trying to switch to song %d (Current one is %d)...\n", id, mCurrentSongID);
@@ -90,8 +89,13 @@ void dKPMusic_c::play(int id) {
     }
 }
 
-extern "C" void AxVoice_SetADPCM(void *axVoice, void *adpcm);
-extern "C" void Voice_SetADPCMLoop(void *voice, int channel, void *adpcmLoop);
+void dKPMusic_c::startStarSe() {
+    if (mIsStarPlaying)
+        return;
+
+    SndAudioMgr::sInstance->startSound(&sStarHandle, SE_BGM_CS_STAR, 1);
+    mIsStarPlaying = true;
+}
 
 void dKPMusic_c::execute() {
     if (!mIsPlaying)
@@ -208,15 +212,6 @@ void dKPMusic_c::updTrackVolume(bool isOpenMenu) {
 
     f32 newVol = (isOpenMenu) ? 0.3 : 1.0;
     sStreamHandle.SetVolume(newVol, 15);
-}
-
-
-void dKPMusic_c::playStarSfx() {
-    if (mIsStarPlaying)
-        return;
-
-    SndAudioMgr::sInstance->startSound(&sStarHandle, SE_BGM_CS_STAR, 1);
-    mIsStarPlaying = true;
 }
 
 /* Types are:

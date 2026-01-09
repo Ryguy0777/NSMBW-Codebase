@@ -9,6 +9,7 @@ namespace EGG {
 namespace StateGX {
     void initialize(unsigned short, unsigned short, GXColor, GXPixelFmt);
     void resetGXCache();
+    void GXSetAlphaUpdate_(bool);
 }
 
 } // namespace EGG

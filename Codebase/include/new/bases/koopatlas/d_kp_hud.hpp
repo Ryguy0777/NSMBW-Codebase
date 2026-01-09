@@ -8,7 +8,7 @@
 struct dKPNode_s {
     //temp
 };
-class dWMHud_c : public dBase_c {
+class dKPHud_c : public dBase_c {
 public:
     enum N_PANE_e {
         N_IconPos1P_00, N_IconPos2P_00,
@@ -46,36 +46,34 @@ public:
         ANIM_UNHIDE_ALL
     };
 
-    dWMHud_c();
+    dKPHud_c();
 
     int create();
     int doDelete();
     int execute();
     int draw();
 
-    static dWMHud_c *build();
-    static dWMHud_c *m_instance;
-
     void loadInitially();
 
     void enteredNode(dKPNode_s *node = nullptr);
     void leftNode();
 
+    void hideAll();
+    void unhideAll();
+
     void hideFooter();
     void showFooter();
 
     void setupLives();
-
-    void hideAll();
-    void unhideAll();
-
     void controllerConnectCheck();
+
     void loadFooterInfo();
 
 private:
+    void loadHeaderInfo();
+
     void playShowAnim(int id);
     void playHideAnim(int id);
-    void loadHeaderInfo();
 
     LytBase_c mLayout;
     dTexMapColouriser_c mHeaderCol, mFooterCol;
@@ -92,5 +90,8 @@ private:
     bool mInitalDispComplete;
     bool mDispFooter;
     bool mFooterVisible;
+
+public:
+    static dKPHud_c *m_instance;
 };
 #endif

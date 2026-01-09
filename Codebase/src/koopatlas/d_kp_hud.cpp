@@ -2,7 +2,7 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_wm_hud.hpp>
+#include <new/bases/koopatlas/d_kp_hud.hpp>
 #include <new/level_info_utils.hpp>
 #include <new/constants/message_list.h>
 #include <constants/message_list.h>
@@ -12,25 +12,24 @@
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_save_mng.hpp>
 
-dWMHud_c *dWMHud_c::m_instance = nullptr;
+dKPHud_c *dKPHud_c::m_instance = nullptr;
 
-dWMHud_c *dWMHud_c::build() {
-    dWMHud_c *c = new dWMHud_c;
-    m_instance = c;
+dKPHud_c *dKPHud_c_classInit() {
+    dKPHud_c *c = new dKPHud_c;
+    dKPHud_c::m_instance = c;
     return c;
 }
 
 // Replace WM_DANCE_PAKKUN actor
-kmWritePointer(0x80982844, &dWMHud_c::build);
+kmWritePointer(0x80982844, &dKPHud_c_classInit);
 
-dWMHud_c::dWMHud_c() {
+dKPHud_c::dKPHud_c() {
     mLayoutLoaded = false;
     mControllerType = -1;
     mFooterVisible = false;
 }
 
-
-int dWMHud_c::create() {
+int dKPHud_c::create() {
     static const char *AnmNameTbl[] = {
         "mapHUD_00_showMain.brlan",
         "mapHUD_00_showHeader.brlan",
@@ -123,24 +122,8 @@ int dWMHud_c::create() {
     return SUCCEEDED;
 }
 
-
-void dWMHud_c::loadInitially() {
-    if (mInitalDispComplete)
-        return;
-
-    mInitalDispComplete = true;
-
-    dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
-    mDispFooter = /*(save->newerWorldName[0] != 0) &&*/ (world->mHudHue != 2000);
-
-    //if (!dScKoopatlas_c::instance->mPathManager.isMoving)
-    //    enteredNode();
-}
-
-
-int dWMHud_c::doDelete() {
-    dWMHud_c::m_instance = nullptr;
+int dKPHud_c::doDelete() {
+    dKPHud_c::m_instance = nullptr;
     if (!mLayoutLoaded) {
         return SUCCEEDED;
     }
@@ -148,7 +131,7 @@ int dWMHud_c::doDelete() {
     return mLayout.doDelete();
 }
 
-int dWMHud_c::execute() {
+int dKPHud_c::execute() {
     if (!mLayoutLoaded) {
         return SUCCEEDED;
     }
@@ -178,175 +161,121 @@ int dWMHud_c::execute() {
     return SUCCEEDED;
 }
 
-
-int dWMHud_c::draw() {
+int dKPHud_c::draw() {
     if (mLayoutLoaded) {
         mLayout.entry();
     }
     return SUCCEEDED;
 }
 
+void dKPHud_c::loadInitially() {
+    if (mInitalDispComplete)
+        return;
 
-void dWMHud_c::hideAll() {
+    mInitalDispComplete = true;
+
+    dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
+    mDispFooter = /*(save->newerWorldName[0] != 0) &&*/ (world->mHudHue != 2000);
+
+    //if (!dScKoopatlas_c::m_instance->mPathManager.isMoving)
+    //    enteredNode();
+}
+
+void dKPHud_c::enteredNode(dKPNode_s *node) {
+    /*if (node == 0)
+        node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
+
+    if (node->type == dKPNode_s::LEVEL && mInitalDispComplete) {*/
+        mDispHeader = true;
+    //    mpHeaderNode = node;
+    //}
+}
+
+void dKPHud_c::leftNode() {
+    if (mLayout.GetAnimGroup()[ANIM_SHOW_HEADER].mFrameCtrl.mCurrFrame > 0.1f) {
+        // not hidden
+        if ((mLayout.isAnime(ANIM_SHOW_HEADER) && !(mLayout.GetAnimGroup()[ANIM_SHOW_HEADER].mFrameCtrl.mFlags & 2))
+                || (!mLayout.isAnime(ANIM_SHOW_HEADER))) {
+            // currently being shown, OR fully shown already
+            playHideAnim(ANIM_SHOW_HEADER);
+        }
+    }
+}
+
+void dKPHud_c::hideAll() {
     if (!mLayout.isAnime(ANIM_HIDE_ALL))
         mLayout.AnimeStartSetup(ANIM_HIDE_ALL, false);
     mLayout.GetAnimGroup()[ANIM_HIDE_ALL].mFrameCtrl.mFlags = 1; // NO_LOOP
 }
-void dWMHud_c::unhideAll() {
+
+void dKPHud_c::unhideAll() {
     if (!mLayout.isAnime(ANIM_HIDE_ALL))
         mLayout.AnimeStartSetup(ANIM_HIDE_ALL, true);
     mLayout.GetAnimGroup()[ANIM_HIDE_ALL].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
 }
 
-
-
-
-void dWMHud_c::playShowAnim(int id) {
-    if (!this || !this->mLayoutLoaded) return;
-
-    mLayout.AnimeStartSetup(id, false);
+void dKPHud_c::hideFooter() {
+    if (mFooterVisible)
+        playHideAnim(ANIM_SHOW_FOOTER);
 }
 
-void dWMHud_c::playHideAnim(int id) {
-    if (!this || !this->mLayoutLoaded) return;
-
-    if (!mLayout.isAnime(id)) {
-        mLayout.AnimeStartSetup(id, true);
-    }
-    mLayout.GetAnimGroup()[id].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
-    if (id == ANIM_SHOW_FOOTER)
-        mFooterVisible = false;
-}
-
-
-void dWMHud_c::loadHeaderInfo() {
-    dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
-    //dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
-    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(3, 21); // Temp
-    MsgRes_c *msgRes = dMessage_c::getMesRes();
-
-    if (infEntry == nullptr) {
-        const wchar_t *dummyName = getLevelName(0, 0);
-        mpTextBoxes[LevelName]->SetString(dummyName, 0);
-        mpTextBoxes[LevelNameS]->SetString(dummyName, 0);
-
-        mpTextBoxes[LevelNumber]->SetString(L"?-?", 0);
-        mpTextBoxes[LevelNumberS]->SetString(L"?-?", 0);
-
-        // Hide exit flags and Star Coins
-        for (int i = 0; i < 5; i++) {
-            mpPicturePanes[NormalExitFlag+i]->SetVisible(false);
-        }
+void dKPHud_c::showFooter() {
+    if (!mInitalDispComplete)
         return;
-    }
+    mDispFooter = true;
+    if (mFooterVisible)
+        playHideAnim(ANIM_SHOW_FOOTER);
+}
 
-    // Set the level name
-    const wchar_t *levelName = getLevelName(infEntry->mDisplayWorld, infEntry->mDisplayLevel);
-    mpTextBoxes[LevelName]->SetString(levelName, 0);
-    mpTextBoxes[LevelNameS]->SetString(levelName, 0);
+void dKPHud_c::setupLives() {
+    static const int LogicalPlayerIDs[] = {0,1,3,2};
 
-    // Set the level number
-    ulong number = getLevelNumberIdx(infEntry->mDisplayWorld, infEntry->mDisplayLevel, infEntry->mWorldSlot, infEntry->mLevelSlot, false);
-    mpTextBoxes[LevelNumber]->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
-    mpTextBoxes[LevelNumberS]->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
+    mpPicturePanes[P_marioFace_00]->SetVisible(false);
+    mpPicturePanes[P_luigiFace_00]->SetVisible(false);
+    mpPicturePanes[P_BkinoFace_00]->SetVisible(false);
+    mpPicturePanes[P_YkinoFace_00]->SetVisible(false);
 
-    // Get the level number width (for the dynamic HUD size)
-    nw4r::ut::WideTextWriter tw2;
-    tw2.SetFont(*mpTextBoxes[LevelNumber]->GetFont());
-    nw4r::lyt::Size fontSize = mpTextBoxes[LevelNumber]->GetFontSize();
-    tw2.SetFontSize(fontSize.width, fontSize.height);
-    tw2.SetLineSpace(mpTextBoxes[LevelNumber]->GetLineSpace());
-    tw2.SetCharSpace(mpTextBoxes[LevelNumber]->GetCharSpace());
-    if (mpTextBoxes[LevelNumber]->GetTagProcessor() != nullptr)
-        tw2.SetTagProcessor(mpTextBoxes[LevelNumber]->GetTagProcessor());
+    int playerCount = 0;
 
-    const wchar_t *numStrBuf = mpTextBoxes[LevelNumber]->GetStringBuffer();
-    float currentPos = tw2.CalcStringWidth(numStrBuf, wcslen(numStrBuf));
-    nw4r::math::VEC3 trans = mpTextBoxes[LevelNumber]->GetTranslate();
-    currentPos += trans.x + 12.0f;
+    for (int i = 0; i < 4; i++) {
+        // The part in setupLives()
+        int playerID = LogicalPlayerIDs[i];
+        int slotID = SearchForIndexOfPlayerID(playerID);
+        int lives = daPyMng_c::mRest[slotID];
+        int length = 2;
 
-    // Setup the clearing flags
-    int w = infEntry->mWorldSlot;
-    int l = infEntry->mLevelSlot;
+        dGameCom::LayoutDispNumber(lives, length, mpTextBoxes[T_lifeNumber_00+slotID], true);
 
-    u32 conds = dSaveMng_c::m_instance->getSaveGame(-1)->getCourseDataFlag(w, l);
-    // States: 0 = invisible, 1 = visible, 2 = faded
-    int normalState = 0, secretState = 0;
+        // The part in setupIconThings()
+        if (dGameCom::PlayerEnterCheck(slotID)) {
+            playerCount++;
 
-    if ((conds & dMj2dGame_c::GOAL_MASK) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_MASK) == 0x30) {
-        // If this level has two exits and one of them is already collected,
-        // then show the faded flags
-        normalState = 2;
-        secretState = 2;
-    }
-
-    if ((conds & dMj2dGame_c::GOAL_NORMAL) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL))
-        normalState = 1;
-    if ((conds & dMj2dGame_c::GOAL_SECRET) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET))
-        secretState = 1;
-
-    mpPicturePanes[NormalExitFlag]->SetSRTElement(0, currentPos);
-    mpPicturePanes[NormalExitFlag]->SetAlpha((normalState == 2) ? 80 : 255);
-    mpPicturePanes[NormalExitFlag]->SetVisible(normalState > 0);
-    if (normalState > 0) {
-        nw4r::lyt::Size size = mpPicturePanes[NormalExitFlag]->GetSize();
-        currentPos += size.width;
-    }
-
-    mpPicturePanes[SecretExitFlag]->SetSRTElement(0, currentPos);
-    mpPicturePanes[SecretExitFlag]->SetAlpha((secretState == 2) ? 80 : 255);
-    mpPicturePanes[SecretExitFlag]->SetVisible(secretState > 0);
-    if (secretState > 0) {
-        nw4r::lyt::Size size = mpPicturePanes[SecretExitFlag]->GetSize();
-        currentPos += size.width;
-    }
-
-    // Setup the Star Coins
-    bool haveSC = (infEntry->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL);
-
-    for (int i = 0; i < 3; i++) {
-        bool flag = (conds & (dMj2dGame_c::COIN1_COLLECTED << i));
-        mpPicturePanes[StarCoinOn0+i]->SetVisible(flag);
-        mpPicturePanes[StarCoinOff0+i]->SetVisible(haveSC);
-        // Hide outline if we have the coin (it can be seen during anims)
-        mpPicturePanes[StarCoinOff0+i]->SetAlpha((flag) ? 0 : 0xFF);
-
-        if (haveSC) {
-            mpPicturePanes[StarCoinOff0+i]->SetSRTElement(0, currentPos);
-            nw4r::lyt::Size size = mpPicturePanes[StarCoinOff0+i]->GetSize();
-            currentPos += size.width + 4.0f;
+            nw4r::lyt::Pane *facePane = mpPicturePanes[P_marioFace_00+playerID];
+            facePane->SetTranslate(mpNullPanes[playerCount-1]->GetTranslate());
+            facePane->SetVisible(true);
         }
     }
 
-    // Get the width of the level name
-    nw4r::ut::WideTextWriter tw;
-    tw.SetFont(*mpTextBoxes[LevelName]->GetFont());
-    nw4r::lyt::Size nameFontSize = mpTextBoxes[LevelName]->GetFontSize();
-    tw.SetFontSize(nameFontSize.width, nameFontSize.height);
-    tw.SetLineSpace(mpTextBoxes[LevelName]->GetLineSpace());
-    tw.SetCharSpace(mpTextBoxes[LevelName]->GetCharSpace());
-    if (mpTextBoxes[LevelName]->GetTagProcessor() != nullptr)
-        tw.SetTagProcessor(mpTextBoxes[LevelName]->GetTagProcessor());
-
-    float width = tw.CalcStringWidth(levelName, wcslen(levelName));
-    nw4r::math::VEC3 levelNameTrans = mpTextBoxes[LevelName]->GetTranslate();
-
-    float totalWidth = width + levelNameTrans.x - 20.0f;
-    // If the level name is shorter than the bottom row,
-    // use that instead
-    if (totalWidth < currentPos)
-        totalWidth = currentPos;
-
-    mpPicturePanes[Header_Centre]->SetSRTElement(8, totalWidth);
-    mpPicturePanes[Header_Right]->SetSRTElement(0, totalWidth);
-
-    u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
-    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(worldIdx);
-    mHeaderCol.colourise(world->mHudHue%1000, world->mHudSat, world->mHudLight);
+    for (int i = 0; i < 4; i++)
+        mpNullPanes[i]->SetVisible(false);
+    mpNullPanes[playerCount-1]->SetVisible(true);
 }
 
+void dKPHud_c::controllerConnectCheck() {
+    int type = dGameKey_c::m_instance->mRemocon[0]->mAttachedExtension;
 
-void dWMHud_c::loadFooterInfo() {
+    if (type != mControllerType) {
+        mControllerType = type;
+
+        dInfo_c::m_instance->mExtensionAttached = (type == 0) ? 0 : 1;
+
+        MsgRes_c *msgRes = dMessage_c::getMesRes();
+        mpTextBoxes[ItemsButtonInfo]->setMessage(msgRes, BMG_CATEGORY_COURSE_SELECT_GUIDE, MSG_CS_ITEMS, 0);
+    }
+}
+
+void dKPHud_c::loadFooterInfo() {
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
     dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
     MsgRes_c *msgRes = dMessage_c::getMesRes();
@@ -416,88 +345,145 @@ void dWMHud_c::loadFooterInfo() {
     mpTextBoxes[WorldNameS]->SetSRTElement(0, startX + 6.0f);
 }
 
+void dKPHud_c::loadHeaderInfo() {
+    dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
+    //dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
+    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(3, 21); // Temp
+    MsgRes_c *msgRes = dMessage_c::getMesRes();
 
+    if (infEntry == nullptr) {
+        const wchar_t *dummyName = getLevelName(0, 0);
+        mpTextBoxes[LevelName]->SetString(dummyName, 0);
+        mpTextBoxes[LevelNameS]->SetString(dummyName, 0);
 
-void dWMHud_c::enteredNode(dKPNode_s *node) {
-    /*if (node == 0)
-        node = dScKoopatlas_c::instance->mPathManager.currentNode;
+        mpTextBoxes[LevelNumber]->SetString(L"?-?", 0);
+        mpTextBoxes[LevelNumberS]->SetString(L"?-?", 0);
 
-    if (node->type == dKPNode_s::LEVEL && mInitalDispComplete) {*/
-        mDispHeader = true;
-    //    mpHeaderNode = node;
-    //}
-}
-
-void dWMHud_c::leftNode() {
-    if (mLayout.GetAnimGroup()[ANIM_SHOW_HEADER].mFrameCtrl.mCurrFrame > 0.1f) {
-        // not hidden
-        if ((mLayout.isAnime(ANIM_SHOW_HEADER) && !(mLayout.GetAnimGroup()[ANIM_SHOW_HEADER].mFrameCtrl.mFlags & 2))
-                || (!mLayout.isAnime(ANIM_SHOW_HEADER))) {
-            // currently being shown, OR fully shown already
-            playHideAnim(ANIM_SHOW_HEADER);
+        // Hide exit flags and Star Coins
+        for (int i = 0; i < 5; i++) {
+            mpPicturePanes[NormalExitFlag+i]->SetVisible(false);
         }
-    }
-}
-
-
-void dWMHud_c::hideFooter() {
-    if (mFooterVisible)
-        playHideAnim(ANIM_SHOW_FOOTER);
-}
-
-void dWMHud_c::showFooter() {
-    if (!mInitalDispComplete)
         return;
-    mDispFooter = true;
-    if (mFooterVisible)
-        playHideAnim(ANIM_SHOW_FOOTER);
-}
+    }
 
+    // Set the level name
+    const wchar_t *levelName = getLevelName(infEntry->mDisplayWorld, infEntry->mDisplayLevel);
+    mpTextBoxes[LevelName]->SetString(levelName, 0);
+    mpTextBoxes[LevelNameS]->SetString(levelName, 0);
 
-void dWMHud_c::setupLives() {
-    static const int LogicalPlayerIDs[] = {0,1,3,2};
+    // Set the level number
+    ulong number = getLevelNumberIdx(infEntry->mDisplayWorld, infEntry->mDisplayLevel, infEntry->mWorldSlot, infEntry->mLevelSlot, false);
+    mpTextBoxes[LevelNumber]->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
+    mpTextBoxes[LevelNumberS]->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
 
-    mpPicturePanes[P_marioFace_00]->SetVisible(false);
-    mpPicturePanes[P_luigiFace_00]->SetVisible(false);
-    mpPicturePanes[P_BkinoFace_00]->SetVisible(false);
-    mpPicturePanes[P_YkinoFace_00]->SetVisible(false);
+    // Get the level number width (for the dynamic HUD size)
+    nw4r::ut::WideTextWriter tw2;
+    tw2.SetFont(*mpTextBoxes[LevelNumber]->GetFont());
+    nw4r::lyt::Size fontSize = mpTextBoxes[LevelNumber]->GetFontSize();
+    tw2.SetFontSize(fontSize.width, fontSize.height);
+    tw2.SetLineSpace(mpTextBoxes[LevelNumber]->GetLineSpace());
+    tw2.SetCharSpace(mpTextBoxes[LevelNumber]->GetCharSpace());
+    if (mpTextBoxes[LevelNumber]->GetTagProcessor() != nullptr)
+        tw2.SetTagProcessor(mpTextBoxes[LevelNumber]->GetTagProcessor());
 
-    int playerCount = 0;
+    const wchar_t *numStrBuf = mpTextBoxes[LevelNumber]->GetStringBuffer();
+    float currentPos = tw2.CalcStringWidth(numStrBuf, wcslen(numStrBuf));
+    nw4r::math::VEC3 trans = mpTextBoxes[LevelNumber]->GetTranslate();
+    currentPos += trans.x + 12.0f;
 
-    for (int i = 0; i < 4; i++) {
-        // The part in setupLives()
-        int playerID = LogicalPlayerIDs[i];
-        int slotID = SearchForIndexOfPlayerID(playerID);
-        int lives = daPyMng_c::mRest[slotID];
-        int length = 2;
+    // Setup the clearing flags
+    int w = infEntry->mWorldSlot;
+    int l = infEntry->mLevelSlot;
 
-        dGameCom::LayoutDispNumber(lives, length, mpTextBoxes[T_lifeNumber_00+slotID], true);
+    u32 conds = dSaveMng_c::m_instance->getSaveGame(-1)->getCourseDataFlag(w, l);
+    // States: 0 = invisible, 1 = visible, 2 = faded
+    int normalState = 0, secretState = 0;
 
-        // The part in setupIconThings()
-        if (dGameCom::PlayerEnterCheck(slotID)) {
-            playerCount++;
+    if ((conds & dMj2dGame_c::GOAL_MASK) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_MASK) == 0x30) {
+        // If this level has two exits and one of them is already collected, show the faded flags
+        normalState = 2;
+        secretState = 2;
+    }
 
-            nw4r::lyt::Pane *facePane = mpPicturePanes[P_marioFace_00+playerID];
-            facePane->SetTranslate(mpNullPanes[playerCount-1]->GetTranslate());
-            facePane->SetVisible(true);
+    if ((conds & dMj2dGame_c::GOAL_NORMAL) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL))
+        normalState = 1;
+    if ((conds & dMj2dGame_c::GOAL_SECRET) && (infEntry->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET))
+        secretState = 1;
+
+    mpPicturePanes[NormalExitFlag]->SetSRTElement(0, currentPos);
+    mpPicturePanes[NormalExitFlag]->SetAlpha((normalState == 2) ? 80 : 255);
+    mpPicturePanes[NormalExitFlag]->SetVisible(normalState > 0);
+    if (normalState > 0) {
+        nw4r::lyt::Size size = mpPicturePanes[NormalExitFlag]->GetSize();
+        currentPos += size.width;
+    }
+
+    mpPicturePanes[SecretExitFlag]->SetSRTElement(0, currentPos);
+    mpPicturePanes[SecretExitFlag]->SetAlpha((secretState == 2) ? 80 : 255);
+    mpPicturePanes[SecretExitFlag]->SetVisible(secretState > 0);
+    if (secretState > 0) {
+        nw4r::lyt::Size size = mpPicturePanes[SecretExitFlag]->GetSize();
+        currentPos += size.width;
+    }
+
+    // Setup the Star Coins
+    bool haveSC = (infEntry->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL);
+
+    for (int i = 0; i < 3; i++) {
+        bool flag = (conds & (dMj2dGame_c::COIN1_COLLECTED << i));
+        mpPicturePanes[StarCoinOn0+i]->SetVisible(flag);
+        mpPicturePanes[StarCoinOff0+i]->SetVisible(haveSC);
+        // Hide outline if we have the coin (it can be seen during anims)
+        mpPicturePanes[StarCoinOff0+i]->SetAlpha((flag) ? 0 : 0xFF);
+
+        if (haveSC) {
+            mpPicturePanes[StarCoinOff0+i]->SetSRTElement(0, currentPos);
+            nw4r::lyt::Size size = mpPicturePanes[StarCoinOff0+i]->GetSize();
+            currentPos += size.width + 4.0f;
         }
     }
 
-    for (int i = 0; i < 4; i++)
-        mpNullPanes[i]->SetVisible(false);
-    mpNullPanes[playerCount-1]->SetVisible(true);
+    // Get the width of the level name
+    nw4r::ut::WideTextWriter tw;
+    tw.SetFont(*mpTextBoxes[LevelName]->GetFont());
+    nw4r::lyt::Size nameFontSize = mpTextBoxes[LevelName]->GetFontSize();
+    tw.SetFontSize(nameFontSize.width, nameFontSize.height);
+    tw.SetLineSpace(mpTextBoxes[LevelName]->GetLineSpace());
+    tw.SetCharSpace(mpTextBoxes[LevelName]->GetCharSpace());
+    if (mpTextBoxes[LevelName]->GetTagProcessor() != nullptr)
+        tw.SetTagProcessor(mpTextBoxes[LevelName]->GetTagProcessor());
+
+    float width = tw.CalcStringWidth(levelName, wcslen(levelName));
+    nw4r::math::VEC3 levelNameTrans = mpTextBoxes[LevelName]->GetTranslate();
+
+    float totalWidth = width + levelNameTrans.x - 20.0f;
+    // If the level name is shorter than the bottom row,
+    // use that instead
+    if (totalWidth < currentPos)
+        totalWidth = currentPos;
+
+    mpPicturePanes[Header_Centre]->SetSRTElement(8, totalWidth);
+    mpPicturePanes[Header_Right]->SetSRTElement(0, totalWidth);
+
+    u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(worldIdx);
+    mHeaderCol.colourise(world->mHudHue%1000, world->mHudSat, world->mHudLight);
 }
 
-void dWMHud_c::controllerConnectCheck() {
-    int type = dGameKey_c::m_instance->mRemocon[0]->mAttachedExtension;
+void dKPHud_c::playShowAnim(int id) {
+    if (!this || !this->mLayoutLoaded) return;
 
-    if (type != mControllerType) {
-        mControllerType = type;
+    mLayout.AnimeStartSetup(id, false);
+}
 
-        dInfo_c::m_instance->mExtensionAttached = (type == 0) ? 0 : 1;
+void dKPHud_c::playHideAnim(int id) {
+    if (!this || !this->mLayoutLoaded) return;
 
-        MsgRes_c *msgRes = dMessage_c::getMesRes();
-        mpTextBoxes[ItemsButtonInfo]->setMessage(msgRes, BMG_CATEGORY_COURSE_SELECT_GUIDE, MSG_CS_ITEMS, 0);
+    if (!mLayout.isAnime(id)) {
+        mLayout.AnimeStartSetup(id, true);
     }
+    mLayout.GetAnimGroup()[id].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
+    if (id == ANIM_SHOW_FOOTER)
+        mFooterVisible = false;
 }
 #endif

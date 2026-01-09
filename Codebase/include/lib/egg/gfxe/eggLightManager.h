@@ -20,7 +20,9 @@ public:
     virtual void DoneDraw();
 
     void LoadScnLightInner(nw4r::g3d::ResAnmScn, float, short, unsigned long);
-    void LoadBlight(void *); ///< @unofficial
+    void LoadBinary(void *); ///< @unofficial
+
+    void SetBinaryInner(void *curBin, void *newBin, float ratio); ///< @unofficial
 
     char pad[0x10];
     LightTextureManager *ltMgr;

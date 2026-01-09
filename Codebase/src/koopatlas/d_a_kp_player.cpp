@@ -11,14 +11,14 @@
 
 daKPPlayer_c *daKPPlayer_c::m_instance = nullptr;
 
-daKPPlayer_c *daKPPlayer_c::build() {
+daKPPlayer_c *daKPPlayer_c_classInit() {
     daKPPlayer_c *c = new daKPPlayer_c;
-    m_instance = c;
+    daKPPlayer_c::m_instance = c;
     return c;
 }
 
 // Replace WM_PLAYER actor
-kmWritePointer(0x80988DDC, &daKPPlayer_c::build);
+kmWritePointer(0x80988DDC, &daKPPlayer_c_classInit);
 
 static const char *mdlNames[] = {"MB_model", "SMB_model", "PLMB_model", "PMB_model"};
 static const char *patNames[] = {"PB_switch_swim", "PB_switch_swim", "PLMB_switch_swim", "PLB_switch_swim"};
@@ -67,10 +67,10 @@ int daKPPlayer_c::doDelete() {
 }
 
 int daKPPlayer_c::execute() {
-    if (daPyMng_c::mCreateItem[0] & 1) {
+    if (daPyMng_c::mCreateItem[0] & CREATE_ITEM_STAR_POWER) {
         mpPyMdlMng->mpMdl->onStarAnm();
         mpPyMdlMng->mpMdl->onStarEffect();
-        dKPMusic_c::m_instance->playStarSfx();
+        dKPMusic_c::m_instance->startStarSe();
     }
 
     if (mIsSpinning) {
@@ -79,8 +79,8 @@ int daKPPlayer_c::execute() {
         sLib::chaseAngle(&mAngle.y.mAngle, mTargetRotY, 0xC00);
     }
 
-    //if (dScKoopatlas_c::instance->mapIsRunning())
-    //	dScKoopatlas_c::instance->pathManager.execute();
+    //if (dScKoopatlas_c::m_instance->chkMapIdleState())
+    //	dScKoopatlas_c::m_instance->pathManager.execute();
 
     mpPyMdlMng->play();
     //pats[((dPlayerModel_c*)mpPyMdlMng->mdlClass)->currentPlayerModelID].process();
@@ -88,14 +88,14 @@ int daKPPlayer_c::execute() {
     mMtx_c myMatrix;
     PSMTXScale(myMatrix, mScale.x, mScale.y, mScale.z);
     myMatrix.trans(mPos.x, mPos.y + mJumpOffset, mPos.z);
-    if (dScKoopatlas_c::instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED))
+    if (dScKoopatlas_c::m_instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED))
         myMatrix.trans(0, 0, 600.0f);	
     myMatrix.XrotM(mAngle.x);
     myMatrix.YrotM(mAngle.y);
     // Z is unused for now
     mpPyMdlMng->calc(myMatrix);
 
-    if (dScKoopatlas_c::instance->mapIsRunning()) {
+    if (dScKoopatlas_c::m_instance->chkMapIdleState()) {
         if (mHasEffect) { 
             mVec3_c effPos(mPos.x, mPos.y, 3300.0f);
             mEffect.createEffect(mpEffectName, 0, &effPos, &mAngle, &mScale);
@@ -124,15 +124,14 @@ int daKPPlayer_c::execute() {
 }
 
 int daKPPlayer_c::draw() {
-    if (!mVisible)
+    // TODO: Why doesn't the ending scene just set the player to be invisible...?
+    if (!mVisible || dScKoopatlas_c::m_instance->mIsEndingScene) {
         return true;
-    if (dScKoopatlas_c::instance->mIsEndingScene)
-        return true;
+    }
 
     mpPyMdlMng->draw();
     return true;
 }
-
 
 void daKPPlayer_c::startAnimation(int id, float frame, float unk, float updateRate) {
     if (id == mCurrentAnim && frame == mCurrentFrame && unk == mCurrentUnk && updateRate == mCurrentUpdateRate)

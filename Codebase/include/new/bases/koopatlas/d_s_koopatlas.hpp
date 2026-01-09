@@ -20,10 +20,11 @@
 #include <new/bases/d_world_info.hpp>
 // #include "koopatlas/mapdata.h"
 // #include "koopatlas/shop.h"
-#include <new/bases/koopatlas/d_wm_star_coin.hpp>
-#include <new/bases/koopatlas/d_wm_hud.hpp>
+#include <new/bases/koopatlas/d_kp_director.hpp>
+#include <new/bases/koopatlas/d_kp_hud.hpp>
 // #include "koopatlas/pathmanager.h"
 #include <new/bases/koopatlas/d_kp_music.hpp>
+#include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
 
 #ifdef KP_MAP_REPORT
 #define MapReport OSReport
@@ -39,19 +40,20 @@
 
 void KoopatlasDrawFunc();
 
-extern "C" bool IsWarningManagerActive(); // 0x8076DB90, Newer calls this CheckIfWeCantDoStuff
 int SearchForIndexOfPlayerID(int id);
 
-#define WM_HUD WM_DANCE_PAKKUN
+#define KP_HUD WM_DANCE_PAKKUN
 #define WM_SHOP WM_TOGEZO
-#define WM_STARCOIN WM_GHOST
+#define KP_STAR_COIN_MENU WM_GHOST
 
+// Forward declarations
 class daKPPlayer_c;
 class dWMMap_c;
-class dWMHud_c;
+class dKPHud_c;
 class dWMShop_c;
-class dWMStarCoin_c;
+class dKPStarCoinMenu_c;
 class dKPCamera_c;
+class dKPDirector_c;
 
 class dScKoopatlas_c : public dScene_c {
 public:
@@ -73,16 +75,11 @@ public:
     int doDelete();
     int execute();
 
+    bool chkAllowExecute();
+    bool chkMapIdleState();
+
     void startMusic();
-
-    u32 iterateMapList(u32(*callback)(u32,const char *,int,int), u32 userData, int *ptrIndex = 0);
-    const char *getMapNameForIndex(int index);
-    int getIndexForMapName(const char *name);
-
     void startLevel(dLevelInfo_c::entry_s *level);
-
-    bool canDoStuff();
-    bool mapIsRunning();
 
     void openMenu(int starSndMode, int soundID);
     void returnToNormalState();
@@ -92,17 +89,17 @@ public:
     // Lighting
     void setupScene();
     void loadScene(int sceneID);
+    void blendScene(const char *blightName, const char *blmapName);
 
-    sPhase_c mInitChain;
-
-    sFStateMgr_c<dScKoopatlas_c, sStateMethodUsr_FI_c> mStateMgr;
+    // Map List parser
+    u32 iterateMapList(u32(*callback)(u32,const char *,int,int), u32 userData, int *ptrIndex = 0);
+    const char *getMapNameForIndex(int index);
+    int getIndexForMapName(const char *name);
 
     STATE_FUNC_DECLARE(dScKoopatlas_c, Limbo);
     STATE_FUNC_DECLARE(dScKoopatlas_c, ContinueWait);
     STATE_FUNC_DECLARE(dScKoopatlas_c, Normal);
-    STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsg);
-    STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsgHideWait);
-    STATE_FUNC_DECLARE(dScKoopatlas_c, CSMenu);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, MenuSelect);
     STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmOpenWait);
     STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmSelect);
     STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmHitWait);
@@ -126,7 +123,13 @@ public:
     STATE_FUNC_DECLARE(dScKoopatlas_c, QuickSaveEndCloseWait);
 #endif
     STATE_FUNC_DECLARE(dScKoopatlas_c, SaveError);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsgWindow);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, CompletionMsgCloseWait);
 
+    sPhase_c mInitChain;
+    sFStateMgr_c<dScKoopatlas_c, sStateMethodUsr_FI_c> mStateMgr;
+
+    // Retail actors
     dCourseSelectMenu_c *mpCourseSelectMenu;
     dSelectCursor_c *mpSelectCursor;
     dNumberOfPeopleChange_c *mpNumPeopleChange;
@@ -136,32 +139,35 @@ public:
     dStockItemShadow_c *mpStockItemShadow;
     dEasyPairing_c *mpEasyPairing;
 
-
     daKPPlayer_c *mpPlayer;
-    dWMHud_c *mpHud;
+    dKPHud_c *mpHud;
     dWMMap_c *mpMap;
     dWMShop_c *mpShop;
-    dWMStarCoin_c *mpCoins;
+    dKPStarCoinMenu_c *mpCoins;
+    dKPDirector_c *mpDirector;
+
+    //dKPMapData_c mMapData;
+    //dKPPathManager_c mPathManager;
+    dDvd::loader_c mMapListLoader;
+
+    const char *mMapPath;
+
+    void *mpCurrentLight;
+    void *mpCurrentLightMap;
+    int mBlendStep;
 
     int mCurrentMapID;
-    const char *mMapPath;
-    //dKPMapData_c mMapData;
-    //dWMPathManager_c mPathManager;
 
-    dDvd::loader_c mMapListLoader;
+    bool mDoBlendLighting;
+    bool mWarpZoneHacks;
+    bool mSetupCompletionMessage;
+    bool mMusicPersist;
 
     bool mIsFirstPlay;
     bool mIsAfterKamekCutscene;
     bool mIsAfter8Castle;
     bool mIsEndingScene;
 
-    bool mWarpZoneHacks;
-
-    int mMustFixYesNoText;	
-
-    bool mKeepMusicPlaying;
-
-    static dScKoopatlas_c *build();
-    static dScKoopatlas_c *instance; // TODO: rename to m_instance
+    static dScKoopatlas_c *m_instance;
 };
 #endif

@@ -16,13 +16,13 @@ public:
     int execute();
     int draw();
 
-    void calculateScreenGeometry();
+    void calcScreenGeometry();
+    void calcCameras();
+    void updateCameras();
+    void setPosAndTarget(float camPosZ);
+
     void panToBounds(float left, float top, float right, float bottom);
     void panToPosition(float x, float y, float zoom=STD_ZOOM);
-
-    void doStuff(float camPosZ);
-    void generateCameraMatrices();
-    void updateCameras();
 
     EGG::Screen mScreen;
     EGG::LookAtCamera mCamera3D;
@@ -59,7 +59,6 @@ public:
     bool mFollowPlayer;
     bool mIsPanning;
 
-    static dKPCamera_c *build();
     static dKPCamera_c *m_instance;
 };
 #endif

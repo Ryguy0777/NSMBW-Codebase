@@ -2,38 +2,38 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_wm_star_coin.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_game_key.hpp>
 #include <game/bases/d_save_mng.hpp>
+#include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
+#include <new/constants/message_list.h>
+#include <new/level_info_utils.hpp>
 
-dWMStarCoin_c *dWMStarCoin_c::m_instance = nullptr;
+dKPStarCoinMenu_c *dKPStarCoinMenu_c::m_instance = nullptr;
 
-dWMStarCoin_c *dWMStarCoin_c::build() {
-    dWMStarCoin_c *c = new dWMStarCoin_c;
-    m_instance = c;
+dKPStarCoinMenu_c *dKPStarCoinMenu_c_classInit() {
+    dKPStarCoinMenu_c *c = new dKPStarCoinMenu_c;
+    dKPStarCoinMenu_c::m_instance = c;
     return c;
 }
 
 // Replace WM_GHOST actor
-kmWritePointer(0x80982D1C, &dWMStarCoin_c::build);
+kmWritePointer(0x80982D1C, &dKPStarCoinMenu_c_classInit);
 
-dWMStarCoin_c::dWMStarCoin_c() : mStateMgr(*this, StateID_Hidden) {
+dKPStarCoinMenu_c::dKPStarCoinMenu_c() : mStateMgr(*this, StateID_Hidden) {
     mHasLayoutLoaded = false;
     mIsVisible = false;
 }
 
-STATE_DEFINE(dWMStarCoin_c, Hidden);
-STATE_DEFINE(dWMStarCoin_c, ShowWait);
-STATE_DEFINE(dWMStarCoin_c, ShowSectionWait);
-STATE_DEFINE(dWMStarCoin_c, Wait);
-STATE_DEFINE(dWMStarCoin_c, HideSectionWait);
-STATE_DEFINE(dWMStarCoin_c, HideWait);
+STATE_DEFINE(dKPStarCoinMenu_c, Hidden);
+STATE_DEFINE(dKPStarCoinMenu_c, ShowWait);
+STATE_DEFINE(dKPStarCoinMenu_c, ShowSectionWait);
+STATE_DEFINE(dKPStarCoinMenu_c, Wait);
+STATE_DEFINE(dKPStarCoinMenu_c, HideSectionWait);
+STATE_DEFINE(dKPStarCoinMenu_c, HideWait);
 
-int dWMStarCoin_c::create() {
+int dKPStarCoinMenu_c::create() {
     bool res = mLayout.ReadResource("starCoins.arc", false);
     if (!res) {
         return false;
@@ -136,19 +136,11 @@ int dWMStarCoin_c::create() {
     return true;
 }
 
-
-int dWMStarCoin_c::doDelete() {
+int dKPStarCoinMenu_c::doDelete() {
     return mLayout.doDelete();
 }
 
-
-void dWMStarCoin_c::show() {
-    if (mStateMgr.getStateID() == &StateID_Hidden)
-        mStateMgr.changeState(StateID_ShowWait);
-}
-
-
-int dWMStarCoin_c::execute() {
+int dKPStarCoinMenu_c::execute() {
     mStateMgr.executeState();
     if (mIsVisible) {
         mLayout.AnimePlay();
@@ -157,66 +149,57 @@ int dWMStarCoin_c::execute() {
     return true;
 }
 
-int dWMStarCoin_c::draw() {
+int dKPStarCoinMenu_c::draw() {
     if (mIsVisible)
         mLayout.draw();
     return true;
 }
 
-void dWMStarCoin_c::showLeftArrow() {
-    if (!mLeftArrowActive) {
-        mLeftArrowActive = true;
-        mLayout.AnimeStartSetup(ANIM_SHOW_LEFT_ARROW, false);
-        mpPicturePanes[DPadLeft]->SetVisible(true);
-    }
+void dKPStarCoinMenu_c::dispMenu() {
+    if (mStateMgr.getStateID() == &StateID_Hidden)
+        mStateMgr.changeState(StateID_ShowWait);
 }
 
-void dWMStarCoin_c::showRightArrow() {
-    if (!mRightArrowActive) {
-        mRightArrowActive = true;
-        mLayout.AnimeStartSetup(ANIM_SHOW_RIGHT_ARROW, false);
-        mpPicturePanes[DPadRight]->SetVisible(true);
-    }
-}
-
-void dWMStarCoin_c::hideLeftArrow() {
-    if (mLeftArrowActive) {
-        mLeftArrowActive = false;
-        mLayout.AnimeStartSetup(ANIM_HIDE_LEFT_ARROW, false);
-        mpPicturePanes[DPadLeft]->SetVisible(false);
-    }
-}
-
-void dWMStarCoin_c::hideRightArrow() {
-    if (mRightArrowActive) {
-        mRightArrowActive = false;
-        mLayout.AnimeStartSetup(ANIM_HIDE_RIGHT_ARROW, false);
-        mpPicturePanes[DPadRight]->SetVisible(false);
-    }
-}
-
-void dWMStarCoin_c::setLeftArrowVisible(bool value) {
-    if (value)
-        showLeftArrow();
-    else
-        hideLeftArrow();
-}
-
-void dWMStarCoin_c::setRightArrowVisible(bool value) {
-    if (value)
-        showRightArrow();
-    else
-        hideRightArrow();
-}
-
-bool dWMStarCoin_c::canScrollLeft() const {
+bool dKPStarCoinMenu_c::canScrollLeft() const {
     return (mCurrentWorldIndex > 0);
 }
-bool dWMStarCoin_c::canScrollRight() const {
+bool dKPStarCoinMenu_c::canScrollRight() const {
     return (mCurrentWorldIndex < (mOpenWorldCount-1));
 }
 
-void dWMStarCoin_c::loadInfo() {
+void dKPStarCoinMenu_c::leftArrowDisp(bool value) {
+    if (value) {
+        if (!mLeftArrowActive) {
+            mLeftArrowActive = true;
+            mLayout.AnimeStartSetup(ANIM_SHOW_LEFT_ARROW, false);
+            mpPicturePanes[DPadLeft]->SetVisible(true);
+        }
+    } else {
+        if (mLeftArrowActive) {
+            mLeftArrowActive = false;
+            mLayout.AnimeStartSetup(ANIM_HIDE_LEFT_ARROW, false);
+            mpPicturePanes[DPadLeft]->SetVisible(false);
+        }
+    }
+}
+
+void dKPStarCoinMenu_c::rightArrowDisp(bool value) {
+    if (value) {
+        if (!mRightArrowActive) {
+            mRightArrowActive = true;
+            mLayout.AnimeStartSetup(ANIM_SHOW_RIGHT_ARROW, false);
+            mpPicturePanes[DPadRight]->SetVisible(true);
+        }
+    } else {
+        if (mRightArrowActive) {
+            mRightArrowActive = false;
+            mLayout.AnimeStartSetup(ANIM_HIDE_RIGHT_ARROW, false);
+            mpPicturePanes[DPadRight]->SetVisible(false);
+        }
+    }
+}
+
+void dKPStarCoinMenu_c::loadInfo() {
     int unspentCoins = dGameCom::getUnspentStarCoinCount();
     int coins = dGameCom::getStarCoinCount();
 
@@ -263,7 +246,7 @@ void dWMStarCoin_c::loadInfo() {
 }
 
 // TODO: Add byte to WorldInfo that contains the world idx of the related subworld
-void dWMStarCoin_c::loadSectionInfo() {
+void dKPStarCoinMenu_c::loadSectionInfo() {
     dLevelInfo_c::entry_s *visibleLevels[COLUMN_COUNT][ROW_COUNT];
 
     // Reset everything
@@ -304,7 +287,6 @@ void dWMStarCoin_c::loadSectionInfo() {
     dLevelInfo_c::section_s *section = linfo->getSection(mCurrentWorld);
 
     int collectedCoins = 0, totalCoins = 0;
-    // collectedCoins is calculated later
 
     for (int i = 0; i < section->mLevelCount; i++) {
         dLevelInfo_c::entry_s *level = &section->mLevels[i];
@@ -345,7 +327,7 @@ void dWMStarCoin_c::loadSectionInfo() {
         names[1] = nullptr;
     }
 
-    // if the second column is empty, remove its name
+    // If the second column is empty, remove its name
     if (currentPosition[1] == 0 && usesSubworlds)
         names[1] = nullptr;
 
@@ -376,6 +358,8 @@ void dWMStarCoin_c::loadSectionInfo() {
                 mpCoinOutlines[col][row][coin]->SetVisible(true);
 
                 if (conds & (dMj2dGame_c::COIN1_COLLECTED << coin)) {
+                    // Hide outlines so they aren't seen during page switch
+                    mpCoinOutlines[col][row][coin]->SetVisible(false);
                     mpCoins[col][row][coin]->SetVisible(true);
                     collectedCoins++;
                 }
@@ -392,7 +376,7 @@ void dWMStarCoin_c::loadSectionInfo() {
     dGameCom::LayoutDispNumberDigit(totalCoins, mpTextBoxes[EarnedCoinMax], false);
 }
 
-void dWMStarCoin_c::showSecretMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2, int bodyMsgCount2) {
+void dKPStarCoinMenu_c::displayMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2, int bodyMsgCount2) {
     MsgRes_c *msgRes = dMessage_c::getMesRes();
     mpTextBoxes[LeftTitle]->SetVisible(true);
     mpTextBoxes[RightTitle]->SetVisible(false);
@@ -445,13 +429,12 @@ static u8 isReplayEnabled;
 
 
 
-void dWMStarCoin_c::initializeState_Hidden() { }
-void dWMStarCoin_c::executeState_Hidden() { }
-void dWMStarCoin_c::finalizeState_Hidden() { }
+void dKPStarCoinMenu_c::initializeState_Hidden() { }
+void dKPStarCoinMenu_c::executeState_Hidden() { }
+void dKPStarCoinMenu_c::finalizeState_Hidden() { }
 
 
-
-void dWMStarCoin_c::initializeState_ShowWait() {
+void dKPStarCoinMenu_c::initializeState_ShowWait() {
     mIsVisible = true;
     loadInfo();
     mLayout.AnimeStartSetup(ANIM_SHOW_ALL, false);
@@ -463,33 +446,31 @@ void dWMStarCoin_c::initializeState_ShowWait() {
     secretCodeIndex = 0;
     minusCount = 0;
 }
-void dWMStarCoin_c::executeState_ShowWait() {
+void dKPStarCoinMenu_c::executeState_ShowWait() {
     if (!mLayout.isAnime(ANIM_SHOW_ALL))
         mStateMgr.changeState(StateID_ShowSectionWait);
 }
-void dWMStarCoin_c::finalizeState_ShowWait() { }
+void dKPStarCoinMenu_c::finalizeState_ShowWait() { }
 
 
-
-void dWMStarCoin_c::initializeState_ShowSectionWait() {
+void dKPStarCoinMenu_c::initializeState_ShowSectionWait() {
     loadSectionInfo();
     mLayout.AnimeStartSetup(ANIM_SHOW_SECTION, false);
 
     if (canScrollLeft())
-        showLeftArrow();
+        leftArrowDisp(true);
     if (canScrollRight())
-        showRightArrow();
+        rightArrowDisp(true);
 }
-void dWMStarCoin_c::executeState_ShowSectionWait() {
+void dKPStarCoinMenu_c::executeState_ShowSectionWait() {
     if (!mLayout.isAnime(ANIM_SHOW_SECTION))
         mStateMgr.changeState(StateID_Wait);
 }
-void dWMStarCoin_c::finalizeState_ShowSectionWait() { }
+void dKPStarCoinMenu_c::finalizeState_ShowSectionWait() { }
 
 
-
-void dWMStarCoin_c::initializeState_Wait() { }
-void dWMStarCoin_c::executeState_Wait() {
+void dKPStarCoinMenu_c::initializeState_Wait() { }
+void dKPStarCoinMenu_c::executeState_Wait() {
     int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
     // A and Plus
@@ -498,11 +479,11 @@ void dWMStarCoin_c::executeState_Wait() {
             enableHardMode = true;
             MapReport("Hard Mode enabled!\n");
             SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_COURSE_IN_HARD, 1);
-            showSecretMessage(0x20, 0x21, 9);
+            displayMessage(0x20, 0x21, 9);
         } else {
             enableHardMode = false;
             MapReport("Hard Mode disabled!\n");
-            showSecretMessage(0x30, 0x31, 2);
+            displayMessage(0x30, 0x31, 2);
         }
         return;
     }
@@ -518,11 +499,11 @@ void dWMStarCoin_c::executeState_Wait() {
                 if (isReplayEnabled != 100) {
                     isReplayEnabled = 100;
                     MapReport("Replay Recording enabled!\n");
-                    showSecretMessage(0x40, 0x41, 9);
+                    displayMessage(0x40, 0x41, 9);
                 } else {
                     isReplayEnabled = 0;
                     MapReport("Replay Recording disabled!\n");
-                    showSecretMessage(0x50, 0x51, 2);
+                    displayMessage(0x50, 0x51, 2);
                 }
             }
             return;
@@ -539,9 +520,9 @@ void dWMStarCoin_c::executeState_Wait() {
             enableDebugMode = !enableDebugMode;
             if (enableDebugMode) {
                 SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_GET_PRIZE, 1);
-                showSecretMessage(0x60, 0x61, 9, 0x6A, 9);
+                displayMessage(0x60, 0x61, 9, 0x6A, 9);
             } else {
-                showSecretMessage(0x80, 0x81, 6);
+                displayMessage(0x80, 0x81, 6);
             }
         }
     } else if (pressed & WPAD_BUTTON_1) {
@@ -558,22 +539,21 @@ void dWMStarCoin_c::executeState_Wait() {
         mStateMgr.changeState(StateID_HideSectionWait);
     }
 }
-void dWMStarCoin_c::finalizeState_Wait() { }
+void dKPStarCoinMenu_c::finalizeState_Wait() { }
 
 
-
-void dWMStarCoin_c::initializeState_HideSectionWait() {
+void dKPStarCoinMenu_c::initializeState_HideSectionWait() {
     mLayout.AnimeStartSetup(ANIM_HIDE_SECTION, false);
     if (mWillExit) {
-        hideLeftArrow();
-        hideRightArrow();
+        leftArrowDisp(false);
+        rightArrowDisp(false);
     } else {
         SndAudioMgr::sInstance->startSystemSe(SE_SYS_PAGE, 1);
-        setLeftArrowVisible(canScrollLeft());
-        setRightArrowVisible(canScrollRight());
+        leftArrowDisp(canScrollLeft());
+        rightArrowDisp(canScrollRight());
     }
 }
-void dWMStarCoin_c::executeState_HideSectionWait() {
+void dKPStarCoinMenu_c::executeState_HideSectionWait() {
     if (!mLayout.isAnime(ANIM_HIDE_SECTION)) {
         if (mWillExit)
             mStateMgr.changeState(StateID_HideWait);
@@ -581,19 +561,18 @@ void dWMStarCoin_c::executeState_HideSectionWait() {
             mStateMgr.changeState(StateID_ShowSectionWait);
     }
 }
-void dWMStarCoin_c::finalizeState_HideSectionWait() { }
+void dKPStarCoinMenu_c::finalizeState_HideSectionWait() { }
 
 
-
-void dWMStarCoin_c::initializeState_HideWait() {
+void dKPStarCoinMenu_c::initializeState_HideWait() {
     mLayout.AnimeStartSetup(ANIM_SHOW_ALL, true);
     mLayout.GetAnimGroup()[ANIM_SHOW_ALL].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
 }
-void dWMStarCoin_c::executeState_HideWait() {
+void dKPStarCoinMenu_c::executeState_HideWait() {
     if (!mLayout.isAnime(ANIM_SHOW_ALL))
         mStateMgr.changeState(StateID_Hidden);
 }
-void dWMStarCoin_c::finalizeState_HideWait() {
+void dKPStarCoinMenu_c::finalizeState_HideWait() {
     mIsVisible = false;
 }
 #endif

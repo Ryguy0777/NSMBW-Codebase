@@ -51,7 +51,7 @@ int dWMMap_c::onCreate() {
 	bgMatrix.translation(0.0f, 0.0f, -500.0f);
 
 	allocator.link(-1, GameHeaps[0], 0, 0x20);
-	nw4r::g3d::ResFile rf(dScKoopatlas_c::instance->mapData.bgLoader.buffer);
+	nw4r::g3d::ResFile rf(dScKoopatlas_c::m_instance->mapData.bgLoader.buffer);
 	rf.CheckRevision();
 	rf.Init();
 	rf.Bind(rf);
@@ -72,7 +72,7 @@ int dWMMap_c::onCreate() {
 	}
 
 	bool lsRotate = false;
-	switch (dScKoopatlas_c::instance->currentMapID) {
+	switch (dScKoopatlas_c::m_instance->currentMapID) {
 		case 5: // Starry Sky
 			launchStarX = 5424.0f; launchStarY = -4416.0f; showLaunchStar = true; break;
 		// case 11: // Sky City
@@ -136,7 +136,7 @@ int dWMMap_c::onDraw() {
 	}
 
 
-	dKPMapData_c *dataCls = &dScKoopatlas_c::instance->mapData;
+	dKPMapData_c *dataCls = &dScKoopatlas_c::m_instance->mapData;
 	renderPathLayer(dataCls->pathLayer);
 
 	return true;
@@ -156,7 +156,7 @@ void dWMMap_c::renderer_c::drawXlu() {
 
 
 void dWMMap_c::renderer_c::drawLayers() {
-	dScKoopatlas_c *wm = dScKoopatlas_c::instance;
+	dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
 	dKPMapData_c *dataCls = &wm->mapData;
 	dKPMapFile_s *data = dataCls->data;
 
@@ -551,7 +551,7 @@ void dWMMap_c::renderer_c::loadCamera(Mtx m) {
 
 
 void dWMMap_c::doEffects() {
-	int mapID = dScKoopatlas_c::instance->currentMapID;
+	int mapID = dScKoopatlas_c::m_instance->currentMapID;
 
 	// Note: effect::spawn() takes name, unk, pos, rot, scale
 	const S16Vec efRot = {0x1800, 0, 0};

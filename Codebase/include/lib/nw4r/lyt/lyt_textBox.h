@@ -75,7 +75,9 @@ public:
 
     virtual void AllocStringBuffer(u16 len); // at 0x64
     virtual void FreeStringBuffer();         // at 0x68
-    u16 GetStringBufferLength() const;
+    u16 GetStringBufferLength() const {
+        return mTextLen;
+    }
 
     virtual u16 SetString(const wchar_t* pStr, u16 pos);          // at 0x6C
     virtual u16 SetString(const wchar_t* pStr, u16 pos, u16 len); // at 0x70
