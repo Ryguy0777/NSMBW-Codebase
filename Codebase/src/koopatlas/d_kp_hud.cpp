@@ -99,6 +99,9 @@ int dKPHud_c::create() {
     // Adjust layout position and clip for 4:3
     mLayout.getRootPane()->SetSRTElement(0, -112.0f);
     if (!dGameCom::GetAspectRatio()) {
+        mLayout.getRootPane()->SetSRTElement(6, 19.0f/26.0f);
+        mLayout.getRootPane()->SetSRTElement(7, 352.0f/456.0f);
+        mLayout.findPaneByName("N_zanki_00")->SetSRTElement(0, -26.0f);
         mLayout.mScissorMask.mEnabled = true;
         mLayout.mScissorMask.mPos.x = 0;
         mLayout.mScissorMask.mPos.y = 52;

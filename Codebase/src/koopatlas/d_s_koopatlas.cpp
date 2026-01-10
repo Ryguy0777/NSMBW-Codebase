@@ -34,9 +34,6 @@
 #include <game/snd/snd_scene_manager.hpp>
 #include <lib/egg/gfxe/eggStateGX.h>
 
-// remove me later
-#include <game/bases/d_system.hpp>
-
 // Reset stage exit mode after a Game Over
 extern int m_exitMode__10dScStage_c;
 kmBranchDefAsm(0x809216EC, 0x809216F0) {
@@ -324,12 +321,8 @@ int dScKoopatlas_c::create() {
     OSReport("KP scene param: %08x\n", mParam);
     SpammyReport("create() called\n");
 
-    // note: this should probably be changed to make the scene params control the wipe used
+    // TODO: This should probably be changed to make the scene params control the wipe used
     dFader_c::setFader(dFader_c::CIRCLE_SLOW);
-
-    // temp
-    nw4r::ut::Color clr(16, 58, 135, 255);
-    dSys_c::setClearColor(clr);
 
     // NewerSMBW's opening cutscene loads VS effects for some reason and fragments RAM too much for some maps
     SpammyReport("Freeing effects\n");
@@ -771,6 +764,7 @@ void dScKoopatlas_c::executeState_MenuSelect() {
 
                 case 1: // Add/Drop Players
                     MapReport("Add/Drop Players was pressed\n");
+                    SndAudioMgr::sInstance->startSystemSe(SE_SYS_DIALOGUE_IN, 1);
                     mStateMgr.changeState(StateID_PlayerChangeWait);
                     mpNumPeopleChange->mIsVisible = true;
                     mPad::setGetWPADInfoInterval(10);
@@ -868,7 +862,9 @@ void dScKoopatlas_c::finalizeState_TitleConfirmHitWait() { }
 /**********************************************************************/
 // StateID_PlayerChangeWait : Wait for the user to do something on the
 // Add/Drop Players screen
-void dScKoopatlas_c::initializeState_PlayerChangeWait() { }
+void dScKoopatlas_c::initializeState_PlayerChangeWait() {
+    dKPMusic_c::m_instance->updStarVolume(2);
+}
 void dScKoopatlas_c::executeState_PlayerChangeWait() {
     int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
@@ -884,6 +880,7 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
             }
 
             mpEasyPairing->mIsVisible = true;
+            dKPMusic_c::m_instance->updStarVolume(1);
             mStateMgr.changeState(StateID_EasyPairingWait);
         }
     } else {

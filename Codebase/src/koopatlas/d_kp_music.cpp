@@ -216,23 +216,21 @@ void dKPMusic_c::updTrackVolume(bool isOpenMenu) {
 
 /* Types are:
  * 0: on map, default volume
- * 1: in menu, make it silent
+ * 1: in menu, pause it
  * 2: in stockItem, make it loud
 */
 void dKPMusic_c::updStarVolume(int type) {
     if (!sStarHandle.IsAttachedSound())
         return;
+    
+    if (type == 1) {
+        sStarHandle.detail_GetAttachedSound()->Pause(true, 15);
+        return;
+    }
 
-    float volume = 1.5f;
-    switch (type) {
-        case 1:
-            volume = 0.0f;
-            break;
-        case 2:
-            volume = 4.0f;
-            break;
-    };
+    float volume = (type == 2) ? 4.0f : 1.5f;
 
     sStarHandle.SetVolume(volume, 15);
+    sStarHandle.detail_GetAttachedSound()->Pause(false, 15);
 }
 #endif
