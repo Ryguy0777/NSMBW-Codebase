@@ -1,3 +1,4 @@
+#pragma once
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED

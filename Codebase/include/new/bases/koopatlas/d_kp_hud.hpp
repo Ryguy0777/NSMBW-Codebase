@@ -2,12 +2,10 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/bases/koopatlas/d_kp_map_data.hpp>
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <new/bases/koopatlas/d_tex_map_colouriser.hpp>
 
-struct dKPNode_s {
-    //temp
-};
 class dKPHud_c : public dBase_c {
 public:
     enum N_PANE_e {
@@ -75,7 +73,10 @@ private:
     void playShowAnim(int id);
     void playHideAnim(int id);
 
+    void drawStarEffects();
+
     LytBase_c mLayout;
+    mEf::levelEffect_c mEffects[3][2];
     dTexMapColouriser_c mHeaderCol, mFooterCol;
     dKPNode_s *mpHeaderNode;
 
@@ -90,6 +91,7 @@ private:
     bool mInitalDispComplete;
     bool mDispFooter;
     bool mFooterVisible;
+    bool mDrawStarEffect;
 
 public:
     static dKPHud_c *m_instance;

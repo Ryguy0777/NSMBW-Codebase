@@ -1,3 +1,4 @@
+#pragma once
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
@@ -7,6 +8,12 @@
 #include <lib/egg/gfxe/eggScreen.h>
 
 #define STD_ZOOM 2.8f
+
+template <typename T>
+inline T min(T one, T two) { return (one < two) ? one : two; }
+
+template <typename T>
+inline T max(T a, T b) { return (a > b) ? a : b; }
 
 class dKPCamera_c : public dBase_c {
 public:

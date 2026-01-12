@@ -18,13 +18,13 @@
 
 #include <new/bases/d_level_info.hpp>
 #include <new/bases/d_world_info.hpp>
-// #include "koopatlas/mapdata.h"
-// #include "koopatlas/shop.h"
 #include <new/bases/koopatlas/d_kp_director.hpp>
 #include <new/bases/koopatlas/d_kp_hud.hpp>
-// #include "koopatlas/pathmanager.h"
+#include <new/bases/koopatlas/d_kp_map_data.hpp>
 #include <new/bases/koopatlas/d_kp_music.hpp>
+// #include "koopatlas/pathmanager.h"
 #include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
+// #include "koopatlas/shop.h"
 
 #ifdef KP_MAP_REPORT
 #define MapReport OSReport
@@ -146,11 +146,11 @@ public:
     dKPStarCoinMenu_c *mpCoins;
     dKPDirector_c *mpDirector;
 
-    //dKPMapData_c mMapData;
+    dKPMapData_c mMapData;
     //dKPPathManager_c mPathManager;
     dDvd::loader_c mMapListLoader;
 
-    const char *mMapPath;
+    const char *mpMapPath;
 
     void *mpCurrentLight;
     void *mpCurrentLightMap;

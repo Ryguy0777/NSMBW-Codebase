@@ -1,3 +1,4 @@
+#pragma once
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
@@ -40,22 +41,22 @@ public:
         void loadTexture(GXTexObj *obj);
 
         void loadCamera();
-        void loadCamera(mMtx_c matrix);
+        void loadCamera(nw4r::math::MTX34 matrix);
 
         void beginRendering();
         void endRendering();
 
         void drawLayers();
 
-        //void renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sector_s *sector);
-        //void renderDoodadLayer(dKPLayer_s *layer);
+        void renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sector_s *sector);
+        void renderDoodadLayer(dKPLayer_s *layer);
 
     public:
         mAllocator_c mAllocator;
 
     private:
         GXTexObj *mpCurrentTexture;
-        mMtx_c mRenderMtx;
+        nw4r::math::MTX34 mRenderMtx;
         float mBaseZ;
 
         int mMinX;
@@ -74,7 +75,7 @@ public:
     void spinLaunchStar();
 
     void spawnMapEffects();
-    //void renderPathLayer(dKPLayer_s *layer);
+    void renderPathLayer(dKPLayer_s *layer);
 
     dMapRender_c mRender;
     dScEffectProc_c mEffectProcs[EFFECT_PROC_COUNT];

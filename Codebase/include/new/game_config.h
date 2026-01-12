@@ -43,10 +43,17 @@
     //#define KP_MUSIC_DEBUGPRINT     // Writes music to the Exception Handler
     //#define KP_CAMERA_REPORT        // Prints camera info to the log
     //#define KP_CAMERA_DEBUG         // Prints camera + screen variables to the log
-    #define KP_MAP_TILE_REPORT      // Prints tile info to the log
-    #define KP_MAP_BOUND_REPORT     // Prints rendering bound info to the log
-    #define KP_MAP_DOODAD_REPORT    // Prints doodad info to the log
+    //#define KP_MAP_TILE_REPORT      // Prints tile info to the log
+    //#define KP_MAP_BOUND_REPORT     // Prints rendering bound info to the log
+    //#define KP_MAP_DOODAD_REPORT    // Prints doodad info to the log
 
 // TOGGLABLE FEATURES
+    // Skips drawing the topmost layer in Map 0 after the first show of the map
+    // Used in Newer for the initial fade-in clouds in W1
+    #define KP_SKIP_TOP_LAYER_W1
+
+    // Hides the completion stars on the HUD if the LevelInfo world is 15 (F)
+    // Intended for Newer's scrapped "Cutland" world
+    #define KP_HIDE_STARS_W15
 
 #endif

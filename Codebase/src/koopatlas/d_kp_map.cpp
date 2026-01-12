@@ -3,6 +3,8 @@
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <game/bases/d_res_mng.hpp>
+#include <game/cLib/c_counter.hpp>
+#include <lib/MSL/math.h>
 
 #include <new/bases/koopatlas/d_kp_map.hpp>
 #include <new/bases/koopatlas/d_kp_camera.hpp>
@@ -26,21 +28,13 @@ kmWritePointer(0x80984710, &dKPMap_c_classInit);
 dKPMap_c::dKPMap_c() {
     mDispLaunchStar = false;
 }
-static dDvd::loader_c s_temp_bgLoader;
-static bool didLoad;
+
 int dKPMap_c::create() {
-    if (didLoad == false) {
-        s_temp_bgLoader.request("/Koopatlas/Water.brres", 0, nullptr);
-        if (s_temp_bgLoader.GetBuffer() != nullptr) {
-            didLoad = true;
-        }
-        return false;
-    }
     mRender.mAllocator.attach(mHeap::g_gameHeaps[0], 0x20);
     mRender.create(&mRender.mAllocator, nullptr);
 
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
-    nw4r::g3d::ResFile rf(s_temp_bgLoader.GetBuffer());
+    nw4r::g3d::ResFile rf(dScKoopatlas_c::m_instance->mMapData.mBgLoader.GetBuffer());
     rf.CheckRevision();
     rf.Init();
     rf.Bind(rf);
@@ -134,8 +128,10 @@ int dKPMap_c::draw() {
         mEffectProcs[i].entry();
     }
 
-    //dKPMapData_c *dataCls = &dScKoopatlas_c::m_instance->mapData;
-    //renderPathLayer(dataCls->pathLayer);
+    dKPMapData_c *dataCls = &dScKoopatlas_c::m_instance->mMapData;
+    if (dataCls->mpPathLayer) {
+        renderPathLayer(dataCls->mpPathLayer);
+    }
     return true;
 }
 
@@ -221,39 +217,39 @@ dKPMap_c::dMapRender_c::dMapRender_c() { }
 void dKPMap_c::dMapRender_c::drawOpa() { }
 
 void dKPMap_c::dMapRender_c::drawXlu() {
-    //drawLayers();
+    drawLayers();
 }
 
-/*void dKPMap_c::dMapRender_c::loadTexture(GXTexObj *obj) {
-    if (currentTexture == obj)
+void dKPMap_c::dMapRender_c::loadTexture(GXTexObj *obj) {
+    if (mpCurrentTexture == obj)
         return;
 
     GXLoadTexObj(obj, GX_TEXMAP0);
-    currentTexture = obj;
+    mpCurrentTexture = obj;
 }
 
 void dKPMap_c::dMapRender_c::loadCamera() {
-    GXLoadPosMtxImm(renderMtx, GX_PNMTX0);
+    GXLoadPosMtxImm(mRenderMtx, GX_PNMTX0);
 }
 
-void dKPMap_c::dMapRender_c::loadCamera(mMtx_c matrix) {
+void dKPMap_c::dMapRender_c::loadCamera(nw4r::math::MTX34 matrix) {
     GXLoadPosMtxImm(matrix, GX_PNMTX0);
 }
 
 void dKPMap_c::dMapRender_c::beginRendering() {
-    currentTexture = 0;
+    mpCurrentTexture = nullptr;
 
-    nw4r::g3d::Camera cam3d(GetCameraByID(0));
-    cam3d.GetCameraMtx(&renderMtx);
-    MTXTransApply(renderMtx, renderMtx, 0, 0, baseZ);
+    nw4r::g3d::Camera cam3d(m3d::getCamera(0));
+    cam3d.GetCameraMtx(&mRenderMtx);
+    PSMTXTransApply(mRenderMtx, mRenderMtx, 0, 0, mBaseZ);
 
     GXSetCurrentMtx(GX_PNMTX0);
 
-    dWorldCamera_c *camObj = dWorldCamera_c::instance;
-    minX = ((int)camObj->screenLeft) / 24;
-    minY = ((int)(-camObj->screenTop) - 23) / 24;
-    maxX = (((int)(camObj->screenLeft + camObj->screenWidth)) + 23) / 24;
-    maxY = ((int)(-camObj->screenTop + camObj->screenHeight)) / 24;
+    dKPCamera_c *camera = dKPCamera_c::m_instance;
+    mMinX = ((int)camera->mScreenLeft) / 24;
+    mMinY = ((int)(-camera->mScreenTop) - 23) / 24;
+    mMaxX = (((int)(camera->mScreenLeft + camera->mScreenWidth)) + 23) / 24;
+    mMaxY = ((int)(-camera->mScreenTop + camera->mScreenHeight)) / 24;
 
     GXClearVtxDesc();
 
@@ -269,13 +265,14 @@ void dKPMap_c::dMapRender_c::beginRendering() {
     GXSetVtxAttrFmt(GX_VTXFMT1, GX_VA_TEX0, GX_TEX_ST, GX_U8, 8);
 
     GXSetNumIndStages(0);
-    for (int i = 0; i < 0x10; i++)
-        GXSetTevDirect(i);
+    for (int i = 0; i < 0x10; i++) {
+        GXSetTevDirect((GXTevStageID)i);
+    }
 
     GXSetNumChans(0);
     GXSetNumTexGens(1);
 
-    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_DTTIDENTITY);
+    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
 
     GXSetNumTevStages(1);
     GXSetNumIndStages(0);
@@ -293,57 +290,69 @@ void dKPMap_c::dMapRender_c::beginRendering() {
     GXSetZMode(GX_TRUE, GX_LEQUAL, GX_FALSE);
     GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_OR, GX_GREATER, 0);
 
-    GXSetFog(GX_FOG_NONE, 0, 0, 0, 0, (GXColor){0,0,0,0});
+    GXColor fogColor = {0, 0, 0, 0};
+    GXSetFog(GX_FOG_NONE, fogColor, 0.0f, 0.0f, 0.0f, 0.0f);
     GXSetFogRangeAdj(GX_FALSE, 0, 0);
 
     GXSetCullMode(GX_CULL_NONE);
 
     GXSetDither(GX_TRUE);
 
-    GXSetTevColor(GX_TEVREG0, (GXColor){255,255,255,255});
-    GXSetTevColor(GX_TEVREG1, (GXColor){0,0,0,255});
+    GXColor regColor0 = {255, 255, 255, 255};
+    GXColor regColor1 = {0, 0, 0, 255};
+    GXSetTevColor(GX_TEVREG0, regColor0);
+    GXSetTevColor(GX_TEVREG1, regColor1);
 }
 
 void dKPMap_c::dMapRender_c::endRendering() { }
 
 void dKPMap_c::dMapRender_c::drawLayers() {
     dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
-    dKPMapData_c *dataCls = &wm->mapData;
-    dKPMapFile_s *data = dataCls->data;
+    dKPMapData_c::MapFile_s *data = wm->mMapData.mpData;
 
-    baseZ = -100.0f - (2 * data->layerCount);
+    if (data == nullptr) {
+        return;
+    }
 
-    bool skipFirstLayer = (wm->currentMapID == 0) && !(wm->isFirstPlay);
+    mBaseZ = -100.0f - (2 * data->mLayerCount);
+
+#ifdef KP_SKIP_TOP_LAYER_W1
+    bool skipFirstLayer = (wm->mCurrentMapID == 0) && !(wm->mIsFirstPlay);
+#endif
 
     beginRendering();
 
-    for (int iLayer = data->layerCount - 1; iLayer >= 0; iLayer--) {
+    for (int iLayer = data->mLayerCount - 1; iLayer >= 0; iLayer--) {
+#ifdef KP_SKIP_TOP_LAYER_W1
         if (skipFirstLayer && iLayer == 0)
             continue;
+#endif
 
-        dKPLayer_s *layer = data->layers[iLayer];
-        renderMtx[2][3] += 2.0f;
+        dKPLayer_s *layer = data->mpLayers[iLayer];
+        mRenderMtx[2][3] += 2.0f;
 
-        if (layer->type == dKPLayer_s::PATHS) {
-            // rebase the camera matrix
-            baseZ = 3500.0f;
-            nw4r::g3d::Camera cam3d(GetCameraByID(0));
-            cam3d.GetCameraMtx(&renderMtx);
-            MTXTransApply(renderMtx, renderMtx, 0, 0, baseZ);
+        if (layer->mLayerType == dKPLayer_s::PATH) {
+            // Rebase the camera matrix
+            mBaseZ = 3500.0f;
+            nw4r::g3d::Camera cam3d(m3d::getCamera(0));
+            cam3d.GetCameraMtx(&mRenderMtx);
+            PSMTXTransApply(mRenderMtx, mRenderMtx, 0, 0, mBaseZ);
         }
 
-        if (layer->alpha == 0)
-            continue; // invisible
+        // Invisible
+        if (layer->mLayerAlpha == 0)
+            continue;
 
-        TileReport("Checking layer %d with type %d\n", iLayer, layer->type);
+        TileReport("Checking layer %d with type %d\n", iLayer, layer->mLayerType);
 
-        GXColor whichCol = (GXColor){255,255,255,layer->alpha};
-        GXSetTevColor(GX_TEVREG0, whichCol);
+        GXColor layerClr = {255,255,255,layer->mLayerAlpha};
+        GXSetTevColor(GX_TEVREG0, layerClr);
 
-        if (layer->type == dKPLayer_s::OBJECTS)
-            renderTileLayer(layer, data->sectors);
-        else if (layer->type == dKPLayer_s::DOODADS)
+        if (layer->mLayerType == dKPLayer_s::OBJECT) {
+            renderTileLayer(layer, data->mpSectors);
+        } else if (layer->mLayerType == dKPLayer_s::DOODAD) {
             renderDoodadLayer(layer);
+        }
     }
 
     endRendering();
@@ -352,29 +361,27 @@ void dKPMap_c::dMapRender_c::drawLayers() {
 void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sector_s *sectors) {
     //TileReport("Rendering layer %p\n", layer);
 
-    // don't render it if we don't need to
-    if (maxX < layer->left || minX > layer->right)
+    // Don't render it if we don't need to
+    if (mMaxX < layer->mLeft || mMinX > layer->mRight)
         return;
-    if (maxY < layer->top || minY > layer->bottom)
+    if (mMaxY < layer->mTop || mMinY > layer->mBottom)
         return;
 
-    // set up
     loadCamera();
+    loadTexture(layer->mpTileset);
 
-    loadTexture(layer->tileset);
+    // Figure out -what- to render
+    BoundReport("Regular render area: %d,%d to %d,%d\n", mMinX, mMinY, mMaxX, mMaxY);
+    BoundReport("Layer bounds: %d,%d to %d,%d\n", layer->mLeft, layer->mTop, layer->mRight, layer->mBottom);
+    int toRenderMinX = max(mMinX, layer->mLeft);
+    int toRenderMinY = max(mMinY, layer->mTop);
 
-    // figure out -what- to render
-    BoundReport("Regular render area: %d,%d to %d,%d\n", minX, minY, maxX, maxY);
-    BoundReport("Layer bounds: %d,%d to %d,%d\n", layer->left, layer->top, layer->right, layer->bottom);
-    int toRenderMinX = max(minX, layer->left);
-    int toRenderMinY = max(minY, layer->top);
+    int toRenderMaxX = min(mMaxX, layer->mRight);
+    int toRenderMaxY = min(mMaxY, layer->mBottom);
 
-    int toRenderMaxX = min(maxX, layer->right);
-    int toRenderMaxY = min(maxY, layer->bottom);
-
-    int sectorBaseX = layer->sectorLeft;
-    int sectorBaseY = layer->sectorTop;
-    int sectorIndexStride = (layer->sectorRight - layer->sectorLeft + 1);
+    int sectorBaseX = layer->mSectorLeft;
+    int sectorBaseY = layer->mSectorTop;
+    int sectorIndexStride = (layer->mSectorRight - layer->mSectorLeft + 1);
 
     int sectorMinX = toRenderMinX / 16;
     int sectorMinY = toRenderMinY / 16;
@@ -392,7 +399,7 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
         int worldSectorY = sectorY << 4;
 
         for (int sectorX = sectorMinX; sectorX <= sectorMaxX; sectorX++) {
-            u16 index = layer->indices[baseIndex + sectorX - sectorBaseX];
+            u16 index = layer->mIndices[baseIndex + sectorX - sectorBaseX];
             TileReport("Sector index @ %d,%d: %d\n", sectorX, sectorY, index);
             if (index == 0xFFFF)
                 continue;
@@ -427,7 +434,6 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
                     float coordY1 = yMult * (tileY + 2.0f);
                     float coordY2 = yMult * (tileY + 26.0f);
 
-
                     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
                     GXPosition2s16(worldX + 24, worldY - 24);
                     GXTexCoord2f32(coordX2, coordY2);
@@ -449,134 +455,138 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
 }
 
 void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
-    for (int i = 0; i < layer->doodadCount; i++) {
-        dKPDoodad_s *doodad = layer->doodads[i];
-        DoodadReport("Doodad @ %f,%f sized %f,%f with angle %f\n", doodad->x, doodad->y, doodad->width, doodad->height, doodad->angle);
+    for (int i = 0; i < layer->mDoodadCount; i++) {
+        // TODO: Implement doodad culling
 
-        // ANIMATE THE FUCKER
-        float effectiveX = doodad->x, effectiveY = doodad->y;
-        float effectiveWidth = doodad->width, effectiveHeight = doodad->height;
-        float effectiveAngle = doodad->angle;
-        int effectiveAlpha = layer->alpha;
+        dKPDoodad_s *doodad = layer->mpDoodads[i];
+        DoodadReport("Doodad @ %f,%f sized %f,%f with angle %f\n", doodad->mPos.x, doodad->mPos.y, doodad->mWidth, doodad->mHeight, doodad->mAngle);
 
-        if (doodad->animationCount > 0) {
-            for (int j = 0; j < doodad->animationCount; j++) {
-                dKPDoodad_s::animation_s *anim = &doodad->animations[j];
+        float effectiveX = doodad->mPos.x, effectiveY = doodad->mPos.y;
+        float effectiveWidth = doodad->mWidth, effectiveHeight = doodad->mHeight;
+        float effectiveAngle = doodad->mAngle;
+        int effectiveAlpha = layer->mLayerAlpha;
 
-                if (anim->delayOffset == 0) {
-                    u32 baseTick = anim->baseTick;
+        // Animate it
+        if (doodad->mAnimCount > 0) {
+            for (int j = 0; j < doodad->mAnimCount; j++) {
+                dKPDoodad_s::Animation_s *anim = &doodad->mAnims[j];
+
+                if (anim->mInitialDelay == 0) {
+                    u32 baseTick = anim->mBaseTick;
                     if (baseTick == 0) {
-                        anim->baseTick = baseTick = GlobalTickCount;
+                        anim->mBaseTick = baseTick = cCounter_c::m_gameFrame;
                     }
 
-                    u32 elapsed = GlobalTickCount - baseTick;
-                    if (anim->isReversed)
-                        elapsed = anim->frameCount - 1 - elapsed;
+                    u32 elapsed = cCounter_c::m_gameFrame - baseTick;
+                    if (anim->mIsReverse) {
+                        elapsed = anim->mFrameCount - 1 - elapsed;
+                    }
                     u32 elapsedAdjusted = elapsed;
 
-                    if (elapsed >= anim->frameCount) {
-                        if (elapsed >= (anim->frameCount + anim->delay)) {
+                    if (elapsed >= anim->mFrameCount) {
+                        if (elapsed >= (anim->mFrameCount + anim->mDelay)) {
 
-                            // we've reached the end
-                            switch (anim->loop) {
-                                case dKPDoodad_s::animation_s::CONTIGUOUS:
+                            // We've reached the end
+                            switch (anim->mLoopType) {
+                                case dKPDoodad_s::Animation_s::CONTIGUOUS:
                                     // Stop here
-                                    elapsed = anim->frameCount - 1;
+                                    elapsed = anim->mFrameCount - 1;
                                     break;
 
-                                case dKPDoodad_s::animation_s::LOOP:
+                                case dKPDoodad_s::Animation_s::LOOP:
                                     // Start over
                                     elapsed = 0;
-                                    anim->baseTick = GlobalTickCount;
+                                    anim->mBaseTick = cCounter_c::m_gameFrame;
                                     break;
 
-                                case dKPDoodad_s::animation_s::REVERSE_LOOP:
+                                case dKPDoodad_s::Animation_s::REVERSE_LOOP:
                                     // Change direction
-                                    anim->isReversed = !anim->isReversed;
-                                    elapsed = (anim->isReversed) ? (anim->frameCount - 1) : 0;
-                                    anim->baseTick = GlobalTickCount;
+                                    anim->mIsReverse = !anim->mIsReverse;
+                                    elapsed = (anim->mIsReverse) ? (anim->mFrameCount - 1) : 0;
+                                    anim->mBaseTick = cCounter_c::m_gameFrame;
                                     break;
                             }
                             elapsedAdjusted = elapsed;
                         } else {
-                            elapsedAdjusted = anim->frameCount;
+                            elapsedAdjusted = anim->mFrameCount;
                         }
                     }
 
-                    // now calculate the thing
-                    float progress = elapsedAdjusted / (float)anim->frameCount;
+                    // Calculate the thing
+                    float progress = elapsedAdjusted / (float)anim->mFrameCount;
                     // float progress = elapsed / (float)anim->frameCount;
                     float value;
 
-                    switch (anim->curve) {
-                        case dKPDoodad_s::animation_s::LINEAR:
+                    switch (anim->mCurveType) {
+                        case dKPDoodad_s::Animation_s::LINEAR:
                             value = progress;
                             break;
-                        case dKPDoodad_s::animation_s::SIN:
-                            value = (sin(((progress * M_PI * 2)) - M_PI_2) + 1) / 2;
+                        case dKPDoodad_s::Animation_s::SIN:
+                            value = (sin(((progress * M_PI * 2)) - (M_PI/2)) + 1) / 2;
                             break;
-                        case dKPDoodad_s::animation_s::COS:
-                            value = (cos(((progress * M_PI * 2)) - M_PI_2) + 1) / 2;
+                        case dKPDoodad_s::Animation_s::COS:
+                            value = (cos(((progress * M_PI * 2)) - (M_PI/2)) + 1) / 2;
                             break;
                     }
 
-                    float delta = anim->end - anim->start;
+                    float delta = anim->mEnd - anim->mStart;
                     float frame;
 
-                    if (anim->isReversed)
-                        frame = anim->start + ceil(delta * value);
+                    if (anim->mIsReverse)
+                        frame = anim->mStart + ceil(delta * value);
                     else
-                        frame = anim->start + (delta * value);
+                        frame = anim->mStart + (delta * value);
 
                     float scaleYMod;
-                    // and apply it!
-                    switch (anim->type) {
-                        case dKPDoodad_s::animation_s::X_POS:
+
+                    // Apply it
+                    switch (anim->mAnimType) {
+                        case dKPDoodad_s::Animation_s::X_POS:
                             effectiveX += frame;
                             break;
-                        case dKPDoodad_s::animation_s::Y_POS:
+                        case dKPDoodad_s::Animation_s::Y_POS:
                             effectiveY += frame;
                             break;
-                        case dKPDoodad_s::animation_s::ANGLE:
+                        case dKPDoodad_s::Animation_s::ANGLE:
                             effectiveAngle += frame;
                             break;
-                        case dKPDoodad_s::animation_s::X_SCALE:
+                        case dKPDoodad_s::Animation_s::X_SCALE:
                             effectiveWidth = (effectiveWidth * frame / 100.0);
                             break;
-                        case dKPDoodad_s::animation_s::Y_SCALE:
+                        case dKPDoodad_s::Animation_s::Y_SCALE:
                             effectiveHeight = (effectiveHeight * frame / 100.0);
 
-                            scaleYMod = doodad->height - effectiveHeight;
+                            scaleYMod = doodad->mHeight - effectiveHeight;
                             effectiveY += scaleYMod;
                             break;
-                        case dKPDoodad_s::animation_s::OPACITY:
+                        case dKPDoodad_s::Animation_s::OPACITY:
                             effectiveAlpha = (effectiveAlpha * (frame * 2.55f)) / 255;
                             break;
                     }
-                }
-                else {
-                anim->delayOffset -= 1;
+                } else {
+                    // Doodad has an initial delay
+                    anim->mInitialDelay -= 1;
                 }
             }
         }
 
         float halfW = effectiveWidth * 0.5f, halfH = effectiveHeight * 0.5f;
 
-        Mtx doodadMtx;
-        MTXTransApply(renderMtx, doodadMtx, effectiveX + halfW, -effectiveY - halfH, 0);
+        nw4r::math::MTX34 doodadMtx;
+        PSMTXTransApply(mRenderMtx, doodadMtx, effectiveX + halfW, -effectiveY - halfH, 0);
 
         if (effectiveAngle != 0) {
             Mtx rotMtx;
-            MTXRotDeg(rotMtx, 'z', -effectiveAngle);
+            PSMTXRotRad(rotMtx, 'z', (-effectiveAngle)*0.01745329252f);
 
-            MTXConcat(doodadMtx, rotMtx, doodadMtx);
+            PSMTXConcat(doodadMtx, rotMtx, doodadMtx);
         }
 
-        GXColor whichCol = (GXColor){255,255,255,u8(effectiveAlpha)};
-        GXSetTevColor(GX_TEVREG0, whichCol);
+        GXColor doodadClr = {255,255,255,u8(effectiveAlpha)};
+        GXSetTevColor(GX_TEVREG0, doodadClr);
 
         loadCamera(doodadMtx);
-        loadTexture(doodad->texObj);
+        loadTexture(doodad->mpTexObj);
 
         GXBegin(GX_QUADS, GX_VTXFMT1, 4);
         GXPosition2f32(halfW, -halfH);
@@ -592,26 +602,27 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
 }
 
 void dKPMap_c::renderPathLayer(dKPLayer_s *layer) {
-    for (int i = 0; i < layer->nodeCount; i++) {
-        dKPNode_s *node = layer->nodes[i];
+    for (int i = 0; i < layer->mNodeCount; i++) {
+        dKPNode_s *node = layer->mpNodes[i];
 
-        if (node->type == dKPNode_s::LEVEL) {
+        if (node->mNodeType == dKPNode_s::LEVEL) {
+            OSReport("Node %d: POS:%f,%f, %02d-%02d\n", i, node->mPosX, node->mPosY, node->mLevelNumber[0], node->mLevelNumber[1]);
+            // Used for the "ending scene" where the W9 path appears
             // TODO: Dehardcode this, if possible
-            if (node->levelNumber[0] == 80)
+            if (node->mLevelNumber[0] == 80) {
                 continue;
+            }
 
-            short rz = 0x6000;
-            short rx = 0x4000;
-            short ry = 0x8000;
+            mAng3_c angle(0x4000, 0x8000, 0x6000);
 
-            node->extra->matrix.translation(node->x, -node->y + 4.0, 498.0);
-            node->extra->matrix.applyRotationYXZ(&ry, &rx, &rz);
-            node->extra->model.setDrawMatrix(node->extra->matrix);
-            node->extra->model.setScale(0.8f, 0.8f, 0.8f);
-            node->extra->model.calcWorld(false);
+            PSMTXTrans(node->mpNodeMdl->mMatrix, node->mPosX, -node->mPosY + 4.0, 498.0);
+            node->mpNodeMdl->mMatrix.ZXYrotM(angle.y, angle.x, angle.z);
+            node->mpNodeMdl->mModel.setLocalMtx(&node->mpNodeMdl->mMatrix);
+            node->mpNodeMdl->mModel.setScale(0.8f, 0.8f, 0.8f);
+            node->mpNodeMdl->mModel.calc(false);
 
-            node->extra->model.scheduleForDrawing();
+            node->mpNodeMdl->mModel.entry();
         }
     }
-}*/
+}
 #endif

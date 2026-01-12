@@ -25,9 +25,6 @@
 
 #define SMOOTHSTEP(x) ((x) * (x) * (3 - 2 * (x)))
 
-template <typename T>
-inline T max(T a, T b) { return (a > b) ? a : b; }
-
 dKPCamera_c *dKPCamera_c::m_instance = nullptr;
 
 dKPCamera_c *dKPCamera_c_classInit() {
@@ -38,7 +35,6 @@ dKPCamera_c *dKPCamera_c_classInit() {
 
 // Replace WORLD_CAMERA actor
 kmWritePointer(0x8098EEC8, &dKPCamera_c_classInit);
-
 
 dKPCamera_c::dKPCamera_c() {
     Vec camPos = {0.0, 10.0, 0.0};
@@ -205,17 +201,17 @@ void dKPCamera_c::calcCameras() {
 }
 
 void dKPCamera_c::updateCameras() {
-    //nw4r::g3d::Camera cam0(m3d::getCamera(0));
+    nw4r::g3d::Camera cam0 = m3d::getCamera(0);
     //mCamera3D.setG3DCamera(cam0);
-    //mScreen.CopyToG3D(cam0);
+    mScreen.CopyToG3D(cam0);
 
-    //nw4r::g3d::Camera cam1(m3d::getCamera(1));
-    //mOrthoData2D.setG3DCamera(cam1);
-    //mCamera2D.setG3DCamera(cam1);
+    nw4r::g3d::Camera cam1(m3d::getCamera(1));
+    mOrthoData2D.setG3DCamera(cam1);
+    mCamera2D.setG3DCamera(cam1);
 }
 
 void dKPCamera_c::setPosAndTarget(float camPosZ) {
-    CameraDebug("Doing \"stuff\"\n");
+    CameraDebug("Setting camera pos/target\n");
     mCamTarget = nw4r::math::VEC3(mScreenLeft + (mScreenWidth * 0.5), (mScreenTop - mScreenHeight) + (mScreenHeight * 0.5), 0.0);
     mCamPos = nw4r::math::VEC3(mCamTarget.x, mCamTarget.y, camPosZ);
     CameraDebug("Target (%f, %f, %f)\n", mCamTarget.x, mCamTarget.y, mCamTarget.z);

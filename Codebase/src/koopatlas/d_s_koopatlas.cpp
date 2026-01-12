@@ -155,8 +155,8 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void *ptr) {
     dResMng_c::m_instance->setRes("WorldMap", "SI_propeller", nullptr);
     dResMng_c::m_instance->setRes("WorldMap", "SI_star", nullptr);
 
-    /*dResMng_c::m_instance->setRes("Object", "cobCourse", nullptr);
-    dResMng_c::m_instance->setRes("Object", "I_kinoko_bundle", nullptr);
+    dResMng_c::m_instance->setRes("Koopatlas", "cobCourse", nullptr);
+    /*dResMng_c::m_instance->setRes("Object", "I_kinoko_bundle", nullptr);
     dResMng_c::m_instance->setRes("Object", "lakitu", nullptr);
     dResMng_c::m_instance->setRes("Object", "star_coin", nullptr);
     dResMng_c::m_instance->setRes("Object", "StarRing", nullptr);*/
@@ -178,34 +178,33 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_EndLoading(void *ptr) {
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources1(void *ptr) {
-    SpammyReport("KPInitPhase_LoadResources1 returning true\n");
+    SpammyReport("KPInitPhase_LoadResources1 called\n");
 
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-    //bool result = wm->mMapListLoader.request("/Maps/List.txt", 0, nullptr) != nullptr;
-    //return (sPhase_c::METHOD_RESULT_e)result;
-    return (sPhase_c::METHOD_RESULT_e)true;
+    bool result = wm->mMapListLoader.request("/Koopatlas/MapList.txt", 0, nullptr) != nullptr;
+    return (sPhase_c::METHOD_RESULT_e)result;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources2(void *ptr) {
-    SpammyReport("KPInitPhase_LoadResources2 returning true\n");
+    SpammyReport("KPInitPhase_LoadResources2 called\n");
 
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-    /*if (wm->mMapPath == 0) {
-        wm->mMapPath = wm->getMapNameForIndex(wm->mCurrentMapID);
-        if (wm->mMapPath == 0)
-            wm->mMapPath = wm->getMapNameForIndex(0);
-        if (!strcmp(wm->mMapPath, "/Maps/WSEL.kpbin"))
+    if (wm->mpMapPath == nullptr) {
+        //wm->mpMapPath = wm->getMapNameForIndex(wm->mCurrentMapID);
+        wm->mpMapPath = wm->getMapNameForIndex(0);
+        if (wm->mpMapPath == nullptr)
+            wm->mpMapPath = wm->getMapNameForIndex(0);
+        if (!strcmp(wm->mpMapPath, "/Maps/WSEL.kpbin"))
             wm->mWarpZoneHacks = true;
         else
             wm->mWarpZoneHacks = false;
-        MapReport("Loading map: %s\n", wm->mMapPath);
+        MapReport("Loading map: %s\n", wm->mpMapPath);
     }
 
-    bool result = wm->mMapData.load(wm->mMapPath);
-    return (sPhase_c::METHOD_RESULT_e)result;*/
-    return (sPhase_c::METHOD_RESULT_e)true;
+    bool result = wm->mMapData.load(wm->mpMapPath);
+    return (sPhase_c::METHOD_RESULT_e)result;
 }
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_ChkLayoutLoad(void *ptr) {
@@ -265,10 +264,8 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
 
     // And put the player into position
     //dKPNode_s *cNode = wm->mPathManager.currentNode;
-    //wm->mpPlayer->mPos = mVec3_c(cNode->x, -cNode->y, wm->mpPlayer->mPos.z);
-
-    // Temp
-    wm->mpPlayer->mPos = mVec3_c(0.0f, 0.0f, wm->mpPlayer->mPos.z);
+    //dKPNode_s *cNode = wm->mMapData.mpPathLayer->mpNodes[3];
+    //wm->mpPlayer->mPos = mVec3_c(cNode->mPosX, -cNode->mPosY, wm->mpPlayer->mPos.z);
 
     SpammyReport("Creating MAP\n");
     wm->mpMap = (dKPMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);

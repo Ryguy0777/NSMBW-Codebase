@@ -8,15 +8,7 @@ namespace EGG {
 
 /// @unofficial
 class LookAtCamera /*: public BaseCamera*/ {
-private:
-    nw4r::math::MTX34 mMatrix;
-    nw4r::math::MTX34 mPreviousMatrix;
-
 public:
-    nw4r::math::VEC3 mCamPos;
-    nw4r::math::VEC3 mTarget;
-    nw4r::math::VEC3 mCamUp;
-
     virtual nw4r::math::MTX34 getViewMatrix();
     virtual nw4r::math::MTX34 getViewMatrix() const;
     virtual void updateMatrix();
@@ -29,6 +21,15 @@ public:
     virtual Mtx *getViewMatrixOld();
 
     void setG3DCamera(nw4r::g3d::Camera &);
+
+private:
+    nw4r::math::MTX34 mViewMatrix;
+    nw4r::math::MTX34 mViewMatrixOld;
+
+public:
+    nw4r::math::VEC3 mCamPos;
+    nw4r::math::VEC3 mTarget;
+    nw4r::math::VEC3 mCamUp;
 };
 
 } // namespace EGG

@@ -2,16 +2,15 @@ KOOPATLAS TODO:
 - Rename all members and files and stuff
 - Remove any hammer suit hacks
 - Convert file indentations to spaces
-- Make circle wipes be focused on player position
 
-Other TODO:
+Miscellaneous TODO:
 - Implement internal-font portion of MoreFonts, then use that for Newer's pause menu layout
 - Add support for overiding the BMG font via userdata
 - Move pane_userdata hacks to whatever the right place is
 - Revamp Star Coins Menu arrows to have idle animations and look more like the retail arrow layouts
-
-Others:
-- Finish porting music, it needs some dvd stuff and i need to figure out how to use the Stop func with these headers
+- Add succession scrolling to the Star Coins Menu
+- Add sparkles to the HUD stars
+- Make circle wipes be focused on player position (they might already be, but player doesn't work currently)
 
 Bugs:
 - HUD and SCM don't scale correctly in 4:3 mode
@@ -24,7 +23,10 @@ Planned Features/TODO:
 - World Select (rsm's, not retail)
 - Retail styled HUD (maybe, togglable)
 - CLR anims for Course Nodes
+- Start Nodes (implement same way as the improved level nodes)
 - Freeze map when displaying a warning screen
 - Make player shrink when opening a menu
 - Togglable option for level nodes to not render (specifically to de-hardcode that one node in the W1 map)
 - Dehardcoded effect/model positions (maybe)
+- Make map background based on the W2 quicksand
+- Make alt water background that has a visible ocean floor (like retail W4)

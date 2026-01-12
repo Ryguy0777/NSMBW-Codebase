@@ -25,10 +25,11 @@ static const char *patNames[] = {"PB_switch_swim", "PB_switch_swim", "PLMB_switc
 
 int daKPPlayer_c::create() {
     mpPyMdlMng = new dPyMdlMng_c(dPyMdlMng_c::MODEL_MARIO);
-    dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
 
+    dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
     pyMdl->mSceneType = 1;
     pyMdl->mPlayerID = 0;
+
     pyMdl->mAllocator.createFrmHeap(0xC000, mHeap::g_gameHeaps[0], 0, 0x20, mHeap::OPT_0);
     pyMdl->createModel();
 
@@ -40,15 +41,16 @@ int daKPPlayer_c::create() {
     }*/
 
     pyMdl->mAllocator.adjustFrmHeap();
+
     pyMdl->setPlayerMode(3);
     pyMdl->initialize();
 
-    pyMdl->setAnm(0, 1.2, 10.0, 0.0);
+    pyMdl->setAnm(dPyMdlBase_c::WAIT, 1.2, 10.0, 0.0);
     mpPyMdlMng->calc(mVec3_c(0.0, 100.0, -100.0), mAng3_c(0,0,0), mVec3_c(2.0, 2.0, 2.0));
 
-    mPos = mVec3_c(0.0f,0.0f,3000.0f);
-    mAngle = mAng3_c(0x1800,0,0);
-    mScale = mVec3_c(1.6f,1.6f,1.6f);
+    mPos = mVec3_c(0.0f, 0.0f, 3000.0f);
+    mAngle = mAng3_c(0x1800, 0, 0);
+    mScale = mVec3_c(1.6f, 1.6f, 1.6f);
 
     mHasEffect = false;
     mHasSound = false;
@@ -85,15 +87,16 @@ int daKPPlayer_c::execute() {
     mpPyMdlMng->play();
     //pats[((dPlayerModel_c*)mpPyMdlMng->mdlClass)->currentPlayerModelID].process();
 
-    mMtx_c myMatrix;
-    PSMTXScale(myMatrix, mScale.x, mScale.y, mScale.z);
-    myMatrix.trans(mPos.x, mPos.y + mJumpOffset, mPos.z);
-    if (dScKoopatlas_c::m_instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED))
-        myMatrix.trans(0, 0, 600.0f);
-    myMatrix.XrotM(mAngle.x);
-    myMatrix.YrotM(mAngle.y);
+    mMtx_c matrix;
+    PSMTXScale(matrix, mScale.x, mScale.y, mScale.z);
+    PSMTXTrans(matrix, mPos.x, mPos.y + mJumpOffset, mPos.z);
+    if (dScKoopatlas_c::m_instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED)) {
+        matrix.trans(0, 0, 600.0f);
+    }
+    matrix.XrotM(mAngle.x);
+    matrix.YrotM(mAngle.y);
     // Z is unused for now
-    mpPyMdlMng->calc(myMatrix);
+    mpPyMdlMng->calc(matrix);
 
     if (dScKoopatlas_c::m_instance->chkMapIdleState()) {
         if (mHasEffect) {
@@ -144,7 +147,7 @@ void daKPPlayer_c::startAnimation(int id, float frame, float unk, float updateRa
     mCurrentFrame = frame;
     mCurrentUnk = unk;
     mCurrentUpdateRate = updateRate;
-    this->mpPyMdlMng->mpMdl->setAnm(id, frame, unk, updateRate);
+    mpPyMdlMng->mpMdl->setAnm(id, frame, unk, updateRate);
 
     //if (isOldSwimming != isNewSwimming)
     //	bindPats();
