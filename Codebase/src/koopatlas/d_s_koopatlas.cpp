@@ -34,6 +34,8 @@
 #include <game/snd/snd_scene_manager.hpp>
 #include <lib/egg/gfxe/eggStateGX.h>
 
+void dScKoopatlas_c_painter();
+
 // Reset stage exit mode after a Game Over
 extern int m_exitMode__10dScStage_c;
 kmBranchDefAsm(0x809216EC, 0x809216F0) {
@@ -384,7 +386,7 @@ int dScKoopatlas_c::create() {
     fBase_c::createChild(fProfile::WORLD_CAMERA, this, 0, 0);
 
     SpammyReport("Setting Draw Function\n");
-    dGraph_c::ms_Instance->mpDrawFunc = KoopatlasDrawFunc;
+    dGraph_c::ms_Instance->mpPainterFunc = dScKoopatlas_c_painter;
 
 
     SpammyReport("Checking cutscene/behavior params\n");
@@ -1228,7 +1230,7 @@ void dScKoopatlas_c::executeState_CompletionMsgCloseWait() {
 void dScKoopatlas_c::finalizeState_CompletionMsgCloseWait() { }
 
 
-void KoopatlasDrawFunc() {
+void dScKoopatlas_c_painter() {
     m3d::reset();
     m3d::setCurrentCamera(0);
     m3d::screenEffectReset(m3d::getCurrentCameraID(), dKPCamera_c::m_instance->mScreen);

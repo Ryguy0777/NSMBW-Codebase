@@ -38,8 +38,6 @@
 #define SpammyReport(...)
 #endif
 
-void KoopatlasDrawFunc();
-
 int SearchForIndexOfPlayerID(int id);
 
 #define KP_HUD WM_DANCE_PAKKUN

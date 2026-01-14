@@ -2,7 +2,7 @@
 
 class dGraph_c {
 public:
-    void *mpDrawFunc;
+    void (*mpPainterFunc)();
 
     static dGraph_c *ms_Instance;
 };
