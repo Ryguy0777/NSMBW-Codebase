@@ -2,6 +2,8 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/koopatlas_config.h>
+
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_s_effect_proc.hpp>
 #include <game/mLib/m_3d.hpp>

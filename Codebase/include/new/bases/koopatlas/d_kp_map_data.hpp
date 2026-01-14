@@ -2,6 +2,7 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/koopatlas_config.h>
 
 #include <game/bases/d_dvd.hpp>
 #include <game/bases/d_heap_allocator.hpp>
@@ -323,9 +324,4 @@ public:
 
     dKPNodeMdl_c *mpNodeMdls;
 };
-
-
-
-
 #endif
-

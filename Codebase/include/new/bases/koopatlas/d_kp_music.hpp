@@ -2,6 +2,8 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/koopatlas_config.h>
+
 #include <new/custom_music.hpp>
 #include <nw4r/snd.h>
 

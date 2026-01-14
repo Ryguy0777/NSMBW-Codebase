@@ -2,6 +2,8 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/koopatlas_config.h>
+
 #include <new/bases/koopatlas/d_kp_map_data.hpp>
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <new/bases/koopatlas/d_tex_map_colouriser.hpp>

@@ -2,6 +2,8 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/koopatlas_config.h>
+
 #include <game/bases/d_continue.hpp>
 #include <game/bases/d_course_select_menu.hpp>
 #include <game/bases/d_dvd.hpp>

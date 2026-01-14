@@ -2,6 +2,8 @@
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/koopatlas_config.h>
+
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 
 #include <game/bases/d_base.hpp>

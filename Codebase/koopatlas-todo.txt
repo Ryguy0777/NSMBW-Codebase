@@ -13,7 +13,7 @@ Miscellaneous TODO:
 - Make circle wipes be focused on player position (they might already be, but player doesn't work currently)
 
 Bugs:
-- HUD and SCM don't scale correctly in 4:3 mode
+- [Newer bug] Exiting from a "cave entrance" will scale the player incorrectly, they're slightly too small
 
 Planned Features/TODO:
 - Add support for "back entrances" where a course will auto-begin when walking onto the node
