@@ -1,7 +1,7 @@
 #include <kamek.h>
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_DEV_ENABLED
+#if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_STAR_COINS_MENU)
 #include <constants/sound_list.h>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_game_key.hpp>
@@ -18,15 +18,15 @@ dKPStarCoinMenu_c *dKPStarCoinMenu_c_classInit() {
     return c;
 }
 
-// Replace WM_GHOST actor
-kmWritePointer(0x80982D1C, &dKPStarCoinMenu_c_classInit);
+// Replace COLLECTION_COIN actor
+kmWritePointer(0x8093F810, &dKPStarCoinMenu_c_classInit);
 
-dKPStarCoinMenu_c::dKPStarCoinMenu_c() : mStateMgr(*this, StateID_Hidden) {
+dKPStarCoinMenu_c::dKPStarCoinMenu_c() : mStateMgr(*this, StateID_Initial) {
     mHasLayoutLoaded = false;
     mIsVisible = false;
 }
 
-STATE_DEFINE(dKPStarCoinMenu_c, Hidden);
+STATE_DEFINE(dKPStarCoinMenu_c, Initial);
 STATE_DEFINE(dKPStarCoinMenu_c, ShowWait);
 STATE_DEFINE(dKPStarCoinMenu_c, ShowSectionWait);
 STATE_DEFINE(dKPStarCoinMenu_c, Wait);
@@ -41,10 +41,12 @@ int dKPStarCoinMenu_c::create() {
 
     mLayout.build("starCoins_00.brlyt", nullptr);
 
-    mLayout.getRootPane()->SetSRTElement(0, -112.0f);
+    mpRootPane = mLayout.getRootPane();
+
+    mpRootPane->SetSRTElement(0, -112.0f);
     if (!dGameCom::GetAspectRatio()) {
-        mLayout.getRootPane()->SetSRTElement(6, 19.0f/26.0f);
-        mLayout.getRootPane()->SetSRTElement(7, 352.0f/456.0f);
+        mpRootPane->SetSRTElement(6, 19.0f/26.0f);
+        mpRootPane->SetSRTElement(7, 352.0f/456.0f);
         mLayout.mScissorMask.mEnabled = true;
         mLayout.mScissorMask.mPos.x = 0;
         mLayout.mScissorMask.mPos.y = 52;
@@ -106,6 +108,7 @@ int dKPStarCoinMenu_c::create() {
     mLayout.TPaneNameRegister(T_PANE_FIXED_NAME_TBL, MESSAGE_DATA_TBL, BMG_CATEGORY_KOOPATLAS, ARRAY_SIZE(T_PANE_FIXED_NAME_TBL));
     mLayout.AllAnimeEndSetup();
 
+    mpRootPane->SetVisible(false);
     mLayout.mDrawOrder = 1;
 
     for (int col = 0; col < COLUMN_COUNT; col++) {
@@ -143,8 +146,8 @@ int dKPStarCoinMenu_c::doDelete() {
 }
 
 int dKPStarCoinMenu_c::execute() {
-    mStateMgr.executeState();
     if (mIsVisible) {
+        mStateMgr.executeState();
         mLayout.AnimePlay();
         mLayout.calc();
     }
@@ -152,14 +155,17 @@ int dKPStarCoinMenu_c::execute() {
 }
 
 int dKPStarCoinMenu_c::draw() {
-    if (mIsVisible)
+    if (mIsVisible) {
         mLayout.entry();
+    }
     return true;
 }
 
-void dKPStarCoinMenu_c::dispMenu() {
-    if (mStateMgr.getStateID() == &StateID_Hidden)
-        mStateMgr.changeState(StateID_ShowWait);
+void dKPStarCoinMenu_c::dispMenu(int worldNum) {
+    if (mStateMgr.getStateID() == &StateID_Initial) {
+        mCurrentWorld = worldNum;
+        mIsVisible = true;
+    }
 }
 
 bool dKPStarCoinMenu_c::canScrollLeft() const {
@@ -208,13 +214,16 @@ void dKPStarCoinMenu_c::loadInfo() {
     dGameCom::LayoutDispNumberDigit(unspentCoins, mpTextBoxes[UnspentCoinCount], false);
     dGameCom::LayoutDispNumberDigit(coins, mpTextBoxes[TotalCoinCount], false);
 
-    mCurrentWorld = -1;
     mCurrentWorldIndex = -1;
     mOpenWorldCount = 0;
 
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+#ifdef KOOPATLAS_DEV_ENABLED
     dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
     int wantedSection = world->mLevelInfoID-1;
+#else
+    int wantedSection = mCurrentWorld;
+#endif
 
     // Figure out which sections should be available
     for (int i = 0; i < dLevelInfo_c::m_instance.sectionCount(); i++) {
@@ -223,7 +232,7 @@ void dKPStarCoinMenu_c::loadInfo() {
         bool hasLevels = false;
         for (int j = 0; j < section->mLevelCount; j++) {
             dLevelInfo_c::entry_s *level = &section->mLevels[j];
-            if (level->mFlag & 2) {
+            if (level->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL) {
                 if (save->isCourseDataFlag(level->mWorldSlot, level->mLevelSlot, dMj2dGame_c::GOAL_NORMAL)) {
                     hasLevels = true;
                     break;
@@ -431,23 +440,26 @@ static u8 isReplayEnabled;
 
 
 
-void dKPStarCoinMenu_c::initializeState_Hidden() { }
-void dKPStarCoinMenu_c::executeState_Hidden() { }
-void dKPStarCoinMenu_c::finalizeState_Hidden() { }
-
-
-void dKPStarCoinMenu_c::initializeState_ShowWait() {
-    mIsVisible = true;
+void dKPStarCoinMenu_c::initializeState_Initial() { }
+void dKPStarCoinMenu_c::executeState_Initial() {
     loadInfo();
+
     mLayout.AnimeStartSetup(ANIM_SHOW_ALL, false);
     mLayout.ReverseAnimeStartSetup(ANIM_SHOW_SECTION, false);
     mLayout.ReverseAnimeStartSetup(ANIM_SHOW_LEFT_ARROW, false);
     mLayout.ReverseAnimeStartSetup(ANIM_SHOW_RIGHT_ARROW, false);
     SndAudioMgr::sInstance->startSystemSe(SE_SYS_DIALOGUE_IN, 1);
 
+    mpRootPane->SetVisible(true);
+    mStateMgr.changeState(StateID_ShowWait);
+}
+void dKPStarCoinMenu_c::finalizeState_Initial() {
     secretCodeIndex = 0;
     minusCount = 0;
 }
+
+
+void dKPStarCoinMenu_c::initializeState_ShowWait() { }
 void dKPStarCoinMenu_c::executeState_ShowWait() {
     if (!mLayout.isAnime(ANIM_SHOW_ALL))
         mStateMgr.changeState(StateID_ShowSectionWait);
@@ -572,9 +584,10 @@ void dKPStarCoinMenu_c::initializeState_HideWait() {
 }
 void dKPStarCoinMenu_c::executeState_HideWait() {
     if (!mLayout.isAnime(ANIM_SHOW_ALL))
-        mStateMgr.changeState(StateID_Hidden);
+        mStateMgr.changeState(StateID_Initial);
 }
 void dKPStarCoinMenu_c::finalizeState_HideWait() {
+    mpRootPane->SetVisible(false);
     mIsVisible = false;
 }
 #endif

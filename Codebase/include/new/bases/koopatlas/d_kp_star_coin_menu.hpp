@@ -1,15 +1,16 @@
 #pragma once
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_DEV_ENABLED
+#if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_STAR_COINS_MENU)
 #include <new/koopatlas_config.h>
-
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
 
 #include <game/bases/d_base.hpp>
 #include <game/bases/d_lytbase.hpp>
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
+#include <game/snd/snd_audio_mgr.hpp>
+#include <new/bases/d_world_info.hpp>
+#include <new/bases/koopatlas/d_kp_common.hpp>
 
 class dKPStarCoinMenu_c : public dBase_c {
 public:
@@ -50,7 +51,7 @@ public:
     int execute();
     int draw();
 
-    void dispMenu();
+    void dispMenu(int worldNum = -1);
 
     bool canScrollLeft() const;
     bool canScrollRight() const;
@@ -63,7 +64,7 @@ public:
 
     void displayMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2 = 0, int bodyMsgCount2 = 0);
 
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Hidden);
+    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Initial);
     STATE_FUNC_DECLARE(dKPStarCoinMenu_c, ShowWait);
     STATE_FUNC_DECLARE(dKPStarCoinMenu_c, ShowSectionWait);
     STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Wait);
@@ -73,6 +74,7 @@ public:
     LytBase_c mLayout;
     sFStateMgr_c<dKPStarCoinMenu_c, sStateMethodUsr_FI_c> mStateMgr;
 
+    nw4r::lyt::Pane *mpRootPane;
     nw4r::lyt::Picture *mpShines[COLUMN_COUNT][SHINE_COUNT];
     nw4r::lyt::Picture *mpCoinOutlines[COLUMN_COUNT][ROW_COUNT][3];
     nw4r::lyt::Picture *mpCoins[COLUMN_COUNT][ROW_COUNT][3];

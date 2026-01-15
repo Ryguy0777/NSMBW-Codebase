@@ -27,6 +27,7 @@
 //#define NEWER_PREGAME
 //#define NEWER_FILE_SELECT
 //#define NEWER_PAUSE_MENU
+//#define NEWER_STAR_COINS_MENU
 
 // See 'koopatlas_config.h'
 //#define KOOPATLAS_ENABLED

@@ -20,6 +20,7 @@
 
 #include <new/bases/d_level_info.hpp>
 #include <new/bases/d_world_info.hpp>
+#include <new/bases/koopatlas/d_kp_common.hpp>
 #include <new/bases/koopatlas/d_kp_director.hpp>
 #include <new/bases/koopatlas/d_kp_hud.hpp>
 #include <new/bases/koopatlas/d_kp_map_data.hpp>
@@ -28,23 +29,7 @@
 #include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
 // #include "koopatlas/shop.h"
 
-#ifdef KP_MAP_REPORT
-#define MapReport OSReport
-#else
-#define MapReport(...)
-#endif
-
-#ifdef KP_SPAMMY_DEBUG
-#define SpammyReport OSReport
-#else
-#define SpammyReport(...)
-#endif
-
 int SearchForIndexOfPlayerID(int id);
-
-#define KP_HUD WM_DANCE_PAKKUN
-#define WM_SHOP WM_TOGEZO
-#define KP_STAR_COIN_MENU WM_GHOST
 
 // Forward declarations
 class daKPPlayer_c;
