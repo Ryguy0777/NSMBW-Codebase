@@ -757,6 +757,7 @@ void dScKoopatlas_c::executeState_MenuSelect() {
             switch (mpCourseSelectMenu->mCurrentSelection) {
                 case 0: // Star Coins
                     MapReport("Star Coins was pressed\n");
+                    SndAudioMgr::sInstance->startSystemSe(SE_SYS_DIALOGUE_IN, 1);
                     mpCoins->dispMenu();
                     mStateMgr.changeState(StateID_CoinsWait);
                     break;

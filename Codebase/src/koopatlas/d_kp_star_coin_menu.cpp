@@ -448,7 +448,6 @@ void dKPStarCoinMenu_c::executeState_Initial() {
     mLayout.ReverseAnimeStartSetup(ANIM_SHOW_SECTION, false);
     mLayout.ReverseAnimeStartSetup(ANIM_SHOW_LEFT_ARROW, false);
     mLayout.ReverseAnimeStartSetup(ANIM_SHOW_RIGHT_ARROW, false);
-    SndAudioMgr::sInstance->startSystemSe(SE_SYS_DIALOGUE_IN, 1);
 
     mpRootPane->SetVisible(true);
     mStateMgr.changeState(StateID_ShowWait);
