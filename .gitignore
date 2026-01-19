@@ -3,6 +3,7 @@
 /Codebase/bin
 Codebase/build.ninja
 Codebase/ninja.exe
+Codebase/build.bat
 /.vscode
 Codebase/loader/kamekLoader.o
 Codebase/loader/nsmbw.o
