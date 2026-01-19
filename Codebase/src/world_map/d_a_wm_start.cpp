@@ -5,7 +5,7 @@
 kmBranchDefCpp(0x808E80B0, NULL, void, daWmStart_c *this_) {
     this_->mAllocator.createFrmHeap(0xFFFFFFFF, mHeap::g_gameHeaps[0], nullptr, 0x20);
 
-    this_->mResFile = dResMng_c::m_instance->mRes.getRes("cobStart", "g3d/model.brres");
+    this_->mResFile = dResMng_c::m_instance->getRes("cobStart", "g3d/model.brres");
     nw4r::g3d::ResMdl mdl = this_->mResFile.GetResMdl("cobStart");
     this_->mModel.create(mdl, &this_->mAllocator, 0x20, 1, nullptr);
 

@@ -10,11 +10,11 @@ dCsvParser_c::~dCsvParser_c() { }
 bool dCsvParser_c::getRes(const char *arcName, const char *resPath) {
     // Override as needed
     ulong resSize = 0;
-    void *res = dResMng_c::m_instance->mRes.getRes(arcName, resPath, &resSize, nullptr);
+    nw4r::g3d::ResFile res = dResMng_c::m_instance->getRes(arcName, resPath, &resSize);
 
-    mpData = (char*)res;
+    mpData = (char*)res.ptr();
     mDataSize = resSize;
-    return (res != nullptr);
+    return (res.ptr() != nullptr);
 }
 
 bool dCsvParser_c::isLineEnd(char *data, int index) {

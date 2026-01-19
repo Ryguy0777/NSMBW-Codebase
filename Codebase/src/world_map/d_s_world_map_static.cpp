@@ -11,7 +11,7 @@ kmBranchDefCpp(0x80926D64, 0x80926D68, bool) {
 
 // Delete new resources
 kmBranchDefCpp(0x80927A9C, 0x80927AA0, bool) {
-    dResMng_c::m_instance->mRes.deleteRes("mapModelCull");
+    dResMng_c::m_instance->deleteRes("mapModelCull");
 
     return true;
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <new/bases/d_csv_parser.hpp>
 
 class dWmCullCsvData_c : public dCsvParser_c {

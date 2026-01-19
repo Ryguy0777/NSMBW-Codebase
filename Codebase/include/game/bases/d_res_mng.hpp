@@ -53,6 +53,16 @@ public:
         return mRes.syncAllRes();
     }
 
+    /// @unofficial
+    inline bool deleteRes(const char *arcName) {
+        return mRes.deleteRes(arcName);
+    }
+
+    /// @unofficial
+    inline nw4r::g3d::ResFile getRes(const char *arcName, const char *resPath, unsigned long *size) const {
+        return mRes.getRes(arcName, resPath, size);
+    }
+
 private:
     dRes_c mRes; ///< The resource manager.
     resCallback_c mCallback; ///< The callback for after a file has been loaded.
