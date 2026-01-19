@@ -39,6 +39,10 @@ vfa8__Q23mEf13levelEffect_cFv=0x8016ce80
 
 rotateCoin__15daEnCoinAngle_cFv=0x809E5660
 
+setupAnmTexSrt__12daWmIsland_cFv=0x808d38d0
+setupAnmClr__12daWmIsland_cFv=0x808d39c0
+setSignLanguage__12daWmIsland_cFv=0x808d3ab0
+
 __vt__12daEnKuribo_c=0x80af7de8
 __dt__12daEnKuribo_cFv=0x80a575f0
 isDamageInvalid__12daEnKuribo_cFv=0x80a57510

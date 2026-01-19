@@ -39,6 +39,7 @@ These features are complete and should be fully functional.
 * Fake Star Coin sprite
 * Effect/SFX Spawner sprite
 * Galoomba sprites
+* Dynamic CLR/SRT anims for World Select models
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
