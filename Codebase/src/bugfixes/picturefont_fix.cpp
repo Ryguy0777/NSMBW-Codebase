@@ -1,7 +1,7 @@
 #include <kamek.h>
 
-// always draw picturefont white
-// so colored textboxes don't tint the image
+// Always draw picturefont white
+// So colored textboxes don't tint the image
 
 kmBranchDefAsm(0x800E596C, 0x800E598C) {
     nofralloc

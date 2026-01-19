@@ -7,36 +7,43 @@
 
 CUSTOM_ACTOR_PROFILE(EN_LARGE_KABOCHAN, daEnLargeKabochan_c, fProfile::EN_LARGE_KURIBO, fProfile::DRAW_ORDER::EN_LARGE_KURIBO, 0x12);
 
-const char* bigSplunkinArcList [] = {"kabochan", NULL};
-const SpriteData bigSplunkinSpriteData = {fProfile::EN_LARGE_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c bigSplunkinProfile(&g_profile_EN_LARGE_KABOCHAN, "EN_LARGE_KABOCHAN", SpriteId::EN_LARGE_KABOCHAN, &bigSplunkinSpriteData, bigSplunkinArcList);
+const char* l_LARGE_KABOCHAN_res [] = {"kabochan", NULL};
+const dActorData_c c_LARGE_KABOCHAN_actor_data = {fProfile::EN_LARGE_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_LARGE_KABOCHAN_profile(&g_profile_EN_LARGE_KABOCHAN, "EN_LARGE_KABOCHAN", SpriteId::EN_LARGE_KABOCHAN, &c_LARGE_KABOCHAN_actor_data, l_LARGE_KABOCHAN_res);
 
-bool daEnLargeKabochan_c::hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2) {
-    daPlBase_c *player = (daPlBase_c *)cc2->mpOwner;
-    u8 direction = getTrgToSrcDir_Main(player->getCenterX(), getCenterY());
+const float daEnLargeKabochan_c::smc_WALK_SPEED = 0.5f;
+const float daEnLargeKabochan_c::smc_WALK_SPEED_CRACK = 0.75f;
+const float daEnLargeKabochan_c::smc_WALK_SPEED_CRACK2 = 1.0f;
+
+const sBcSensorLine l_large_kabochan_foot = { 1, -0x10000, 0x10000, 0 };
+const sBcSensorLine l_large_kabochan_wall = { 1, 0x14000, 0x0A000, 0x14000 };
+
+bool daEnLargeKabochan_c::hitCallback_HipAttk(dCc_c *self, dCc_c *other) {
+    daPlBase_c *player = (daPlBase_c *)other->mpOwner;
+    u8 direction = getTrgToSrcDir_Main(player->getCenterPos().x, getCenterPos().y);
     s8 *playerNo = player->getPlrNo();
 
     setDeathSound_HipAttk();
-    mVec3_c effPos(mPos.x, getCenterY(), 5500.0);
+    mVec3_c effPos(mPos.x, getCenterPos().y, 5500.0);
     hipatkEffect(effPos);
     int comboCnt = dEnCombo_c::calcPlComboCnt(player);
     int score = mCombo.getComboScore(comboCnt);
     sDeathInfoData splunkinDeathInfo = {
-        0.0, 0.0,
-        0.0, 0.0,
+        0.0f, 0.0f,
+        0.0f, 0.0f,
         &StateID_DieOther,
         score,
         -1,
         direction,
         *playerNo
     };
-    mDeathInfo.set(splunkinDeathInfo);
+    mDeathInfo = splunkinDeathInfo;
     return true;
 }
 
-bool daEnLargeKabochan_c::hitCallback_Fire(dCc_c *cc1, dCc_c *cc2) {
+bool daEnLargeKabochan_c::hitCallback_Fire(dCc_c *self, dCc_c *other) {
     if (mHitByFire) {
-        return dEn_c::hitCallback_Fire(cc1, cc2);
+        return dEn_c::hitCallback_Fire(self, other);
     } else {
         mHitByFire = true;
         boyonBegin();
@@ -53,7 +60,7 @@ void daEnLargeKabochan_c::setDeathSound_HipAttk() {
 
 void daEnLargeKabochan_c::initializeState_DieOther() {
     mVec3_c pos = getCenterPos();
-    mVec3_c scale(1.5, 1.5, 1.5);
+    mVec3_c scale(1.5f, 1.5f, 1.5f);
     dEf::createEffect_change("Wm_mr_softhit", 0, &pos, nullptr, &scale);
     mCc.release();
     deleteActor(mNoRespawn);
@@ -63,25 +70,25 @@ void daEnLargeKabochan_c::hipatkEffect(const mVec3_c &pos) {
     if (mCracked < 2) {
         dEf::createEffect_change("Wm_en_pumpkinbreak", 0, &pos, nullptr, &mScale);
     } else {
-        mVec3_c scale(3.0, 3.0, 3.0);
+        mVec3_c scale(3.0f, 3.0f, 3.0f);
         dEf::createEffect_change("Wm_en_pumpkinbreak_b", 0, &pos, nullptr, &scale);
     }
 }
 
-void daEnLargeKabochan_c::createIceActor() {
+bool daEnLargeKabochan_c::createIceActor() {
     dIceInfo splunkinIceInfo[1] = {
         3,                                      // mFlags
-        mVec3_c(mPos.x, mPos.y-2.0, mPos.z),    // mPos
-        mVec3_c(0.85, 0.87, 1.1),               // mScale
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0
+        mVec3_c(mPos.x, mPos.y-2.0f, mPos.z),   // mPos
+        mVec3_c(0.85f, 0.87f, 1.1f),            // mScale
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f
     };
-    mIceMng.createIce(&splunkinIceInfo[0], 1);
+    return mIceMng.createIce(&splunkinIceInfo[0], 1);
 }
 
 void daEnLargeKabochan_c::fumiSE(dActor_c *actor) {
@@ -104,12 +111,12 @@ void daEnLargeKabochan_c::reactFumiProc(dActor_c* player) {
         setWalkSpeed();
         boyonBegin();
     } else {
-        mVec3_c scale(3.0, 3.0, 3.0);
+        mVec3_c scale(3.0f, 3.0f, 3.0f);
         mBreakEffect.createEffect("Wm_en_pumpkinbreak_b", 0, &centerPos, nullptr, &scale);
         setDeathInfo_Fumi(player, mVec2_c(mSpeed.x, mSpeed.y), StateID_DieOther, 0);
     }
-    mAnmChr.setRate(1.0 + (float)mCracked);
-    mAnmClr.setFrame((float)mCracked, 0);
+    mAnmChr.setRate(1.0f + mCracked);
+    mAnmClr.setFrame(mCracked, 0);
 }
 
 void daEnLargeKabochan_c::reactSpinFumiProc(dActor_c* player) {
@@ -120,7 +127,7 @@ void daEnLargeKabochan_c::reactSpinFumiProc(dActor_c* player) {
         setWalkSpeed();
         boyonBegin();
     } else {
-        mVec3_c scale(3.0, 3.0, 3.0);
+        mVec3_c scale(3.0f, 3.0f, 3.0f);
         if (mCracked == 1) {
             mBreakEffect.createEffect("Wm_en_pumpkinbreak", 0, &centerPos, nullptr, &scale);
         } else {
@@ -128,8 +135,8 @@ void daEnLargeKabochan_c::reactSpinFumiProc(dActor_c* player) {
         }
         setDeathInfo_Fumi(player, mVec2_c(mSpeed.x, mSpeed.y), StateID_DieOther, 0);
     }
-    mAnmChr.setRate(1.0 + (float)mCracked);
-    mAnmClr.setFrame((float)mCracked, 0);
+    mAnmChr.setRate(1.0 + mCracked);
+    mAnmClr.setFrame(mCracked, 0);
 }
 
 void daEnLargeKabochan_c::reactYoshiFumiProc(dActor_c* yoshi) {
@@ -140,7 +147,7 @@ void daEnLargeKabochan_c::reactYoshiFumiProc(dActor_c* yoshi) {
         setWalkSpeed();
         boyonBegin();
     } else {
-        mVec3_c scale(3.0, 3.0, 3.0);
+        mVec3_c scale(3.0f, 3.0f, 3.0f);
         if (mCracked == 1) {
             mBreakEffect.createEffect("Wm_en_pumpkinbreak", 0, &centerPos, nullptr, &scale);
         } else {
@@ -148,15 +155,15 @@ void daEnLargeKabochan_c::reactYoshiFumiProc(dActor_c* yoshi) {
         }
         setDeathInfo_Fumi(yoshi, mVec2_c(mSpeed.x, mSpeed.y), StateID_DieOther, 0);
     }
-    mAnmChr.setRate(2.0 + (float)mCracked);
-    mAnmClr.setFrame((float)mCracked, 0);
+    mAnmChr.setRate(2.0f + mCracked);
+    mAnmClr.setFrame(mCracked, 0);
 }
 
 void daEnLargeKabochan_c::createBodyModel() {
-    mRes = dResMng_c::m_instance->mRes.getRes("kabochan", "g3d/kabochan.brres");
+    mRes = dResMng_c::m_instance->getRes("kabochan", "g3d/kabochan.brres");
     nw4r::g3d::ResMdl bmdl = mRes.GetResMdl("kabochan");
 	mModel.create(bmdl, &mAllocator, 0x32C, 1, 0);
-	dActor_c::setSoftLight_Enemy(mModel);
+	setSoftLight_Enemy(mModel);
 
 	nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("walk");
 	mAnmChr.create(bmdl, resAnmChr, &mAllocator, 0);
@@ -168,26 +175,27 @@ void daEnLargeKabochan_c::createBodyModel() {
 void daEnLargeKabochan_c::initialize() {
     daEnKuribo_c::initialize();
 
-    mScale = mVec3_c(2.5, 2.5, 2.5);
-    mCenterOffs = mVec3_c(0.0, 20.0, 0.0);
+    mScale = mVec3_c(2.5f, 2.5f, 2.5f);
+    mCenterOffs = mVec3_c(0.0f, 20.0f, 0.0f);
 
-    mCc.mCcData.mOffsetY = 20;
-    mCc.mCcData.mHeight = 20;
-    mCc.mCcData.mWidth = 20;
+    mCc.mCcData.mOffset.y = 20.0f;
+    mCc.mCcData.mSize.set(20.0f, 20.0f);
 
-    static const dBcSensorLine_c below(-16<<12, 16<<12, 0<<12);
-    static const dBcSensorLine_c adjacent(20<<12, 10<<12, 20<<12);
+    mBc.set(this, l_large_kabochan_foot, nullptr, l_large_kabochan_wall);
 
-    mBc.set(this, (dBcSensor_c*)&below, nullptr, (dBcSensor_c*)&adjacent);
+    mVisibleAreaOffset.y = 20.0f;
+    mVisibleAreaSize.set(40.0f, 40.0f);
 
-    mVisibleAreaOffset.y = 20.0;
-    mVisibleAreaSize = mVec2_c(40.0, 40.0);
-
-    mEatBehaviour = 0;
+    mEatBehaviour = EAT_TYPE_NONE;
 }
 
 void daEnLargeKabochan_c::setWalkSpeed() {
-    mSpeed.x = l_large_splunkin_speeds[mCracked][mDirection];
+    static const float dirSpeed[3][2] = {
+        { smc_WALK_SPEED, -smc_WALK_SPEED },
+        { smc_WALK_SPEED_CRACK, -smc_WALK_SPEED_CRACK },
+        { smc_WALK_SPEED_CRACK2, -smc_WALK_SPEED_CRACK2 }
+    };
+    mSpeed.x = dirSpeed[mCracked][mDirection];
     return;
 }
 
@@ -202,13 +210,13 @@ void daEnLargeKabochan_c::setWalkAnm() {
     nw4r::g3d::ResAnmClr resClr = mRes.GetResAnmClr("break");
 
     mAnmChr.setAnm(mModel, resAnmChr, m3d::FORWARD_LOOP);
-    mModel.setAnm(mAnmChr, 2.0);
-    mAnmChr.setRate(2.0);
+    mModel.setAnm(mAnmChr, 2.0f);
+    mAnmChr.setRate(2.0f);
 
     mAnmClr.setAnm(mModel, resClr, 0, m3d::FORWARD_LOOP);
-    mAnmClr.setRate(0.0, 0);
-    mAnmClr.setFrame(0, 0);
-    mModel.setAnm(mAnmClr, 1.0);
+    mAnmClr.setRate(0.0f, 0);
+    mAnmClr.setFrame(0.0f, 0);
+    mModel.setAnm(mAnmClr, 1.0f);
 }
 
 bool daEnLargeKabochan_c::isBgmSync() const {

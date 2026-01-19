@@ -1,8 +1,7 @@
 #pragma once
-
 #include <game/bases/d_actor.hpp>
 
-// an actor that spawns another actor when a target event is triggered.
+// Actor that spawns another actor when a target event is triggered.
 
 class daSpawner_c : public dActor_c {
 public:

@@ -12,11 +12,11 @@ public:
     virtual void finalUpdate();
 
     // dEn_c overrides
-    virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
+    virtual bool hitCallback_HipAttk(dCc_c *self, dCc_c *other);
 
     virtual void fumidamageSE(const mVec3_c &pos, int);
 
-    virtual void createIceActor();
+    virtual bool createIceActor();
 
     virtual void beginFunsui();
     virtual void endFunsui();

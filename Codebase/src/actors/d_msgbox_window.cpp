@@ -19,7 +19,7 @@ STATE_DEFINE(dMsgBoxWindow_c, BoxAppearWait);
 STATE_DEFINE(dMsgBoxWindow_c, ShownWait);
 STATE_DEFINE(dMsgBoxWindow_c, BoxDisappearWait);
 
-dCustomProfile_c msgboxWindow(&g_profile_MSGBOX_WINDOW, "MSGBOX_WINDOW", fProfile::MSGBOX_WINDOW);
+dCustomProfile_c l_MSGBOX_WINDOW_profile(&g_profile_MSGBOX_WINDOW, "MSGBOX_WINDOW", fProfile::MSGBOX_WINDOW);
 
 dMsgBoxWindow_c::dMsgBoxWindow_c() : mIsCreated(false), mStateMgr(*this, StateID_Wait) {}
 
@@ -58,7 +58,7 @@ int dMsgBoxWindow_c::create() {
         return NOT_READY;
     }
 
-    // setup layout
+    // Setup layout
     mLayout.build("messageBox.brlyt", nullptr);
     mLayout.AnimeResRegister(AnmNameTbl, ARRAY_SIZE(AnmNameTbl));
     mLayout.GroupRegister(GROUP_NAME_DT, ANIME_INDEX_TBL, ARRAY_SIZE(GROUP_NAME_DT));
@@ -104,7 +104,7 @@ void dMsgBoxWindow_c::executeState_Wait() {}
 void dMsgBoxWindow_c::initializeState_BoxAppearWait() {
     mVisible = true;
     m_isShowing = true;
-    PauseManager_c::m_instance->mDisablePause = 1; // enable no-pause
+    PauseManager_c::m_instance->mDisablePause = 1; // Enable no-pause
     mLayout.AnimeStartSetup(ANIM_BOX_APPEAR, false);
 
     SndAudioMgr::sInstance->startSystemSe(SE_SYS_KO_DIALOGUE_IN, 1);
@@ -146,7 +146,7 @@ void dMsgBoxWindow_c::finalizeState_BoxDisappearWait() {
 	mVisible = false;
     m_isShowing = false;
 	if (mCanCancel && PauseManager_c::m_instance)
-		PauseManager_c::m_instance->mDisablePause = 0; // disable no-pause
+		PauseManager_c::m_instance->mDisablePause = 0; // Disable no-pause
 }
 
 void dMsgBoxWindow_c::executeState_BoxDisappearWait() {
@@ -174,7 +174,7 @@ void dMsgBoxWindow_c::showMessage(unsigned long id, bool canCancel, int delay) {
     mStateMgr.changeState(StateID_BoxAppearWait);
 }
 
-// patch dGameCom::isGameStop to add a check for the message box
+// Patch dGameCom::isGameStop to add a check for the message box
 kmBranchDefCpp(0x800b3b50, NULL, bool, ulong stopType) {
     if (dMsgBoxWindow_c::m_isShowing) {
         return true;

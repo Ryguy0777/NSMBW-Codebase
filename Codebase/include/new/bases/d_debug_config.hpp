@@ -1,5 +1,4 @@
 #pragma once
-
 #include <nw4r/ut/ut_charStrmReader.h>
 
 // debugging config ini from NSMASRv2
@@ -34,6 +33,23 @@ struct ColliderDisplayFlags {
     };
 };
 
+struct SpawnRangeDisplayFlags {
+    enum Value {
+        None,
+        NoMargins,
+        Margins,
+        VisibleArea,
+    };
+};
+
+struct SpawnRangeDisplayMode {
+    enum Value {
+        None,
+        Enemy,
+        MapObj,
+    };
+};
+
 struct DebugKey {
     enum KeyId {
         LaunchType,
@@ -54,6 +70,11 @@ struct DebugKey {
         DrawRideableColliders,
         MovieId,
         ActorLog,
+        DrawSpawnRange,
+        DrawSpawnRangeMargins,
+        DrawVisibleArea,
+        DrawEnemySpawnRange,
+        DrawMapObjSpawnRange,
     };
 
     KeyId keyId;
@@ -64,11 +85,11 @@ class dDebugConfig_c {
     public:
         dDebugConfig_c();
 
-        void loadConfig();
+        bool loadConfig();
         void parseConfig(nw4r::ut::CharStrmReader* reader, void* bufferEnd);
         void parseConfigLine(char* key, char* param, int paramSize);
 
-        static void setupConfig();
+        static bool setupConfig();
 
         // Generic
         u8 mLaunchType;
@@ -86,6 +107,8 @@ class dDebugConfig_c {
         u8 mHintMovieType;
         bool mShowPregame;
         u8 mCollisionDebugFlags;
+        u8 mSpawnRangeDebugFlags;
+        u8 mSpawnRangeModeFlags;
 
         // Movie only
         u8 mMovieId;

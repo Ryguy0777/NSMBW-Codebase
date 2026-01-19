@@ -5,7 +5,7 @@
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
 
-// message box window
+// Message box window
 
 class dMsgBoxWindow_c : public dBase_c {
 public:

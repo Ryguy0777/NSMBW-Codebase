@@ -12,11 +12,11 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL,
 STATE_DEFINE(daEnBlockRotate_c, Wait);
 STATE_DEFINE(daEnBlockRotate_c, Flipping);
 
-const char* flipblockArcList[] = {"block_rotate", NULL};
-const SpriteData flipblockSpriteData = {fProfile::EN_BLOCK_ROTATE, 8, -16, 8, 0, 16, 16, 0, 0, 0, 0, 0x8};
-dCustomProfile_c flipblockProfile(&g_profile_EN_BLOCK_ROTATE, "EN_BLOCK_ROTATE", SpriteId::EN_BLOCK_ROTATE, &flipblockSpriteData, flipblockArcList);
+const char* l_BLOCK_ROTATE_res[] = {"block_rotate", NULL};
+const dActorData_c c_BLOCK_ROTATE_actor_data = {fProfile::EN_BLOCK_ROTATE, 8, -16, 8, 0, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
+dCustomProfile_c l_BLOCK_ROTATE_profile(&g_profile_EN_BLOCK_ROTATE, "EN_BLOCK_ROTATE", SpriteId::EN_BLOCK_ROTATE, &c_BLOCK_ROTATE_actor_data, l_BLOCK_ROTATE_res);
 
-sBgSetInfo l_flipblock_info = {
+sBgSetInfo l_flipblock_bgc_info = {
     mVec2_c(-8, 16),
     mVec2_c(8, 0),
     &daEnBlockRotate_c::callBackF,
@@ -29,15 +29,15 @@ sBgSetInfo l_flipblock_info = {
 void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
     // Call OG function
     daEnBlockMain_c::callBackF(self, other);
-    daEnBlockRotate_c *_this = (daEnBlockRotate_c *)self;
+    daEnBlockRotate_c *this_ = (daEnBlockRotate_c *)self;
     // Only break if empty and indestructible
-    if (_this->mContents == 0 && _this->mIndestructible == false) {
+    if (this_->mContents == 0 && this_->mIndestructible == false) {
         if (other->mKind == STAGE_ACTOR_PLAYER) {
             daPlBase_c *player = (daPlBase_c *)other;
             // Statuses 0xA9 and 0x2B are only both set when spinjumping
             if (player->isStatus(0xA9) && player->isStatus(daPlBase_c::STATUS_2B)) {
                 if (player->mPowerup != POWERUP_NONE && player->mPowerup != POWERUP_MINI_MUSHROOM) {
-                    _this->destroyBlock();
+                    this_->destroyBlock();
                     // Move player upwards slightly
                     float playerSpeedInc;
                     if (player->mKey.buttonTwo()) {
@@ -56,26 +56,26 @@ int daEnBlockRotate_c::create() {
     // Setup model
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
 
-    mRes = dResMng_c::m_instance->mRes.getRes("block_rotate", "g3d/block_rotate.brres");
+    mRes = dResMng_c::m_instance->getRes("block_rotate", "g3d/block_rotate.brres");
     nw4r::g3d::ResMdl mdl = mRes.GetResMdl("block_rotate");
     mFlipBlockModel.create(mdl, &mAllocator, 0x227, 1, nullptr);
-    dActor_c::setSoftLight_MapObj(mFlipBlockModel);
+    setSoftLight_MapObj(mFlipBlockModel);
 
     mAllocator.adjustFrmHeap();
 
     Block_CreateClearSet(mPos.y);
 
     // Set collider
-    mBg.set(this, &l_flipblock_info, 3, mLayer, nullptr);
+    mBg.set(this, &l_flipblock_bgc_info, 3, mLayer, nullptr);
     mBg.mFlags = 0x260;
 
-    mBg.mBelowCallback = &daEnBlockMain_c::checkRevFoot;
-    mBg.mAboveCallback = &daEnBlockMain_c::checkRevHead;
-    mBg.mAdjCallback = &daEnBlockMain_c::checkRevWall;
+    mBg.mBelowCheckFunc = &daEnBlockMain_c::checkRevFoot;
+    mBg.mAboveCheckFunc = &daEnBlockMain_c::checkRevHead;
+    mBg.mAdjCheckFunc = &daEnBlockMain_c::checkRevWall;
 
-    mBg.mBelowCheckFunc = &daEnBlockRotate_c::callBackF;
-    mBg.mAboveCheckFunc = &daEnBlockMain_c::callBackH;
-    mBg.mAdjCheckFunc = &daEnBlockMain_c::callBackW;
+    mBg.mBelowCallback = &daEnBlockRotate_c::callBackF;
+    mBg.mAboveCallback = &daEnBlockMain_c::callBackH;
+    mBg.mAdjCallback = &daEnBlockMain_c::callBackW;
 
     mBg.entry();
 
@@ -102,7 +102,7 @@ int daEnBlockRotate_c::execute() {
 
     // Only delete if not flipping
     if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
-        ActorScrOutCheck(0);
+        ActorScrOutCheck(SKIP_NONE);
     }
 
     return SUCCEEDED;
@@ -198,19 +198,19 @@ bool daEnBlockRotate_c::playerOverlaps() {
     mVec3_c myTR(mPos.x + 8.0f, mPos.y + 8.0f, 0.0f);
 
     while ((player = (dActor_c*)fManager_c::searchBaseByProfName(fProfile::PLAYER, player)) != 0) {
-        float centerX = player->mPos.x + player->mCc.mCcData.mOffsetX;
-        float centerY = player->mPos.y + player->mCc.mCcData.mOffsetY;
+        float centerX = player->mPos.x + player->mCc.mCcData.mOffset.x;
+        float centerY = player->mPos.y + player->mCc.mCcData.mOffset.y;
 
-        float left = centerX - player->mCc.mCcData.mWidth;
-        float right = centerX + player->mCc.mCcData.mWidth;
+        float left = centerX - player->mCc.mCcData.mSize.x;
+        float right = centerX + player->mCc.mCcData.mSize.x;
 
-        float top = centerY + player->mCc.mCcData.mHeight;
-        float bottom = centerY - player->mCc.mCcData.mHeight;
+        float top = centerY + player->mCc.mCcData.mSize.y;
+        float bottom = centerY - player->mCc.mCcData.mSize.y;
 
         mVec3_c playerBL(left, bottom + 0.1f, 0.0f);
         mVec3_c playerTR(right, top - 0.1f, 0.0f);
 
-        if (dGameCom::checkRectangleOverlap(&playerBL, &playerTR, &myBL, &myTR, 0.0))
+        if (dGameCom::checkRectangleOverlap(&playerBL, &playerTR, &myBL, &myTR, 0.0f))
             return true;
     }
 
@@ -294,7 +294,7 @@ void daEnBlockRotate_c::initializeState_Flipping() {
 }
 
 void daEnBlockRotate_c::finalizeState_Flipping() {
-    mBg.set(this, &l_flipblock_info, 3, mLayer, nullptr);
+    mBg.set(this, &l_flipblock_bgc_info, 3, mLayer, nullptr);
     mBg.entry();
 }
 

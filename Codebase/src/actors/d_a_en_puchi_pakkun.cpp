@@ -17,47 +17,55 @@ STATE_DEFINE(daEnPuchiPakkun_c, Jump);
 STATE_DEFINE(daEnPuchiPakkun_c, FireSpit);
 STATE_DEFINE(daEnPuchiPakkun_c, IceWait);
 
-const char* nipperArcList[] = {"pakkun_puchi", NULL};
-const SpriteData nipperSpriteData = {fProfile::EN_PUCHI_PAKKUN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c nipperProfile(&g_profile_EN_PUCHI_PAKKUN, "EN_PUCHI_PAKKUN", SpriteId::EN_PUCHI_PAKKUN, &nipperSpriteData, nipperArcList);
+const char* l_PUCHI_PAKKUN_res[] = {"pakkun_puchi", NULL};
+const dActorData_c c_PUCHI_PAKKUN_actor_data = {fProfile::EN_PUCHI_PAKKUN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_PUCHI_PAKKUN_profile(&g_profile_EN_PUCHI_PAKKUN, "EN_PUCHI_PAKKUN", SpriteId::EN_PUCHI_PAKKUN, &c_PUCHI_PAKKUN_actor_data, l_PUCHI_PAKKUN_res);
 
-sCcDatNewF l_nipper_cc = {
-    0.0,                        // mOffsetX
-    8.0,                        // mOffsetY
-    8.0,                        // mWidth
-    8.0,                        // mHeight
-    dCc_c::CAT_ENTITY,          // mCategory
-    0,                          // mAttackCategory
-    0x4F,                       // mCategoryInteract
-    0xFFBAD35E,                 // mAttackCategoryInteract     
-    0,                          // mFlag
-    &dEn_c::normal_collcheck,   // mCallback
+const s16 l_nipper_angleY[] = { 0x4000, -0x4000 };
+const s16 l_nipper_turn_angleY[] = { 0x3999, -0x3999 };
+
+const float daEnPuchiPakkun_c::smc_WALK_SPEED = 0.5f;
+
+const sBcSensorPoint l_nipper_head = { 0, 0x0, 0x10000 };
+const sBcSensorLine l_nipper_foot = { 1, -0x4000, 0x4000, 0 };
+const sBcSensorLine l_nipper_wall = { 1, 0x3000, 0x8000, 0x8000 };
+
+const sCcDatNewF l_nipper_cc = {
+    {0.0f, 8.0f},
+    {8.0f, 8.0f},
+    CC_KIND_ENEMY,
+    CC_ATTACK_NONE,
+    BIT_FLAG(CC_KIND_PLAYER) | BIT_FLAG(CC_KIND_PLAYER_ATTACK) | BIT_FLAG(CC_KIND_YOSHI) |
+    BIT_FLAG(CC_KIND_ENEMY) | BIT_FLAG(CC_KIND_TAMA),
+    0xFFBAD35E,  
+    CC_STATUS_NONE,
+    &dEn_c::normal_collcheck,
 };
 
 int daEnPuchiPakkun_c::create() {
-    // setup our model
+    // Setup our model
     mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
-    mRes = dResMng_c::m_instance->mRes.getRes("pakkun_puchi", "g3d/pakkun_puchi.brres");
+    mRes = dResMng_c::m_instance->getRes("pakkun_puchi", "g3d/pakkun_puchi.brres");
     nw4r::g3d::ResMdl mdl = mRes.GetResMdl("pakkun_puchi");
-    mNipperModel.create(mdl, &mAllocator, 0x227, 1, nullptr);
-    dActor_c::setSoftLight_Enemy(mNipperModel);
+    mNipperModel.create(mdl, &mAllocator, 0x20, 1, nullptr);
+    setSoftLight_Enemy(mNipperModel);
 
     nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("attack");
     mAnmChr.create(mdl, resAnmChr, &mAllocator, 0);
-    playChrAnim("attack", m3d::FORWARD_LOOP, 0.0, 1.0);
+    playChrAnim("attack", m3d::FORWARD_LOOP, 0.0f, 1.0f);
 
     mAllocator.adjustFrmHeap();
 
     // Set y acceleration and max speed for gravity
-    mAccelY = -0.1875;
-    mSpeedMax.y = -4.0;
+    mAccelY = -0.1875f;
+    mSpeedMax.y = -4.0f;
 
     // Register the cc data (hitbox)
-    mCc.set(this, &l_nipper_cc);
+    mCc.set(this, (sCcDatNewF *)&l_nipper_cc);
     mCc.entry();
 
     mDirection = getPl_LRflag(mPos);
-    mAngle.y = l_nipper_look_angle[mDirection];
+    mAngle.y = l_nipper_angleY[mDirection];
 
     // Assign settings variables
     mWalks = (mParam >> 17) & 1;
@@ -66,13 +74,11 @@ int daEnPuchiPakkun_c::create() {
 
     // mCenterOffs is used to set the "center" of the actor
     // For yoshi tongue and dieFall
-    mCenterOffs = mVec3_c(0.0, 8.0, 0.0);
+    mCenterOffs.set(0.0f, 8.0f, 0.0f);
 
     // Set size for model culling
-    mVisibleAreaSize.x = 16.0;
-    mVisibleAreaSize.y = 16.0;
-    mVisibleAreaOffset.x = 0.0;
-    mVisibleAreaOffset.y = 8.0;
+    mVisibleAreaSize.set(16.0f, 16.0f);
+    mVisibleAreaOffset.set(0.0f, 8.0f);
 
     // Set yoshi eating behavior
     if (mSpitsFire) {
@@ -82,11 +88,7 @@ int daEnPuchiPakkun_c::create() {
     }
 
     // Tile sensors
-    static const dBcSensorLine_c below(-4<<12, 4<<12, 0<<12);
-    static const dBcSensorPoint_c above(0<<12, 16<<12);
-    static const dBcSensorLine_c adjacent(3<<12, 8<<12, 8<<12);
-
-    mBc.set(this, (dBcSensor_c*)&below, (dBcSensor_c*)&above, (dBcSensor_c*)&adjacent);
+    mBc.set(this, l_nipper_foot, l_nipper_head, l_nipper_wall);
 
     if (mParam & 1) { // Spawn frozen
         changeState(StateID_IceWait);
@@ -105,9 +107,9 @@ int daEnPuchiPakkun_c::create() {
 }
 
 int daEnPuchiPakkun_c::execute() {
-    // execute state and remove if outisde of zone
+    // Execute state and remove if outside of zone
     mStateMgr.executeState();
-    ActorScrOutCheck(0);
+    ActorScrOutCheck(SKIP_NONE);
     return true;
 }
 
@@ -133,9 +135,9 @@ void daEnPuchiPakkun_c::finalUpdate() {
     mMatrix.ZrotM(mAngle.z);
     
     // Apply center offsets
-    PSMTXTrans(someMatrix, 0.0, mCenterOffs.y, 0.0);
+    PSMTXTrans(someMatrix, 0.0f, mCenterOffs.y, 0.0f);
     PSMTXConcat(mMatrix, someMatrix, mMatrix);
-    PSMTXTrans(thirdMatrix, 0.0, -mCenterOffs.y, 0.0);
+    PSMTXTrans(thirdMatrix, 0.0f, -mCenterOffs.y, 0.0f);
     PSMTXConcat(mMatrix, thirdMatrix, mMatrix);
 
     // Set the matrix for the model
@@ -147,13 +149,13 @@ void daEnPuchiPakkun_c::finalUpdate() {
     return;
 }
 
-void daEnPuchiPakkun_c::Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2) {
+void daEnPuchiPakkun_c::Normal_VsEnHitCheck(dCc_c *self, dCc_c *other) {
     // Collisions with other non-player actors
-    if ((mDirection != 1) || (cc1->mCollOffsetX[3] <= 0.0)) {
+    if ((mDirection != 1) || (self->mCollOffsetX[3] <= 0.0f)) {
         if (mDirection != 0) {
             return;
         }
-        if (cc1->mCollOffsetX[3] >= 0.0) {
+        if (self->mCollOffsetX[3] >= 0.0f) {
             return;
         }
     }
@@ -166,11 +168,11 @@ void daEnPuchiPakkun_c::Normal_VsEnHitCheck(dCc_c *cc1, dCc_c *cc2) {
 void daEnPuchiPakkun_c::initializeState_Ice() {
     if (!mWalks) {
         // Munchers are slightly smaller when encased in ice, so we replicate that here
-        mScale = mVec3_c(0.89, 0.89, 0.89);
+        mScale.set(0.89f, 0.89f, 0.89f);
         // Store x pos
         mStoredIcePos = mPos.x;
         // Set animation to open mouth
-        mAnmChr.setFrame(0.0);
+        mAnmChr.setFrame(0.0f);
     }
     return dEn_c::initializeState_Ice();
 }
@@ -178,35 +180,35 @@ void daEnPuchiPakkun_c::initializeState_Ice() {
 void daEnPuchiPakkun_c::finalizeState_Ice() {
     // Restore everything
     if (!mWalks) {
-        mScale = mVec3_c(1.0, 1.0, 1.0);
+        mScale.set(1.0f, 1.0f, 1.0f);
         mPos.x = mStoredIcePos;
-        playChrAnim("attack", m3d::FORWARD_LOOP, 0.0, 1.0);
+        playChrAnim("attack", m3d::FORWARD_LOOP, 0.0f, 1.0f);
     }
     return dEn_c::finalizeState_Ice();
 }
 
-void daEnPuchiPakkun_c::createIceActor() {
+bool daEnPuchiPakkun_c::createIceActor() {
     // Iceinfo is an array so that __destory_arr can be called
     dIceInfo nipperIceInfo[1] = {
         0x1000,                                 // mFlags
-        mVec3_c(mPos.x, mPos.y, mPos.z+5.0),    // mPos
-        mVec3_c(0.8, 0.8, 0.8),                 // mScale
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0, 
-        0.0
+        mVec3_c(mPos.x, mPos.y, mPos.z+5.0f),   // mPos
+        mVec3_c(0.8f, 0.8f, 0.8f),              // mScale
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f, 
+        0.0f
     };
 
     if (mWalks) {
         nipperIceInfo[0].mFlags = 0;
-        nipperIceInfo[0].mPos = mVec3_c(mPos.x, mPos.y-1.0, mPos.z);
-        nipperIceInfo[0].mScale = mVec3_c(1.0, 1.0, 1.0);
+        nipperIceInfo[0].mPos.set(mPos.x, mPos.y-1.0f, mPos.z);
+        nipperIceInfo[0].mScale.set(1.0f, 1.0f, 1.0f);
     }
 
-    mIceMng.createIce(&nipperIceInfo[0], 1);
+    return mIceMng.createIce(&nipperIceInfo[0], 1);
 }
 
 void daEnPuchiPakkun_c::playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate) {
@@ -226,7 +228,8 @@ void daEnPuchiPakkun_c::updateModel() {
 }
 
 void daEnPuchiPakkun_c::setWalkSpeed() {
-    mSpeed.x = l_nipper_walk_speed[mDirection];
+    static const float dirSpeed[] = { smc_WALK_SPEED, -smc_WALK_SPEED };
+    mSpeed.x = dirSpeed[mDirection];
     return;
 }
 
@@ -234,18 +237,18 @@ bool daEnPuchiPakkun_c::checkForLedge(float xOffset) {
     float xOffs[] = {xOffset, -xOffset};
 
     mVec3_c tileToCheck;
-    tileToCheck.y = 4.0 + mPos.y;
+    tileToCheck.y = 4.0f + mPos.y;
     tileToCheck.z = mPos.z;
     tileToCheck.x = mPos.x + xOffs[mDirection];
 
-    u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0, mLayer);
+    u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0f, mLayer);
 
     if (((unit >> 0x10) & 0xFF) == 8) {
         return false;
     } else {
-        float zeroFloat = 0.0;
+        float zeroFloat = 0.0f;
         bool result = mBc.checkGround(&tileToCheck, &zeroFloat, mLayer, 1, -1);
-        if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0)) {
+        if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0f)) {
             return false;
         } else {
             return true;
@@ -256,14 +259,14 @@ bool daEnPuchiPakkun_c::checkForLedge(float xOffset) {
 }
 
 bool daEnPuchiPakkun_c::isPlayerAbove() {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < PLAYER_COUNT; i++) {
         dAcPy_c *player = daPyMng_c::getPlayer(i);
         // Grab any active players
         if (player) {
             // Are we in the same x range as the nipper?
-            if (10.0 >= std::fabs(player->mPos.x - mPos.x)) {
+            if (10.0f >= std::fabs(player->mPos.x - mPos.x)) {
                 // Are we in the y range?
-                if (mPos.y + 8.0 <= player->mPos.y && player->mPos.y <= mPos.y + 104.0) {
+                if (mPos.y + 8.0f <= player->mPos.y && player->mPos.y <= mPos.y + 104.0f) {
                     return true;
                 }
             }
@@ -273,10 +276,10 @@ bool daEnPuchiPakkun_c::isPlayerAbove() {
 }
 
 bool daEnPuchiPakkun_c::isPlayerInFireRange() {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < PLAYER_COUNT; i++) {
         dAcPy_c *player = daPyMng_c::getPlayer(i);
         if (player) {
-            if ((88.0 >= std::fabs(player->mPos.x - mPos.x)) && (48.0 >= abs(player->mPos.y - mPos.y))) {
+            if ((88.0f >= std::fabs(player->mPos.x - mPos.x)) && (48.0f >= abs(player->mPos.y - mPos.y))) {
                 mFireDirection = getTrgToSrcDir_Main(player->mPos.x + player->mCenterOffs.x, mPos.x + mCenterOffs.x);
                 setFireDistance(abs(player->mPos.x - mPos.x));
                 return true;
@@ -287,11 +290,11 @@ bool daEnPuchiPakkun_c::isPlayerInFireRange() {
 }
 
 void daEnPuchiPakkun_c::setFireDistance(float distance) {
-    if (distance >= 65.0) {
+    if (distance >= 65.0f) {
         mFireDist = 3;
-    } else if (distance >= 49.0) {
+    } else if (distance >= 49.0f) {
         mFireDist = 2;
-    } else if (distance >= 30) {
+    } else if (distance >= 30.0f) {
         mFireDist = 1;
     } else {
         mFireDist = 0;
@@ -299,7 +302,7 @@ void daEnPuchiPakkun_c::setFireDistance(float distance) {
 }
 
 void daEnPuchiPakkun_c::initializeState_Idle() {
-    playChrAnim("attack", m3d::FORWARD_LOOP, 0.0, 1.0);
+    playChrAnim("attack", m3d::FORWARD_LOOP, 0.0f, 1.0f);
 }
 
 void daEnPuchiPakkun_c::finalizeState_Idle() {}
@@ -325,12 +328,12 @@ void daEnPuchiPakkun_c::executeState_Idle() {
         mFireCooldown--;
     }
 
-    killIfTouchingLava(mPos, 1.0);
+    WaterCheck(mPos, 1.0f);
 }
 
 void daEnPuchiPakkun_c::initializeState_Walk() {
     if (mStateMgr.getOldStateID() != &StateID_Turn) {
-        playChrAnim("jump", m3d::FORWARD_LOOP, 0.0, 1.0);
+        playChrAnim("jump", m3d::FORWARD_LOOP, 0.0f, 1.0f);
     }
     setWalkSpeed();
 }
@@ -341,7 +344,7 @@ void daEnPuchiPakkun_c::executeState_Walk() {
     updateModel();
     calcSpeedY();
     posMove();
-    sLib::chaseAngle((short*)&mAngle.y, l_nipper_look_angle[mDirection], 0x500);
+    sLib::chaseAngle((short*)&mAngle.y, l_nipper_angleY[mDirection], 0x800);
 
     if (!EnBgCheck() & 1) {
         if (mBc.isFoot() && (mInLiquid == false) && (mSpeed.y <= 0.0f)) {
@@ -353,12 +356,12 @@ void daEnPuchiPakkun_c::executeState_Walk() {
             return;
         }
         if (mBc.mFlags & 0x15 << mDirection & 0x3f) {
-            mSpeed.x = 0.0;
+            mSpeed.x = 0.0f;
             if (EnBgCheck() & 1) {
                 changeState(StateID_Turn);
             }
         } else {
-            mFootPush2.x = 0.0;
+            mFootPush2.x = 0.0f;
             mSpeed.y = 1.2;
         }
     }
@@ -369,21 +372,19 @@ void daEnPuchiPakkun_c::executeState_Walk() {
         mIsBahJump = true;
         changeState(StateID_Jump);
     }
-    killIfTouchingLava(mPos, 1.0);
+    WaterCheck(mPos, 1.0f);
 }
 
 void daEnPuchiPakkun_c::initializeState_Turn() {
     if (mStateMgr.getOldStateID() != &StateID_Walk) {
-        playChrAnim("jump", m3d::FORWARD_LOOP, 0.0, 1.0);
+        playChrAnim("jump", m3d::FORWARD_LOOP, 0.0f, 1.0f);
     } else {
         mDirection ^= 1;
     }
-    mSpeed.x = 0.0;
+    mSpeed.x = 0.0f;
 }
 
-void daEnPuchiPakkun_c::finalizeState_Turn() {
-    mAngle.y = l_nipper_look_angle[mDirection];
-}
+void daEnPuchiPakkun_c::finalizeState_Turn() {}
 
 void daEnPuchiPakkun_c::executeState_Turn() {
     updateModel();
@@ -395,7 +396,7 @@ void daEnPuchiPakkun_c::executeState_Turn() {
             mFootPush2.x = mFootPush2.x + m_1eb.x;
         }
     } else {
-        mSpeed.y = 0.0;
+        mSpeed.y = 0.0f;
     }
 
     if (dAudio::isBgmAccentSign(1)) {
@@ -403,10 +404,10 @@ void daEnPuchiPakkun_c::executeState_Turn() {
         changeState(StateID_Jump);
     }
 
-    killIfTouchingLava(mPos, 1.0);
+    WaterCheck(mPos, 1.0f);
 
     // Face our new direction, and exit state when finished
-    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_nipper_turn_angle[mDirection], 0x800);
+    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_nipper_turn_angleY[mDirection], 0x800);
 
     if (doneTurning) {
         changeState(StateID_Walk);
@@ -415,21 +416,21 @@ void daEnPuchiPakkun_c::executeState_Turn() {
 }
 
 void daEnPuchiPakkun_c::initializeState_Jump() {
-    playChrAnim("jump", m3d::FORWARD_LOOP, 0.0, 1.0);
+    playChrAnim("jump", m3d::FORWARD_LOOP, 0.0f, 1.0f);
 
-    mSpeed.x = 0.0;
+    mSpeed.x = 0.0f;
     if (mIsBahJump) {
-        mSpeed.y = 2.0;
+        mSpeed.y = 2.0f;
     } else {
         switch (mJumpHeight) {
             default:
-                mSpeed.y = 5.5; 
+                mSpeed.y = 5.5f; 
                 break;
             case 1:
-                mSpeed.y = 4.5;
+                mSpeed.y = 4.5f;
                 break;
             case 2:
-                mSpeed.y = 3.5;
+                mSpeed.y = 3.5f;
                 break;
         }
     }
@@ -455,12 +456,12 @@ void daEnPuchiPakkun_c::executeState_Jump() {
         }
     }
 
-    killIfTouchingLava(mPos, 1.0);
+    WaterCheck(mPos, 1.0f);
 }
 
 void daEnPuchiPakkun_c::initializeState_IceWait() {
-    mScale = mVec3_c(0.89, 0.89, 0.89);
-    mAnmChr.setFrame(0.0);
+    mScale.set(0.89f, 0.89f, 0.89f);
+    mAnmChr.setFrame(0.0f);
 }
 
 void daEnPuchiPakkun_c::finalizeState_IceWait() {}
@@ -477,7 +478,7 @@ void daEnPuchiPakkun_c::executeState_IceWait() {
     }
     // We're MELTING
     if (fireballState == 2) {
-        mScale = mVec3_c(1.0, 1.0, 1.0);
+        mScale.set(1.0f, 1.0f, 1.0f);
     }
     // Our AC_FREEZER no longer exists, so we've melted
     if (fireballState == 0) {
@@ -492,7 +493,7 @@ void daEnPuchiPakkun_c::executeState_IceWait() {
 }
 
 void daEnPuchiPakkun_c::initializeState_FireSpit() {
-    playChrAnim("spit", m3d::FORWARD_LOOP, 0.0, 1.0);
+    playChrAnim("spit", m3d::FORWARD_LOOP, 0.0f, 1.0f);
     mFireTimer = 15;
 }
 
@@ -509,7 +510,7 @@ void daEnPuchiPakkun_c::executeState_FireSpit() {
     EnBgCheck();
 
     if (mFireTimer == 15 && isPlayerInFireRange()) {
-        mVec3_c firePos = mVec3_c(mPos.x, mPos.y + 10.0, mPos.z);
+        mVec3_c firePos(mPos.x, mPos.y + 10.0f, mPos.z);
         construct(fProfile::AC_PAKKUN_PUCHI_FIRE, mFireDist << 4 | mFireDirection, &firePos, &mAngle, mLayer);
         mVec2_c soundPos = dAudio::cvtSndObjctPos(mPos);
         dAudio::g_pSndObjEmy->startSound(SE_EMY_FIRE_BROS_FIRE, soundPos, 0);

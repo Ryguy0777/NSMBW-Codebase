@@ -1,3 +1,4 @@
+// Source: https://github.com/CLF78/NSMASR-v2/blob/master/game/debug/config.cpp
 #include <kamek.h>
 #include <new/bases/d_debug_config.hpp>
 #include <constants/game_constants.h>
@@ -37,10 +38,15 @@ const DebugKey keys[] = {
     {DebugKey::DrawRideableColliders, "DrawRideableColliders"},
     {DebugKey::MovieId, "MovieId"},
     {DebugKey::ActorLog, "ActorLog"},
+    {DebugKey::DrawSpawnRange, "DrawSpawnRange"},
+    {DebugKey::DrawSpawnRangeMargins, "DrawSpawnRangeMargins"},
+    {DebugKey::DrawVisibleArea, "DrawVisibleArea"},
+    {DebugKey::DrawEnemySpawnRange, "DrawEnemySpawnRange"},
+    {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"}
 };
 
 static dDebugConfig_c instance;
-dDebugConfig_c* dDebugConfig_c::m_instance = &instance;
+dDebugConfig_c* dDebugConfig_c::m_instance = nullptr;
 
 dDebugConfig_c::dDebugConfig_c() {
     // Initialize the values to sane defaults
@@ -59,6 +65,8 @@ dDebugConfig_c::dDebugConfig_c() {
     mHintMovieType = 0;
     mShowPregame = false;
     mCollisionDebugFlags = ColliderDisplayFlags::None;
+    mSpawnRangeDebugFlags = SpawnRangeDisplayFlags::None;
+    mSpawnRangeModeFlags = SpawnRangeDisplayMode::None;
 
     mMovieId = 1;
 
@@ -174,6 +182,26 @@ void dDebugConfig_c::parseConfigLine(char* key, char* param, int paramSize) {
             mCollisionDebugFlags |= ((decodedParam & 1) << ColliderDisplayFlags::RideableColliders);
             break;
 
+        case DebugKey::DrawSpawnRange:
+            mSpawnRangeDebugFlags |= ((decodedParam & 1) << SpawnRangeDisplayFlags::NoMargins);
+            break;
+
+        case DebugKey::DrawSpawnRangeMargins:
+            mSpawnRangeDebugFlags |= ((decodedParam & 1) << SpawnRangeDisplayFlags::Margins);
+            break;
+
+        case DebugKey::DrawVisibleArea:
+            mSpawnRangeDebugFlags |= ((decodedParam & 1) << SpawnRangeDisplayFlags::VisibleArea);
+            break;
+        
+        case DebugKey::DrawEnemySpawnRange:
+            mSpawnRangeModeFlags |= ((decodedParam & 1) << SpawnRangeDisplayMode::Enemy);
+            break;
+        
+        case DebugKey::DrawMapObjSpawnRange:
+            mSpawnRangeModeFlags |= ((decodedParam & 1) << SpawnRangeDisplayMode::MapObj);
+            break;
+
         case DebugKey::MovieId:
             mMovieId = clamp(decodedParam, 1, 3);
             break;
@@ -259,13 +287,13 @@ void dDebugConfig_c::parseConfig(nw4r::ut::CharStrmReader* reader, void* bufferE
     } while (reader->GetCurrentPos() < bufferEnd);
 }
 
-void dDebugConfig_c::loadConfig() {
+bool dDebugConfig_c::loadConfig() {
 
     // Locate the file
     int entrynum = DVDConvertPathToEntrynum("config/debug_config.ini");
     if (entrynum == -1) {
         OSReport("Debug config not found, bailing!\n");
-        return;
+        return false;
     }
 
     // Try to load it
@@ -273,7 +301,7 @@ void dDebugConfig_c::loadConfig() {
     bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
     if (!fileLoaded) {
         OSReport("Debug config not loaded, bailing!\n");
-        return;
+        return false;
     }
 
     // Allocate the necessary space
@@ -281,7 +309,7 @@ void dDebugConfig_c::loadConfig() {
     void* buffer = EGG::Heap::alloc(size, 0x20, mHeap::g_archiveHeap);
     if (buffer == nullptr) {
         OSReport("Failed to allocate buffer, bailing!\n");
-        return;
+        return false;
     }
 
     // Read the file
@@ -299,15 +327,20 @@ void dDebugConfig_c::loadConfig() {
     // Close the file, free the buffer and return
     DVDClose(&dvdHandle);
     EGG::Heap::free(buffer, mHeap::g_archiveHeap);
+    m_instance = &instance;
+    return true;
 }
 
-void dDebugConfig_c::setupConfig() {
-    instance.loadConfig();
+bool dDebugConfig_c::setupConfig() {
+    if (dDebugConfig_c::m_instance == nullptr) {
+        return instance.loadConfig();
+    }
+    return true;
 }
 
 extern "C" void CrsinLoadFiles();
 
-// process launch type
+// Process launch type
 kmBranchDefCpp(0x8015D850, NULL, void, void) {
     // If launch type is 0, do the original call and nothing else
     u8 launchType = instance.mLaunchType;
@@ -333,7 +366,7 @@ kmBranchDefCpp(0x8015D850, NULL, void, void) {
 
         for (int i = 0; i <= instance.mPlayerCount; i++) {
             daPyMng_c::mPlayerEntry[i] = 1;
-            daPyMng_c::mPlayerType[i] = i;
+            daPyMng_c::mPlayerType[i] = (PLAYER_TYPE_e)i;
             daPyMng_c::mPlayerMode[i] = instance.mPowerUp;
             daPyMng_c::mCreateItem[i] = instance.mStar;
         }
@@ -345,7 +378,7 @@ kmBranchDefCpp(0x8015D850, NULL, void, void) {
                 dInfo_c::mGameFlag |= dInfo_c::GAME_FLAG_IS_COIN_COURSE;
 
             case LaunchGameMode::FreePlay:
-                dInfo_c::mGameFlag |= dInfo_c::GAME_FLAG_IS_EXTRA_MODE;
+                dInfo_c::mGameFlag |= dInfo_c::GAME_FLAG_4;
                 break;
 
             case LaunchGameMode::SuperGuideReplay:

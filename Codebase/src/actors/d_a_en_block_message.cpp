@@ -7,10 +7,10 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_MESSAGE, daEnBlockMessage_c, fProfile::EN_BLOCK, f
 
 STATE_DEFINE(daEnBlockMessage_c, Wait);
 
-const SpriteData msgblockSpriteData = {fProfile::EN_BLOCK_MESSAGE, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, 0x8};
-dCustomProfile_c msgblockProfile(&g_profile_EN_BLOCK_MESSAGE, "EN_BLOCK_MESSAGE", SpriteId::EN_BLOCK_MESSAGE, &msgblockSpriteData);
+const dActorData_c c_BLOCK_MESSAGE_actor_data = {fProfile::EN_BLOCK_MESSAGE, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
+dCustomProfile_c l_BLOCK_MESSAGE_profile(&g_profile_EN_BLOCK_MESSAGE, "EN_BLOCK_MESSAGE", SpriteId::EN_BLOCK_MESSAGE, &c_BLOCK_MESSAGE_actor_data);
 
-sBgSetInfo l_msgblock_info = {
+sBgSetInfo l_msgblock_bgc_info = {
     mVec2_c(-8, 8),
     mVec2_c(8, -8),
     &daEnBlockMain_c::callBackF,
@@ -22,16 +22,16 @@ int daEnBlockMessage_c::create() {
     Block_CreateClearSet(mPos.y);
 
     // set collider
-    mBg.set(this, &l_msgblock_info, 3, mLayer, nullptr);
+    mBg.set(this, &l_msgblock_bgc_info, 3, mLayer, nullptr);
     mBg.mFlags = 0x260;
 
-    mBg.mBelowCallback = &daEnBlockMain_c::checkRevFoot;
-    mBg.mAboveCallback = &daEnBlockMain_c::checkRevHead;
-    mBg.mAdjCallback = &daEnBlockMain_c::checkRevWall;
+    mBg.mBelowCheckFunc = &daEnBlockMain_c::checkRevFoot;
+    mBg.mAboveCheckFunc = &daEnBlockMain_c::checkRevHead;
+    mBg.mAdjCheckFunc = &daEnBlockMain_c::checkRevWall;
 
-    mBg.mBelowCheckFunc = &daEnBlockMain_c::callBackF;
-    mBg.mAboveCheckFunc = &daEnBlockMain_c::callBackH;
-    mBg.mAdjCheckFunc = &daEnBlockMain_c::callBackW;
+    mBg.mBelowCallback = &daEnBlockMain_c::callBackF;
+    mBg.mAboveCallback = &daEnBlockMain_c::callBackH;
+    mBg.mAdjCallback = &daEnBlockMain_c::callBackW;
 
     mBg.entry();
 
@@ -72,7 +72,7 @@ int daEnBlockMessage_c::execute() {
     mTile.setScaleFoot(mScale.x);
 
     if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
-        ActorScrOutCheck(0);
+        ActorScrOutCheck(SKIP_NONE);
     }
 
     return true;
@@ -93,7 +93,7 @@ void daEnBlockMessage_c::blockWasHit(bool isDown) {
 
     dMsgBoxWindow_c::m_instance->showMessage(mMessageId);
 
-    mBg.set(this, &l_msgblock_info, 3, mLayer, nullptr);
+    mBg.set(this, &l_msgblock_bgc_info, 3, mLayer, nullptr);
     mBg.entry();
     
     changeState(StateID_Wait);

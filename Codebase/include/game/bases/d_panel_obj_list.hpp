@@ -14,6 +14,8 @@ public:
 
     void setScaleFoot(float scale);
 
+    void setScaleAngle(float scale, short angle);
+
     float getScale();
 
     dPanelObjList_c *mpPrev, *mpNext;

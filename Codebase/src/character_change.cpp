@@ -196,7 +196,7 @@ kmBranchDefAsm(0x8019AAB4, 0x8019AAB8) {
 }
 
 // IncreaseCourseInVolume
-static const float D_IncreaseCourseInVolume_Volume = 2.0;
+static const float D_IncreaseCourseInVolume_Volume = 2.0f;
 extern "C" void SetVolume__Q44nw4r3snd6detail10BasicSoundFfi(void);
 kmBranchDefAsm(0x8019AB8C, 0x8019AB90) {
     nofralloc

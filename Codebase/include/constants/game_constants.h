@@ -11,11 +11,19 @@
 
 #define CHECKPOINT_COUNT 2 ///< The maximum number of checkpoints supported.
 
+#define COURSE_FILE_COUNT 4 ///< The number of files in a course.
+
 #define HINT_MOVIE_COUNT 70 ///< The total hint movie count.
+
+#define MAX_AREAS 64 ///< The maximum number of areas per course file.
 
 #define MAX_LIVES 99 ///< The maximum life count.
 
+#define MAX_MAP_ACTOR_COUNT 1000 ///< The maximum number of map actors that can exist simultaneously.
+
 #define MAX_STOCK_ITEM 99 ///< The maximum inventory amount per item.
+
+#define MAX_EXTRA_MODE_SCORE 1000000 ///< The maximum possible score in Free Mode and Coin Battle.
 
 #define SAVE_SLOT_COUNT 3 ///< The total save slot count.
 
@@ -31,11 +39,19 @@
 
 #define WM_PATH_MAX_POINT_COUNT 32 ///< The maximum number of keypoints for generic world map paths.
 
+#define Z_POS_COUNT 30 ///< The number of Z positions inside a layer.
+
 enum DIRECTION_e {
     DIR_UP,
     DIR_DOWN,
     DIR_LEFT,
     DIR_RIGHT
+};
+
+enum LAYER_e {
+    LAYER_1,
+    LAYER_2,
+    LAYER_0,
 };
 
 enum PATH_DIRECTION_e {
@@ -44,8 +60,8 @@ enum PATH_DIRECTION_e {
     PATH_DIR_INITIAL,
 };
 
-/// @brief The identifiers for each character.
-enum PLAYER_CHARACTER_e {
+/// @brief The identifiers for each player type.
+enum PLAYER_TYPE_e {
     PLAYER_MARIO,
     PLAYER_LUIGI,
     PLAYER_YELLOW_TOAD,

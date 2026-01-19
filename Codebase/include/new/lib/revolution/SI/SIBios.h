@@ -136,7 +136,7 @@ u32 SIDisablePolling(u32 poll);
 bool SIGetResponse(s32 chan, void* data);
 u32 SIGetTypeAsync(s32 chan, SITypeCallback callback);
 u32 SIDecodeType(u32 type);
-u32 SIProbe(u32 chan);
+u32 SIProbe(s32 chan);
 
 // functions from the original game
 void SIInit(void);

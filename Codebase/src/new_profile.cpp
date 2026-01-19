@@ -1,96 +1,85 @@
 #include <kamek.h>
 #include <new/new_profile.hpp>
-#include <revolution/OS/OSError.h>
 
 //#define DEBUG_PROFILE_CALL
 
-// sprites
+// Sprites
 
-extern SpriteData spriteDataTable[SPRITE_COUNT];
-SpriteData customSpriteDataTable[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
+dActorData_c l_custom_actor_data_tbl[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
 
-extern const char** spriteFiles[SPRITE_COUNT];
-const char** customSpriteFiles[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
+extern const char** l_actor_file_tbl[SPRITE_COUNT];
+const char** l_custom_actor_file_tbl[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
 
-// profiles
+// Profiles
 
-extern fProfile::fProfilePtr_c* profileList[fProfile::PROFILE_COUNT];
-fProfile::fProfilePtr_c* customProfileList[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
+extern fProfile::fProfilePtr_c* l_profile_tbl[fProfile::PROFILE_COUNT];
+fProfile::fProfilePtr_c* l_custom_profile_tbl[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
 
-extern const char* profileNames[fProfile::PROFILE_COUNT];
-const char* customProfileNames[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
+extern const char* s_table[fProfile::PROFILE_COUNT];
+const char* custom_s_table[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT];
 
-// custom profile ctors
+// Custom profile ctors
 
-// stage actor with sprite
-dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const SpriteData *spriteData, const char** files) {
-#ifdef DEBUG_PROFILE_CALL
-    OSReport("Profile Setter: Sprite, %p, %s, %d, %d, %p, %p\n", profile, name, spriteData->profileId, spriteId, spriteData, files);
-#endif
-    // store profile in the class
+// Stage actor with sprite
+dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const dActorData_c *dActorData_c, const char** files) {
+    // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
     mProfile.mActorProperties = profile->mActorProperties;
 
-    // store sprite data
-    ProfileName profileId = spriteData->profileId;
+    // Store sprite data
+    ProfileName profileId = dActorData_c->mProfileName;
     if (spriteId < SPRITE_COUNT) {
-        spriteDataTable[spriteId] = *spriteData;
-        spriteFiles[spriteId] = files;
+        dActorData_c::l_actor_data_tbl[spriteId] = *dActorData_c;
+        l_actor_file_tbl[spriteId] = files;
     } else {
-        customSpriteDataTable[spriteId - SPRITE_COUNT] = *spriteData;
-        customSpriteFiles[spriteId - SPRITE_COUNT] = files;
+        l_custom_actor_data_tbl[spriteId - SPRITE_COUNT] = *dActorData_c;
+        l_custom_actor_file_tbl[spriteId - SPRITE_COUNT] = files;
     }
 
-    // store profile data
+    // Store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
-        profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
-        profileNames[profileId] = name;
+        l_profile_tbl[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
+        s_table[profileId] = name;
     } else {
-        customProfileList[profileId - fProfile::PROFILE_COUNT] = (fProfile::fProfilePtr_c*)&mProfile;
-        customProfileNames[profileId - fProfile::PROFILE_COUNT] = name;
+        l_custom_profile_tbl[profileId - fProfile::PROFILE_COUNT] = (fProfile::fProfilePtr_c*)&mProfile;
+        custom_s_table[profileId - fProfile::PROFILE_COUNT] = name;
     }
 }
 
-// stage actor without sprite
+// Stage actor without sprite
 dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, ProfileName profileId) {
-#ifdef DEBUG_PROFILE_CALL
-    OSReport("Profile Setter: Actor, %p, %s, %d\n", profile, name, profileId);
-#endif
-    // store profile in the class
+    // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
     mProfile.mActorProperties = profile->mActorProperties;
 
-    // store profile data
+    // Store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
-        profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
-        profileNames[profileId] = name;
+        l_profile_tbl[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
+        s_table[profileId] = name;
     } else {
-        customProfileList[profileId - fProfile::PROFILE_COUNT]= (fProfile::fProfilePtr_c*)&mProfile;
-        customProfileNames[profileId - fProfile::PROFILE_COUNT] = name;
+        l_custom_profile_tbl[profileId - fProfile::PROFILE_COUNT]= (fProfile::fProfilePtr_c*)&mProfile;
+        custom_s_table[profileId - fProfile::PROFILE_COUNT] = name;
     }
 }
 
-// non-stage actors
+// Non-stage actors
 dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId) {
-#ifdef DEBUG_PROFILE_CALL
-    OSReport("Profile Setter: Base, %p, %s, %d\n", profile, name, profileId);
-#endif
-    // store profile in the class
+    // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
     mProfile.mDrawOrder = profile->mDrawOrder;
 
-    // store profile data
+    // Store profile data
     if (profileId < fProfile::PROFILE_COUNT) {
-        profileList[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
-        profileNames[profileId] = name;
+        l_profile_tbl[profileId] = (fProfile::fProfilePtr_c*)&mProfile;
+        s_table[profileId] = name;
     } else {
-        customProfileList[profileId - fProfile::PROFILE_COUNT]= (fProfile::fProfilePtr_c*)&mProfile;
-        customProfileNames[profileId - fProfile::PROFILE_COUNT] = name;
+        l_custom_profile_tbl[profileId - fProfile::PROFILE_COUNT]= (fProfile::fProfilePtr_c*)&mProfile;
+        custom_s_table[profileId - fProfile::PROFILE_COUNT] = name;
     }
 }
 
@@ -107,7 +96,7 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char
     #define PROFCNT 750
 #endif
 
-/* Spritedata List hooks */
+/* dActorData_c List hooks */
 
 kmCallDefAsm(0x80068440) {
     // Move r30 to r4 to preserve it, as we are inside a loop
@@ -122,8 +111,8 @@ kmCallDefAsm(0x80068440) {
     sub r0, r0, r12
 
     // Override table address
-    lis r4, customSpriteDataTable@h
-    ori r4, r4, customSpriteDataTable@l
+    lis r4, l_custom_actor_data_tbl@h
+    ori r4, r4, l_custom_actor_data_tbl@l
 
     // Modified original instruction
     notCustom:
@@ -141,8 +130,8 @@ kmCallDefAsm(0x80068E18) {
     sub r0, r0, r12
 
     // Override table address
-    lis r9, customSpriteDataTable@h
-    ori r9, r9, customSpriteDataTable@l
+    lis r9, l_custom_actor_data_tbl@h
+    ori r9, r9, l_custom_actor_data_tbl@l
 
     // Original instruction
     notCustom:
@@ -160,8 +149,8 @@ kmCallDefAsm(0x80068F50) {
     sub r0, r0, r12
 
     // Override table address
-    lis r3, customSpriteDataTable@h
-    ori r3, r3, customSpriteDataTable@l
+    lis r3, l_custom_actor_data_tbl@h
+    ori r3, r3, l_custom_actor_data_tbl@l
 
     // Original instruction
     notCustom:
@@ -179,8 +168,8 @@ kmCallDefAsm(0x807FC8D8) {
     sub r0, r0, r12
 
     // Override table address
-    lis r7, customSpriteDataTable@h
-    ori r7, r7, customSpriteDataTable@l
+    lis r7, l_custom_actor_data_tbl@h
+    ori r7, r7, l_custom_actor_data_tbl@l
 
     // Original instruction
     notCustom:
@@ -197,8 +186,8 @@ kmCallDefAsm(0x8006894C) {
     subi r4, r4, SPRITE_COUNT*0x28
 
     // Override table address
-    lis r0, customSpriteDataTable@h
-    ori r0, r0, customSpriteDataTable@l
+    lis r0, l_custom_actor_data_tbl@h
+    ori r0, r0, l_custom_actor_data_tbl@l
 
     // Original instruction
     notCustom:
@@ -218,8 +207,8 @@ kmCallDefAsm(0x8006C7C8) {
     sub r0, r0, r12
 
     // Override table address
-    lis r4, customProfileList@h
-    ori r4, r4, customProfileList@l
+    lis r4, l_custom_profile_tbl@h
+    ori r4, r4, l_custom_profile_tbl@l
 
     // Original instruction
     notCustom:
@@ -237,8 +226,8 @@ kmCallDefAsm(0x80161CF4) {
     sub r0, r0, r12
 
     // Override table address
-    lis r3, customProfileList@h
-    ori r3, r3, customProfileList@l
+    lis r3, l_custom_profile_tbl@h
+    ori r3, r3, l_custom_profile_tbl@l
 
     // Original instruction
     notCustom:
@@ -255,8 +244,8 @@ kmCallDefAsm(0x80162BC8) {
     subi r31, r31, PROFCNT*4
 
     // Override table address
-    lis r7, customProfileList@h
-    ori r7, r7, customProfileList@l
+    lis r7, l_custom_profile_tbl@h
+    ori r7, r7, l_custom_profile_tbl@l
 
     // Original instruction
     notCustom:
@@ -282,8 +271,8 @@ kmCallDefAsm(0x8091FD3C) {
     sub r0, r0, r12
 
     // Override table address
-    lis r21, customSpriteFiles@h
-    ori r21, r21, customSpriteFiles@l
+    lis r21, l_custom_actor_file_tbl@h
+    ori r21, r21, l_custom_actor_file_tbl@l
 
     // Modified original instruction
     notCustom:
@@ -296,5 +285,5 @@ kmCallDefAsm(0x8091FD3C) {
 kmBranchDefCpp(0x801018CC, NULL, const char*, u16 profileId, const char** array) {
     if (profileId < fProfile::PROFILE_COUNT)
         return array[profileId];
-    return customProfileNames[profileId - fProfile::PROFILE_COUNT];
+    return custom_s_table[profileId - fProfile::PROFILE_COUNT];
 }

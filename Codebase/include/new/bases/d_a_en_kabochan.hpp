@@ -1,11 +1,10 @@
 #pragma once
-
 #include <game/bases/d_a_en_kuribo.hpp>
 
 class daEnKabochan_c : public daEnKuribo_c {
 public:
     // dEn_c overrides
-    virtual bool hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2);
+    virtual bool hitCallback_HipAttk(dCc_c *self, dCc_c *other);
 
     virtual void setDeathSound_HipAttk();
 
@@ -13,7 +12,7 @@ public:
 
     virtual void hipatkEffect(const mVec3_c &pos);
 
-    virtual void createIceActor();
+    virtual bool createIceActor();
 
     virtual void fumiSE(dActor_c *actor);
 

@@ -7,30 +7,30 @@
 
 CUSTOM_ACTOR_PROFILE(EN_KABOCHAN, daEnKabochan_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 
-const char* splunkinArcList [] = {"kabochan", NULL};
-const SpriteData splunkinSpriteData = {fProfile::EN_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c splunkinProfile(&g_profile_EN_KABOCHAN, "EN_KABOCHAN", SpriteId::EN_KABOCHAN, &splunkinSpriteData, splunkinArcList);
+const char* l_KABOCHAN_res [] = {"kabochan", NULL};
+const dActorData_c c_KABOCHAN_actor_data = {fProfile::EN_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+dCustomProfile_c l_KABOCHAN_profile(&g_profile_EN_KABOCHAN, "EN_KABOCHAN", SpriteId::EN_KABOCHAN, &c_KABOCHAN_actor_data, l_KABOCHAN_res);
 
-bool daEnKabochan_c::hitCallback_HipAttk(dCc_c *cc1, dCc_c *cc2) {
-    daPlBase_c *player = (daPlBase_c *)cc2->mpOwner;
-    u8 direction = getTrgToSrcDir_Main(player->getCenterX(), getCenterY());
+bool daEnKabochan_c::hitCallback_HipAttk(dCc_c *self, dCc_c *other) {
+    daPlBase_c *player = (daPlBase_c *)other->mpOwner;
+    u8 direction = getTrgToSrcDir_Main(player->getCenterPos().x, getCenterPos().y);
     s8 *playerNo = player->getPlrNo();
 
     setDeathSound_HipAttk();
-    mVec3_c effPos(mPos.x, getCenterY(), 5500.0);
+    mVec3_c effPos(mPos.x, getCenterPos().y, 5500.0f);
     hipatkEffect(effPos);
     int comboCnt = dEnCombo_c::calcPlComboCnt(player);
     int score = mCombo.getComboScore(comboCnt);
     sDeathInfoData splunkinDeathInfo = {
-        0.0, 0.0,
-        0.0, 0.0,
+        0.0f, 0.0f,
+        0.0f, 0.0f,
         &StateID_DieOther,
         score,
         -1,
         direction,
         *playerNo
     };
-    mDeathInfo.set(splunkinDeathInfo);
+    mDeathInfo = splunkinDeathInfo;
     return true;
 }
 
@@ -46,7 +46,7 @@ void daEnKabochan_c::initializeState_DieOther() {
 
 void daEnKabochan_c::hipatkEffect(const mVec3_c &pos) {
     dEf::createEffect_change("Wm_mr_softhit", 0, &pos, nullptr, nullptr);
-    mVec3_c scale(1.5, 1.5, 1.5);
+    mVec3_c scale(1.5f, 1.5f, 1.5f);
     if (!mIsCracked) {
         dEf::createEffect_change("Wm_en_pumpkinbreak", 0, &pos, nullptr, nullptr);
     } else {
@@ -54,7 +54,7 @@ void daEnKabochan_c::hipatkEffect(const mVec3_c &pos) {
     }
 }
 
-void daEnKabochan_c::createIceActor() {
+bool daEnKabochan_c::createIceActor() {
     dIceInfo splunkinIceInfo[1] = {
         0,                                      // mFlags
         mVec3_c(mPos.x, mPos.y-2.0, mPos.z),    // mPos
@@ -67,7 +67,7 @@ void daEnKabochan_c::createIceActor() {
         0.0, 
         0.0
     };
-    mIceMng.createIce(&splunkinIceInfo[0], 1);
+    return mIceMng.createIce(&splunkinIceInfo[0], 1);
 }
 
 void daEnKabochan_c::fumiSE(dActor_c *actor) {
@@ -93,10 +93,10 @@ void daEnKabochan_c::reactFumiProc(dActor_c* player) {
 }
 
 void daEnKabochan_c::createBodyModel() {
-    mRes = dResMng_c::m_instance->mRes.getRes("kabochan", "g3d/kabochan.brres");
+    mRes = dResMng_c::m_instance->getRes("kabochan", "g3d/kabochan.brres");
     nw4r::g3d::ResMdl bmdl = mRes.GetResMdl("kabochan");
 	mModel.create(bmdl, &mAllocator, 0x32C, 1, 0);
-	dActor_c::setSoftLight_Enemy(mModel);
+	setSoftLight_Enemy(mModel);
 
 	nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("walk");
 	mAnmChr.create(bmdl, resAnmChr, &mAllocator, 0);

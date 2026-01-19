@@ -1,5 +1,6 @@
 #pragma once
 
+#include <types.h>
 #include <game_versions_nsmbw.h>
 
 namespace fProfile {
@@ -7,7 +8,8 @@ namespace fProfile {
     /// @brief A name of a profile. Can be used to index into fProfile::sProfileList.
     /// @ingroup profile
     enum PROFILE_NAME_e {
-        BOOT,
+        PROFILE_NULL = (u16) -1,
+        BOOT = 0,
         AUTO_SELECT,
         SELECT,
         WORLD_MAP,
@@ -795,6 +797,38 @@ namespace fProfile {
         EN_LARGE_KABOCHAN,
         EN_KABOKURIBO,
         AC_KABOKURIBO_FLAME,
+        EN_KAKIBO,
+        EN_KURIBON,
+        EN_PATA_KURIBON,
+        EN_KAKIBON,
+        EN_HEIHO_BUBBLE,
+        EN_HEIHO_BALLOON,
+        EN_HEIHO_NET,
+        EN_HEIHO_LARGE,
+        EN_HEIHO_GIANT,
+        EN_HEIHO_MEGA,
+        AC_LIFT_BG_RAIL,
+        AC_LIFT_BG_ROTATION,
+        AC_EFFECT_SPAWNER,
+        EN_STAR_COIN_FAKE,
+        DEBUG_MENU,
+        AC_MODEL_LOADER,
+        MODEL_RES0,
+        MODEL_RES1,
+        MODEL_RES2,
+        MODEL_RES3,
+        MODEL_RES4,
+        MODEL_RES5,
+        MODEL_RES6,
+        MODEL_RES7,
+        MODEL_RES8,
+        MODEL_RES9,
+        MODEL_RES10,
+        MODEL_RES11,
+        MODEL_RES12,
+        MODEL_RES13,
+        MODEL_RES14,
+        MODEL_RES15,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

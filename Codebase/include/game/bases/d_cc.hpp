@@ -4,142 +4,127 @@
 
 class dActor_c;
 
+///< @unofficial
+enum CC_SHAPE_e {
+    CC_SHAPE_BOX, ///< Rectangular collider
+    CC_SHAPE_CIRCLE, ///< Circular / elliptical collider
+    CC_SHAPE_DAIKEI_UD, ///< Trapezoid-shaped collider (left/right sides are parallel)
+    CC_SHAPE_DAIKEI_LR, ///< Trapezoid-shaped collider (top/bottom sides are parallel)
+};
+
+///< @unofficial
+enum CC_STATUS_FLAG_e {
+    CC_STATUS_NONE = 0,
+    CC_STATUS_NO_REVISION = BIT_FLAG(0), ///< Don't set the collision offset if a collision occurs
+    /**
+    * When another collider collides with this one,
+    * don't update the result or execute the callback
+    * on the other collider.
+    */
+    CC_STATUS_NO_PASS_INFO = BIT_FLAG(2),
+};
+
+///< @unofficial
+enum CC_INFO_e {
+    CC_NO_HIT = BIT_FLAG(1), ///< Disables all collisions with this collider
+};
+
+///< @unofficial
+enum CC_KIND_e {
+    CC_KIND_PLAYER,
+    /**
+    * This collider can attack, which means it will use mAttackCategory and
+    * mAttackCategoryInteract to further check if the colliders will collide.
+    */
+    CC_KIND_PLAYER_ATTACK,
+    CC_KIND_YOSHI,
+    CC_KIND_ENEMY,
+    CC_KIND_BALLOON,
+    CC_KIND_ITEM,
+    CC_KIND_TAMA,
+    CC_KIND_KILLER,
+    CC_KIND_GOAL_POLE
+};
+
+///< @unofficial
+enum CC_ATTACK_e {
+    CC_ATTACK_NONE,
+    CC_ATTACK_FIREBALL,
+    CC_ATTACK_ICEBALL,
+    CC_ATTACK_STAR,
+    CC_ATTACK_ICE_BREAK,
+    CC_ATTACK_SLIP,
+    CC_ATTACK_KOOPA_FIRE,
+    CC_ATTACK_HIP_ATTACK,
+    CC_ATTACK_WIRE_NET,
+    CC_ATTACK_SHELL,
+    CC_ATTACK_PENGUIN_SLIDE,
+    CC_ATTACK_SPIN,
+    CC_ATTACK_UNK12,
+    CC_ATTACK_SPIN_FALL,
+    CC_ATTACK_FIRE_2,
+    CC_ATTACK_YOSHI_EAT,
+    CC_ATTACK_YOSHI_MOUTH,
+    CC_ATTACK_CANNON,
+    CC_ATTACK_SPIN_LIFT_UP,
+    CC_ATTACK_YOSHI_BULLET,
+    CC_ATTACK_YOSHI_FIRE,
+    CC_ATTACK_ICE_2,
+    CC_ATTACK_SAND_PILLAR
+};
+
+class dCc_c;
+
+/**
+* @brief A structure that contains information about a collider.
+* @unofficial
+*/
+struct sCcDatNewF {
+    mVec2_POD_c mOffset; ///< The offset of the collider.
+
+    ///< @brief The size of the collider.
+    ///< Note: This is the distance from the center to the edge, so half the actual size.
+    mVec2_POD_c mSize;
+
+    u8 mKind; ///< The type of this collider. See CC_KIND_e.
+    u8 mAttack; ///< The attack type of this collider. See CC_ATTACK_e.
+
+    ///< @brief Which types this collider should be able to collide with.
+    ///< This is a bitfield with the bits enumerated by CC_KIND_e.
+    u32 mVsKind;
+
+    ///< @brief Which attack types this collider should be able to receive.
+    ///< This is a bitfield with the bits enumerated by CC_ATTACK_e.
+    u32 mVsDamage;
+
+    u16 mStatus; ///< Status flags for this collider. See CC_STATUS_FLAG_e.
+
+    void (*mCallback)(dCc_c *self, dCc_c *target); ///< The callback to execute when a collision occurs.
+};
+
 /**
  * @brief Collider ("Collision Check") class - handles collisions between actors.
  *
  * It also includes logic that handles collisions
  * within a horizontally looping stage (like 2-C).
  */
-
-class dCc_c;
-
-/// @brief A structure that contains information about a collider.
-struct sCcDatNewF {
-    float mOffsetX; ///< The X offset of the collider.
-    float mOffsetY; ///< The Y offset of the collider.
-
-    /**
-     * @brief The width of the collider.
-     *
-     * Note: This is the distance from the center to the edge, so half the actual width.
-     */
-    float mWidth;
-
-    /**
-     * @brief The height of the collider.
-     *
-     * Note: This is the distance from the center to the edge, so half the actual height.
-     */
-    float mHeight;
-
-    u8 mCategory; ///< The category of this collider. See @ref CC_CATEGORY_e .
-    u8 mAttackCategory; ///< The attack category of this collider. See CC_ATTACK_e .
-    /**
-     * @brief Which categories this collider should be able to collide with.
-     *
-     * This is a bitfield with the bits enumerated by @ref CC_CATEGORY_e .
-     */
-    u32 mCategoryInteract;
-    /**
-     * @brief Which attack categories this collider should be able to receive.
-     *
-     * This is a bitfield with the bits enumerated by CC_ATTACK_e .
-     */
-    u32 mAttackCategoryInteract;
-
-    u16 mFlag; ///< Flags for this collider. See @ref CC_DATA_FLAG_e .
-
-    void (*mCallback)(dCc_c *, dCc_c *); ///< The callback to execute when a collision occurs.
-};
-
 class dCc_c {
 public:
-    enum CC_SHAPE_e {
-        CC_SHAPE_BOX, ///< Rectangular collider
-        CC_SHAPE_CIRCLE, ///< Circular / elliptical collider
-        CC_SHAPE_DAIKEI_UD, ///< Trapezoid-shaped collider (left/right sides are parallel)
-        CC_SHAPE_DAIKEI_LR, ///< Trapezoid-shaped collider (top/bottom sides are parallel)
-    };
-
-    enum CC_DATA_FLAG_e {
-        CC_DATA_NO_OFFSET = 1, ///< Don't set the collision offset if a collision occurs
-        /**
-         * When another collider collides with this one,
-         * don't update the result or execute the callback
-         * on the other collider.
-         */
-        CC_DATA_PASSIVE = 4
-    };
-
-    enum CC_FLAG_e {
-        CC_DISABLE = 2, ///< Disables all collisions with this collider
-    };
-
-    enum CC_CATEGORY_e {
-        CAT_PLAYER_GENERIC,
-        /**
-         * This collider can attack, which means it will use mAttackCategory and
-         * mAttackCategoryInteract to further check if the colliders will collide.
-         */
-        CAT_PLAYER_ATTACK,
-        CAT_YOSHI,
-        CAT_ENTITY,
-        CAT_BALLOON,
-        CAT_ITEM,
-        CAT_PROJECTILE,
-        CAT_CANNON,
-        CAT_GOAL_POLE
-    };
-
-    enum CC_ATTACK_e {
-        ATTACK_FIRE = 1,
-        ATTACK_ICE,
-        ATTACK_STAR,
-        ATTACK_ICE_BREAK,
-        ATTACK_SLIP,
-        ATTACK_KOOPA_FIRE,
-        ATTACK_HIP_ATTK,
-        ATTACK_WIRE_NET,
-        ATTACK_SHELL,
-        ATTACK_PENGUIN_SLIDE,
-        ATTACK_SPIN,
-        ATTACK_UNK12,
-        ATTACK_SPIN_FALL,
-        ATTACK_FIRE_2,
-        ATTACK_YOSHI_EAT,
-        ATTACK_YOSHI_MOUTH,
-        ATTACK_CANNON,
-        ATTACK_SPIN_LIFT_UP,
-        ATTACK_YOSHI_BULLET,
-        ATTACK_YOSHI_FIRE,
-        ATTACK_ICE_2,
-        ATTACK_SAND_PILLAR
-    };
-
-private:
-
-    /// [Some unused class - but needed here because it has a static initializer.]
-    /// @unofficial
-    class InitializedUnkClass {
+    ///< @unofficial
+    class U32Holder {
     public:
-        u32 a, b, c;
-        bool d, e;
+        U32Holder(u32 value) : mValue(value) {}
 
-        static class _init {
-        public:
-            _init() {
-                if (!dCc_c::msIsInitialized) {
-                    dCc_c::msInitializedUnkClass.b = 0xa000a0;
-                    dCc_c::msInitializedUnkClass.c = 0xa00000a0;
-                    dCc_c::msIsInitialized = true;
-                }
-            }
-        } _initializer;
+        u32 mValue;
     };
-    /// @unofficial
-    static char msIsInitialized; // [This might also be an auto-generated guard variable]
-    /// @unofficial
-    static InitializedUnkClass msInitializedUnkClass;
+
+    ///< @unofficial
+    struct GlobalData_t {
+        u32 a;
+        U32Holder b;
+        U32Holder c;
+        bool d, e;
+    };
 
 public:
     dCc_c(); ///< Constructs a new collider.
@@ -152,7 +137,6 @@ public:
 
     /**
      * @brief Registers an owner actor to this collider and sets the collider data.
-     * @unofficial
      * @param actor The actor to register.
      * @param collInfo The collider data to set.
      */
@@ -160,15 +144,16 @@ public:
 
     /**
      * @brief Registers an owner actor to this collider and sets the collider data.
-     * @unofficial
      * @param actor The actor to register.
      * @param collInfo The collider data to set.
-     * @param nonCollideMask The non-collide mask to set.
+     * @param amiLine The chainline fence layer to set.
      */
-    void set(dActor_c *actor, sCcDatNewF *collInfo, u8 nonCollideMask);
+    void set(dActor_c *actor, sCcDatNewF *collInfo, u8 amiLine);
 
     /// Sets a friend actor for this collider.
     void setFriendActor(dActor_c *actor) { mFriendActor = actor; }
+
+    dActor_c *getOwner() const { return mpOwner; } ///< Gets the owner actor of this collider.
 
     /**
      * @brief Gets the result of a hit check.
@@ -230,6 +215,9 @@ public:
      */
     static void reset();
 
+    float getCollPosX() const { return mCollPos.x; }
+    float getCollPosY() const { return mCollPos.y; }
+
 private:
     /**
      * @brief A hit check function for rectangular colliders. Used in _hitCheckNormal and _hitCheckLoop.
@@ -270,7 +258,7 @@ public:
     dCc_c *mpNext; ///< The next collider in the list.
     dCc_c *mpPrev; ///< The previous collider in the list.
 
-    u32 unk3; ///< [Unused (?)].
+    u32 mCanBounce; ///< [used by Giant Wigglers to allow jumping].
 
     sCcDatNewF mCcData; ///< The collision data of this collider.
 
@@ -312,7 +300,7 @@ public:
      * If the same bit is set in a second actor's non-collide mask,
      * the two actors will not collide.
      */
-    u8 mNonCollideMask;
+    u8 mAmiLine;
 
     /**
      * @brief The layer this collider is on.
@@ -321,7 +309,7 @@ public:
      */
     u8 mLayer;
 
-    u8 mFlag; ///< Flags for this collider. See @ref CC_FLAG_e .
+    u8 mInfo; ///< Info flags for this collider. See CC_INFO_e.
 
 private:
     bool mIsLinked; ///< Whether this collider has been placed in the collider list.

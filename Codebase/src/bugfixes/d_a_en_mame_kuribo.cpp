@@ -13,39 +13,39 @@ kmWrite32(0x80ad2d3c, 0x40900000);
 
 
 // Fix the player collision function to kill the goomba when jumped on by a mini player
-void mameKuribo_Normal_VsPlHitCheck(daEnKuriboBase_c *_this, dCc_c *cc1, dCc_c *cc2) {
-    dActor_c *player = cc2->mpOwner;
-    int hitcheck = _this->Enfumi_check(cc1, cc2, false);
+void mameKuribo_Normal_VsPlHitCheck(daEnKuriboBase_c *this_, dCc_c *self, dCc_c *other) {
+    dActor_c *player = other->mpOwner;
+    int hitcheck = this_->Enfumi_check(self, other, false);
     if (hitcheck == 1 || hitcheck == 2) {
         if (hitcheck == 2) {
-            _this->FumiScoreSet(player);
-            _this->fumiEffect(player);
+            this_->FumiScoreSet(player);
+            this_->fumiEffect(player);
         }
-        _this->reactFumiProc(player);
+        this_->reactFumiProc(player);
     } else if (hitcheck == 3) {
-        _this->reactSpinFumiProc(player);
-    } else if (hitcheck == 0 && _this->isDamageInvalid() == false) {
-        _this->dEn_c::Normal_VsPlHitCheck(cc1, cc2);
+        this_->reactSpinFumiProc(player);
+    } else if (hitcheck == 0 && this_->isDamageInvalid() == false) {
+        this_->dEn_c::Normal_VsPlHitCheck(self, other);
     }
 }
 
 kmWritePointer(0x80afaad0, &mameKuribo_Normal_VsPlHitCheck);
 
 // Play a sound and graphical effect when dying from contact with a normal sized player
-bool mameKuribo_hitCallback_Large(daEnKuriboBase_c *_this, dCc_c *cc1, dCc_c *cc2) {
-    mVec2_c soundPos = dAudio::cvtSndObjctPos(_this->mPos);
+bool mameKuribo_hitCallback_Large(daEnKuriboBase_c *this_, dCc_c *self, dCc_c *other) {
+    mVec2_c soundPos = dAudio::cvtSndObjctPos(this_->mPos);
     dAudio::g_pSndObjEmy->startSound(SE_EMY_MAMEKURIBO_DEAD, soundPos, 0);
-    mVec3_c centerPos = _this->getCenterPos();
-    centerPos.z = 5500.0;
+    mVec3_c centerPos = this_->getCenterPos();
+    centerPos.z = 5500.0f;
     mEf::createEffect("Wm_en_hit", 0, &centerPos, nullptr, nullptr);
-    return _this->dEn_c::hitCallback_Large(cc1, cc2);
+    return this_->dEn_c::hitCallback_Large(self, other);
 }
 
 kmWritePointer(0x80afaae0, &mameKuribo_hitCallback_Large);
 
 // Play the correct sound when jumped on by a mini player
-void mameKuribo_mameFumiSE(daEnKuriboBase_c *_this, dActor_c *actor) {
-    mVec2_c soundPos = dAudio::cvtSndObjctPos(_this->getCenterPos());
+void mameKuribo_mameFumiSE(daEnKuriboBase_c *this_, dActor_c *actor) {
+    mVec2_c soundPos = dAudio::cvtSndObjctPos(this_->getCenterPos());
     dAudio::g_pSndObjEmy->startSound(SE_EMY_MAMEKURIBO_DEAD, soundPos, 0);
 }
 
