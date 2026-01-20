@@ -8,7 +8,7 @@
 CUSTOM_ACTOR_PROFILE(EN_LARGE_KABOCHAN, daEnLargeKabochan_c, fProfile::EN_LARGE_KURIBO, fProfile::DRAW_ORDER::EN_LARGE_KURIBO, 0x12);
 
 const char* l_LARGE_KABOCHAN_res [] = {"kabochan", NULL};
-const dActorData_c c_LARGE_KABOCHAN_actor_data = {fProfile::EN_LARGE_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+const dActorData_c c_LARGE_KABOCHAN_actor_data = {fProfile::EN_LARGE_KABOCHAN, 8, -16, 0, 20, 20, 20, 0, 0, 0, 0, 0};
 dCustomProfile_c l_LARGE_KABOCHAN_profile(&g_profile_EN_LARGE_KABOCHAN, "EN_LARGE_KABOCHAN", SpriteId::EN_LARGE_KABOCHAN, &c_LARGE_KABOCHAN_actor_data, l_LARGE_KABOCHAN_res);
 
 const float daEnLargeKabochan_c::smc_WALK_SPEED = 0.5f;

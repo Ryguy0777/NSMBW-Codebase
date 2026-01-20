@@ -43,6 +43,8 @@ int daEnStarCoinFake_c::create() {
     mPos.y -= 19.0f;
     mPos.z = 500.0f;
 
+    mVisibleAreaOffset.set(0.0f, 16.0f);
+
     mRotateX = mParam & 1;
 
     return SUCCEEDED;

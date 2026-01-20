@@ -161,7 +161,7 @@ void daEnBlockRotate_c::block_downmove() {
 
 void daEnBlockRotate_c::calcModel() {
     // Calculate model
-    dActor_c::changePosAngle(&mPos, &mAngle, 1);
+    changePosAngle(&mPos, &mAngle, 1);
     PSMTXTrans(mMatrix, mPos.x, mPos.y + 8.0, mPos.z);
 
     mMatrix.YrotM(mAngle.y);
@@ -169,7 +169,7 @@ void daEnBlockRotate_c::calcModel() {
     mMatrix.ZrotM(mAngle.z);
     
     mFlipBlockModel.setLocalMtx(&mMatrix);
-    mFlipBlockModel.setScale(mScale.x, mScale.y, mScale.z);
+    mFlipBlockModel.setScale(mScale);
     mFlipBlockModel.calc(false);
 
     return;
