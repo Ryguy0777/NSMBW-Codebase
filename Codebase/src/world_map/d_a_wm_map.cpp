@@ -2,6 +2,8 @@
 #include <game/bases/d_a_wm_map.hpp>
 #include <game/bases/d_w_camera.hpp>
 
+#include <new/world_map_config.h>
+
 // Patch size (0x6C510 + 0x4)
 kmWrite32(0x808DEB90, 0x3863C514);
 
@@ -58,3 +60,85 @@ kmBranchDefCpp(0x808E3230, NULL, void, daWmMap_c *this_) {
         this_->mModels[this_->currIdx].mModel.cullNode(this_->mCullNodeIdx[i], visible, true);
     }
 }
+
+
+// Remove enemy ambushes
+
+#ifdef REMOVE_W1_GOOMBA
+kmWriteNop(0x808DFE70);
+kmWriteNop(0x808DFE74);
+#endif
+
+#ifdef REMOVE_W2_ANTLION
+kmWriteNop(0x808E0130);
+#endif
+
+#ifdef REMOVE_W3_BROS
+kmWriteNop(0x808DFE88);
+kmWriteNop(0x808DFE8C);
+#endif
+
+#ifdef REMOVE_W4_FISH
+kmWriteNop(0x808dfe78);
+kmWriteNop(0x808dfe7c);
+#endif
+
+#ifdef REMOVE_W5_PIRANHA
+kmWriteNop(0x808DFE80);
+kmWriteNop(0x808DFE84);
+#endif
+
+#ifdef REMOVE_W6_BULLET
+kmWrite32(0x808D5210, 0x4E800020);
+#endif
+
+#ifdef REMOVE_W7_LAKITU
+kmWriteNop(0x808DFE90);
+kmWriteNop(0x808DFE94);
+#endif
+
+#ifdef REMOVE_W8_BUBBLE
+kmWrite32(0x808CA570, 0x4E800020);
+#endif
+
+// Do not construct Koopalings
+
+#ifdef REMOVE_KOOPALINGS
+kmWrite32(0x808F7100, 0x4E800020);
+#endif
+
+// Remove world-specific map actors
+
+#ifdef REMOVE_W2_PALM
+kmWriteNop(0x808E1C70);
+kmWriteNop(0x808E1C74);
+#endif
+
+#ifdef REMOVE_W4_PALM
+kmWriteNop(0x808E1C78);
+kmWriteNop(0x808E1C7C);
+#endif
+
+#ifdef REMOVE_W5_WIGGLER
+kmWriteNop(0x808E1D38);
+#endif
+
+#ifdef REMOVE_W5_VINES
+kmWriteNop(0x808E1D88);
+#endif
+
+#ifdef REMOVE_W6_CLOUD
+kmWriteNop(0x808E1DA4);
+#endif
+
+#ifdef REMOVE_W7_CLOUDS
+kmWriteNop(0x808E1CF4);
+kmWriteNop(0x808E1D10);
+#endif
+
+#ifdef REMOVE_W7_VINES
+kmWriteNop(0x808E1CD0);
+#endif
+
+// Expand the map model heap size
+kmWrite32(0x808DF15C, 0x3C800004);

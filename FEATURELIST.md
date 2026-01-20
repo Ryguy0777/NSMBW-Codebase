@@ -39,6 +39,7 @@ These features are complete and should be fully functional.
 * Fake Star Coin sprite
 * Effect/SFX Spawner sprite
 * Galoomba sprites
+* Load World Map culling data from external file
 * Dynamic CLR/SRT anims for World Select models
 
 ### Unfinished Features
