@@ -15,7 +15,7 @@ STATE_DEFINE(daEnHeiho_c, Dizzy);
 STATE_DEFINE(daEnHeiho_c, Idle);
 
 const char* l_HEIHO_res[] = {"heiho", NULL};
-const dActorData_c c_HEIHO_actor_data = {fProfile::EN_HEIHO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+const dActorData_c c_HEIHO_actor_data = {fProfile::EN_HEIHO, 8, -16, 0, 12, 8, 12, 0, 0, 0, 0, 0};
 dCustomProfile_c l_HEIHO_profile(&g_profile_EN_HEIHO, "EN_HEIHO", SpriteId::EN_HEIHO, &c_HEIHO_actor_data, l_HEIHO_res);
 
 const float daEnHeiho_c::smc_WALK_SPEED = 0.6f;
@@ -68,7 +68,7 @@ int daEnHeiho_c::create() {
     mCenterOffs.set(0.0f, 12.0f, 0.0f);
 
     // Set size for model culling
-    mVisibleAreaSize.set(28.0f, 32.0f);
+    mVisibleAreaSize.set(16.0f, 24.0f);
     mVisibleAreaOffset.set(0.0f, 12.0f);
 
     // Set yoshi eating behavior
@@ -245,30 +245,25 @@ void daEnHeiho_c::drawModel() {
 
 void daEnHeiho_c::calcModel() {
     // Calculate model matricies
-    Mtx someMatrix;
-    Mtx thirdMatrix;
+    mVec3_c pos = mPos;
+    mAng3_c angle = mAngle;
 
     // Do screen wrapping for levels with it enabled
-    dActor_c::changePosAngle(&mPos, &mAngle, 1);
+    changePosAngle(&pos, &angle, 1);
 
-    // Set matrix to world position
-    PSMTXTrans(mMatrix, mPos.x, mPos.y, mPos.z);
+    mMatrix.trans(pos.x, pos.y, pos.z);
+    mMatrix.YrotM(angle.y);
 
-    // Apply rotation vector
-    mMatrix.YrotM(mAngle.y);
-    mMatrix.XrotM(mAngle.x);
-    mMatrix.ZrotM(mAngle.z);
-    
-    // Apply center offsets
-    PSMTXTrans(someMatrix, 0.0f, mCenterOffs.y, 0.0f);
-    PSMTXConcat(mMatrix, someMatrix, mMatrix);
-    PSMTXTrans(thirdMatrix, 0.0f, -mCenterOffs.y, 0.0f);
-    PSMTXConcat(mMatrix, thirdMatrix, mMatrix);
+    mMatrix.concat(mMtx_c::createTrans(0.0f, mCenterOffs.y, 0.0f));
+    mMatrix.XrotM(angle.x);
+    mMatrix.concat(mMtx_c::createTrans(0.0f, -mCenterOffs.y, 0.0f));
 
-    // Set the matrix for the model
+    mMatrix.concat(mMtx_c::createTrans(0.0f, mCenterOffs.y * 2, 0.0f));
+    mMatrix.ZrotM(angle.z);
+    mMatrix.concat(mMtx_c::createTrans(0.0f, -mCenterOffs.y * 2, 0.0f));
+
     mHeihoModel.setLocalMtx(&mMatrix);
-    // Set scale using boyon 
-    mHeihoModel.setScale(mBoyoMng.mScale.x, mBoyoMng.mScale.y, mBoyoMng.mScale.z);
+    mHeihoModel.setScale(mBoyoMng.mScale);
     mHeihoModel.calc(false);
 }
 

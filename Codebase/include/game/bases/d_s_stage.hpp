@@ -1,5 +1,6 @@
 #pragma once
 #include <game/bases/d_scene.hpp>
+#include <game/bases/d_fader.hpp>
 #include <game/mLib/m_vec.hpp>
 #include <constants/game_constants.h>
 
@@ -14,6 +15,8 @@ public:
         LOOP_COUNT,
     };
 
+    enum Exit_e { };
+
     char pad[0x1198];
     u8 mCurrWorld;
     u8 mCurrCourse;
@@ -24,6 +27,7 @@ public:
 
     static dScStage_c *getInstance() { return m_instance; }
     static float getLoopPosX(float x);
+    static void setNextScene(ProfileName, int, dScStage_c::Exit_e, dFader_c::fader_type_e);
     static u32 m_exeFrame;
     static int m_loopType;
     static PLAYER_TYPE_e mCollectionCoin[STAR_COIN_COUNT];
@@ -32,6 +36,7 @@ public:
 
     static bool m_isCourseOut; ///< Whether the game is transitioning from a stage scene to a non-stage scene.
     static bool m_KoopaJrEscape;
+    static Exit_e m_exitMode;
 
     static void *m_replayPlay_p[4];
 

@@ -41,6 +41,7 @@ These features are complete and should be fully functional.
 * Galoomba sprites
 * Load World Map culling data from external file
 * Dynamic CLR/SRT anims for World Select models
+* Quick Restart (togglable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -49,11 +50,12 @@ These features are implemented, but not complete or not fully functional.
 * Splunkin sprite
 * Jack O' Goomba sprite
 * Goombrat sprite
+* Magic Platform sprite
+* Debug menu scene (togglable)
 
 ### Planned Features
 These features are planned to be implemented in the future.
 * Switch Blocks (togglable)
-* Magic Platform sprite
 * Shyguy variant sprites
 * RandTiles
 * AnimTiles
@@ -66,8 +68,6 @@ These features are planned to be implemented in the future.
 * More Characters (togglable)
 * Region Free utilites (togglable)
 * Dynamic Discord RPC (togglable)
-* Quick Restart (togglable)
-* Debug menu scene (togglable)
 * Player Script Event sprite
 * Angry Sun/Moon sprite
 * Replay recorder
