@@ -6,7 +6,7 @@
 #include <game/bases/d_res_mng.hpp>
 
 #define ANIMDATA "BG_anim/anim_overrides.bin"
-#define ANIMTILE "BG_anim/anim_%02x.bin"
+#define ANIMTILE "BG_tex/anim_%02x.bin"
 #define ANIMSPECVERSION 1
 
 struct AnimsBinEntry_s {
