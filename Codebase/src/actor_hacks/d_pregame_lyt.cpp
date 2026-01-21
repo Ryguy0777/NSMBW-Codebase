@@ -167,6 +167,7 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *this_) {
 kmBranchDefCpp(0x80b6c580, NULL, bool, dPreGameLyt_c *this_) {
     if (pregameTPLbuffer != nullptr) {
         EGG::Heap::free(pregameTPLbuffer, mHeap::g_archiveHeap);
+        pregameTPLbuffer = nullptr;
     }
     return this_->mLayout.doDelete();
 }
