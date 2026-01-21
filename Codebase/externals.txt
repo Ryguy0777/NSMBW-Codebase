@@ -1,3 +1,9 @@
+setupAnimTile__11dBgTexMng_cFiUsPcPUcb=0x80087B60
+
+randomiseHorz__9dBgUnit_cFP9dBGRenderPUsii=0x80086EC0
+randomiseHorzVert__9dBgUnit_cFP9dBGRenderPUsii=0x80086D10
+randomiseVert__9dBgUnit_cFP9dBGRenderPUsii=0x80086FE0
+
 __vt__16daEnPataKuribo_c=0x80b02360
 __dt__16daEnPataKuribo_cFv=0x80a82610
 isDamageInvalid__16daEnPataKuribo_cFv=0x80a60240

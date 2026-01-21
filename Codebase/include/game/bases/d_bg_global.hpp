@@ -34,14 +34,42 @@ enum UNIT_NUM_e {
     x == UNIT_GRASS_FLOWER_3 \
 )
 
+struct dBGRender {
+    u8 mPad[0xC00];
+    u8 *mObjData;
+    u8 m_c04, m_c05; // Extracted from UnitHeadData, maybe row and column?
+    u16 m_c06, m_c08; // Unused??
+    u16 mBlockNumber;
+    u16 mCurrX, mCurrY;
+    u16 mCurrTile;
+    u16 mObjDataOffset, mObjType, mObjX, mObjY, mObjWidth, mObjHeight;
+    u16 mTileNumberWithinBlock, mAreaID;
+};
+
+struct dBGBuffer {
+    u16 mTiles[0x100];
+};
+
 class dBgUnit_c {
 public:
-    dBgUnit_c *fn_80083b40(u16, u16, int *, bool); ///< @unofficial
+    void* vtable;
+    dBGBuffer *mAllocatedBlocks[257];
+    u8 mUsedIDs[2048];
+    u16 mNextID;
+    // 2 bytes padding
+    u32 mPa0_id, mPa1_id, mPa2_id, mPa3_id; // Only set for Nintendo tilesets and used for randomization
+    u32 mLayerId, mAreaId;
+    EGG::FrmHeap *mHeap;
+    bool mShouldRandomize;
+    // 3 bytes padding
 
-    static bool fn_80081900(u16, u16 *); ///< @unofficial
-    static u16 cvtNum(u16); ///< @unofficial
+    u16 *GetBuffPos(u16, u16, int*, bool); // Last param is unused
 
-    u16 mUnitNumber;
+    void randomiseHorzVert(dBGRender *render, u16 *tileArray, int arrayLength, int slot);
+    void randomiseHorz(dBGRender *render, u16 *tileArray, int arrayLength, int slot);
+    void randomiseVert(dBGRender *render, u16 *tileArray, int arrayLength, int slot);
+
+    static dBgUnit_c* create(dBgUnit_c* unit, EGG::Heap* heap, int area, int layer);
 };
 
 struct dBgData_c {

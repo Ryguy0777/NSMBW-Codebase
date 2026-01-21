@@ -40,6 +40,9 @@ These features are complete and should be fully functional.
 * Effect/SFX Spawner sprite
 * Galoomba sprites
 * Quick Restart (togglable)
+* Custom Tileset Randomization
+* Custom Tileset Animation
+* Custom Tileset Grass/Flowers
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -55,9 +58,6 @@ These features are implemented, but not complete or not fully functional.
 These features are planned to be implemented in the future.
 * Switch Blocks (togglable)
 * Shyguy variant sprites
-* RandTiles
-* AnimTiles
-* FlowerTiles
 * 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss sprite
 * Level Names/Info (togglable)
