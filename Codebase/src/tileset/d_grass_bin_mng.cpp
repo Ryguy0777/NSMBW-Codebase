@@ -2,6 +2,7 @@
 #include <game/bases/d_bg.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <new/bases/d_grass_bin_mng.hpp>
+#include <game/bases/d_s_stage.hpp>
 
 // Externs for ASM calls
 extern "C" {
@@ -120,9 +121,9 @@ void* LoadCustomFlowerBrres() {
             brresFile = "g3d/obj_hana_daishizen.brres";
             break;
         default:
-            arcFile = "obj_hana_custom";
-            snprintf(buffer, sizeof(buffer), "g3d/t%02d.brres", dGrassBinMng_c::m_instance->mData->mFlowerStyle);
-            brresFile = buffer;
+            int area = dScStage_c::m_instance->mCurrArea;
+            arcFile = dBgGlobal_c::ms_pInstance->getEnvironment(area, dGrassBinMng_c::m_instance->mTileSlot);
+            brresFile = "g3d/obj_hana.brres";
     }
 
     // Load it
@@ -137,9 +138,9 @@ void* LoadCustomGrassBrres(dRes_c* res, char* originalArc, char* originalName, i
     }
 
     // Load custom brres otherwise
-    char buffer[16];
-    snprintf(buffer, sizeof(buffer), "g3d/t%02d.brres", dGrassBinMng_c::m_instance->mData->mGrassStyle);
-    return res->getRes("obj_kusa_custom", buffer).ptr();
+    int area = dScStage_c::m_instance->mCurrArea;
+    const char *arcFile = dBgGlobal_c::ms_pInstance->getEnvironment(area, dGrassBinMng_c::m_instance->mTileSlot);
+    return res->getRes(arcFile, "g3d/obj_kusa.brres").ptr();
 }
 
 // Dehardcode tileset name check

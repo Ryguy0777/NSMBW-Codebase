@@ -36,7 +36,7 @@ dRandTileMng_c::dRandTileMng_c(int area) {
         // If tileset name is valid, get data
         RandTileBin_s *data = NULL;
         if (tilesetName[0] != '\0') {
-            data = (RandTileBin_s *)dResMng_c::m_instance->getRes(tilesetName, RANDDATA).ptr();
+            data = (RandTileBin_s *)dResMng_c::m_instance->getResSilently(tilesetName, RANDDATA).ptr();
         }
 
         // Set it

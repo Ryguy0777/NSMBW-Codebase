@@ -62,7 +62,7 @@ kmCallDefCpp(0x80087840, void, dBgTexMng_c* mng, int slot, u16 tileNum, char* na
         }
 
         // Get anims.bin from relevant file
-        AnimsBin_s *animData = (AnimsBin_s *)dResMng_c::m_instance->getRes(tileName, ANIMDATA).ptr();
+        AnimsBin_s *animData = (AnimsBin_s *)dResMng_c::m_instance->getResSilently(tileName, ANIMDATA).ptr();
 
         // If file was not found or the version mismatches, skip
         if (animData == NULL || animData->mVersion != ANIMSPECVERSION) {

@@ -23,7 +23,7 @@ dBgUnit_c *LoadBins(dBgUnit_c *unit, EGG::Heap *heap, int area, int layer) {
             }
 
             // Get the grass file
-            GrassBin_s *grass = (GrassBin_s *)dResMng_c::m_instance->getRes(tileName, GRASSDATA).ptr();
+            GrassBin_s *grass = (GrassBin_s *)dResMng_c::m_instance->getResSilently(tileName, GRASSDATA).ptr();
 
             // If the file was found and is valid, create the class
             if (grass != NULL && grass->mVersion == GRASSSPECVERSION && dGrassBinMng_c::m_instance == NULL) {
