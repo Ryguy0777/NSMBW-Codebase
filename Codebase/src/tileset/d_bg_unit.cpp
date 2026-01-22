@@ -15,7 +15,7 @@ dBgUnit_c *LoadBins(dBgUnit_c *unit, EGG::Heap *heap, int area, int layer) {
         for (int slot = 0; slot < 4; slot++) {
 
             // Get tileset name (this has already been set up so it is safe to call)
-            const char* tileName = dBgGlobal_c::ms_pInstance->getEnvironment(area, slot);
+            const char *tileName = dBgGlobal_c::ms_pInstance->getEnvironment(area, slot);
 
             // If tileset is null, skip
             if (tileName[0] == '\0') {

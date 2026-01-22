@@ -23,7 +23,7 @@ struct AnimsBin_s {
 };
 
 // Process animation data
-void ProcessAnimsBin(dBgTexMng_c *mng, AnimsBin_s *animData, int slot, char* tileName) {
+void ProcessAnimsBin(dBgTexMng_c *mng, AnimsBin_s *animData, int slot, char *tileName) {
     char buffer[32];
 
     for (int i = 0; i < animData->mNumEntries; i++) {
@@ -43,7 +43,7 @@ void ProcessAnimsBin(dBgTexMng_c *mng, AnimsBin_s *animData, int slot, char* til
 kmWrite16(0x80087546, 0x1000);
 
 // Actual animtiles code
-kmCallDefCpp(0x80087840, void, dBgTexMng_c* mng, int slot, u16 tileNum, char* name, u8* pFrameTimes, bool reverse) {
+kmCallDefCpp(0x80087840, void, dBgTexMng_c *mng, int slot, u16 tileNum, char *name, u8 *pFrameTimes, bool reverse) {
 
     // Original call that we hijacked
     mng->setupAnimTile(slot, tileNum, name, pFrameTimes, reverse);

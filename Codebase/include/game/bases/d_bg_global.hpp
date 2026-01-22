@@ -52,14 +52,15 @@ struct dBGBuffer {
 
 class dBgUnit_c {
 public:
-    void* vtable;
+    virtual ~dBgUnit_c();
+
     dBGBuffer *mAllocatedBlocks[257];
     u8 mUsedIDs[2048];
     u16 mNextID;
     // 2 bytes padding
     u32 mPa0_id, mPa1_id, mPa2_id, mPa3_id; // Only set for Nintendo tilesets and used for randomization
     u32 mLayerId, mAreaId;
-    EGG::FrmHeap *mHeap;
+    EGG::FrmHeap *mpHeap;
     bool mShouldRandomize;
     // 3 bytes padding
 
@@ -69,7 +70,7 @@ public:
     void randomiseHorz(dBGRender *render, u16 *tileArray, int arrayLength, int slot);
     void randomiseVert(dBGRender *render, u16 *tileArray, int arrayLength, int slot);
 
-    static dBgUnit_c* create(dBgUnit_c* unit, EGG::Heap* heap, int area, int layer);
+    static dBgUnit_c *create(dBgUnit_c *unit, EGG::Heap *heap, int area, int layer);
 };
 
 struct dBgData_c {

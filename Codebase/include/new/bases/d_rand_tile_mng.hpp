@@ -41,8 +41,8 @@ public:
     dRandTileMng_c(int area);
     ~dRandTileMng_c();
 
-    RandTileBin_s *mRandData[4];
+    RandTileBin_s *mpRandData[4];
 
-    static dRandTileMng_c* m_instance;
-    static dRandTileMng_c* build(int area);
+    static dRandTileMng_c *m_instance;
+    static dRandTileMng_c *build(int area);
 };

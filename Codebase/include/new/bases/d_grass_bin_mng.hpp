@@ -27,9 +27,9 @@ public:
 
     GrassBinEntry_s *getFlowerData(u16 tileNum);
 
-    GrassBin_s *mData;
+    GrassBin_s *mpData;
     u8 mTileSlot;
 
-    static dGrassBinMng_c* m_instance;
-    static dGrassBinMng_c* build(GrassBin_s *rawData, u8 slot);
+    static dGrassBinMng_c *m_instance;
+    static dGrassBinMng_c *build(GrassBin_s *rawData, u8 slot);
 };

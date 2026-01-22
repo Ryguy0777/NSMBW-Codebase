@@ -40,7 +40,7 @@ dRandTileMng_c::dRandTileMng_c(int area) {
         }
 
         // Set it
-        mRandData[slot] = data;
+        mpRandData[slot] = data;
     }
 
     // Set static instance
@@ -71,14 +71,14 @@ RandTileBinEntry_s *GetTileFromData(RandTileBin_s *data, u8 tileNum) {
 }
 
 // Main random function
-bool DoRandTile(dBgUnit_c* unit, dBGRender* render) {
+bool DoRandTile(dBgUnit_c *unit, dBGRender *render) {
 
     // Get tile and slot
     u16 tileNum = render->mCurrTile & 0x3FF;
     int slot = tileNum >> 8;
 
     // Get random data for slot
-    RandTileBin_s *data = dRandTileMng_c::m_instance->mRandData[slot];
+    RandTileBin_s *data = dRandTileMng_c::m_instance->mpRandData[slot];
 
     // If no data is found, fall back to Nintendo's code
     if (data == NULL || data->mVersion != RANDSPECVERSION) {
@@ -94,7 +94,7 @@ bool DoRandTile(dBgUnit_c* unit, dBGRender* render) {
     }
 
     // Initialize pointer
-    u16* tilePtr = NULL;
+    u16 *tilePtr = NULL;
 
     // Handle special tiles first
     switch(entry->mSpecialType) {
@@ -120,7 +120,7 @@ bool DoRandTile(dBgUnit_c* unit, dBGRender* render) {
     }
 
     // Get a pointer to the random choices list
-    u16* tileArray = (u16*)((u32)data + entry->mTileArrayOffs);
+    u16 *tileArray = (u16*)((u32)data + entry->mTileArrayOffs);
 
     // Handle regular tiles with the game's original functions (setting slot to 0 in order to insert it manually later)
     switch(entry->mNormalType) {

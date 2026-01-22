@@ -8,8 +8,8 @@
 extern "C" {
 bool AreCustomFlowersLoaded();
 int AddFlowerEntry(dBg_c *bg, u16 tileNum, u32 x, u32 y);
-void* LoadCustomFlowerBrres();
-void* LoadCustomGrassBrres(dRes_c *res, char *originalArc, char *originalName, int style);
+void *LoadCustomFlowerBrres();
+void *LoadCustomGrassBrres(dRes_c *res, char *originalArc, char *originalName, int style);
 }
 
 // Static instance (and a pointer to it for ASM because the compiler is garbage)
@@ -32,7 +32,7 @@ dGrassBinMng_c *dGrassBinMng_c::build(GrassBin_s *rawData, u8 slot) {
 dGrassBinMng_c::dGrassBinMng_c(GrassBin_s *rawData, u8 slot) {
 
     // Set variables
-    mData = rawData;
+    mpData = rawData;
     mTileSlot = slot;
 
     // Set static instance
@@ -50,10 +50,10 @@ dGrassBinMng_c::~dGrassBinMng_c() {
 GrassBinEntry_s *dGrassBinMng_c::getFlowerData(u16 tileNum) {
 
     // Traverse through all entries
-    for (int i = 0; i < mData->mNumEntries; i++) {
+    for (int i = 0; i < mpData->mNumEntries; i++) {
 
         // Get entry
-        GrassBinEntry_s *current = &mData->mEntries[i];
+        GrassBinEntry_s *current = &mpData->mEntries[i];
 
         // Check if tile number matches, and if so return this entry
         if (tileNum == (current->mTileNum | 0x100 * mTileSlot)) {
@@ -70,7 +70,7 @@ bool AreCustomFlowersLoaded() {
     return (dGrassBinMng_c::m_instance != NULL);
 }
 
-int AddFlowerEntry(dBg_c* bg, u16 tileNum, u32 x, u32 y) {
+int AddFlowerEntry(dBg_c *bg, u16 tileNum, u32 x, u32 y) {
 
     // Get the flower data for this tile
     GrassBinEntry_s *data = dGrassBinMng_c::m_instance->getFlowerData(tileNum);
@@ -102,7 +102,7 @@ int AddFlowerEntry(dBg_c* bg, u16 tileNum, u32 x, u32 y) {
     return 0;
 }
 
-void* LoadCustomFlowerBrres() {
+void *LoadCustomFlowerBrres() {
 
     // Allocate name buffer on the stack
     char buffer[16];
@@ -111,7 +111,7 @@ void* LoadCustomFlowerBrres() {
     char *arcFile = NULL;
     char *brresFile = NULL;
 
-    switch(dGrassBinMng_c::m_instance->mData->mFlowerStyle) {
+    switch(dGrassBinMng_c::m_instance->mpData->mFlowerStyle) {
         case 0:
             arcFile = "obj_hana";
             brresFile = "g3d/obj_hana.brres";
@@ -130,10 +130,10 @@ void* LoadCustomFlowerBrres() {
     return dResMng_c::m_instance->getRes(arcFile, brresFile).ptr();
 }
 
-void* LoadCustomGrassBrres(dRes_c* res, char* originalArc, char* originalName, int style) {
+void *LoadCustomGrassBrres(dRes_c *res, char *originalArc, char *originalName, int style) {
 
     // Replicate original call if custom brres is not to be loaded
-    if (style < 2 || dGrassBinMng_c::m_instance->mData->mGrassStyle < 2) {
+    if (style < 2 || dGrassBinMng_c::m_instance->mpData->mGrassStyle < 2) {
         return res->getRes(originalArc, originalName).ptr();
     }
 
@@ -300,7 +300,7 @@ kmCallDefAsm(0x8087657C) {
 }
 
 // Swap 4th flower texture if found
-kmCallDefCpp(0x80876410, nw4r::g3d::ResTex, nw4r::g3d::ResFile* res, const char* originalName) {
+kmCallDefCpp(0x80876410, nw4r::g3d::ResTex, nw4r::g3d::ResFile *res, const char *originalName) {
 
     // Get custom texture
     nw4r::g3d::ResTex tex = res->GetResTex("obj_hana05");
@@ -314,7 +314,7 @@ kmCallDefCpp(0x80876410, nw4r::g3d::ResTex, nw4r::g3d::ResFile* res, const char*
 }
 
 // Swap 5th flower texture if found
-kmCallDefCpp(0x80876420, nw4r::g3d::ResTex, nw4r::g3d::ResFile* res, const char* originalName) {
+kmCallDefCpp(0x80876420, nw4r::g3d::ResTex, nw4r::g3d::ResFile *res, const char *originalName) {
 
     // Get custom texture
     nw4r::g3d::ResTex tex = res->GetResTex("obj_hana04");
