@@ -46,6 +46,7 @@ const char *crsinLoadNames[] = {
     "obj_chikuwa_block",
     "lift_rakka_ashi",
     "Mask",
+    "rail",
 };
 
 kmBranchDefCpp(0x8091ec50, NULL, u32) {

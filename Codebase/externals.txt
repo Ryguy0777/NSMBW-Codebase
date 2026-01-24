@@ -1,3 +1,6 @@
+RailColors=0x8097DE48
+RailScales=0x8097DE70
+
 setupAnimTile__11dBgTexMng_cFiUsPcPUcb=0x80087B60
 
 randomiseHorz__9dBgUnit_cFP9dBGRenderPUsii=0x80086EC0
