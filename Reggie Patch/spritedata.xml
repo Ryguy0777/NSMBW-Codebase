@@ -105,6 +105,17 @@
     <value nybble="5-6" title="Spawn Delay While Not Ridden" comment="Used instead of the other Spawn Delay whenever no Rays are currently being ridden." />
   </sprite> <!-- #273: Jumbo Ray Respawner 2 -->
 
+  <sprite id="286" name="Rotating Wooden Airship Wheel" notes="A circular wheel matching the standard airship decor that rotates, making it hard to stand on.">
+    <list nybble="12" title="Size" comment="This determines the size of the wheel.">
+      <entry value="0">4 Blocks Wide</entry>
+      <entry value="1">6 Blocks Wide</entry>
+      <entry value="2">8 Blocks Wide</entry>
+    </list>
+    <checkbox nybble="5.4" title="Does Not Rotate" comment="When enabled, the wheel will remain stationary." />
+    <dualbox nybble="11.4" title1="Rotates Counter-Clockwise" title2="Rotates Clockwise" comment="This determines the direction the wheel will rotate in." requirednybble="5" requiredval="0" />
+    <value nybble="10" title="Speed" comment="This determines the speed of the wheel's rotation. A speed of 0 still moves, just very slowly." requirednybble="5" requiredval="0" />
+  </sprite> <!-- #286: Rotating Wooden Airship Wheel -->
+
   <sprite id="302" name="Climbing Koopa - Cliffs" notes="Koopas that hang from cliff edges and shimmy across them." advancednotes="This sprite's constructor (and the sprite settings) was removed from the vanilla game and has been restored. There may have been more settings for this sprite at one point.">
 	<dualbox nybble="10" title1="Walks Off Ledges" title2="Turns Around At Ledges" comment="This determines if the Cliff Koopa will mindlessly walk off of ledges or if it will turn around when it reaches a ledge." comment2="This also changes the color of the Cliff Koopa."/>
 	<dualbox nybble="11" title1="Spawns Moving Left" title2= "Spawns Moving Right" comment="This determines what direction the Cliff Koopa will spawn."/>
