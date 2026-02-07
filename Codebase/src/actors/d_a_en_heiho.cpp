@@ -53,7 +53,7 @@ int daEnHeiho_c::create() {
     mCc.entry();
 
     // Assign settings variables
-    mAmiLayer = (mParam >> 0x10 & 1);
+    mAmiLayer = mParam >> 16 & 1;
 
     mType = (HEIHO_TYPE_e)(mParam >> 28 & 0xF);
     mColor = mParam >> 24 & 0xF;
@@ -201,9 +201,9 @@ void daEnHeiho_c::setDamage(dActor_c *actor) {
 bool daEnHeiho_c::createIceActor() {
     // Iceinfo is an array so that __destory_arr can be called
     dIceInfo heihoIceInfo[1] = {
-        0,                                      // mFlags
+        0,                                       // mFlags
         mVec3_c(mPos.x, mPos.y-3.8f, mPos.z),    // mPos
-        mVec3_c(1.3f, 1.5f, 1.5f),                 // mScale
+        mVec3_c(1.3f, 1.5f, 1.5f),               // mScale
         0.0f, 
         0.0f, 
         0.0f, 
@@ -348,7 +348,7 @@ void daEnHeiho_c::reactFumiProc(dActor_c* player) {
         mHealth = 0;
         changeState(StateID_Dizzy);
     } else {
-        mVec2_c killSpeed = mVec2_c(mSpeed.x, mSpeed.y);
+        mVec2_c killSpeed(mSpeed.x, mSpeed.y);
         setDeathInfo_Fumi(player, killSpeed, dEn_c::StateID_DieOther, 0);
     }
 }

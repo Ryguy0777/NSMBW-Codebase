@@ -1,6 +1,6 @@
 #pragma once
 #include <lib/egg/core/eggHeap.h>
-#include <game/bases/d_panel_obj_mgr.hpp>
+#include <game/bases/d_PanelObjMgr.hpp>
 
 class bgTex_c {
 public:

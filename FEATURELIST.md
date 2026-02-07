@@ -43,10 +43,11 @@ These features are complete and should be fully functional.
 * Custom Tileset Randomization
 * Custom Tileset Animation
 * Custom Tileset Grass/Flowers
+* Custom Tileset Profile overrides
+* ON/OFF Block sprite
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
-* ON/OFF Block sprite
 * Classic + GameCube controller support (togglable)
 * Splunkin sprite
 * Jack O' Goomba sprite
