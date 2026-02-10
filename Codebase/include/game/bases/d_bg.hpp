@@ -136,7 +136,7 @@ public:
     void setBubble(float, float, u8, u8);
 
     void InitWmSwitchPushed();
-    bool IsWmSwitchPushed();
+    u8 IsWmSwitchPushed();
 
     dPanelObjMgr_c *getPanelObjMgr(int idx);
 

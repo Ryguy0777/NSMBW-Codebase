@@ -77,8 +77,8 @@
       <suggested sprite="149"/>
     </dependency>
     <checkbox nybble="5.4" title="Always Upright" comment="When enabled, the coin will remain upright regardless of its rotation." comment2="This option will not work with 'Tilted Coin' enabled." requirednybble="6" requiredval="0"/>
-	<checkbox nybble="5.3" title="Tilted Coin" comment="When enabled, the bottom of the coin will always face the paired rotation controller." requirednybble="6" requiredval="0"/>
-	<list nybble="6" title="Forced Rotation" comment="This determines the rotation that the coin will always be set to, regardless of it being rotated. This overrides the 'Always Upright' and 'Tilted Coin' options.">
+    <checkbox nybble="5.3" title="Tilted Coin" comment="When enabled, the bottom of the coin will always face the paired rotation controller." requirednybble="6" requiredval="0"/>
+    <list nybble="6" title="Forced Rotation" comment="This determines the rotation that the coin will always be set to, regardless of it being rotated. This overrides the 'Always Upright' and 'Tilted Coin' options.">
       <entry value="0">Disabled</entry>
       <entry value="1">22.5°</entry>
       <entry value="2">45.0°</entry>
@@ -96,7 +96,7 @@
       <entry value="14">315.0°</entry>
       <entry value="15">337.5°</entry>
     </list>
-	<value nybble="11-12" title="Rotation ID" comment="This pairs the Coin to a matching rotation controller." idtype="Rotation"/>
+    <value nybble="11-12" title="Rotation ID" comment="This pairs the Coin to a matching rotation controller." idtype="Rotation"/>
   </sprite> <!-- #253: Rotation Controlled Coin -->
 
   <sprite id="273" name="Jumbo Ray Respawner 2" notes="A controller that will respawn or otherwise spawn additional Jumbo Rays.">
@@ -117,14 +117,14 @@
   </sprite> <!-- #286: Rotating Wooden Airship Wheel -->
 
   <sprite id="302" name="Climbing Koopa - Cliffs" notes="Koopas that hang from cliff edges and shimmy across them." advancednotes="This sprite's constructor (and the sprite settings) was removed from the vanilla game and has been restored. There may have been more settings for this sprite at one point.">
-	<dualbox nybble="10" title1="Walks Off Ledges" title2="Turns Around At Ledges" comment="This determines if the Cliff Koopa will mindlessly walk off of ledges or if it will turn around when it reaches a ledge." comment2="This also changes the color of the Cliff Koopa."/>
-	<dualbox nybble="11" title1="Spawns Moving Left" title2= "Spawns Moving Right" comment="This determines what direction the Cliff Koopa will spawn."/>
-	<checkbox nybble="12" title="Spawn Locaton Fix" comment="by default, this sprite is placed too low to be useful. This setting will spawn them properly."/>
+    <dualbox nybble="10" title1="Walks Off Ledges" title2="Turns Around At Ledges" comment="This determines if the Cliff Koopa will mindlessly walk off of ledges or if it will turn around when it reaches a ledge." comment2="This also changes the color of the Cliff Koopa."/>
+    <dualbox nybble="11" title1="Spawns Moving Left" title2= "Spawns Moving Right" comment="This determines what direction the Cliff Koopa will spawn."/>
+    <checkbox nybble="12" title="Spawn Locaton Fix" comment="by default, this sprite is placed too low to be useful. This setting will spawn them properly."/>
   </sprite> <!-- #302: Climbing Koopa - Cliffs -->
   
   <sprite id="310" name="Signboard - Arrow" notes="A signboard with a red arrow on it, useful for suggesting a player travel in a specific direction.">
-	<value nybble="5" title="Scale" comment="1.0 + 0.5 * value"/>
-	<list nybble="6" title="Rotation" comment="This determines which direction the sign will face.">
+    <value nybble="5" title="Scale" comment="1.0 + 0.5 * value"/>
+    <list nybble="6" title="Rotation" comment="This determines which direction the sign will face.">
       <entry value="0">Up</entry>
       <entry value="1">Up + Left</entry>
       <entry value="2">Left</entry>
@@ -148,18 +148,18 @@
   </sprite> <!-- #310: Signboard - Arrow -->
   
   <sprite id="483" name="Actor Spawner" notes="Spawns an actor on event trigger.">
-	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
-	<external type="actors" nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
+    <value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
+    <external type="actors" nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
   </sprite> <!-- #483: Actor Spawner -->
   
   <sprite id="484" name="Actor Multi Spawner" notes="Spawns an actor every 3 seconds while an event is triggered.">
-	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
-	<external type="actors" nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
+    <value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
+    <external type="actors" nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
   </sprite> <!-- #484: Actor Multi Spawner -->
   
   <sprite id="485" name="Paired Actor Spawner" notes="Spawns an actor on event trigger. When the triggered event is disabled, the actor will despawn.">
-	<value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
-	<external type="actors" nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
+    <value nybble="1.1-2.2" title="Triggering Event ID" comment="Triggered by event number value+1."/>
+    <external type="actors" nybble="2.3-4.4" title="Actor ID" comment="Can only spawn actors with ID values 0-1023."/>
   </sprite> <!-- #485: Paired Actor Spawner -->
 
   <sprite id="486" name="Basic Platform - Water" notes="This platform floats on water. Can follow the current set by sprite 243." advancenotes="Does not work with location water.">
@@ -173,22 +173,22 @@
       <entry value="3">Jumper</entry>
       <entry value="4">Pacer</entry>
     </list>
-	<list nybble="6" title="Color" comment2="While you can set Shy Guys to any color, it is recommended to keep Shy Guy types and colors consistent.">
-	  <entry value="0">Red</entry>
-	  <entry value="1">Pink</entry>
-	  <entry value="2">Yellow</entry>
-	  <entry value="3">Blue</entry>
-	  <entry value="4">Green</entry>
-	  <entry value="5">Black</entry>
-	  <entry value="6">White</entry>
-	  <entry value="7">Light Blue</entry>
-	  <entry value="8">Orange</entry>
-	  <entry value="9">Purple</entry>
-	</list>
-	<checkbox nybble="8.3" title="Dies in 2 Stomps" comment="When enabled, this causes the Shy Guy to die in 2 stomps instead of 1." comment2="It is recommended to keep this consistent across Shy Guy variants."/>
-	<checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
+    <list nybble="6" title="Color" comment2="While you can set Shy Guys to any color, it is recommended to keep Shy Guy types and colors consistent.">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.3" title="Dies in 2 Stomps" comment="When enabled, this causes the Shy Guy to die in 2 stomps instead of 1." comment2="It is recommended to keep this consistent across Shy Guy variants."/>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
     <value nybble="9" title="Distance" comment="The distance the Shy Guy will walk in each direction. The Shy Guy will ignore ledges." requirednybble="5" requiredval="4"/>
-	<dualbox nybble="10.4" title1="Spawns Left" title2="Spawns Right" requirednybble="5" requiredval="3-4"/>
+    <dualbox nybble="10.4" title1="Spawns Left" title2="Spawns Right" requirednybble="5" requiredval="3-4"/>
   </sprite> <!-- #487: Shy Guy -->
   
   <sprite id="488" name="Flip Block" notes="A yellow block with two eyes that can be destroyed by spin jumps. When struck, it will spin, allowing passage through it for a limited time.">
@@ -210,7 +210,7 @@
       <entry value="12">Vine</entry>
       <entry value="13">Spring</entry>
     </list>
-	<checkbox nybble="11.4" title="Indestructible" comment="When enabled, the Flip Block will not be destroyed when Spin Jumped." comment2="It is recommended to keep this consistent across Flip Blocks." requirednybble="12" requiredval="0"/>
+    <checkbox nybble="11.4" title="Indestructible" comment="When enabled, the Flip Block will not be destroyed when Spin Jumped." comment2="It is recommended to keep this consistent across Flip Blocks." requirednybble="12" requiredval="0"/>
   </sprite> <!-- #488: Flip Block -->
 
   <sprite id="489" name="Event Controller - ON/OFF Block" notes="A red or blue block that, when struck, will affect the state of the Target Event(s). Events that are deactivated will become activated, and those that are activated will become deactivated.">
@@ -221,13 +221,13 @@
   
   <sprite id="490" name="Nipper Plant" notes="A small plant resembling a muncher with a white head that will jump to reach players above.">
     <dualbox nybble="8.3" title1="Stationary" title2="Patrols area" comment="This determines if the Nipper Plant will stay in place or move around." comment2="The plant will still jump to the player no matter the movement type."/>
-	<list nybble="9" title="Jump Height" comment="The Nipper Plant will always have the same detection radius (6 tiles).">
-	  <entry value="0">High Jump (5 tiles)</entry>
+    <list nybble="9" title="Jump Height" comment="The Nipper Plant will always have the same detection radius (6 tiles).">
+      <entry value="0">High Jump (5 tiles)</entry>
       <entry value="1">Medium Jump (3 tiles)</entry>
-	  <entry value="2">Low Jump (2 tiles)</entry>
-	</list>
-	<checkbox nybble="12.3" title="Spits Fire" comment="When enabled, the Nipper Plant will spit fireballs when the player is nearby." requirednybble="8.3" requiredval="0"/>
-	<checkbox nybble="12.4" title="Frozen" comment="When enabled, the Nipper Plant will spawn frozen. It can be thawed with a fireball."/>
+      <entry value="2">Low Jump (2 tiles)</entry>
+    </list>
+    <checkbox nybble="12.3" title="Spits Fire" comment="When enabled, the Nipper Plant will spit fireballs when the player is nearby." requirednybble="8.3" requiredval="0"/>
+    <checkbox nybble="12.4" title="Frozen" comment="When enabled, the Nipper Plant will spawn frozen. It can be thawed with a fireball."/>
   </sprite> <!-- #490: Nipper Plant -->
 
   <sprite id="491" name="Message Block" notes="A block that the player can hit which will display a custom message. Messages are defined in Message.arc.">
@@ -239,7 +239,7 @@
 
   <sprite id="493" name="Event Controller - Bah Activation" notes="This sprite will activate/deactivate an event for every bah in the level music.">
     <value nybble="1-2" title="Target Event ID" idtype="Target Event"/>
-	<list nybble="12" title="Bah Type" comment="This is a bitfield, so the number of bahs is not the decimal value." comment2="Value 4 is checked by Koopas, figure out what bah type it correlates to.">
+    <list nybble="12" title="Bah Type" comment="This is a bitfield, so the number of bahs is not the decimal value." comment2="Value 4 is checked by Koopas, figure out what bah type it correlates to.">
       <entry value="0">No Bahs</entry>
       <entry value="1">Every Bah</entry>
       <entry value="2">"Special" Bahs</entry>
@@ -249,18 +249,18 @@
   </sprite> <!-- #493: Event Controller - Bah Activation--> 
 
   <sprite id="494" name="Event Controller - Inverter" notes="This sprite will invert the value of the target event when the triggering event is activated.">
-	<value nybble="3-4" title="Triggering Event ID" idtype="Triggering Event"/>
+    <value nybble="3-4" title="Triggering Event ID" idtype="Triggering Event"/>
     <value nybble="1-2" title="Target Event ID" idtype="Target Event"/>
-	<list nybble="12.3-12.4" title="Toggle type">
-		<entry value="0">When event state changes</entry>
-		<entry value="1">When event is enabled</entry>
-		<entry value="2">When event is disabled</entry>
-	</list>
+    <list nybble="12.3-12.4" title="Toggle type">
+      <entry value="0">When event state changes</entry>
+      <entry value="1">When event is enabled</entry>
+      <entry value="2">When event is disabled</entry>
+    </list>
   </sprite> <!-- #494: Event Controller - Inverter-->
 
   <sprite id="495" name="Splunkin" notes="A walking pumpkin that takes two stomps to defeat.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Splunkin placing it further behind other sprites."/>
-	<list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Splunkin. This is useful for Splunkins within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
+    <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Splunkin. This is useful for Splunkins within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
       <entry value="0">Normal</entry>
       <entry value="1">Tumble</entry>
       <entry value="2">Small Jump</entry>
@@ -272,7 +272,7 @@
 
   <sprite id="496" name="Mega Splunkin" notes="A giant walking pumpkin that takes three stomps to defeat.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-Order of the Mega Splunkin placing it further behind other sprites."/>
-	<list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Splunkin. This is useful for Splunkins within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
+    <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Splunkin. This is useful for Splunkins within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
       <entry value="0">Normal</entry>
       <entry value="1">Tumble</entry>
       <entry value="2">Small Jump</entry>
@@ -342,55 +342,55 @@
       <entry value="3">Jumper</entry>
       <entry value="4">Pacer</entry>
     </list>
-	<list nybble="6" title="Color">
-	  <entry value="0">Red</entry>
-	  <entry value="1">Pink</entry>
-	  <entry value="2">Yellow</entry>
-	  <entry value="3">Blue</entry>
-	  <entry value="4">Green</entry>
-	  <entry value="5">Black</entry>
-	  <entry value="6">White</entry>
-	  <entry value="7">Light Blue</entry>
-	  <entry value="8">Orange</entry>
-	  <entry value="9">Purple</entry>
-	</list>
-	<dualbox nybble="8.2" title1="Floats in Bubble" title2="Rides Balloon" comment="This determines what the Shy Guy will float around with."/>
-	<list nybble="12" title="Balloon Color" requirednybble="8.2" requiredval="1">
-		<entry value="0">Red</entry>
-		<entry value="1">Green</entry>
-		<entry value="2">Blue</entry>
-		<entry value="3">Yellow</entry>
-	</list>
-	<checkbox nybble="7.1" title="Pops when Above Player" comment="The Shy Guy's bubble will pop when above the player when this is enabled." requirednybble="8.2" requiredval="0"/>
-	<list nybble="7.2-7.3" title="Bubble/Balloon Movement">
-	  <entry value="0">No Movement</entry>
-	  <entry value="1">Horizontal Movement</entry>
-	  <entry value="2">Vertical Movement</entry>
-	  <entry value="3">Circular Movement</entry>
-	</list>
-	<value nybble="11" title="Movement Distance" comment="The distance the bubble/balloon will travel in each direction."/>
-	<checkbox nybble="8.3" title="Dies in 2 Stomps" comment="When enabled, this causes the Shy Guy to die in 2 stomps instead of 1."/>
-	<checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <dualbox nybble="8.2" title1="Floats in Bubble" title2="Rides Balloon" comment="This determines what the Shy Guy will float around with."/>
+    <list nybble="12" title="Balloon Color" requirednybble="8.2" requiredval="1">
+      <entry value="0">Red</entry>
+      <entry value="1">Green</entry>
+      <entry value="2">Blue</entry>
+      <entry value="3">Yellow</entry>
+    </list>
+    <checkbox nybble="7.1" title="Pops when Above Player" comment="The Shy Guy's bubble will pop when above the player when this is enabled." requirednybble="8.2" requiredval="0"/>
+    <list nybble="7.2-7.3" title="Bubble/Balloon Movement">
+      <entry value="0">No Movement</entry>
+      <entry value="1">Horizontal Movement</entry>
+      <entry value="2">Vertical Movement</entry>
+      <entry value="3">Circular Movement</entry>
+    </list>
+    <value nybble="11" title="Movement Distance" comment="The distance the bubble/balloon will travel in each direction."/>
+    <checkbox nybble="8.3" title="Dies in 2 Stomps" comment="When enabled, this causes the Shy Guy to die in 2 stomps instead of 1."/>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
     <value nybble="9" title="Distance" comment="The distance the Shy Guy will walk in each direction. The Shy Guy will ignore ledges." requirednybble="5" requiredval="4"/>
-	<dualbox nybble="10.4" title1="Spawns Left" title2="Spawns Right" requirednybble="5" requiredval="3-4"/>
+    <dualbox nybble="10.4" title1="Spawns Left" title2="Spawns Right" requirednybble="5" requiredval="3-4"/>
   </sprite> <!-- #502: Bubble Shy Guy -->
 
   <sprite id="503" name="Climbing Shy Guy" notes="A Shy guy that climbs on wire fences. The Shy guy can punch the player if on the other side of the fence.">
-	<list nybble="6" title="Color">
-	  <entry value="0">Red</entry>
-	  <entry value="1">Pink</entry>
-	  <entry value="2">Yellow</entry>
-	  <entry value="3">Blue</entry>
-	  <entry value="4">Green</entry>
-	  <entry value="5">Black</entry>
-	  <entry value="6">White</entry>
-	  <entry value="7">Light Blue</entry>
-	  <entry value="8">Orange</entry>
-	  <entry value="9">Purple</entry>
-	</list>
-	<checkbox nybble="8.1" title="Attacks" comment="When enabled, the Shy Guy will attempt to punch the other side of the Chainlink Fence if the player is on the other side."/>
-	<checkbox nybble="8.2" title="Moves Up/Down"/>
-	<checkbox nybble="8.4" title="Starts Behind Fence" comment="When enabled, the Shy Guy will be placed on the reverse side of the Chainlink Fence."/>
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.1" title="Attacks" comment="When enabled, the Shy Guy will attempt to punch the other side of the Chainlink Fence if the player is on the other side."/>
+    <checkbox nybble="8.2" title="Moves Up/Down"/>
+    <checkbox nybble="8.4" title="Starts Behind Fence" comment="When enabled, the Shy Guy will be placed on the reverse side of the Chainlink Fence."/>
   </sprite> <!-- #503: Climbing Shy Guy -->
   
   <sprite id="504" name="Large Shy Guy" notes="">
@@ -403,14 +403,14 @@
   </sprite> <!-- #506: Mega Shy Guy -->
   
   <sprite id="507" name="Path Controlled Magic Platform" notes="A path controlled platform made out of tile objects.">
-	<dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks."/>
-	<value nybble="3-4" title="Triggering Event ID" comment="When this Event is activated, the Magic Platform will move as specified. Deactivating the event will not deactivate the Magic Platform; it will continue until it has reached the final Path Node." idtype="Triggering Event"/>
-	<value nybble="1-2" title="Target Event ID" comment="When the Magic Platform reaches its final path Node, this Event ID is activated." idtype="Target Event"/>
-	<value nybble="5-6" title="Path ID" comment="This determines the ID of the Path that the Magic Platform will be linked to." comment2="If set to 0, the Magic Platform will be stationary." idtype="Path"/>
-	<value nybble="7-8" title="Starting Node" comment="This determines the Node of the Path that the Magic Platform will appear at and start moving from."/>
-	<checkbox nybble="9.1" title="Bounces" comment="This determines if the Magic Platform should reverse direction at the ends of the Path (only applicable if not looping)."/>
-	<value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
-	<list nybble="10" title="Collision" comment="This determines the type of collision.">
+    <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks."/>
+    <value nybble="3-4" title="Triggering Event ID" comment="When this Event is activated, the Magic Platform will move as specified. Deactivating the event will not deactivate the Magic Platform; it will continue until it has reached the final Path Node." idtype="Triggering Event"/>
+    <value nybble="1-2" title="Target Event ID" comment="When the Magic Platform reaches its final path Node, this Event ID is activated." idtype="Target Event"/>
+    <value nybble="5-6" title="Path ID" comment="This determines the ID of the Path that the Magic Platform will be linked to." comment2="If set to 0, the Magic Platform will be stationary." idtype="Path"/>
+    <value nybble="7-8" title="Starting Node" comment="This determines the Node of the Path that the Magic Platform will appear at and start moving from."/>
+    <checkbox nybble="9.1" title="Bounces" comment="This determines if the Magic Platform should reverse direction at the ends of the Path (only applicable if not looping)."/>
+    <value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
+    <list nybble="10" title="Collision" comment="This determines the type of collision.">
       <entry value="0">Solid Block</entry>
       <entry value="1">Permeable (Solid on Top)</entry>
       <entry value="2">Fully Permeable</entry>
@@ -418,20 +418,20 @@
       <entry value="4">Collision Line on Left Side</entry>
       <entry value="5">Collision Line on Top Edge</entry>
       <entry value="6">Collision Line on Bottom Edge</entry>
-	  <entry value="7">Circular</entry>
+      <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
   </sprite> <!-- #507: Path Controlled Magic Platform -->
 
   <sprite id="508" name="Rotation Controlled Magic Platform" notes="A rotation controlled platform made out of tile objects.">
-	<dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A rotation controller is required for the Magic Platform.">
-	  <required sprite="96"/>
+    <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A rotation controller is required for the Magic Platform.">
+      <required sprite="96"/>
       <required sprite="149" />
     </dependency>
-	<value nybble="5-6" title="Rotation ID" comment="This pairs the Magic Platform to a matching rotation controller." comment2="If the Magic Platform cannot find the rotation controller, it will not spawn." idtype="Rotation"/>
-	<checkbox nybble="9.1" title="Ignores Rotation Controller Angle" comment="This determines if the Magic Platform should always face upwards rather than tilting with the rotation controller."/>
-	<value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
-	<list nybble="10" title="Collision" comment="This determines the type of collision.">
+    <value nybble="5-6" title="Rotation ID" comment="This pairs the Magic Platform to a matching rotation controller." comment2="If the Magic Platform cannot find the rotation controller, it will not spawn." idtype="Rotation"/>
+    <checkbox nybble="9.1" title="Ignores Rotation Controller Angle" comment="This determines if the Magic Platform should always face upwards rather than tilting with the rotation controller."/>
+    <value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
+    <list nybble="10" title="Collision" comment="This determines the type of collision.">
       <entry value="0">Solid Block</entry>
       <entry value="1">Permeable (Solid on Top)</entry>
       <entry value="2">Fully Permeable (Layer 1)</entry>
@@ -439,109 +439,109 @@
       <entry value="4">Collision Line on Left Side</entry>
       <entry value="5">Collision Line on Top Edge</entry>
       <entry value="6">Collision Line on Bottom Edge</entry>
-	  <entry value="7">Circular</entry>
+      <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
   </sprite> <!-- #508: Rotation Controlled Magic Platform -->
   
   <sprite id="509" name="Effect Spawner" phonebook="Effects" notes="Enables event-driven spawning of Sound Effects and Graphic Effects.&lt;br&gt;&lt;u&gt;Limitations&lt;/u&gt;&lt;br&gt; 1) Do not use 1000 or more sounds/effects per area.&lt;br&gt; 2) A single Event ID can only trigger one sound/effect per area&lt;br&gt; 3) Only a specific number of sounds/effects can be active at the same time&lt;br&gt; 4) Only two BRSTMs can be active at the same time." advancednotes="If spawning a Sound Effect, the placement of the sprite is crucial, as the sound is emitted from that position. If the player is ~3 screens away from the sprite, then they won't hear it anymore. Placing multiple sprites with the same settings at different locations is possible.">
-      <value nybble="3-4" title="Triggering Event ID" comment="When this Event ID is activated, the associated sound or affect will be played." idtype="Triggering Event"/>
-      <external type="sfx" nybble="10-12" title="Sfx ID" comment="Use this external window to select your Sound Effect." requirednybble="8.4" requiredval="0"/>
-      <external type="gfx" nybble="10-12" title="Gfx ID" comment="Use this external window to select your Graphic Effect." requirednybble="8.4" requiredval="1"/>
-      <dualbox nybble="8.4" title1="Sound Effect" title2="Graphical Effect*" comment="This determines if you are spawning a sound effect or a graphical effect. The volume of the sound effect is relative to the distance of the placement of the spawner."/>
-      <list nybble="7" title="Effect Scale" requirednybble="8.4">
-          <entry value="1">x0.25 (25%)</entry>
-          <entry value="2">x0.5 (50%)</entry>
-          <entry value="3">x0.75 (75%)</entry>
-          <entry value="0">x1.0 (100%)</entry>
-          <entry value="5">x1.25</entry>
-          <entry value="6">x1.5</entry>
-          <entry value="7">x1.75</entry>
-          <entry value="8">x2.0 (200%)</entry>
-          <entry value="9">x2.25</entry>
-          <entry value="10">x2.5</entry>
-          <entry value="11">x2.75</entry>
-          <entry value="12">x3.0 (300%)</entry>
-          <entry value="13">x3.25</entry>
-          <entry value="14">x3.5</entry>
-          <entry value="15">x3.75</entry>
-      </list>
-      <value nybble="9" title="Loop Delay" comment="This determines the number of seconds between activations of the sound or graphic effect." comment2="The effect will only activate once if the delay is left at 0."/>
+    <value nybble="3-4" title="Triggering Event ID" comment="When this Event ID is activated, the associated sound or affect will be played." idtype="Triggering Event"/>
+    <external type="sfx" nybble="10-12" title="Sfx ID" comment="Use this external window to select your Sound Effect." requirednybble="8.4" requiredval="0"/>
+    <external type="gfx" nybble="10-12" title="Gfx ID" comment="Use this external window to select your Graphic Effect." requirednybble="8.4" requiredval="1"/>
+    <dualbox nybble="8.4" title1="Sound Effect" title2="Graphical Effect*" comment="This determines if you are spawning a sound effect or a graphical effect. The volume of the sound effect is relative to the distance of the placement of the spawner."/>
+    <list nybble="7" title="Effect Scale" requirednybble="8.4">
+      <entry value="1">x0.25 (25%)</entry>
+      <entry value="2">x0.5 (50%)</entry>
+      <entry value="3">x0.75 (75%)</entry>
+      <entry value="0">x1.0 (100%)</entry>
+      <entry value="5">x1.25</entry>
+      <entry value="6">x1.5</entry>
+      <entry value="7">x1.75</entry>
+      <entry value="8">x2.0 (200%)</entry>
+      <entry value="9">x2.25</entry>
+      <entry value="10">x2.5</entry>
+      <entry value="11">x2.75</entry>
+      <entry value="12">x3.0 (300%)</entry>
+      <entry value="13">x3.25</entry>
+      <entry value="14">x3.5</entry>
+      <entry value="15">x3.75</entry>
+    </list>
+    <value nybble="9" title="Loop Delay" comment="This determines the number of seconds between activations of the sound or graphic effect." comment2="The effect will only activate once if the delay is left at 0."/>
   </sprite> <!-- #509: Effect Spawner -->
   
   <sprite id="510" name="Fake Star Coin" notes="A Star Coin that will disperse into 4 harmless Boos like a Fake Door when the player attempts to collect it.">
-	<dualbox nybble="12.4" title1="Rotates Counter-Clockwise" title2="Rotates towards screen" comment="This determines the way the Fake Star Coin will rotate to differentiate itself from real Star Coins." comment2="It is recommended to keep this consistent across Fake Star Coins."/>
+    <dualbox nybble="12.4" title1="Rotates Counter-Clockwise" title2="Rotates towards screen" comment="This determines the way the Fake Star Coin will rotate to differentiate itself from real Star Coins." comment2="It is recommended to keep this consistent across Fake Star Coins."/>
   </sprite> <!-- #510: Fake Star Coin -->
   
   <sprite id="511" name="Model Loader" notes="This will load a model from the specified bank and brres. Can play any type of animation.">
-	<value nybble="5" title="Resource Bank ID" comment="This determines what resource bank to load the model from." comment2="You must place the corresponding resource bank sprite into the level, or else the game will crash."/>
-	<value nybble="6" title="BRRES ID" comment="This determines what BRRES to load the model from." comment2="The brres with the name of the ID must exist in order, or else the game will crash."/>
-	<list nybble="7" title="Lightmap Type" comment="This determines what lightmaps to generate.">
-		<entry value="0">Player</entry>
-		<entry value="1">Enemy</entry>
-		<entry value="2">Map</entry>
-		<entry value="3">MapObj</entry>
-		<entry value="4">Boss</entry>
-		<entry value="5">Item</entry>
-	</list>
-	<list nybble="8" title="Animation playback mode" comment="This determines how the model should play it's animations.">
-		<entry value="0">Forward Loop</entry>
-		<entry value="1">Forward Once</entry>
-		<entry value="2">Reverse Loop</entry>
-		<entry value="3">Reverse Once</entry>
-	</list>
-	<list nybble="10" title="Z-Order" comment="This determines the Z-Order of the model." comment2="Some in-game Z-Order values: &lt;br&gt;Background: -5500.0 &lt;br&gt;Layer 2: -3300.0 &lt;br&gt;Layer 1: 0.0 &lt;br&gt;Player: 300.0 &lt;br&gt;Foreground: 1200.0 &lt;br&gt;Layer 0: 3300.0 &lt;br&gt;Above Layer 0: 5500.0">
-		  <entry value="0">0.0</entry>
-		  <entry value="1">-5000.0</entry>
-		  <entry value="2">-4500.0</entry>
-		  <entry value="3">-2000.0</entry>
-		  <entry value="4">-1000.0</entry>
-		  <entry value="5">300.0</entry>
-		  <entry value="6">800.0</entry>
-		  <entry value="7">1600.0</entry>
-		  <entry value="8">2000.0</entry>
-		  <entry value="9">3600.0</entry>
-		  <entry value="10">4000.0</entry>
-		  <entry value="11">4500.0</entry>
-		  <entry value="12">6000.0</entry>
-		  <entry value="13">6500.0</entry>
-		  <entry value="14">7000.0</entry>
-		  <entry value="15">7500.0</entry>
+    <value nybble="5" title="Resource Bank ID" comment="This determines what resource bank to load the model from." comment2="You must place the corresponding resource bank sprite into the level, or else the game will crash."/>
+    <value nybble="6" title="BRRES ID" comment="This determines what BRRES to load the model from." comment2="The brres with the name of the ID must exist in order, or else the game will crash."/>
+    <list nybble="7" title="Lightmap Type" comment="This determines what lightmaps to generate.">
+      <entry value="0">Player</entry>
+      <entry value="1">Enemy</entry>
+      <entry value="2">Map</entry>
+      <entry value="3">MapObj</entry>
+      <entry value="4">Boss</entry>
+      <entry value="5">Item</entry>
     </list>
-	<list nybble="11" title="Animation Playback Rate">
-          <entry value="1">x0.25 (25%)</entry>
-          <entry value="2">x0.5 (50%)</entry>
-          <entry value="3">x0.75 (75%)</entry>
-          <entry value="0">x1.0 (100%)</entry>
-          <entry value="5">x1.25</entry>
-          <entry value="6">x1.5</entry>
-          <entry value="7">x1.75</entry>
-          <entry value="8">x2.0 (200%)</entry>
-          <entry value="9">x2.25</entry>
-          <entry value="10">x2.5</entry>
-          <entry value="11">x2.75</entry>
-          <entry value="12">x3.0 (300%)</entry>
-          <entry value="13">x3.25</entry>
-          <entry value="14">x3.5</entry>
-          <entry value="15">x3.75</entry>
-      </list>
-	  <list nybble="12" title="Model Scale">
-          <entry value="1">x0.25 (25%)</entry>
-          <entry value="2">x0.5 (50%)</entry>
-          <entry value="3">x0.75 (75%)</entry>
-          <entry value="0">x1.0 (100%)</entry>
-          <entry value="5">x1.25</entry>
-          <entry value="6">x1.5</entry>
-          <entry value="7">x1.75</entry>
-          <entry value="8">x2.0 (200%)</entry>
-          <entry value="9">x2.25</entry>
-          <entry value="10">x2.5</entry>
-          <entry value="11">x2.75</entry>
-          <entry value="12">x3.0 (300%)</entry>
-          <entry value="13">x3.25</entry>
-          <entry value="14">x3.5</entry>
-          <entry value="15">x3.75</entry>
-      </list>
+    <list nybble="8" title="Animation playback mode" comment="This determines how the model should play it's animations.">
+      <entry value="0">Forward Loop</entry>
+      <entry value="1">Forward Once</entry>
+      <entry value="2">Reverse Loop</entry>
+      <entry value="3">Reverse Once</entry>
+    </list>
+    <list nybble="10" title="Z-Order" comment="This determines the Z-Order of the model." comment2="Some in-game Z-Order values: &lt;br&gt;Background: -5500.0 &lt;br&gt;Layer 2: -3300.0 &lt;br&gt;Layer 1: 0.0 &lt;br&gt;Player: 300.0 &lt;br&gt;Foreground: 1200.0 &lt;br&gt;Layer 0: 3300.0 &lt;br&gt;Above Layer 0: 5500.0">
+      <entry value="0">0.0</entry>
+      <entry value="1">-5000.0</entry>
+      <entry value="2">-4500.0</entry>
+      <entry value="3">-2000.0</entry>
+      <entry value="4">-1000.0</entry>
+      <entry value="5">300.0</entry>
+      <entry value="6">800.0</entry>
+      <entry value="7">1600.0</entry>
+      <entry value="8">2000.0</entry>
+      <entry value="9">3600.0</entry>
+      <entry value="10">4000.0</entry>
+      <entry value="11">4500.0</entry>
+      <entry value="12">6000.0</entry>
+      <entry value="13">6500.0</entry>
+      <entry value="14">7000.0</entry>
+      <entry value="15">7500.0</entry>
+    </list>
+    <list nybble="11" title="Animation Playback Rate">
+      <entry value="1">x0.25 (25%)</entry>
+      <entry value="2">x0.5 (50%)</entry>
+      <entry value="3">x0.75 (75%)</entry>
+      <entry value="0">x1.0 (100%)</entry>
+      <entry value="5">x1.25</entry>
+      <entry value="6">x1.5</entry>
+      <entry value="7">x1.75</entry>
+      <entry value="8">x2.0 (200%)</entry>
+      <entry value="9">x2.25</entry>
+      <entry value="10">x2.5</entry>
+      <entry value="11">x2.75</entry>
+      <entry value="12">x3.0 (300%)</entry>
+      <entry value="13">x3.25</entry>
+      <entry value="14">x3.5</entry>
+      <entry value="15">x3.75</entry>
+    </list>
+    <list nybble="12" title="Model Scale">
+      <entry value="1">x0.25 (25%)</entry>
+      <entry value="2">x0.5 (50%)</entry>
+      <entry value="3">x0.75 (75%)</entry>
+      <entry value="0">x1.0 (100%)</entry>
+      <entry value="5">x1.25</entry>
+      <entry value="6">x1.5</entry>
+      <entry value="7">x1.75</entry>
+      <entry value="8">x2.0 (200%)</entry>
+      <entry value="9">x2.25</entry>
+      <entry value="10">x2.5</entry>
+      <entry value="11">x2.75</entry>
+      <entry value="12">x3.0 (300%)</entry>
+      <entry value="13">x3.25</entry>
+      <entry value="14">x3.5</entry>
+      <entry value="15">x3.75</entry>
+    </list>
   </sprite> <!-- #511: Model Loader -->
 
   <sprite id="512" name="Model Loader Resource Bank 1" notes="Place this in the level to load resources necessary for the Model Loader.">
@@ -591,4 +591,13 @@
   
   <sprite id="527" name="Model Loader Resource Bank 16" notes="Place this in the level to load resources necessary for the Model Loader.">
   </sprite> <!-- #527: Model Loader Resource Bank 16 -->
+  
+  <sprite id="528" name="Switch ! Block" notes="A colored !-block that will turn solid upon the activation of the associated Switch Palace and will dispense an item when hit from below." advancednotes="Yellow Blocks give Mushrooms, Red Blocks give Fire Flowers, Green Blocks give Propellers, and Blue Blocks give Ice Flowers.">
+    <list nybble="12" title="Block Color">
+      <entry value="0">Yellow</entry>
+      <entry value="1">Red</entry>
+      <entry value="2">Green</entry>
+      <entry value="3">Blue</entry>
+    </list>
+  </sprite>
 </sprites>

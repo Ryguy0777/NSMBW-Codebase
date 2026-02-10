@@ -10,6 +10,7 @@
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL, fProfile::DRAW_ORDER::RIVER_BARREL, 0x2);
 
 STATE_DEFINE(daEnBlockRotate_c, Wait);
+STATE_DEFINE(daEnBlockRotate_c, HitWait);
 STATE_DEFINE(daEnBlockRotate_c, Flipping);
 
 const char* l_BLOCK_ROTATE_res[] = {"block_rotate", NULL};
@@ -91,6 +92,12 @@ int daEnBlockRotate_c::create() {
 }
 
 int daEnBlockRotate_c::doDelete() {
+    // Remove tile renderer and collider
+    if (mStateMgr.getStateID()->isEqual(StateID_HitWait)) {
+        dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
+        list->removePanelObjList(&mTile);
+    }
+
     mBg.release();
     return SUCCEEDED;
 }
@@ -101,7 +108,8 @@ int daEnBlockRotate_c::execute() {
     Block_ExecuteClearSet();
 
     // Only delete if not flipping
-    if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
+    if (mStateMgr.getStateID()->isEqual(StateID_Wait)
+        || mStateMgr.getStateID()->isEqual(StateID_HitWait)) {
         ActorScrOutCheck(SKIP_NONE);
     }
 
@@ -109,20 +117,23 @@ int daEnBlockRotate_c::execute() {
 }
 
 int daEnBlockRotate_c::draw() {
-    mFlipBlockModel.entry();
+    if (mStateMgr.getStateID()->operator!=(StateID_HitWait)) {
+        mFlipBlockModel.entry();
+    }
+
     return SUCCEEDED;
 }
 
 int daEnBlockRotate_c::preDraw() {
     int ret = dActor_c::preDraw();
-    if (ret) {
+    if (ret && mStateMgr.getStateID()->operator!=(StateID_HitWait)) {
         calcModel();
     }
     return ret;
 }
 
 void daEnBlockRotate_c::initialize_upmove() {
-    // shouldSpawnContinuousStar sets the contents to either 7 (star) or 1 (coin)
+    // continue_star_check sets the contents to either 7 (star) or 1 (coin)
     continue_star_check(&mContents, mPlayerID);
     // Handle mushroom-if-small
     if (mContents == 14) {
@@ -189,8 +200,9 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
         // We've already spawned our coin if we're a 10-coin block, so go back to wait
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
-        } else 
-            createEmpty();
+        } else {
+            changeState(StateID_HitWait);
+        }
     } else {
         changeState(StateID_Flipping);
     }
@@ -248,22 +260,6 @@ void daEnBlockRotate_c::createItem() {
     }
 }
 
-void daEnBlockRotate_c::createEmpty() {
-    // Delete block
-    deleteActor(1);
-    
-    // Create empty block tile
-    u16 worldX = ((u16)mPos.x) & 0xFFF0;
-	u16 worldY = ((u16)-(mPos.y + 16.0)) & 0xFFF0;
-
-    dBg_c::m_bg_p->BgUnitChange(worldX, worldY, mLayer, 0x0001);
-
-    // Spawn item if we haven't already
-    if (!l_early_items[mContents]) {
-        createItem();
-    }
-}
-
 void daEnBlockRotate_c::destroyBlock() {
     // Delete block
     deleteActor(1);
@@ -294,6 +290,32 @@ void daEnBlockRotate_c::executeState_Wait() {
         mIsGroundPound = true;
         changeState(StateID_DownMove);
     }
+}
+
+void daEnBlockRotate_c::initializeState_HitWait() {
+    // Setup tile renderer
+    dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
+    list->addPanelObjList(&mTile);
+
+    mTile.mPos.x = mPos.x - 8;
+    mTile.mPos.y = -(16 + mPos.y);
+    mTile.mTileNumber = 0x32;
+
+    // Remove model
+    mFlipBlockModel.remove();
+
+    // Spawn item if we haven't already
+    if (!l_early_items[mContents]) {
+        createItem();
+    }
+}
+
+void daEnBlockRotate_c::finalizeState_HitWait() {}
+
+void daEnBlockRotate_c::executeState_HitWait() {
+    // Update tile collider
+    mTile.setPos(mPos.x-8, -(16+mPos.y), mPos.z);
+    mTile.setScaleFoot(mScale.x);
 }
 
 

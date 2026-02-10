@@ -28,5 +28,5 @@ public:
     void setupAnimTile(int slot, u16 tileNum, char* name, u8* pFrameTimes, bool reverse);
 
     u8 mPad[0x54];
-    bool mWmSwitchRelated;
+    u8 mWmSwitchRelated;
 };
