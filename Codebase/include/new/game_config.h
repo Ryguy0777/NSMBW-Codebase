@@ -2,8 +2,6 @@
 
 // Defines to toggle certain code modules should be defined here.
 
-//#define PLAYER_MODEL_HACKS
-
 #define CONTROLLER_EXPANSION_ENABLED
 
 #define NO_1_1_BG
@@ -33,3 +31,5 @@
 //#define KOOPATLAS_ENABLED
 
 #define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
+
+//#define QUICK_RESTART

@@ -1,9 +1,14 @@
-/Codebase/_build
-/Codebase/.vscode
-/Codebase/bin
+# CW/Ninja
+/Codebase/cw/
 Codebase/build.ninja
 Codebase/ninja.exe
-/.vscode
+
+# Build directories
+/Codebase/_build
+/Codebase/_map
+/Codebase/bin
+
+# Loader objects
 Codebase/loader/kamekLoader.o
 Codebase/loader/nsmbw.o
 Codebase/loader/loader.xml
@@ -14,3 +19,9 @@ Codebase/loader/loader.bin
 /Tools/**/.vs
 /Tools/**/bin
 /Tools/**/obj
+
+# Python cache/compiled modules
+*.pyc
+__pycache__/
+
+/.vscode

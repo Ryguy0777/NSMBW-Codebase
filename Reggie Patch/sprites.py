@@ -210,7 +210,7 @@ class SpriteImage_MessageBlock(SLib.SpriteImage_Static):  # 491
         )
     
 
-class SpriteImage_BombBro(SLib.SpriteImage_Static):
+class SpriteImage_BombBro(SLib.SpriteImage_Static):  # 492
     def __init__(self, parent, scale=1.5):
         super().__init__(
             parent,
@@ -224,7 +224,7 @@ class SpriteImage_BombBro(SLib.SpriteImage_Static):
         SLib.loadIfNotInImageCache('BombBro', 'bombbro.png')
 
 
-class SpriteImage_Splunkin(SLib.SpriteImage_Static):
+class SpriteImage_Splunkin(SLib.SpriteImage_Static):  # 495
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -238,6 +238,175 @@ class SpriteImage_Splunkin(SLib.SpriteImage_Static):
         SLib.loadIfNotInImageCache('Splunkin', 'splunkin.png')
 
 
+class SpriteImage_MegaSplunkin(SLib.SpriteImage_Static):  # 496
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['SplunkinMega'],
+            (-20, -34)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SplunkinMega', 'splunkin_mega.png')
+
+
+class SpriteImage_JackOGoomba(SLib.SpriteImage_Static):  # 497
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['JackOGoomba'],
+            (-4, -8)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('JackOGoomba', 'jack-o-goomba.png')
+
+
+class SpriteImage_Goombrat(SLib.SpriteImage_Static):  # 498
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['Goombrat'],
+            (-2, -5)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Goombrat', 'goombrat.png')
+
+
+class SpriteImage_Galoomba(SLib.SpriteImage_Static):  # 499
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['Galoomba'],
+            (-3, 0),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Galoomba', 'galoomba.png')
+
+
+class SpriteImage_ParaGaloomba(SLib.SpriteImage_Static):  # 500
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['ParaGaloomba'],
+            (-2.5, -6.75),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ParaGaloomba', 'paragaloomba.png')
+
+
+class SpriteImage_Goombud(SLib.SpriteImage_Static):  # 501
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['Goombud'],
+            (-3, 0),
+        )
+    
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Goombud', 'goombud.png')
+
+
+class SpriteImage_ShyguyBubble(SLib.SpriteImage_StaticMultiple):  # 502
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['ShyguyBubble'],
+            (-10.75, -13),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ShyguyBubble', 'shyguy_bubble_idle.png')
+        SLib.loadIfNotInImageCache('ShyguyBubble2', 'shyguy_bubble_moving.png')
+        SLib.loadIfNotInImageCache('ShyguyBalloon', 'shyguy_balloon.png')
+        
+    def dataChanged(self):
+        balloon = self.parent.spritedata[3] >> 2 & 1
+        if balloon:
+            self.width = 30
+            self.height = 52
+            
+            self.image = ImageCache['ShyguyBalloon']
+            self.offset = (-7, -8)
+        else:
+            self.width = 40
+            self.height = 40
+            
+            moving = self.parent.spritedata[3] >> 5 & 3
+            if moving > 0:
+                self.image = ImageCache['ShyguyBubble2']
+                self.offset = (-10.75, -13)
+            else:
+                self.image = ImageCache['ShyguyBubble']
+                self.offset = (-10.75, -13)
+
+
+class SpriteImage_ShyguyClimb(SLib.SpriteImage_StaticMultiple):  # 503
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['ShyguyClimbH'],
+            (-2, -5),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ShyguyClimbH', 'shyguy_climb_h.png')
+        SLib.loadIfNotInImageCache('ShyguyClimbV', 'shyguy_climb_v.png')
+        
+    def dataChanged(self):
+        
+        vertical = self.parent.spritedata[3] >> 2 & 1
+        if vertical:
+            self.image = ImageCache['ShyguyClimbV']
+            self.offset = (-2, -5)
+        else:
+            self.image = ImageCache['ShyguyClimbH']
+            self.offset = (-2, -5)
+
+
+class SpriteImage_StarCoinFake(SLib.SpriteImage_Static):  # 510
+    def __init__(self, parent, scale=1.5):
+        super().__init__(
+            parent,
+            scale,
+            ImageCache['StarCoin'],
+            (0, 3),
+        )
+
+
+class SpriteImage_SwitchBlock(SLib.SpriteImage_StaticMultiple):  # 528
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            SLib.GetTile(0xB6),
+        )
+        
+    def dataChanged(self):
+        palace = self.parent.spritedata[5] & 0xF
+        tile_ = 0xB6 + palace
+        
+        self.image = SLib.GetTile(tile_)
+
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
     191: SpriteImage_TileEventImproved,
@@ -249,5 +418,15 @@ ImageClasses = {
     490: SpriteImage_NipperPlant,
     491: SpriteImage_MessageBlock,
     492: SpriteImage_BombBro,
-    495: SpriteImage_Splunkin
+    495: SpriteImage_Splunkin,
+    496: SpriteImage_MegaSplunkin,
+    497: SpriteImage_JackOGoomba,
+    498: SpriteImage_Goombrat,
+    499: SpriteImage_Galoomba,
+    500: SpriteImage_ParaGaloomba,
+    501: SpriteImage_Goombud,
+    502: SpriteImage_ShyguyBubble,
+    503: SpriteImage_ShyguyClimb,
+    510: SpriteImage_StarCoinFake,
+    528: SpriteImage_SwitchBlock,
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <types.h>
-#include <game/bases/d_panel_obj_list.hpp>
+#include <game/bases/d_PanelObjList.hpp>
 
 class dPanelObjMgr_c {
 public:

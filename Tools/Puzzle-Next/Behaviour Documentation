@@ -1,0 +1,393 @@
+
+########################################################
+#
+#BG_chk (behaviour/collisions)
+#    {
+#        char ?
+#        char ?
+#        char ?
+#        char ?
+#        char ?
+#        char ?
+#        char ?
+#        char ?
+#    }
+#
+#
+#BG_unt (objects)
+#    { (Tiles)
+#        char bitfield (0000 0001 == X repeat, 0000 0010 == Y Repeat, 
+#                       0000 0011 == Both repeat, 1000 0000 == Slope flag)
+#        char tilenumber
+#        char bitfield (bottom two bits are tileset number, rest is a parameter)
+#    }
+#    { (Slope)
+#        char (bitfield. 0x1 = Swap directions X
+#                        0x2 = Swap directions y (and swap slope blocks)
+#                        0x4 = Unknown
+#                        0x8 = Unknown
+#                        0x10 = Unknown
+#                        0x20 = "  "
+#                        0x40 = "  "
+#                        0x80 = Slope Flag
+#    }
+#    { (other crud)
+#        char (0xFE linefeed for each tile row)
+#        char (0xFF end of object)
+#    }
+#    
+#
+#    _hd (metadata)
+#    {
+#        short offset
+#        char height
+#        char width
+#    }
+#
+########################################################
+
+
+
+
+All used values of BG_chk:
+
+Byte 0: (missing 0x1, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80)
+0x0
+0x2          Used for Ice Walls. Meltable?
+
+
+Byte 1: (missing 0x4, 0x20, 0x40, 0x80)
+0x0
+0x1          Pipe Flag
+0x2          Falling Block Flag (Donut Blocks)
+0x8          Steep Ledges (shimmying/hanging)
+0x10         Fake Block? (Pa1_obake)
+
+
+Byte 2: (missing 0x1, 0x2, 0x40)
+0x0
+0x4          Climbing Grid Flag
+0x8          Partial Solid Flag
+0x10         Spike Flag
+0x20         Pass-Down (Solid-on-Bottom)
+0x80         Pass-Through (Solid-on-Top)
+
+
+Byte 3: (missing 0x80)
+0x0          
+0x1          Full-Solid
+0x2          Coin
+0x4          Question Block
+0x8          Explodable Block
+0x10         Breakable
+0x20         Slope
+0x40         Flipped Slope
+
+
+Byte 4:
+0x0
+
+
+Byte 5:
+0x0
+0x1         Icy Ground Flag A (Penguin Sliding? Slipping?)
+0x2         Icy Ground Flag B (Penguin Sliding? Slipping?)
+0x3         Quicksand Flag (Gets Replaced w/ Quicksand)
+0x4         Conveyor Belt (Left/Right?, Fast/Slow?)
+0x5         Conveyor Belt (Left/Right?, Fast/Slow?)
+0x6         Horizontal Climbing Rope/Pole
+0x7         Half Spike Terrain Flag (Test more)
+0x8         Ledge Terrain Flag
+0x9         Vertical Climbing Pole
+0xa         Staircase Terrain Flag (No sliding?)
+0xb         Carpet Terrain Flag
+0xc         Dusty Terrain Flag
+0xd         Grass Terrain Flag
+0xf         Beach Sand Terrain Flag
+         
+
+Byte 6:
+0x0
+0x2         Green Large Pipe
+0x6         Red Large Pipe
+0xa         Yellow Large Pipe
+
+
+Byte 7:     (No Flag - mostly Rails)
+0x0         
+0x1         1/1 Diagonal Rail Upslope
+0x2         1/1 Diagonal Rail Downslope
+0x3         90° Corner Fill
+0x4         90° Rail Corner
+0x5         Straight Horizontal Rail
+0x6         Straight Vertical Rail
+0x7         ???
+0x8         2/2 Gentle Rail Upslope
+0x9         1/2 Gentle Rail Upslope
+0xa         2/2 Gentle Rail Downslope
+0xb         1/2 Gentle Rail Downslope
+0xc         2/2 Steep Rail Upslope
+0xd         1/2 Steep Rail Upslope
+0xe         2/2 Steep Rail Downslope
+0xf         1/2 Steep Rail Downslope
+0x10         1 Panel Circle
+0x11         2x2 Circle UR
+0x12         2x2 Circel UL
+0x13         2x2 Circle LR
+0x14         2x2 Circle LL
+0x15         4x4 Circle 1 (UL)
+0x16         4x4 Circle 2
+0x17         4x4 Circle 3
+0x18         4x4 Circle 4 (UR)
+0x19         4x4 Circle 5 (L)
+0x1a         4x4 Circle 6 (R)
+0x1b         4x4 Circle 7 (L)
+0x1c         4x4 Circle 8 (R)
+0x1d         4x4 Circle 9 (LL)
+0x1e         4x4 Circle 10
+0x1f         4x4 Circle 11
+0x20         4x4 Circle 12 (LR)
+0x22         Rail Stops
+0x23         Beanstalk Stopper
+0x28         Coin Outline
+0x35         Coin Battle Coin
+0x36         Red Block Outline
+0x37         Red Block Outline
+0x38         Cave Entrance Right
+0x39         Cave Entrance Left
+0x3b         Unused in Game (nohara)
+
+
+Byte 7:     (Climable Grid Flag)
+0x1         Generic Climbing
+0x2         Upper Left Corner
+0x3         Upper Side
+0x4         Upper Right Corner
+0x5         Left Side
+0x6         Center
+0x7         Right Side
+0x8         Lower Left Corner
+0x9         Lower Side
+0xa         Lower Right Corner
+
+
+Byte 7:     (Coin Flag)
+0x0         Generic Coin
+0x1         
+0x2         
+0x3         
+0x4         Pow Block Coin
+0x5         
+0x6         
+0x7         
+0x8         
+0x9         
+0xa         
+0xb         
+0xc         
+0xd         
+0xe         
+0xf         
+
+
+Byte 7:     (Explodable Block Flag)
+0x0         
+0x1         Stone Block (shards?)
+0x2         Wooden Block (shards?)
+0x3         Red Block (shards?)
+0x4         
+0x5         
+0x6         
+
+
+
+Byte 7:     (pipe flag)
+0x0         Vert. Top Entrance Left
+0x1         Vert. Top Entrance Right
+0x2         Vert. Bottom Entrance Left
+0x3         Vert. Bottom Entrance Right
+0x4         Vert. Center Left
+0x5         Vert. Center Right
+0x6         Vert. On Top Junction Left
+0x7         Vert. On Top Junction Right
+0x8         Horiz. Left Entrance Top
+0x9         Horiz. Left Entrance Bottom
+0xa         Horiz. Right Entrance Top
+0xb         Horiz. Right Entrance Bottom
+0xc         Horiz. Center Left
+0xd         Horiz. Center Right
+0xe         Horiz. On Top Junction Top
+0xf         Horiz. On Top Junction Bottom
+0x10         Vert. Mini Pipe Top
+0x11         
+0x12         Vert. Mini Pipe Bottom
+0x13         
+0x14         
+0x15         
+0x16         Vert. On Top Mini-Junction
+0x17         
+0x18         Horiz. Mini Pipe Left
+0x19         
+0x1a         Horiz. Mini Pipe Right
+0x1b         
+0x1c         Vert. Mini Pipe Center
+0x1d         Horiz. Mini Pipe Center
+0x1e         Horiz. On Top Mini-Junction
+0x1f         Block Covered Corner
+
+
+
+Byte 7:     (Question Block Flag)
+0x0         FireFlower
+0x1         Star
+0x2         Coin Block
+0x3         Vine
+0x4         1-up
+0x5         Mini-Mushroom
+0x6         Propellor Mushroom
+0x7         Penguin Suit
+0x8         Ice Flower
+0x9         
+0xa         
+0xb         
+0xc         
+0xd         
+0xe         
+0xf         
+
+
+Byte 7:     (Partial Solids)
+0x0         
+0x1         Upper Left
+0x2         Upper Right
+0x3         Top Half
+0x4         Lower Left
+0x5         Left Half
+0x6         Diagonal Upwards
+0x7         Upper Left 3/4
+0x8         Lower Right
+0x9         Diagonal Downwards
+0xa         Right Half
+0xb         Upper Right 3/4
+0xc         Lower Half
+0xd         Lower Left 3/4
+0xe         Lower Right 3/4
+0xf         Full Brick
+
+
+
+Byte 7:     (slope flag)
+0x0         1/1 Upslope (Null without Byte 3 = 0x20)
+0x1         1/1 Downslope
+0x2         1/2 Upslope
+0x3         2/2 Upslope
+0x4         1/2 Downslope
+0x5         2/2 Downslope
+0x6         
+0x7         
+0x8         
+0x9         
+0xa         Slope Edge (Solid Slope)
+0xb         1/4 Upslope
+0xc         2/4 Upslope
+0xd         3/4 Upslope
+0xe         4/4 Upslope
+0xf         1/4 Downslope
+0x10         2/4 Downslope
+0x11         3/4 Downslope
+0x12         4/4 Downslope
+0x13         
+0x14         
+0x15         
+0x16         
+0x17         
+0x18         
+0x19         
+0x1a         
+0x1b         
+0x1c         
+0x1d         
+0x1e         
+0x1f         
+
+
+
+Byte 7:     (Spike Flag)
+0x0         2/1 Spikes Left
+0x1         2/1 Spikes Right
+0x2         2/1 Spikes Up
+0x3         2/1 Spikes Down
+0x4         1/2 Spike Downwards   \/
+0x5         2/2 Spike Downwards  \  /
+0x6         1/1 Spike Downwards
+0x7         
+0x8         
+0x9         
+0xa         
+0xb         
+0xc         
+0xd         
+0xe         
+0xf         
+
+
+
+Byte 7:     (Conveyor Belt Flag)
+0x0         ???
+0x1         ???
+0x2         ???
+0x3         ???
+
+
+
+
+All used values of BG_unt:
+
+
+Upperslope:
+0x0
+0x90    
+0x92
+0x93
+0x91
+
+Possible bits - 0x80 (slope flag), 0x10, 0x02, 0x01
+
+
+
+Lowerslope:
+0x0
+0x84
+
+Possible bits - 0x80 (slope flag), 0x04
+
+
+
+First Byte:
+0x0  -  does not tile, which means it tiles fine
+0x1  -  only useful for setting X stretch.
+0x2  -  only useful for setting Y stretch.
+0x3  -  only useful for setting X/Y stretch.
+0x4  -  set for the subblock of a slope
+
+
+Last Byte:
+0x0
+0x1
+0x2
+0x3
+0x4
+0x8
+0xc
+0x10
+0x14
+0x18
+0x1c
+0x20
+0x24
+0x28
+0x2c
+0x30
+
+Possible bits - 0x01, 0x02, 0x04, 0x08, 0x10, 0x20
+Bits 0x01 and 0x02 are tileset number

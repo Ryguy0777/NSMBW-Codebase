@@ -20,9 +20,11 @@ public:
 
     dPanelObjList_c *mpPrev, *mpNext;
     u16 mTileNumber;
-    u8 mPad[2];
+    u8 mType;
+    u8 mIsChange;
     mVec3_c mPos;
     float mScale;
     s16 mAngle;
-    u8 mPad2;
+    u8 mParts;
+    u32 m_20;
 };

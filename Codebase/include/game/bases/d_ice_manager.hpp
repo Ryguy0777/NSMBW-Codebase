@@ -17,6 +17,7 @@ public:
     ~dIceMng_c();
 
     bool createIce(dIceInfo*, int);
+    void setIceStatus(int, int, int);
 
     u8 mPad1[0xc];
     int m_0c;

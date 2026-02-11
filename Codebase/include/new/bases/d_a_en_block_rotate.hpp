@@ -24,17 +24,19 @@ public:
     void blockWasHit(bool isDown);
     bool playerOverlaps();
     void createItem();
-    void createEmpty();
     void destroyBlock();
 
     static void callBackF(dActor_c *self, dActor_c *other);
 
     STATE_FUNC_DECLARE(daEnBlockRotate_c, Wait);
+    STATE_FUNC_DECLARE(daEnBlockRotate_c, HitWait);
     STATE_FUNC_DECLARE(daEnBlockRotate_c, Flipping);
 
     dHeapAllocator_c mAllocator;
     nw4r::g3d::ResFile mRes;
     m3d::mdl_c mFlipBlockModel;
+
+    dPanelObjList_c mTile;
 
     int mFlipsRemaining;
     int mCoinsRemaining;

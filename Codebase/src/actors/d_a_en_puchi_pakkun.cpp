@@ -119,31 +119,26 @@ int daEnPuchiPakkun_c::draw() {
 }
 
 void daEnPuchiPakkun_c::finalUpdate() {
-    // Calculate model
-    Mtx someMatrix;
-    Mtx thirdMatrix;
+    // Calculate model matricies
+    mVec3_c pos = mPos;
+    mAng3_c angle = mAngle;
 
     // Do screen wrapping for levels with it enabled
-    dActor_c::changePosAngle(&mPos, &mAngle, 1);
+    changePosAngle(&pos, &angle, 1);
 
-    // Set matrix to world position
-    PSMTXTrans(mMatrix, mPos.x, mPos.y, mPos.z);
+    mMatrix.trans(pos.x, pos.y, pos.z);
+    mMatrix.YrotM(angle.y);
 
-    // Apply rotation vector
-    mMatrix.YrotM(mAngle.y);
-    mMatrix.XrotM(mAngle.x);
-    mMatrix.ZrotM(mAngle.z);
-    
-    // Apply center offsets
-    PSMTXTrans(someMatrix, 0.0f, mCenterOffs.y, 0.0f);
-    PSMTXConcat(mMatrix, someMatrix, mMatrix);
-    PSMTXTrans(thirdMatrix, 0.0f, -mCenterOffs.y, 0.0f);
-    PSMTXConcat(mMatrix, thirdMatrix, mMatrix);
+    mMatrix.concat(mMtx_c::createTrans(0.0f, mCenterOffs.y, 0.0f));
+    mMatrix.XrotM(angle.x);
+    mMatrix.concat(mMtx_c::createTrans(0.0f, -mCenterOffs.y, 0.0f));
 
-    // Set the matrix for the model
+    mMatrix.concat(mMtx_c::createTrans(0.0f, mCenterOffs.y * 2, 0.0f));
+    mMatrix.ZrotM(angle.z);
+    mMatrix.concat(mMtx_c::createTrans(0.0f, -mCenterOffs.y * 2, 0.0f));
+
     mNipperModel.setLocalMtx(&mMatrix);
-    // Set scale using boyon 
-    mNipperModel.setScale(mBoyoMng.mScale.x, mBoyoMng.mScale.y, mBoyoMng.mScale.z);
+    mNipperModel.setScale(mBoyoMng.mScale);
     mNipperModel.calc(false);
 
     return;

@@ -3,6 +3,7 @@
 
 	<!-- Folders -->
     <folder name="sprites" path="sprites" />
+	<folder name="external" path="external" />
 
     <!-- Files -->
     <file name="spritedata" path="spritedata.xml" />

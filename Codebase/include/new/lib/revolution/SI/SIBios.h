@@ -1,5 +1,5 @@
 // NSMBW only has a partial SI library. We use the 2004 Dolphin SDK decomp's SI library to restore most of it.
-// source: https://github.com/doldecomp/dolsdk2004/blob/main/include/dolphin/si.h
+// Source: https://github.com/doldecomp/dolsdk2004/blob/main/include/dolphin/si.h
 
 #ifndef RVL_SDK_SI_SIBIOS_H
 #define RVL_SDK_SI_SIBIOS_H

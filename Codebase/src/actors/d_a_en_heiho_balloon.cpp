@@ -11,7 +11,7 @@ STATE_DEFINE(daEnHeihoBalloon_c, Balloon);
 STATE_DEFINE(daEnHeihoBalloon_c, BalloonFall);
 
 const char* l_HEIHO_BALLOON_res[] = {"heiho", "obj_balloon", NULL};
-const dActorData_c c_HEIHO_BALLOON_actor_data = {fProfile::EN_HEIHO_BALLOON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
+const dActorData_c c_HEIHO_BALLOON_actor_data = {fProfile::EN_HEIHO_BALLOON, 8, -16, 0, 8, 16, 16, 0, 16, 0, 0, 0};
 dCustomProfile_c l_HEIHO_BALLOON_profile(&g_profile_EN_HEIHO_BALLOON, "EN_HEIHO_BALLOON", SpriteId::EN_HEIHO_BALLOON, &c_HEIHO_BALLOON_actor_data, l_HEIHO_BALLOON_res);
 
 int daEnHeihoBalloon_c::create() {
@@ -28,7 +28,16 @@ int daEnHeihoBalloon_c::create() {
         mBalloonScale = 1.0f;
     }
 
-    return daEnHeiho_c::create();
+    daEnHeiho_c::create();
+
+    if (mIsBalloon) {
+        mVisibleAreaSize.set(32.0f, 48.0f);
+        mVisibleAreaOffset.set(0.0f, -4.0f);
+    } else {
+        mVisibleAreaSize.set(32.0f, 32.0f);
+    }
+
+    return SUCCEEDED;
 }
 
 void daEnHeihoBalloon_c::Normal_VsPlHitCheck(dCc_c *self, dCc_c *other) {
@@ -408,6 +417,9 @@ void daEnHeihoBalloon_c::executeState_BalloonFall() {
             mFinalPos[0] = mPos.x + finalOffset;
             mFinalPos[1] = mPos.x - finalOffset;
         }
+
+        mVisibleAreaSize.set(16.0f, 24.0f);
+        mVisibleAreaOffset.set(0.0f, 12.0f);
 
         switch (mType) {
             case HEIHO_TYPE_WALKER:
