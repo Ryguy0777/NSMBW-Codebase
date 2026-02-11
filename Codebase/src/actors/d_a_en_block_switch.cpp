@@ -21,6 +21,8 @@ sBgSetInfo l_switchblock_bgc_info = {
 };
 
 int daEnBlockSwitch_c::create() {
+    test = mParam & 1;
+
     Block_CreateClearSet(mPos.y);
 
     // Set collider
@@ -37,6 +39,8 @@ int daEnBlockSwitch_c::create() {
 
     mPalaceType = (mParam & 0xF) + 1;
     mIsDotted = !(dInfo_c::m_instance->mWmSwitch & (1 << mPalaceType));
+
+    mSwitchType = (dPSwManager_c::SwType_e)(mPalaceType + 2);
 
     // Setup tile renderer
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
@@ -131,6 +135,11 @@ void daEnBlockSwitch_c::initializeState_Wait() {
 void daEnBlockSwitch_c::finalizeState_Wait() {}
 
 void daEnBlockSwitch_c::executeState_Wait() {
+    // Revert to a dotted block if our switch is deactivated
+    if (mIsDotted && !dPSwManager_c::ms_instance->checkSwitch(mSwitchType)) {
+        changeState(StateID_Dotted);
+    }
+
     // Check if the block has been hit
     int result = ObjBgHitCheck();
 
@@ -159,8 +168,16 @@ void daEnBlockSwitch_c::finalizeState_HitWait() {}
 
 void daEnBlockSwitch_c::executeState_HitWait() {}
 
-void daEnBlockSwitch_c::initializeState_Dotted() {}
+void daEnBlockSwitch_c::initializeState_Dotted() {
+    mBg.release();
+    mTile.mTileNumber = 0xA5 + mPalaceType;
+}
 
 void daEnBlockSwitch_c::finalizeState_Dotted() {}
 
-void daEnBlockSwitch_c::executeState_Dotted() {}
+void daEnBlockSwitch_c::executeState_Dotted() {
+    // Become solid if our switch is activated
+    if (dPSwManager_c::ms_instance->checkSwitch(mSwitchType)) {
+        changeState(StateID_Wait);
+    }
+}

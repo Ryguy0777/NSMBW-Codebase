@@ -1,6 +1,7 @@
 #pragma once
 #include <game/bases/d_a_en_blockmain.hpp>
 #include <game/bases/d_bg.hpp>
+#include <game/bases/d_pswitch_manager.hpp>
 
 class daEnBlockSwitch_c : public daEnBlockMain_c {
 public:
@@ -24,7 +25,10 @@ public:
 
     dPanelObjList_c mTile;
     int mPalaceType;
+    dPSwManager_c::SwType_e mSwitchType;
     bool mIsDotted;
+
+    int test;
 };
 
 const u32 l_item_values[5] = {
