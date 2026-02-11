@@ -2,7 +2,7 @@
 
 // Common Koopatlas resuables, to avoid unnecessary includes
 
-#define KP_HUD WM_DANCE_PAKKUN
+#define KP_HUD WM_TEST
 #define WM_SHOP WM_TOGEZO
 #define KP_STAR_COIN_MENU COLLECTION_COIN
 
@@ -17,3 +17,5 @@
 #else
 #define SpammyReport(...)
 #endif
+
+int SearchForIndexOfPlayerID(int id);

@@ -12,6 +12,7 @@
 #include <new/constants/message_list.h>
 #include <new/level_info_utils.hpp>
 
+#define WORLD_INVALID 10
 #define STAGE_INVALID 42
 
 // Returns the name of a world (from BMG_CATEGORY_KP_WORLD_NAMES)
@@ -126,25 +127,26 @@ const wchar_t *getCombinedLevelNumber(int levelNumIdx) {
         return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES, 0);
 }
 
-// Update the hardcoded level list
+// Replace the hardcoded level list
 kmBranchDefCpp(0x800B4F90, NULL, int, int worldNum, int levelNum) {
     if ((u32)worldNum > 8) {
         return STAGE_INVALID;
     }
+
     if ((u32)levelNum < 12) {
-        //does our world exist?
+        // Does our world exist?
         dLevelInfo_c::entry_s *liWorld = dLevelInfo_c::m_instance.getEntryFromSlotID(worldNum, 38);
         if (liWorld) {
-            //if so, grab the corresponding section
+            // If so, grab the corresponding section
             dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(worldNum);
 
-            //create list of empty slots
+            // Create list of empty slots
             int levelNumList[12];
             for (int i = 0; i < 12; i++) {
-                levelNumList[i] = 42;
+                levelNumList[i] = STAGE_INVALID;
             }
 
-            //fill the list with our level slots
+            // Fill the list with our level slots
             int index = 0;
             for (int i = 0; i < section->mLevelCount; i++) {
                 dLevelInfo_c::entry_s *level = &section->mLevels[i];
@@ -153,7 +155,7 @@ kmBranchDefCpp(0x800B4F90, NULL, int, int worldNum, int levelNum) {
                     index++;
                 }
             }
-            //return the level number
+            // Return the level number
             return levelNumList[levelNum];
         } else {
             return STAGE_INVALID;
@@ -174,7 +176,7 @@ int getWorldForButton(int page, int button) {
             }
         }
     }
-    return 10;
+    return WORLD_INVALID;
 }
 
 int getRecommendedWorld(bool getFreeMode, int button) {
@@ -182,9 +184,9 @@ int getRecommendedWorld(bool getFreeMode, int button) {
     dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(secIndex);
     if (section) {
         dLevelInfo_c::entry_s *level = &section->mLevels[button+2];
-        return (section->mLevelCount <= button+2) ? 10 : level->mWorldSlot;
+        return (section->mLevelCount <= button+2) ? WORLD_INVALID : level->mWorldSlot;
     } else {
-        return 10; // Invalid world ID
+        return WORLD_INVALID; // Invalid world ID
     }
 }
 
@@ -193,9 +195,9 @@ int getRecommendedLevel(bool getFreeMode, int button) {
     dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(secIndex);
     if (section) {
         dLevelInfo_c::entry_s *level = &section->mLevels[button+2];
-        return (section->mLevelCount <= button+2) ? 42 : level->mLevelSlot;
+        return (section->mLevelCount <= button+2) ? STAGE_INVALID : level->mLevelSlot;
     } else {
-        return 42; // Invalid course ID
+        return STAGE_INVALID; // Invalid course ID
     }
 }
 #endif

@@ -3,11 +3,11 @@
 
 // Hide star coin outline if the coin is visible
 kmBranchDefAsm(0x80010E9C, 0x80010EA0) {
-    stb r0, 0xBB(r3) //overwritten insn
+    stb r0, 0xBB(r3) // Overwritten insn
 
-    lwz r3, 0x3E0(r29) //get star coin outline
-    li  r0, 0 //new alpha value
-    stb r0, 0xB8(r3) //put alpha into outline pane
+    lwz r3, 0x3E0(r29) // Get star coin outline
+    li  r0, 0 // New alpha value
+    stb r0, 0xB8(r3) // Put alpha into outline pane
     blr
 }
 
@@ -15,6 +15,8 @@ kmBranchDefAsm(0x80010E9C, 0x80010EA0) {
 #include <game/bases/d_CourseSelectGuide.hpp>
 #include <new/constants/message_list.h>
 #include <new/level_info_utils.hpp>
+
+#include <new/bases/koopatlas/d_kp_hud.hpp>
 
 kmBranchDefCpp(0x80010B50, NULL, void, dCourseSelectGuide_c *this_, dWmLib::PointType_e type) {
     dLevelInfoUtils_c::CourseSelectLevelInfo(this_, type);
@@ -53,6 +55,11 @@ void dLevelInfoUtils_c::CourseSelectLevelInfo(dCourseSelectGuide_c *this_, dWmLi
             this_->mRestAlphaTarget = 0;
         }
 
+#ifdef NEWER_MAP_HUD
+        dKPHud_c::m_instance->enteredNode(this_->mWorldNo, this_->mCourseNo);
+        return;
+#endif
+
         this_->mpTextBoxes[dCourseSelectGuide_c::T_cSelect_pic]->SetVisible(false);
         this_->mpTextBoxes[dCourseSelectGuide_c::T_cSelect_00]->SetVisible(true);
 
@@ -80,4 +87,45 @@ void dLevelInfoUtils_c::CourseSelectLevelInfo(dCourseSelectGuide_c *this_, dWmLi
         }
     }
 }
+#endif
+
+#ifdef NEWER_MAP_HUD
+
+// Skip drawing the original HUD
+kmWriteNop(0x80010B2C);
+
+// Show KP HUD
+kmBranchDefCpp(0x80931050, NULL, void) {
+    OSReport("disp kp\n");
+    
+}
+
+// Hide KP HUD
+/*kmBranchDefCpp(0x808FB74C, 0x808FB754, void) {
+    OSReport("hiding kp\n");
+    
+}*/
+
+// Show header + lives
+kmBranchDefCpp(0x80931090, NULL, void) {
+    dKPHud_c::m_instance->playShowAnim(dKPHud_c::ANIM_SHOW_HEADER);
+    dKPHud_c::m_instance->playShowAnim(dKPHud_c::ANIM_SHOW_LIVES);
+}
+
+// Hide header + lives
+kmBranchDefCpp(0x809310F0, NULL, void) {
+    dKPHud_c::m_instance->playHideAnim(dKPHud_c::ANIM_SHOW_HEADER);
+    //dKPHud_c::m_instance->playHideAnim(dKPHud_c::ANIM_SHOW_LIVES);
+}
+
+// Show footer
+kmBranchDefCpp(0x80931110, NULL, void) {
+    dKPHud_c::m_instance->playShowAnim(dKPHud_c::ANIM_SHOW_FOOTER);
+}
+
+// Hide footer
+kmBranchDefCpp(0x80931170, NULL, void) {
+    dKPHud_c::m_instance->playHideAnim(dKPHud_c::ANIM_SHOW_FOOTER);
+}
+
 #endif

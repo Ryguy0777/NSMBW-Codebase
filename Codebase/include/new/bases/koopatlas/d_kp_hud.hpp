@@ -1,12 +1,19 @@
 #pragma once
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_DEV_ENABLED
+#if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
 #include <new/koopatlas_config.h>
 
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
+#include <game/bases/d_base.hpp>
+#include <game/bases/d_lytbase.hpp>
+
+#include <new/bases/koopatlas/d_kp_common.hpp>
+#include <new/bases/d_world_info.hpp>
 #include <new/bases/koopatlas/d_tex_map_colouriser.hpp>
+
+#ifdef KOOPATLAS_DEV_ENABLED
+#include <new/bases/koopatlas/d_kp_map_data.hpp>
+#endif
 
 class dKPHud_c : public dBase_c {
 public:
@@ -55,7 +62,11 @@ public:
 
     void loadInitially();
 
+#ifdef KOOPATLAS_DEV_ENABLED
     void enteredNode(dKPNode_s *node = nullptr);
+#else
+    void enteredNode(int world, int course);
+#endif
     void leftNode();
 
     void hideAll();
@@ -72,15 +83,21 @@ public:
 private:
     void loadHeaderInfo();
 
+public:
     void playShowAnim(int id);
     void playHideAnim(int id);
 
+private:
     void drawStarEffects();
 
     LytBase_c mLayout;
-    mEf::levelEffect_c mEffects[3][2];
     dTexMapColouriser_c mHeaderCol, mFooterCol;
+#ifdef KOOPATLAS_DEV_ENABLED
     dKPNode_s *mpHeaderNode;
+#else
+    int mWorldNo;
+    int mCourseNo;
+#endif
 
     nw4r::lyt::Pane *mpNullPanes[N_COUNT];
     nw4r::lyt::Picture *mpPicturePanes[P_COUNT];
@@ -88,9 +105,13 @@ private:
 
     int mControllerType;
 
+public:
     bool mLayoutLoaded;
-    bool mDispHeader;
+    bool mHideHud;
+
+private:
     bool mInitalDispComplete;
+    bool mDispHeader;
     bool mDispFooter;
     bool mFooterVisible;
     bool mDrawStarEffect;

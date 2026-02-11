@@ -1,7 +1,7 @@
 #include <kamek.h>
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_DEV_ENABLED
+#if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
 #include <new/bases/koopatlas/d_kp_hud.hpp>
 #include <new/level_info_utils.hpp>
 #include <new/constants/message_list.h>
@@ -20,13 +20,13 @@ dKPHud_c *dKPHud_c_classInit() {
     return c;
 }
 
-// Replace WM_DANCE_PAKKUN actor
-kmWritePointer(0x80982844, &dKPHud_c_classInit);
+// Replace WM_TEST actor
+kmWritePointer(0x8098FEA0, &dKPHud_c_classInit);
 
 dKPHud_c::dKPHud_c() {
     mLayoutLoaded = false;
-    mControllerType = -1;
     mFooterVisible = false;
+    mControllerType = -1;
 }
 
 int dKPHud_c::create() {
@@ -139,7 +139,7 @@ int dKPHud_c::execute() {
         return SUCCEEDED;
     }
 
-    mDispHeader = true; // Temp, remove me once the map data is complete
+    //mDispHeader = true; // Temp, remove me once the map data is complete
     if (mDispHeader && (!(mLayout.isAnime(ANIM_SHOW_HEADER)))) {
         mDispHeader = false;
         loadHeaderInfo();
@@ -185,6 +185,7 @@ void dKPHud_c::loadInitially() {
     //    enteredNode();
 }
 
+#ifdef KOOPATLAS_DEV_ENABLED
 void dKPHud_c::enteredNode(dKPNode_s *node) {
     /*if (node == 0)
         node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
@@ -194,13 +195,20 @@ void dKPHud_c::enteredNode(dKPNode_s *node) {
     //    mpHeaderNode = node;
     //}
 }
+#elif defined(NEWER_MAP_HUD)
+void dKPHud_c::enteredNode(int world, int course) {
+    mDispHeader = true;
+    mWorldNo = world;
+    mCourseNo = course;
+}
+#endif
 
 void dKPHud_c::leftNode() {
     if (mLayout.GetAnimGroup()[ANIM_SHOW_HEADER].mFrameCtrl.mCurrFrame > 0.1f) {
-        // not hidden
+        // Not hidden
         if ((mLayout.isAnime(ANIM_SHOW_HEADER) && !(mLayout.GetAnimGroup()[ANIM_SHOW_HEADER].mFrameCtrl.mFlags & 2))
                 || (!mLayout.isAnime(ANIM_SHOW_HEADER))) {
-            // currently being shown, OR fully shown already
+            // Currently being shown, OR fully shown already
             playHideAnim(ANIM_SHOW_HEADER);
         }
     }
@@ -350,8 +358,12 @@ void dKPHud_c::loadFooterInfo() {
 
 void dKPHud_c::loadHeaderInfo() {
     dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
+#ifdef KOOPATLAS_DEV_ENABLED
     //dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
     dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(3, 21); // Temp
+#else
+    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mWorldNo, mCourseNo);
+#endif
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 
     if (infEntry == nullptr) {
@@ -474,13 +486,17 @@ void dKPHud_c::loadHeaderInfo() {
 }
 
 void dKPHud_c::playShowAnim(int id) {
-    if (!this || !this->mLayoutLoaded) return;
+    if (!mLayoutLoaded) {
+        return;
+    }
 
     mLayout.AnimeStartSetup(id, false);
 }
 
 void dKPHud_c::playHideAnim(int id) {
-    if (!this || !this->mLayoutLoaded) return;
+    if (!mLayoutLoaded) {
+        return;
+    }
 
     if (!mLayout.isAnime(id)) {
         mLayout.AnimeStartSetup(id, true);

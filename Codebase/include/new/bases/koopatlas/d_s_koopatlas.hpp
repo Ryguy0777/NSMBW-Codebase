@@ -29,8 +29,6 @@
 #include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
 // #include "koopatlas/shop.h"
 
-int SearchForIndexOfPlayerID(int id);
-
 // Forward declarations
 class daKPPlayer_c;
 class dKPMap_c;

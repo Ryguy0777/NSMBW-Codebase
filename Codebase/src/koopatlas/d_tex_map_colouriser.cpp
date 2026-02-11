@@ -1,7 +1,7 @@
 #include <new/game_config.h>
 
-#ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_s_koopatlas.hpp> // Needed to access MapReport
+#if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
+#include <new/bases/koopatlas/d_kp_common.hpp>
 #include <new/bases/koopatlas/d_tex_map_colouriser.hpp>
 #include <game/mLib/m_heap.hpp>
 #include <lib/egg/core/eggHeap.h>
