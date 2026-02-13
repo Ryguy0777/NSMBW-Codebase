@@ -6,7 +6,6 @@ public:
     enum SwType_e {
         P_SWICH,
         Q_SWICH,
-        HN_SWICH,
 
         // New switch types
         Y_SWICH,

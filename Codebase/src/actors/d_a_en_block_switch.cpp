@@ -40,7 +40,7 @@ int daEnBlockSwitch_c::create() {
     mPalaceType = (mParam & 0xF) + 1;
     mIsDotted = !(dInfo_c::m_instance->mWmSwitch & (1 << mPalaceType));
 
-    mSwitchType = (dPSwManager_c::SwType_e)(mPalaceType + 2);
+    mSwitchType = (dPSwManager_c::SwType_e)(mPalaceType + 1);
 
     // Setup tile renderer
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);

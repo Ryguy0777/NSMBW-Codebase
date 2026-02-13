@@ -30,14 +30,13 @@
 
   <sprite id="42" name="!-Switch" notes="This switch is similar to the ? Switch, but it has the additional effect of changing all outlined Red Blocks (Pa0 Object 57) into solid Red Blocks. This also applies to any outlined Red Blocks spawned by a Tile God. This additional functionality only occurs when using the Timed Event mode, but a Target Event is not required to make use of this functionality.">
     <dependency notes="Activates 'Red Block Outline A/B' tiles."/>
-	<list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
-	  <entry value="0">Red Switch (White outlines)</entry>
-	  <entry value="1">Red Switch (No outlines)</entry>
-	  <entry value="2">Yellow Switch</entry>
-	  <entry value="3">Red Switch</entry>
-	  <entry value="4">Green Switch</entry>
-	  <entry value="5">Blue Switch</entry>
-	</list>
+    <list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
+      <entry value="0">Red Switch (White outlines)</entry>
+      <entry value="1">Yellow Switch</entry>
+      <entry value="2">Red Switch</entry>
+      <entry value="3">Green Switch</entry>
+      <entry value="4">Blue Switch</entry>
+    </list>
     <checkbox nybble="12.4" title="Upside-Down" comment="When enabled, the switch will be facing downwards." comment2="Upside-Down switches cannot be set to fall."/>
     <checkbox nybble="5.4" title="Falls" comment="When enabled, the switch will be movable by environmental factors, such as dropping down when bricks below it are destroyed, or moving along platforms." comment2="Conveyor belts cannot move Switches, even when [Falls] is set."/>
     <value nybble="3-4" title="Target Event ID" comment="This event will be modified when the switch is pressed. An event is not required if simply using the switch to activate Red Blocks." idtype="Target Event"/>
@@ -60,14 +59,13 @@
 
   <sprite id="45" name="Brick Block !-Switch" notes="This switch, stored inside a Brick Block, is similar to the ? Switch, but it has the additional effect of causing all outlined Red Blocks (Pa0 Object 57) into solid Red Blocks. This also applies to any outlined Red Blocks spawned by a Tile God. This additional functionality only occurs when using the Timed Event mode, but a Target Event is not required to make use of this functionality." advancednotes="A brick block containing or supporting a switch cannot be destroyed by sprites that destroy normal brick and solid blocks as long as the switch exists.">
     <dependency notes="Add Tileset / Puzzle dependency information relating to custom tileset settings."/>
-	<list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
-	  <entry value="0">Red Switch (White outlines)</entry>
-	  <entry value="1">Red Switch (No outlines)</entry>
-	  <entry value="2">Yellow Switch</entry>
-	  <entry value="3">Red Switch</entry>
-	  <entry value="4">Green Switch</entry>
-	  <entry value="5">Blue Switch</entry>
-	</list>
+    <list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
+      <entry value="0">Red Switch (White outlines)</entry>
+      <entry value="1">Yellow Switch</entry>
+      <entry value="2">Red Switch</entry>
+      <entry value="3">Green Switch</entry>
+      <entry value="4">Blue Switch</entry>
+    </list>
     <checkbox nybble="12.4" title="Upside-Down" comment="When enabled, the switch will forcibly spawn on the underside of the block facing down, even if struck from below." comment2="Brick-Block switches cannot be set to fall, even if Upside-Down is unchecked."/>
     <value nybble="3-4" title="Target Event ID" comment="This event will be modified when the switch is pressed. An event is not required if simply using the switch to activate Red Blocks." idtype="Target Event"/>
     <dualbox nybble="9.4" title1="Activates Target Event" title2="Deactivates Target Event" comment="This determines how the Target Event is modified." comment2="The Target Event will be modified to the opposite state when the Timed effect expires." requirednybble="7.4" requiredval="0"/> <!-- Appears if Timed Event is set -->

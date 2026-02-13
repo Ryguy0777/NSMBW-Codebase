@@ -26,6 +26,56 @@ class SpriteImage_MiniGoomba(SLib.SpriteImage_Static):  # 22
         super().dataChanged()
 
 
+class SpriteImage_ColorExcSwitch(SLib.SpriteImage_StaticMultiple):  # 42
+    def __init__(self, parent, scale=1.5):
+        super().__init__(parent, scale)
+        
+    @staticmethod
+    def loadImages():
+        if 'ESwitch' not in ImageCache:
+            e = SLib.GetImg('e_switch.png', True)
+            ImageCache['ESwitch'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['ESwitchU'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+        
+        if 'ESwitch_Y' not in ImageCache:
+            e = SLib.GetImg('e_switch_y.png', True)
+            ImageCache['ESwitch_Y'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['ESwitchU_Y'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+        
+        if 'ESwitch_G' not in ImageCache:
+            e = SLib.GetImg('e_switch_g.png', True)
+            ImageCache['ESwitch_G'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['ESwitchU_G'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+        
+        if 'ESwitch_B' not in ImageCache:
+            e = SLib.GetImg('e_switch_b.png', True)
+            ImageCache['ESwitch_B'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['ESwitchU_B'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+
+    def dataChanged(self):
+
+        upsideDown = self.parent.spritedata[5] & 1
+        
+        styleType = self.parent.spritedata[5] >> 1 & 7
+        
+        if styleType == 0 or styleType == 2:
+            switchType = ''
+        elif styleType == 1:
+            switchType = '_Y'
+        elif styleType == 3:
+            switchType = '_G'
+        elif styleType == 4:
+            switchType = '_B'
+
+        if upsideDown:
+            self.image = ImageCache['ESwitchU' + switchType]
+        else:
+            self.image = ImageCache['ESwitch' + switchType]
+            self.yOffset -= 3
+
+        super().dataChanged()
+
+
 class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
     def __init__(self, parent):
         super().__init__(parent)
@@ -409,6 +459,7 @@ class SpriteImage_SwitchBlock(SLib.SpriteImage_StaticMultiple):  # 528
 
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
+    42: SpriteImage_ColorExcSwitch,
     191: SpriteImage_TileEventImproved,
     302: SpriteImage_CliffKoopa,
     486: SpriteImage_WaterPlatform,
