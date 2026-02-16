@@ -814,6 +814,7 @@ namespace fProfile {
         DEBUG_MENU,
         AC_MODEL_LOADER,
         MODEL_RES,
+        EN_BLOCK_SWITCH,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

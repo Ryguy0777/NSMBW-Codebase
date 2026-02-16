@@ -178,7 +178,6 @@ void daBombProjectile_c::finalUpdate() {
     // Store root bone position
     nw4r::g3d::ResNode root = mResMdl.GetResNode("skl_root");
 	int rootNodeID = root.GetID();
-    mMtx_c rootMtx;
 	mModel.getNodeWorldMtxMultVecZero(rootNodeID, mRootPos);
 
     return;

@@ -273,7 +273,7 @@ void daLiftBgBase_c::createPanelObj() {
 
         for (int x = 0; x < mWidth; x++) {
             
-            u16 *pExistingTile = (u16 *)dBg_c::m_bg_p->fn_80077520(worldX, worldY, mLayer, nullptr, false);
+            u16 *pExistingTile = dBg_c::m_bg_p->__GetUnitPointer(worldX, worldY, mLayer, nullptr, false);
 
             if (*pExistingTile > 0) {
                 dPanelObjList_c *r = &mTiles[rendererID];

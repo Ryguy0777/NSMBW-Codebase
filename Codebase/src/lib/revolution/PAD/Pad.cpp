@@ -1,4 +1,4 @@
-// source: https://github.com/doldecomp/mkw/blob/main/lib/rvl/pad/rvlPad.c
+// Source: https://github.com/doldecomp/mkw/blob/main/lib/rvl/pad/rvlPad.c
 
 #include <new/lib/revolution/PAD.h>
 

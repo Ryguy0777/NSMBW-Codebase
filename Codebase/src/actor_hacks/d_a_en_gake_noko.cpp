@@ -3,7 +3,7 @@
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
 
-// source: https://github.com/Meatball132/NSMBW_GAKENOKO_fix/blob/master/gakenoko/gakenoko.cpp
+// Source: https://github.com/Meatball132/NSMBW_GAKENOKO_fix/blob/master/gakenoko/gakenoko.cpp
 
 struct daEnGakeNoko_c : public dEn_c {
 	dHeapAllocator_c mAllocator;

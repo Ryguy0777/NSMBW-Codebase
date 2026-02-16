@@ -535,6 +535,7 @@ enum Value {
     MODEL_RES13,
     MODEL_RES14,
     MODEL_RES15,
+    EN_BLOCK_SWITCH,
 
     // End of custom entries, do NOT remove
     TOTAL_SPRITE_COUNT

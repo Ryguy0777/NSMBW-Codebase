@@ -10,6 +10,7 @@
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL, fProfile::DRAW_ORDER::RIVER_BARREL, 0x2);
 
 STATE_DEFINE(daEnBlockRotate_c, Wait);
+STATE_DEFINE(daEnBlockRotate_c, HitWait);
 STATE_DEFINE(daEnBlockRotate_c, Flipping);
 
 const char* l_BLOCK_ROTATE_res[] = {"block_rotate", NULL};
@@ -91,6 +92,12 @@ int daEnBlockRotate_c::create() {
 }
 
 int daEnBlockRotate_c::doDelete() {
+    // Remove tile renderer and collider
+    if (mStateMgr.getStateID()->isEqual(StateID_HitWait)) {
+        dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
+        list->removePanelObjList(&mTile);
+    }
+
     mBg.release();
     return SUCCEEDED;
 }
@@ -101,7 +108,8 @@ int daEnBlockRotate_c::execute() {
     Block_ExecuteClearSet();
 
     // Only delete if not flipping
-    if (mStateMgr.getStateID()->isEqual(StateID_Wait)) {
+    if (mStateMgr.getStateID()->isEqual(StateID_Wait)
+        || mStateMgr.getStateID()->isEqual(StateID_HitWait)) {
         ActorScrOutCheck(SKIP_NONE);
     }
 
@@ -109,54 +117,63 @@ int daEnBlockRotate_c::execute() {
 }
 
 int daEnBlockRotate_c::draw() {
-    mFlipBlockModel.entry();
+    if (mStateMgr.getStateID()->operator!=(StateID_HitWait)) {
+        mFlipBlockModel.entry();
+    }
+
     return SUCCEEDED;
 }
 
 int daEnBlockRotate_c::preDraw() {
     int ret = dActor_c::preDraw();
-    if (ret) {
+    if (ret && mStateMgr.getStateID()->operator!=(StateID_HitWait)) {
         calcModel();
     }
     return ret;
 }
 
 void daEnBlockRotate_c::initialize_upmove() {
-    // shouldSpawnContinuousStar sets the contents to either 7 (star) or 1 (coin)
-    shouldSpawnContinuousStar(&mContents, mPlayerID);
+    // continue_star_check sets the contents to either 7 (star) or 1 (coin)
+    continue_star_check(&mContents, mPlayerID);
     // Handle mushroom-if-small
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
-        if (isBig) 
-            mContents = 1;    
+        if (isBig) {
+            mContents = 1;
+        }
     }
     // Create coin items/propeller on block hit
-    if (l_early_items[mContents])
+    if (l_early_items[mContents]) {
         createItem();
+    }
 }
 
 void daEnBlockRotate_c::initialize_downmove() {
     // Same as upmove
-    shouldSpawnContinuousStar(&mContents, mPlayerID);
+    continue_star_check(&mContents, mPlayerID);
     if (mContents == 14) {
         int isBig = player_bigmario_check(mPlayerID);
-        if (isBig) 
-            mContents = 1;    
+        if (isBig) {
+            mContents = 1;
+        } 
     }
-    if (l_early_items[mContents])
+    if (l_early_items[mContents]) {
         createItem();
+    }
 }
 
 void daEnBlockRotate_c::block_upmove() {
     // Call blockWasHit at the end of upmove
-    if (mInitialY >= mPos.y)
+    if (mInitialY >= mPos.y) {
         blockWasHit(false);
+    }
 }
 
 void daEnBlockRotate_c::block_downmove() {
     // Call blockWasHit at the end of downmove
-    if (mInitialY <= mPos.y)
+    if (mInitialY <= mPos.y) {
         blockWasHit(true);
+    }
 }
 
 void daEnBlockRotate_c::calcModel() {
@@ -183,10 +200,12 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
         // We've already spawned our coin if we're a 10-coin block, so go back to wait
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
-        } else 
-            createEmpty();
-    } else 
+        } else {
+            changeState(StateID_HitWait);
+        }
+    } else {
         changeState(StateID_Flipping);
+    }
 }
 
 bool daEnBlockRotate_c::playerOverlaps() {
@@ -210,8 +229,9 @@ bool daEnBlockRotate_c::playerOverlaps() {
         mVec3_c playerBL(left, bottom + 0.1f, 0.0f);
         mVec3_c playerTR(right, top - 0.1f, 0.0f);
 
-        if (dGameCom::checkRectangleOverlap(&playerBL, &playerTR, &myBL, &myTR, 0.0f))
+        if (dGameCom::checkRectangleOverlap(&playerBL, &playerTR, &myBL, &myTR, 0.0f)) {
             return true;
+        }
     }
 
     return false;
@@ -235,24 +255,9 @@ void daEnBlockRotate_c::createItem() {
         default: // Normal items
             dActor_c::construct(fProfile::EN_ITEM, mPlayerID << 16 | (mIsGroundPound * 3) << 18 | l_item_values[mContents] & 0b11111, &mPos, nullptr, mLayer);
             // Play item spawn sound
-            playItemAppearSound(&mPos, l_item_values[mContents], mPlayerID, 0, 0);
+            item_sound_set(mPos, l_item_values[mContents], mPlayerID, 0, 0);
             break;
     }
-}
-
-void daEnBlockRotate_c::createEmpty() {
-    // Delete block
-    deleteActor(1);
-    
-    // Create empty block tile
-    u16 worldX = ((u16)mPos.x) & 0xFFF0;
-	u16 worldY = ((u16)-(mPos.y + 16.0)) & 0xFFF0;
-
-    dBg_c::m_bg_p->BgUnitChange(worldX, worldY, mLayer, 0x0001);
-
-    // Spawn item if we haven't already
-    if (!l_early_items[mContents])
-        createItem();
 }
 
 void daEnBlockRotate_c::destroyBlock() {
@@ -287,6 +292,32 @@ void daEnBlockRotate_c::executeState_Wait() {
     }
 }
 
+void daEnBlockRotate_c::initializeState_HitWait() {
+    // Setup tile renderer
+    dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
+    list->addPanelObjList(&mTile);
+
+    mTile.mPos.x = mPos.x - 8;
+    mTile.mPos.y = -(16 + mPos.y);
+    mTile.mTileNumber = 0x32;
+
+    // Remove model
+    mFlipBlockModel.remove();
+
+    // Spawn item if we haven't already
+    if (!l_early_items[mContents]) {
+        createItem();
+    }
+}
+
+void daEnBlockRotate_c::finalizeState_HitWait() {}
+
+void daEnBlockRotate_c::executeState_HitWait() {
+    // Update tile collider
+    mTile.setPos(mPos.x-8, -(16+mPos.y), mPos.z);
+    mTile.setScaleFoot(mScale.x);
+}
+
 
 void daEnBlockRotate_c::initializeState_Flipping() {
     mFlipsRemaining = 7;
@@ -299,16 +330,18 @@ void daEnBlockRotate_c::finalizeState_Flipping() {
 }
 
 void daEnBlockRotate_c::executeState_Flipping() {
-    if (mIsGroundPound)
+    if (mIsGroundPound) {
         mAngle.x += 0x800;
-    else
+    } else {
         mAngle.x -= 0x800;
+    }
 
     if (mAngle.x == 0) {
         mFlipsRemaining--;
         if (mFlipsRemaining <= 0) {
-            if (!playerOverlaps())
+            if (!playerOverlaps()) {
                 changeState(StateID_Wait);
+            }
         }
     }
 }

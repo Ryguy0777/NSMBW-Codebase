@@ -53,7 +53,8 @@ public:
     int m_54;
     u8 pad3[0x44];
     int m_9c;
-    u8 pad4[0x2e4];
+    u8 pad4[0x2e0];
+    u8 mWmSwitch;
     int mCharIDs[4];
     bool mIsWorldSelect; ///< Whether the World Select Menu is being displayed.
     u8 pad5[30];

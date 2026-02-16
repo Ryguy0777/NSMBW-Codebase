@@ -1,6 +1,6 @@
 #pragma once
 #include <lib/egg/core/eggHeap.h>
-#include <game/bases/d_panel_obj_mgr.hpp>
+#include <game/bases/d_PanelObjMgr.hpp>
 
 class bgTex_c {
 public:
@@ -25,6 +25,8 @@ public:
 
     void create(EGG::Heap *);
 
+    void setupAnimTile(int slot, u16 tileNum, char* name, u8* pFrameTimes, bool reverse);
+
     u8 mPad[0x54];
-    bool mWmSwitchRelated;
+    u8 mWmSwitchRelated;
 };

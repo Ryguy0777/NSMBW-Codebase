@@ -1,4 +1,4 @@
-// source: https://github.com/doldecomp/dolsdk2004/blob/main/src/pad/Padclamp.c
+// Source: https://github.com/doldecomp/dolsdk2004/blob/main/src/pad/Padclamp.c
 
 #pragma once
 

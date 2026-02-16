@@ -110,7 +110,7 @@ public:
 
     unsigned long long CvtBgCheckFromUnitNo(u16);
     static unsigned long long fn_80081960(unsigned long long, int);
-    dBgUnit_c *fn_80077520(u16 param_2, u16 param_3, u8 param_4, int *param_5, bool b);
+    u16 *__GetUnitPointer(u16, u16, u8, int *, bool);
 
     unsigned long long getBgCheckBuff(u16);
     unsigned long long *getpBgCheckBuff(u16);
@@ -136,7 +136,7 @@ public:
     void setBubble(float, float, u8, u8);
 
     void InitWmSwitchPushed();
-    bool IsWmSwitchPushed();
+    u8 IsWmSwitchPushed();
 
     dPanelObjMgr_c *getPanelObjMgr(int idx);
 

@@ -53,9 +53,9 @@ extern "C" void continueToMeltIce(void);
 kmBranchDefAsm(0x807f8104, 0x807f812c) {
     nofralloc
 
-    cmpwi r4, 0x13
-    beq meltIce // broken check? not sure
-    cmpwi r4, 758
+    cmpwi r4, 19 // YOSHI_FIRE 
+    beq meltIce // Broken check? not sure
+    cmpwi r4, 758 // AC_PAKKUN_PUCHI_FIRE
     bne dontMelt
 
     meltIce:
