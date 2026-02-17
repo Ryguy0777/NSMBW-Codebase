@@ -42,6 +42,7 @@ public:
     static void setSoftLight_Enemy(m3d::bmdl_c &mdl); ///< @copydoc dGameCom::SetSoftLight_Enemy
     static void setSoftLight_Boss(m3d::bmdl_c &mdl); ///< @copydoc dGameCom::SetSoftLight_Boss
 
+    inline mSphere_c *getCullSphere() { return &mCullSphere; }
 private:
     mSphere_c mCullSphere; ///< @brief A sphere representing the actor's visible area.
 };

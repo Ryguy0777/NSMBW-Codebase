@@ -50,6 +50,14 @@ struct SpawnRangeDisplayMode {
     };
 };
 
+struct WmCullDisplayFlags {
+    enum Value {
+        None,
+        MapActors,
+        MapModel,
+    };
+};
+
 struct DebugKey {
     enum KeyId {
         LaunchType,
@@ -75,6 +83,9 @@ struct DebugKey {
         DrawVisibleArea,
         DrawEnemySpawnRange,
         DrawMapObjSpawnRange,
+        DrawMapActorCulling,
+        DrawMapModelCulling,
+        DrawMapPlaceholders,
     };
 
     KeyId keyId;
@@ -109,6 +120,10 @@ class dDebugConfig_c {
         u8 mCollisionDebugFlags;
         u8 mSpawnRangeDebugFlags;
         u8 mSpawnRangeModeFlags;
+
+        // World Map only
+        u8 mMapCullingDebugFlags;
+        bool mDrawMapPlaceholders;
 
         // Movie only
         u8 mMovieId;

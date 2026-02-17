@@ -42,7 +42,10 @@ const DebugKey keys[] = {
     {DebugKey::DrawSpawnRangeMargins, "DrawSpawnRangeMargins"},
     {DebugKey::DrawVisibleArea, "DrawVisibleArea"},
     {DebugKey::DrawEnemySpawnRange, "DrawEnemySpawnRange"},
-    {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"}
+    {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"},
+    {DebugKey::DrawMapActorCulling, "DrawMapActorCulling"},
+    {DebugKey::DrawMapModelCulling, "DrawMapModelCulling"},
+    {DebugKey::DrawMapPlaceholders, "DrawMapPlaceholders"}
 };
 
 static dDebugConfig_c instance;
@@ -67,6 +70,8 @@ dDebugConfig_c::dDebugConfig_c() {
     mCollisionDebugFlags = ColliderDisplayFlags::None;
     mSpawnRangeDebugFlags = SpawnRangeDisplayFlags::None;
     mSpawnRangeModeFlags = SpawnRangeDisplayMode::None;
+
+    mMapCullingDebugFlags = WmCullDisplayFlags::None;
 
     mMovieId = 1;
 
@@ -200,6 +205,18 @@ void dDebugConfig_c::parseConfigLine(char* key, char* param, int paramSize) {
         
         case DebugKey::DrawMapObjSpawnRange:
             mSpawnRangeModeFlags |= ((decodedParam & 1) << SpawnRangeDisplayMode::MapObj);
+            break;
+
+        case DebugKey::DrawMapActorCulling:
+            mMapCullingDebugFlags |= ((decodedParam & 1) << WmCullDisplayFlags::MapActors);
+            break;
+
+        case DebugKey::DrawMapModelCulling:
+            mMapCullingDebugFlags |= ((decodedParam & 1) << WmCullDisplayFlags::MapModel);
+            break;
+
+        case DebugKey::DrawMapPlaceholders:
+            mMapCullingDebugFlags |= decodedParam & 1;
             break;
 
         case DebugKey::MovieId:
