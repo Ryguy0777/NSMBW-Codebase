@@ -61,18 +61,14 @@ void dWmCullRender_c::drawXlu() {
 
     // Draw all dWmActor_c culling spheres
     if (flags & (1 << WmCullDisplayFlags::MapActors)) {
-        OSReport("ok, we got a map actor\n");
 
         for (int profName = fProfile::WM_IBARA; profName < fProfile::WORLD_SELECT; profName++) {
             dWmActor_c *pActor = nullptr;
 
             while (pActor = (dWmActor_c*)fManager_c::searchBaseByProfName(profName, pActor), pActor != nullptr) {
-                OSReport("actor is %d\n", pActor->mProfName);
                 mSphere_c *sphere = pActor->getCullSphere();
-
                 // No need to vizualize spheres that won't ever be culled
                 if (sphere->mRadius != 0.0f) {
-                    OSReport("gonna try to draw this\n");
 
                     // Make random color
                     u32 uptr = (u32)pActor;
@@ -81,21 +77,38 @@ void dWmCullRender_c::drawXlu() {
                     u8 b = uptr & 0xFF;
                     u8 a = 0xFF;
 
-                    mVec3_c pos;
-                    pos.x = sphere->mCenter.x;
-                    pos.y = sphere->mCenter.y;
-                    pos.z = sphere->mCenter.z;
-                    //dGameCom::getGlbPosToLyt(pos);
-
                     float centerX = sphere->mCenter.x;
                     float centerY = sphere->mCenter.y;
                     float radius = sphere->mRadius;
-                    OSReport("%f, %f, %f\n", centerX, centerY, radius);
 
                     DrawCircle(centerX, centerY, radius, radius, sphere->mCenter.z, r, g, b, a);
                 }
             }
         }
+    }
 
+    // Draw all culling spheres for the map model
+    if (flags & (1 << WmCullDisplayFlags::MapModel)) {
+        daWmMap_c *pMap = daWmMap_c::m_instance;
+
+        for (int i = 0; i < 30; i++) {
+            // No node to cull here
+            if (pMap->mCullNodeIdx[i] < 0) {
+                continue;
+            }
+
+            mVec3_c nodePos;
+            pMap->GetNodePos(pMap->mCullNodeIdx[i], nodePos);
+            float radius = pMap->mpCullData->mNodes[i].mRadius;
+
+            // Make random color
+            u32 uptr = (u32)pMap;
+            u8 r = (uptr >> 16) & 0xFF;
+            u8 g = (uptr >> 8) & 0xFF;
+            u8 b = uptr & 0xFF;
+            u8 a = 0xFF;
+
+            DrawCircle(nodePos.x, nodePos.y, radius, radius, nodePos.z, r, g, b, a);
+        }
     }
 }
