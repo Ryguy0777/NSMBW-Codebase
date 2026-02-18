@@ -5,6 +5,7 @@
 #include <game/bases/d_wm_actor.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <new/bases/d_debug_config.hpp>
+#include <new/bases/d_wm_cull_csv_data.hpp>
 #include <new/gx_helper.hpp>
 
 dWmCullRender_c dWmCullRender_c::m_instance;
@@ -99,7 +100,7 @@ void dWmCullRender_c::drawXlu() {
 
             mVec3_c nodePos;
             pMap->GetNodePos(pMap->mCullNodeIdx[i], nodePos);
-            float radius = pMap->mpCullData->mNodes[i].mRadius;
+            float radius = dWmCullCsvData_c::m_instance.mNodes[i].mRadius;
 
             // Make random color
             u32 uptr = (u32)pMap;

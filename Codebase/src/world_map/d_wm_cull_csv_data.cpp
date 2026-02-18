@@ -1,10 +1,7 @@
 #include <new/bases/d_wm_cull_csv_data.hpp>
 #include <game/bases/d_s_world_map_static.hpp>
 
-dWmCullCsvData_c::dWmCullCsvData_c() {
-    init();
-    readData();
-}
+dWmCullCsvData_c dWmCullCsvData_c::m_instance;
 
 void dWmCullCsvData_c::init() {
     mNodeNum = 0;

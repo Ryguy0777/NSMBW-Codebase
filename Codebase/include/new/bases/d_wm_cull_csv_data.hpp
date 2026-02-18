@@ -8,7 +8,7 @@ public:
         char mNodeName[32];
     };
 
-    dWmCullCsvData_c();
+    dWmCullCsvData_c() { }
 
     void init();
     void readData();
@@ -18,4 +18,6 @@ public:
 
     int mNodeNum;
     Node_s mNodes[30];
+
+    static dWmCullCsvData_c m_instance;
 };
