@@ -45,7 +45,6 @@ const DebugKey keys[] = {
     {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"},
     {DebugKey::DrawMapActorCulling, "DrawMapActorCulling"},
     {DebugKey::DrawMapModelCulling, "DrawMapModelCulling"},
-    {DebugKey::DrawMapPlaceholders, "DrawMapPlaceholders"}
 };
 
 static dDebugConfig_c instance;
@@ -213,10 +212,6 @@ void dDebugConfig_c::parseConfigLine(char* key, char* param, int paramSize) {
 
         case DebugKey::DrawMapModelCulling:
             mMapCullingDebugFlags |= ((decodedParam & 1) << WmCullDisplayFlags::MapModel);
-            break;
-
-        case DebugKey::DrawMapPlaceholders:
-            mMapCullingDebugFlags |= decodedParam & 1;
             break;
 
         case DebugKey::MovieId:

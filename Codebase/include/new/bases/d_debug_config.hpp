@@ -85,7 +85,6 @@ struct DebugKey {
         DrawMapObjSpawnRange,
         DrawMapActorCulling,
         DrawMapModelCulling,
-        DrawMapPlaceholders,
     };
 
     KeyId keyId;
@@ -123,7 +122,6 @@ class dDebugConfig_c {
 
         // World Map only
         u8 mMapCullingDebugFlags;
-        bool mDrawMapPlaceholders;
 
         // Movie only
         u8 mMovieId;
