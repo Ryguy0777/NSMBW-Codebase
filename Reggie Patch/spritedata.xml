@@ -657,4 +657,18 @@
       <entry value="3">Blue</entry>
     </list>
   </sprite>
+
+  <sprite id="529" name="Switch Palace Switch" notes="A large !-Switch that will activate a Switch Palace and display a message upon being pressed.">
+    <list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
+      <entry value="0">World 3 Switch</entry>
+      <entry value="1">Yellow Switch</entry>
+      <entry value="2">Red Switch</entry>
+      <entry value="3">Green Switch</entry>
+      <entry value="4">Blue Switch</entry>
+    </list>
+    <checkbox nybble="12.4" title="Upside-Down" comment="When enabled, the switch will be facing downwards." comment2="Upside-Down switches cannot be set to fall."/>
+    <checkbox nybble="5.4" title="Falls" comment="When enabled, the switch will be movable by environmental factors, such as dropping down when bricks below it are destroyed, or moving along platforms." comment2="Conveyor belts cannot move Switches, even when [Falls] is set."/>
+    <checkbox nybble="5.2" title="Loads at Midway" comment="When enabled, the switch will only appear if the level has been loaded from a Midway point."/>
+    <value nybble="1-2" title="Triggering Event ID" comment="This switch will not be visible if a Triggering Event is defined unless that event is activated." idtype="Triggering Event"/>
+  </sprite> <!-- #529: Switch Palace Switch -->
 </sprites>

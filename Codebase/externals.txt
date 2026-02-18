@@ -1,3 +1,8 @@
+stopBgm__11SndSceneMgrFUi=0x8019be60
+
+noScoreAddSwitch=0x80a1afbc
+daEnHnswich_c_classinit=0x80a190f0
+
 checkForKoopas=0x80aca5bc
 checkForKoopas2=0x80868714
 

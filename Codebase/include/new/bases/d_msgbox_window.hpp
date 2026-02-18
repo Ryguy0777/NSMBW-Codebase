@@ -35,7 +35,7 @@ public:
     virtual int execute();
     virtual int draw();
 
-    void showMessage(unsigned long id, bool canCancel=true, int delay=-1);
+    void showMessage(unsigned long id, bool canCancel=true, int delay=-1, bool leavesLevel=false);
     
     sFStateMgr_c<dMsgBoxWindow_c, sStateMethodUsr_FI_c> mStateMgr;
 
@@ -49,6 +49,7 @@ public:
     bool mVisible;
     bool mCanCancel;
     int mDelay;
+    bool mLeaveLevel;
 
     LytTextBox_c *mpTextBoxes[T_COUNT];
     nw4r::lyt::Picture *mpPicturePanes[P_COUNT];

@@ -8,6 +8,7 @@
 #include <game/bases/d_game_key.hpp>
 #include <constants/sound_list.h>
 #include <new/constants/message_list.h>
+#include <game/bases/d_s_stage.hpp>
 
 dMsgBoxWindow_c *dMsgBoxWindow_c::m_instance = nullptr;
 bool dMsgBoxWindow_c::m_isShowing = false;
@@ -125,14 +126,16 @@ void dMsgBoxWindow_c::finalizeState_ShownWait() {}
 void dMsgBoxWindow_c::executeState_ShownWait() {
     if (mCanCancel) {
         int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
-        if (pressed & (WPAD_BUTTON_2 | WPAD_BUTTON_A))
+        if (pressed & (WPAD_BUTTON_2 | WPAD_BUTTON_A)) {
             mStateMgr.changeState(StateID_BoxDisappearWait);
+        }
     }
 
     if (mDelay > 0) {
         mDelay--;
-        if (mDelay == 0)
+        if (mDelay == 0) {
             mStateMgr.changeState(StateID_BoxDisappearWait);
+        }
     }
 }
 
@@ -145,23 +148,29 @@ void dMsgBoxWindow_c::initializeState_BoxDisappearWait() {
 void dMsgBoxWindow_c::finalizeState_BoxDisappearWait() {
 	mVisible = false;
     m_isShowing = false;
-	if (mCanCancel && PauseManager_c::m_instance)
+	if (mCanCancel && PauseManager_c::m_instance) {
 		PauseManager_c::m_instance->mDisablePause = 0; // Disable no-pause
+    }
+    if (mLeaveLevel) {
+        dScStage_c::setNextScene(fProfile::WORLD_MAP, 0x80000000, (dScStage_c::Exit_e)0, (dFader_c::fader_type_e)4);
+    }
 }
 
 void dMsgBoxWindow_c::executeState_BoxDisappearWait() {
 	if (!mLayout.isAnime(ANIM_BOX_DISAPPEAR)) {
 		mStateMgr.changeState(StateID_Wait);
 
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 2; i++) {
 			mLayout.ReverseAnimeStartSetup(i, false);
+        }
 		mLayout.AllAnimeEndSetup();
 	}
 }
 
-void dMsgBoxWindow_c::showMessage(unsigned long id, bool canCancel, int delay) {
+void dMsgBoxWindow_c::showMessage(unsigned long id, bool canCancel, int delay, bool leavesLevel) {
     mCanCancel = canCancel;
     mDelay = delay;
+    mLeaveLevel = leavesLevel;
 
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 

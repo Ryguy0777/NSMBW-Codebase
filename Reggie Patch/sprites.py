@@ -69,9 +69,10 @@ class SpriteImage_ColorExcSwitch(SLib.SpriteImage_StaticMultiple):  # 42
 
         if upsideDown:
             self.image = ImageCache['ESwitchU' + switchType]
+            self.yOffset = -1
         else:
             self.image = ImageCache['ESwitch' + switchType]
-            self.yOffset -= 3
+            self.yOffset = -3
 
         super().dataChanged()
 
@@ -457,6 +458,55 @@ class SpriteImage_SwitchBlock(SLib.SpriteImage_StaticMultiple):  # 528
         
         self.image = SLib.GetTile(tile_)
 
+
+class SpriteImage_SwitchPalace(SLib.SpriteImage_StaticMultiple):  # 529
+    @staticmethod
+    def loadImages():
+        if 'SwitchPalace' not in ImageCache:
+            e = SLib.GetImg('switch_palace_r.png', True)
+            ImageCache['SwitchPalace'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['SwitchPalaceU'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+        
+        if 'SwitchPalace_Y' not in ImageCache:
+            e = SLib.GetImg('switch_palace_y.png', True)
+            ImageCache['SwitchPalace_Y'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['SwitchPalaceU_Y'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+        
+        if 'SwitchPalace_G' not in ImageCache:
+            e = SLib.GetImg('switch_palace_g.png', True)
+            ImageCache['SwitchPalace_G'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['SwitchPalaceU_G'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+        
+        if 'SwitchPalace_B' not in ImageCache:
+            e = SLib.GetImg('switch_palace_b.png', True)
+            ImageCache['SwitchPalace_B'] = QtGui.QPixmap.fromImage(e)
+            ImageCache['SwitchPalaceU_B'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
+
+    def dataChanged(self):
+
+        upsideDown = self.parent.spritedata[5] & 1
+        
+        styleType = self.parent.spritedata[5] >> 1 & 7
+        
+        if styleType == 0 or styleType == 2:
+            switchType = ''
+        elif styleType == 1:
+            switchType = '_Y'
+        elif styleType == 3:
+            switchType = '_G'
+        elif styleType == 4:
+            switchType = '_B'
+        
+        if not upsideDown:
+            self.image = ImageCache['SwitchPalace' + switchType]
+            self.offset = (-15, -25)
+        else:
+            self.image = ImageCache['SwitchPalaceU' + switchType]
+            self.offset = (-15, 0)
+
+        super().dataChanged()
+
+
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
     42: SpriteImage_ColorExcSwitch,
@@ -480,4 +530,5 @@ ImageClasses = {
     503: SpriteImage_ShyguyClimb,
     510: SpriteImage_StarCoinFake,
     528: SpriteImage_SwitchBlock,
+    529: SpriteImage_SwitchPalace,
 }

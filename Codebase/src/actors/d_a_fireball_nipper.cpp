@@ -49,13 +49,21 @@ void daFireBall_Nipper_c::setCc() {
     mCc.entry();
 }
 
+#if GAME_REVISION < GAME_REVISION_K
+#define NIPPER_FIRE_ID 758
+#elif GAME_REVISION < GAME_REVISION_C
+#define NIPPER_FIRE_ID 760
+#else
+#define NIPPER_FIRE_ID 762
+#endif
+
 extern "C" void continueToMeltIce(void);
 kmBranchDefAsm(0x807f8104, 0x807f812c) {
     nofralloc
 
     cmpwi r4, 19 // YOSHI_FIRE 
     beq meltIce // Broken check? not sure
-    cmpwi r4, 758 // AC_PAKKUN_PUCHI_FIRE
+    cmpwi r4, NIPPER_FIRE_ID // AC_PAKKUN_PUCHI_FIRE
     bne dontMelt
 
     meltIce:
