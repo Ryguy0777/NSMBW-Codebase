@@ -1,4 +1,4 @@
-<wiidisc version="1" shiftfiles="true" root="/Codebase" log="true">
+<wiidisc version="1" shiftfiles="true" root="/PropelParts" log="true">
 	<id game="SMN">
 		<region type="P"/>
 		<region type="E"/>
@@ -8,13 +8,13 @@
 		<region type="C"/>
 	</id>
 	<options>
-		<section name="Codebase">
-			<option name="Game" id="codebase" default="1">
-				<choice name="Enabled"><patch id="codebase"/></choice>
+		<section name="PropelParts">
+			<option name="Game" id="propelparts" default="1">
+				<choice name="Enabled"><patch id="propelparts"/></choice>
 			</option>
 		</section>
 	</options>
-	<patch id="codebase">
+	<patch id="propelparts">
 		<folder external="config" disc="/config" create="true" />
 		<folder external="Code" disc="/Code" create="true" />
 		<folder external="Layout" disc="/Layout" create="true" recursive="true"/>

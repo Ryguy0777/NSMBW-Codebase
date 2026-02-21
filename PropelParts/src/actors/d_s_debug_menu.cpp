@@ -165,7 +165,7 @@ int dScDebugMenu_c::draw() {
 
     mpTextWriter->Begin();
 
-    mpTextWriter->Print(-300.0f, -220.0f, "NSMBW Codebase - Debug Menu\n");
+    mpTextWriter->Print(-300.0f, -220.0f, "PropelParts - Debug Menu\n");
     mpTextWriter->Print(-270.0f, -180.0f, "Level %02d - %02d Area %d Entrance %d\n", mWorld+1, mLevel+1, mArea+1, mEntrance);
     mpTextWriter->Print(-270.0f, -140.0f, "Go To Level\n");
     mpTextWriter->Print(-270.0f, -100.0f, "Sound ID %d\n", mSound);

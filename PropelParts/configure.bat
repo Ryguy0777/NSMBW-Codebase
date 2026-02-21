@@ -1,0 +1,1 @@
+py -3 configure.py --kamek %KAMEK_PATH% --kstdlib ../PropelParts/k_stdlib/ --cw ../PropelParts/cw/mwcceppc.exe

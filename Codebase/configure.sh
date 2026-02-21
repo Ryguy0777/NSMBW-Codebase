@@ -1,1 +1,0 @@
-python3 configure.py --kamek $KAMEK_PATH --kstdlib ../Codebase/k_stdlib/ --cw ../Codebase/cw/mwcceppc.exe

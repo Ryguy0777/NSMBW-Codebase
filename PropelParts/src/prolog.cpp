@@ -9,7 +9,7 @@
 // Anything that needs to be done on game boot should be placed here
 // As it runs right after kamek hooks are patched in
 kmBranchDefCpp(0x8015bd74, NULL, bool, bool ret) {
-    OSReport("NSMBW Custom Codebase - Hacks by Ryguy\n");
+    OSReport("PropelParts - Hacks by Ryguy\n");
     PADInit();
     dCustomController_c::makeInstance();
     ret &= dDebugConfig_c::setupConfig();

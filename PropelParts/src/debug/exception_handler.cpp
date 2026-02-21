@@ -4,7 +4,7 @@
 #include <nw4r/db/exception.h>
 #include <game_versions_nsmbw.h>
 
-#define GAME_NAME "NSMBW - Custom Codebase"
+#define GAME_NAME "PropelParts"
 
 // Replace the exception handler with our own version
 // Designed with mod debugging in mind

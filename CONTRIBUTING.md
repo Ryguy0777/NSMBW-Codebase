@@ -12,7 +12,7 @@
 
 ### Headers
 
-- Headers that are new to the Codebase and not from the original game must go inside of `include/new/`.
+- Headers that are new to PropelParts and not from the original game must go inside of `include/new/`.
 - Use forward-declared types when possible.
 - At the top of every header place:
 

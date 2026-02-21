@@ -1,18 +1,18 @@
 # CW/Ninja
-/Codebase/cw/
-Codebase/build.ninja
-Codebase/ninja.exe
+/PropelParts/cw/
+PropelParts/build.ninja
+PropelParts/ninja.exe
 
 # Build directories
-/Codebase/_build
-/Codebase/_map
-/Codebase/bin
+/PropelParts/_build
+/PropelParts/_map
+/PropelParts/bin
 
 # Loader objects
-Codebase/loader/kamekLoader.o
-Codebase/loader/nsmbw.o
-Codebase/loader/loader.xml
-Codebase/loader/loader.bin
+PropelParts/loader/kamekLoader.o
+PropelParts/loader/nsmbw.o
+PropelParts/loader/loader.xml
+PropelParts/loader/loader.bin
 
 # Python cache/compiled modules
 *.pyc
