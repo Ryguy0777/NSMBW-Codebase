@@ -1,3 +1,6 @@
+// Slightly modified from https://github.com/Treeki/Kamek/blob/master/shield-fix/shield-fix.cpp
+// Thanks to Ninji/Treeki for the original fix!
+
 #include <kamek.h>
 #include <string.h>
 #include <lib/egg/math/eggVector.h>

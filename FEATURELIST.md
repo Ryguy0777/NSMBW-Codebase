@@ -54,11 +54,11 @@ These features are implemented, but not complete or not fully functional.
 * Goombrat sprite
 * Magic Platform sprite
 * Debug menu scene (togglable)
+* Switch Blocks (togglable)
+* Shyguy variant sprites
 
 ### Planned Features
 These features are planned to be implemented in the future.
-* Switch Blocks (togglable)
-* Shyguy variant sprites
 * 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss sprite
 * Level Names/Info (togglable)
