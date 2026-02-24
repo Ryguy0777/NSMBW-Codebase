@@ -17,6 +17,7 @@ struct loaderFunctionsEx {
 	u32* gameInitTable;
 };
 
+// store the starting address for custom code at 0x800014e0 for later use
 extern u32 codeAddr:0x800014e0;
 
 void *allocAdapter(u32 size, bool isForCode, const loaderFunctions *funcs) {

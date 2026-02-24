@@ -10,4 +10,4 @@ $CC -i . -I- -i ../k_stdlib -Cpp_exceptions off -enum int -Os -use_lmw_stmw on -
 $KAMEK_PATH kamekLoader.o nsmbw.o -static=0x800046E4 -output-code=loader.bin -output-riiv=loader.xml -valuefile=Code/loader.bin
 
 # Or to inject directly into a DOL:
-# $KAMEK_PATH kamekLoader.o nsmbw.o -static=0x800046E4 -input-dol=main.dol -output-dol=main_kamek.dol
+# $KAMEK_PATH kamekLoader.o nsmbw.o -static=0x800046E4 -input-dol=main.dol -output-dol=nsmbw_kamek.dol

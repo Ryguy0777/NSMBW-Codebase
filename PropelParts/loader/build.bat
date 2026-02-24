@@ -4,4 +4,4 @@
 %KAMEK_PATH% kamekLoader.o nsmbw.o -static=0x800046E4 -output-code=loader.bin -output-riiv=loader.xml -valuefile=Code/loader.bin
 
 REM Or to inject directly into a DOL:
-REM %KAMEK_PATH% kamekLoader.o nsmbw.o -static=0x800046E4 -input-dol=main.dol -output-dol=main_kamek.dol
+REM %KAMEK_PATH% kamekLoader.o nsmbw.o -static=0x800046E4 -input-dol=main.dol -output-dol=nsmbw_kamek.dol
