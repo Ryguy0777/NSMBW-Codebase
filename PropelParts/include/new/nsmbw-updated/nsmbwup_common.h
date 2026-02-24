@@ -24,6 +24,7 @@
 #define _NSMBWUP_COMMON_H
 
 #include <kamek.h>
+#include <kamek_sdk.h>
 
 #include "game_versions_nsmbw.h"
 
