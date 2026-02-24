@@ -31,6 +31,6 @@
 		<folder external="Language/US" disc="/US" recursive="true" />
 		
 		<memory offset="0x800046E4" valuefile="Code/loader.bin" />
-		<memory offset="0x80004320" value="48001164" />
+		<memory offset="0x800042F4" value="48001158" />
 	</patch>
 </wiidisc>

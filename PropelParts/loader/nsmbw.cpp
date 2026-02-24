@@ -1,31 +1,34 @@
 #include "kamekLoader.h"
 
-// based on the "First Stage Loader" by CLF78
+// originally by Ninji, with improvements by CLF78, Ryguy, and RoadrunnerWMC
 
-typedef void *(*EGG_Heap_Alloc_t) (u32 size, s32 align, void *heap);
-typedef void (*EGG_Heap_Free_t) (void *buffer, void *heap);
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+
+typedef void *(*EGG_Heap_alloc_t) (u32 size, s32 align, void *heap);
+typedef void (*EGG_Heap_free_t) (void *buffer, void *heap);
 typedef void *(*memcpy_t) (void *dest, const void *src, size_t count);
-typedef void (*flush_cache_t) (void*, size_t);
+typedef void (*flush_cache_t) (void *buffer, size_t size);
 
 struct loaderFunctionsEx {
 	loaderFunctions base;
-	EGG_Heap_Alloc_t eggAlloc;
-	EGG_Heap_Free_t eggFree;
+	EGG_Heap_alloc_t EGG_Heap_alloc;
+	EGG_Heap_free_t EGG_Heap_free;
 	memcpy_t memcpy;
-	flush_cache_t flushCache;
-	void **gameHeapPtr;
-	void **archiveHeapPtr;
+	flush_cache_t __flush_cache;
+	void **mHeap_g_gameHeaps;
+	void **mHeap_g_archiveHeap;
 	u32* bcaCheck;
-	u32* gameInitTable;
+	u32* myBackGround_PhaseMethod;
 };
 
-// store the starting address for custom code at 0x800014e0 for later use
+// store the base address for custom code at 0x800014e0, for optional later use (e.g. for custom exception handlers)
 extern u32 codeAddr:0x800014e0;
 
 void *allocAdapter(u32 size, bool isForCode, const loaderFunctions *funcs) {
 	const loaderFunctionsEx *funcsEx = (const loaderFunctionsEx *)funcs;
-	void **heapPtr = isForCode ? funcsEx->gameHeapPtr : funcsEx->archiveHeapPtr;
-	void *text = funcsEx->eggAlloc(size, 0x20, *heapPtr);
+	void **heapPtr = isForCode ? funcsEx->mHeap_g_gameHeaps : funcsEx->mHeap_g_archiveHeap;
+	void *text = funcsEx->EGG_Heap_alloc(size, 0x20, *heapPtr);
 	if (isForCode) {
 		funcs->OSReport("Code start at %p\n", text);
 		codeAddr = (u32)text;
@@ -34,8 +37,8 @@ void *allocAdapter(u32 size, bool isForCode, const loaderFunctions *funcs) {
 }
 void freeAdapter(void *buffer, bool isForCode, const loaderFunctions *funcs) {
 	const loaderFunctionsEx *funcsEx = (const loaderFunctionsEx *)funcs;
-	void **heapPtr = isForCode ? funcsEx->gameHeapPtr : funcsEx->archiveHeapPtr;
-	funcsEx->eggFree(buffer, *heapPtr);
+	void **heapPtr = isForCode ? funcsEx->mHeap_g_gameHeaps : funcsEx->mHeap_g_archiveHeap;
+	funcsEx->EGG_Heap_free(buffer, *heapPtr);
 }
 
 
@@ -49,8 +52,8 @@ const loaderFunctionsEx functions_p = {
 	(sprintf_t) 0x802E1ACC,
 	allocAdapter,
 	freeAdapter},
-	(EGG_Heap_Alloc_t) 0x802B8E00,
-	(EGG_Heap_Free_t) 0x802B90B0,
+	(EGG_Heap_alloc_t) 0x802B8E00,
+	(EGG_Heap_free_t) 0x802B90B0,
 	(memcpy_t) 0x80004364,
 	(flush_cache_t) 0x80004330,
 	(void **) 0x80377F48,
@@ -68,8 +71,8 @@ const loaderFunctionsEx functions_e = {
 	(sprintf_t) 0x802E17DC,
 	allocAdapter,
 	freeAdapter},
-	(EGG_Heap_Alloc_t) 0x802B8CC0,
-	(EGG_Heap_Free_t) 0x802B8F70,
+	(EGG_Heap_alloc_t) 0x802B8CC0,
+	(EGG_Heap_free_t) 0x802B8F70,
 	(memcpy_t) 0x80004364,
 	(flush_cache_t) 0x80004330,
 	(void **) 0x80377C48,
@@ -88,8 +91,8 @@ const loaderFunctionsEx functions_j = {
 	(sprintf_t) 0x802E15EC,
 	allocAdapter,
 	freeAdapter},
-	(EGG_Heap_Alloc_t) 0x802B8AD0,
-	(EGG_Heap_Free_t) 0x802B8D80,
+	(EGG_Heap_alloc_t) 0x802B8AD0,
+	(EGG_Heap_free_t) 0x802B8D80,
 	(memcpy_t) 0x80004364,
 	(flush_cache_t) 0x80004330,
 	(void **) 0x803779C8,
@@ -107,8 +110,8 @@ const loaderFunctionsEx functions_k = {
 	(sprintf_t) 0x802E1D1C,
 	allocAdapter,
 	freeAdapter},
-	(EGG_Heap_Alloc_t) 0x802B9200,
-	(EGG_Heap_Free_t) 0x802B94B0,
+	(EGG_Heap_alloc_t) 0x802B9200,
+	(EGG_Heap_free_t) 0x802B94B0,
 	(memcpy_t) 0x80004364,
 	(flush_cache_t) 0x80004330,
 	(void **) 0x80384948,
@@ -126,8 +129,8 @@ const loaderFunctionsEx functions_w = {
 	(sprintf_t) 0x802E1D1C,
 	allocAdapter,
 	freeAdapter},
-	(EGG_Heap_Alloc_t) 0x802B9200,
-	(EGG_Heap_Free_t) 0x802B94B0,
+	(EGG_Heap_alloc_t) 0x802B9200,
+	(EGG_Heap_free_t) 0x802B94B0,
 	(memcpy_t) 0x80004364,
 	(flush_cache_t) 0x80004330,
 	(void **) 0x80382D48,
@@ -137,23 +140,23 @@ const loaderFunctionsEx functions_w = {
 };
 
 const loaderFunctionsEx functions_c = {
-	{(OSReport_t) 0x80161a90,
-	(OSFatal_t) 0x801b1930,
-	(DVDConvertPathToEntrynum_t) 0x801cc9e0,
-	(DVDFastOpen_t) 0x801cccf0,
-	(DVDReadPrio_t) 0x801cce80,
-	(DVDClose_t) 0x801ccd60,
-	(sprintf_t) 0x802e4df8,
+	{(OSReport_t) 0x80161A90,
+	(OSFatal_t) 0x801B1930,
+	(DVDConvertPathToEntrynum_t) 0x801CC9E0,
+	(DVDFastOpen_t) 0x801CCCF0,
+	(DVDReadPrio_t) 0x801CCE80,
+	(DVDClose_t) 0x801CCD60,
+	(sprintf_t) 0x802E4DF8,
 	allocAdapter,
 	freeAdapter},
-	(EGG_Heap_Alloc_t) 0x802bb360,
-	(EGG_Heap_Free_t) 0x802bb610,
+	(EGG_Heap_alloc_t) 0x802BB360,
+	(EGG_Heap_free_t) 0x802BB610,
 	(memcpy_t) 0x80004364,
 	(flush_cache_t) 0x80004330,
-	(void **) 0x8037d4c8,
-	(void **) 0x8042fccc,
-	(u32*) 0x800ca2d8,
-	(u32*) 0x8032d2f8
+	(void **) 0x8037D4C8,
+	(void **) 0x8042FCCC,
+	(u32*) 0x800CA2D8,
+	(u32*) 0x8032D2F8
 };
 
 void unknownVersion() {
@@ -167,9 +170,12 @@ void unknownVersion() {
 	for (;;);
 }
 
-struct versionInfo {
-	char region;
-	u8 revision;
+union versionInfo {
+	struct {
+		char region;
+		u8 revision;
+	};
+	u16 pair;
 };
 
 static versionInfo sVersionInfo;
@@ -178,17 +184,16 @@ static const loaderFunctionsEx *sFuncs;
 versionInfo checkVersion() {
 	versionInfo version;
 
-	// default is PALv0
-	version.region = 'P';
-	version.revision = 0;
+	// default is "PALv0"
+	version.pair = 'P\0';
 	switch (*((u32*)0x800CF6CC))
 	{
-		case 0x40820030: version.region = 'P'; version.revision = 1; break;
-		case 0x40820038: version.region = 'P'; version.revision = 2; break;
-		case 0x48000465: version.region = 'E'; version.revision = 1; break;
-		case 0x2C030000: version.region = 'E'; version.revision = 2; break;
-		case 0x480000B4: version.region = 'J'; version.revision = 1; break;
-		case 0x4082000C: version.region = 'J'; version.revision = 2; break;
+		case 0x40820030: version.pair = 'P\1'; break;
+		case 0x40820038: version.pair = 'P\2'; break;
+		case 0x48000465: version.pair = 'E\1'; break;
+		case 0x2C030000: version.pair = 'E\2'; break;
+		case 0x480000B4: version.pair = 'J\1'; break;
+		case 0x4082000C: version.pair = 'J\2'; break;
 		case 0x38A00001:
 			switch (*((u8*)0x8000423A))
 			{
@@ -218,7 +223,7 @@ int loadBinary() {
 extern vu32 aiControl:0xCD006C00;
 
 void loadIntoNSMBW() {
-	// set version before we do anything
+	// set version before we do anything else
 	sVersionInfo = checkVersion();
 
 	// choose functions
@@ -233,40 +238,38 @@ void loadIntoNSMBW() {
 	}
 
 	// report some info
-	sFuncs->base.OSReport("<< NSMBW - LOADER 	release build: " __DATE__ " " __TIME__ " (0x4302_145) >>\n");
-	// sFuncs->base.OSReport("found region %c%d!\n", sVersionInfo.region, sVersionInfo.revision);
+	sFuncs->base.OSReport("<< KAMEK - LOADER \trelease build: " __DATE__ " " __TIME__ " (" STRINGIFY(__CWCC__) "_" STRINGIFY(__CWBUILD__) ") >>\n");
+	// sFuncs->base.OSReport("Detected game version: %c%d\n", sVersionInfo.region, sVersionInfo.revision);
 
-	// reset the AI control register because libogc doesn't reset this right,
-	// so on console the SDK can't initialize audio correctly coming from the Riivolution channel
+	// reset the AI control register because libogc doesn't reset it right,
+	// so on console the SDK can't initialize audio correctly when coming from the Riivolution channel
 	aiControl = 0;
 
 	// remove the BCA check
-	// this not only fixes some USB loaders running mods if the game id is changed
+	// this not only fixes some USB loaders running mods if the game id is changed,
 	// but also gains some of the time lost due to kamek binary injections
 	*sFuncs->bcaCheck = 0x60000000;
 	// we call __flush_cache to remove any stale instructions after writing to RAM
-	sFuncs->flushCache(sFuncs->gameInitTable, 4);
+	sFuncs->__flush_cache(sFuncs->myBackGround_PhaseMethod, 4);
 
-	// modify gameInitTable to load rels earlier & load kamek binary
-	u32 buffer[20];
-	sFuncs->memcpy(&buffer, sFuncs->gameInitTable, 80);
+	// modify myBackGround_PhaseMethod to load rels earlier & load the kamek binary
+	u32 temp[20];
+	sFuncs->memcpy(&temp, sFuncs->myBackGround_PhaseMethod, 0x50);
 
-	// set rel loading functions as first entries in the table
-	sFuncs->gameInitTable[0] = buffer[15];
-	sFuncs->gameInitTable[1] = buffer[16];
-	sFuncs->gameInitTable[2] = buffer[17];
+	// set rel loading functions as the first entries in the table
+	sFuncs->myBackGround_PhaseMethod[0] = temp[15];
+	sFuncs->myBackGround_PhaseMethod[1] = temp[16];
+	sFuncs->myBackGround_PhaseMethod[2] = temp[17];
 
-	// kamek binary loading as fourth entry
-	sFuncs->gameInitTable[3] = (u32)&loadBinary;
+	// set kamek binary loader as the fourth entry
+	sFuncs->myBackGround_PhaseMethod[3] = (u32)&loadBinary;
 
-	// set all the previous functions
-	sFuncs->memcpy(&sFuncs->gameInitTable[4], &buffer, 60);
+	// set all the other functions
+	sFuncs->memcpy(&sFuncs->myBackGround_PhaseMethod[4], &temp, 0x3C);
+	sFuncs->myBackGround_PhaseMethod[19] = temp[18];
+	sFuncs->myBackGround_PhaseMethod[20] = temp[19];
 
-	// set the remaining two functions
-	sFuncs->gameInitTable[19] = buffer[18];
-	sFuncs->gameInitTable[20] = buffer[19];
-
-	sFuncs->flushCache(sFuncs->gameInitTable, 80);
+	sFuncs->__flush_cache(sFuncs->myBackGround_PhaseMethod, 0x50);
 }
 
-kmBranch(0x80004320, loadIntoNSMBW);
+kmBranch(0x800042f4, loadIntoNSMBW);
