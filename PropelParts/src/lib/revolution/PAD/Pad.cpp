@@ -23,8 +23,11 @@ u16 oslow_30e0 AT_ADDRESS(0x800030e0);
 
 #include <string.h>
 
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+
 static const char* __PAD_VERSION =
-    "<< RVL_SDK - PAD \trelease build: Oct  3 2007 01:00:54 (0x4199_60831) >>";
+    "<< RVL_SDK - PAD \trelease build: " __DATE__ " " __TIME__ " (" STRINGIFY(__CWCC__) "_" STRINGIFY(__CWBUILD__) ") >>";
 
 static u32 PADInitialized;
 static u32 PADEnabledBits;
