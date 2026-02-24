@@ -230,14 +230,16 @@ void loadIntoNSMBW() {
 	}
 
 	// report some info
-	sFuncs->base.OSReport("<< CODE - LOADER 	release build: Sep 10 2025 01:39:56 (0x4302_145) >>\n");
-	sFuncs->base.OSReport("found region %c%d!\n", sVersionInfo.region, sVersionInfo.revision);
+	sFuncs->base.OSReport("<< NSMBW - LOADER 	release build: " __DATE__ " " __TIME__ " (0x4302_145) >>\n");
+	// sFuncs->base.OSReport("found region %c%d!\n", sVersionInfo.region, sVersionInfo.revision);
 
 	// reset the AI control register because libogc doesn't reset this right,
 	// so on console the SDK can't initialize audio correctly coming from the Riivolution channel
 	aiControl = 0;
 
 	// remove the BCA check
+	// this not only fixes some USB loaders running mods if the game id is changed
+	// but also gains some of the time lost due to kamek binary injections
 	*sFuncs->bcaCheck = 0x60000000;
 	// we call __flush_cache to remove any stale instructions after writing to RAM
 	sFuncs->flushCache(sFuncs->gameInitTable, 4);
