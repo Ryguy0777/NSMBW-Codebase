@@ -82,6 +82,7 @@ public:
     mVec3_c &getHatPos() const { return mpMdl->mHatPosMaybe; }
 
     dPyMdlBase_c *mpMdl;
+    u8 mPad[0x4];
 
     static dPyMdlBase_HIO_c m_hio;
 };
