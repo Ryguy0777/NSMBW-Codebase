@@ -816,6 +816,7 @@ namespace fProfile {
         MODEL_RES,
         EN_BLOCK_SWITCH,
         EN_PALACE_SWITCH,
+        AC_LIFT_BG_PAIR_OBJ,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

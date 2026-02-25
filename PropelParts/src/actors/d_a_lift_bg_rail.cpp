@@ -17,7 +17,7 @@ bool daLiftBgRail_c::initMovement() {
     mRail.mBounce = (mParam >> 15) & 1;
 
     if (mRailIdx != 0) {
-        mPos = mRailPos;
+        mRailOffset = mPos - mRailPos;
     }
 
     return true;
@@ -30,7 +30,7 @@ void daLiftBgRail_c::executeMovement() {
     }
 
     if (mRailIdx != 0) {
-        mPos = mRailPos;
+        mPos = mRailPos + mRailOffset;
     }
 
     if (mRail.mIdxCurr == mRail.mCount-1) {

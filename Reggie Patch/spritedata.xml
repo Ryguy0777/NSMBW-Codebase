@@ -459,7 +459,7 @@
   <sprite id="506" name="Mega Shy Guy" notes="">
   </sprite> <!-- #506: Mega Shy Guy -->
   
-  <sprite id="507" name="Path Controlled Magic Platform" notes="A path controlled platform made out of tile objects.">
+  <sprite id="507" name="Magic Platform - Path Controlled" notes="A path controlled platform made out of tile objects.">
     <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks."/>
     <value nybble="3-4" title="Triggering Event ID" comment="When this Event is activated, the Magic Platform will move as specified. Deactivating the event will not deactivate the Magic Platform; it will continue until it has reached the final Path Node." idtype="Triggering Event"/>
     <value nybble="1-2" title="Target Event ID" comment="When the Magic Platform reaches its final path Node, this Event ID is activated." idtype="Target Event"/>
@@ -478,12 +478,12 @@
       <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #507: Path Controlled Magic Platform -->
+  </sprite> <!-- #507: Magic Platform - Path Controlled -->
 
-  <sprite id="508" name="Rotation Controlled Magic Platform" notes="A rotation controlled platform made out of tile objects.">
+  <sprite id="508" name="Magic Platform - Rotation Controlled" notes="A rotation controlled platform made out of tile objects.">
     <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A rotation controller is required for the Magic Platform.">
-      <required sprite="96"/>
-      <required sprite="149" />
+      <suggested sprite="96"/>
+      <suggested sprite="149" />
     </dependency>
     <value nybble="5-6" title="Rotation ID" comment="This pairs the Magic Platform to a matching rotation controller." comment2="If the Magic Platform cannot find the rotation controller, it will not spawn." idtype="Rotation"/>
     <checkbox nybble="9.1" title="Ignores Rotation Controller Angle" comment="This determines if the Magic Platform should always face upwards rather than tilting with the rotation controller."/>
@@ -499,7 +499,7 @@
       <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #508: Rotation Controlled Magic Platform -->
+  </sprite> <!-- #508: Magic Platform - Rotation Controlled -->
   
   <sprite id="509" name="Effect Spawner" phonebook="Effects" notes="Enables event-driven spawning of Sound Effects and Graphic Effects.&lt;br&gt;&lt;u&gt;Limitations&lt;/u&gt;&lt;br&gt; 1) Do not use 1000 or more sounds/effects per area.&lt;br&gt; 2) A single Event ID can only trigger one sound/effect per area&lt;br&gt; 3) Only a specific number of sounds/effects can be active at the same time&lt;br&gt; 4) Only two BRSTMs can be active at the same time." advancednotes="If spawning a Sound Effect, the placement of the sprite is crucial, as the sound is emitted from that position. If the player is ~3 screens away from the sprite, then they won't hear it anymore. Placing multiple sprites with the same settings at different locations is possible.">
     <value nybble="3-4" title="Triggering Event ID" comment="When this Event ID is activated, the associated sound or affect will be played." idtype="Triggering Event"/>
@@ -671,4 +671,23 @@
     <checkbox nybble="5.2" title="Loads at Midway" comment="When enabled, the switch will only appear if the level has been loaded from a Midway point."/>
     <value nybble="1-2" title="Triggering Event ID" comment="This switch will not be visible if a Triggering Event is defined unless that event is activated." idtype="Triggering Event"/>
   </sprite> <!-- #529: Switch Palace Switch -->
+  
+  <sprite id="530" name="Magic Platform - Two Way Line" notes="A Two Way Line controlled platform made out of tile objects.">
+    <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A Two Way Line controller is required for the Magic Platform.">
+      <required sprite="260"/>
+    </dependency>
+    <value nybble="5-6" title="Two Way Line ID" comment="This pairs the platform to a matching Two Way Line movement controller." comment2="If set to 0, the Magic Platform will be stationary." idtype="Two Way Line"/>
+    <value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
+    <list nybble="10" title="Collision" comment="This determines the type of collision.">
+      <entry value="0">Solid Block</entry>
+      <entry value="1">Permeable (Solid on Top)</entry>
+      <entry value="2">Fully Permeable</entry>
+      <entry value="3">Collision Line on Right Side</entry>
+      <entry value="4">Collision Line on Left Side</entry>
+      <entry value="5">Collision Line on Top Edge</entry>
+      <entry value="6">Collision Line on Bottom Edge</entry>
+      <entry value="7">Circular</entry>
+    </list>
+    <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
+  </sprite> <!-- #530: Magic Platform - Two Way Line -->
 </sprites>

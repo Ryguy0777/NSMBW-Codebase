@@ -201,12 +201,12 @@ int daLiftBgBase_c::doDelete() {
 }
 
 int daLiftBgBase_c::execute() {
-    // Handle movement controller
-    executeMovement();
-
-	// Hide if not on screen
+    // Hide if not on screen
 	bool shouldCull = ActorDrawCullCheck();
     setVisible(!shouldCull);
+    
+    // Handle movement controller
+    executeMovement();
 
     updatePanelObj();
 

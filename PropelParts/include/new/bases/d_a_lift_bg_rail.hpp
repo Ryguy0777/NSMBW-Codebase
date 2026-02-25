@@ -9,6 +9,7 @@ public:
 
     dRail_c mRail;
     mVec3_c mRailPos;
+    mVec3_c mRailOffset;
 
     // Settings
     u8 mRailIdx;
