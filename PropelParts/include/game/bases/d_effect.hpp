@@ -5,9 +5,6 @@ namespace dEf {
 class followEffect_c : public mEf::effect_c {
 public:
     followEffect_c() {}
-
-    int m_114;
-    u8 m_118;
 };
 
 void createEffect_change(const char*, unsigned long, const mVec3_c*, const mAng3_c*, const mVec3_c*);

@@ -36,7 +36,8 @@ void daEnBlockRotate_c::callBackF(dActor_c *self, dActor_c *other) {
         if (other->mKind == STAGE_ACTOR_PLAYER) {
             daPlBase_c *player = (daPlBase_c *)other;
             // Statuses 0xA9 and 0x2B are only both set when spinjumping
-            if (player->isStatus(0xA9) && player->isStatus(daPlBase_c::STATUS_2B)) {
+            if (player->isStatus(daPlBase_c::STATUS_A9) && player->isStatus(daPlBase_c::STATUS_SPIN)) {
+                OSReport("%x\n", offsetof(daPlBase_c, m_344));
                 if (player->mPowerup != POWERUP_NONE && player->mPowerup != POWERUP_MINI_MUSHROOM) {
                     this_->destroyBlock();
                     // Move player upwards slightly

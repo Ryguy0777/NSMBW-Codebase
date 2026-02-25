@@ -29,6 +29,32 @@ struct sBcSensorLine {
 };
 
 class dBg_ctr_c;
+class dBcSensor_c {
+public:
+    u32 mFlags;
+    int mOffsetX;
+    int mOffsetY;
+};
+
+/// @unofficial
+class sBcPointData {
+public:
+    operator const sBcSensorBase *() const { return (sBcSensorBase *) &mFlags; }
+
+    u32 mFlags;
+    long mInfMargin;
+    long mSupMargin;
+    long mOffset;
+};
+
+/// @unofficial
+class sBcPlayerPointData {
+public:
+    sBcPointData mFoot;
+    sBcPointData mHead;
+    sBcPointData mWall;
+    sBcPointData mVine;
+};
 
 class dBc_c {
 public:

@@ -16,13 +16,13 @@ void ccCallback_kaboFlame(dCc_c *self, dCc_c *other) {
     daKaboFlame_c *flame = (daKaboFlame_c*)self->mpOwner;
     if (ac->mKind == dActor_c::STAGE_ACTOR_PLAYER) {
         daPlBase_c *pl = (daPlBase_c *)other;
-        pl->setDamage(flame, daPlBase_c::DAMAGE_NONE);
+        pl->setDamage(flame, daPlBase_c::DAMAGE_DEFAULT);
         flame->deleteRequest();
     } else if (ac->mKind == dActor_c::STAGE_ACTOR_YOSHI) {
         daYoshi_c *ys = (daYoshi_c *)other;
         s8 *playerNum = ys->getPlrNo();
         if (*playerNum > -1) {
-            ys->setDamage(flame, daPlBase_c::DAMAGE_NONE);
+            ys->setDamage(flame, daPlBase_c::DAMAGE_DEFAULT);
             flame->deleteRequest();
         }
     } else if (other->mCcData.mAttack == CC_ATTACK_ICEBALL) {

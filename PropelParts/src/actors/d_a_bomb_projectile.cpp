@@ -47,12 +47,12 @@ void BombExplosionCollcheck(dCc_c *self, dCc_c *other) {
         u32 otherKind = ac->mKind;
         if (otherKind == dActor_c::STAGE_ACTOR_PLAYER) {
             daPlBase_c *pl = (daPlBase_c *)other;
-            pl->setDamage(bomb, daPlBase_c::DAMAGE_NONE);
+            pl->setDamage(bomb, daPlBase_c::DAMAGE_DEFAULT);
         } else if (otherKind == dActor_c::STAGE_ACTOR_YOSHI) {
             daYoshi_c *ys = (daYoshi_c *)other;
             s8 *playerNum = ys->getPlrNo();
             if (*playerNum > -1) {
-                ys->setDamage(bomb, daPlBase_c::DAMAGE_NONE);
+                ys->setDamage(bomb, daPlBase_c::DAMAGE_DEFAULT);
             }
         }
     }

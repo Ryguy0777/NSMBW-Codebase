@@ -6,11 +6,11 @@
 void daLiftBgBase_c::callBackF(dActor_c *self, dActor_c *other) {
     if (other->mKind == STAGE_ACTOR_PLAYER) {
         daPlBase_c *player = (daPlBase_c *)other;
-        player->setStatus5D(self->mPosDelta.x);
+        player->setExtraPushForce(self->mPosDelta.x);
         if (self->mPosDelta.y <= 0.0f) {
-            player->fn_80056370(self, daPlBase_c::BG_PRESS_FOOT);
+            player->setBgPressReq(self, daPlBase_c::BG_PRESS_FOOT);
         } else {
-            player->fn_80056370(self, (daPlBase_c::BgPress_e)1);
+            player->setBgPressReq(self, (daPlBase_c::BgPress_e)1);
         }
     }
 }
@@ -19,9 +19,9 @@ void daLiftBgBase_c::callBackH(dActor_c *self, dActor_c *other) {
     if (other->mKind == STAGE_ACTOR_PLAYER) {
         daPlBase_c *player = (daPlBase_c *)other;
         if (self->mPosDelta.y < 0.0f) {
-            player->fn_80056370(self, (daPlBase_c::BgPress_e)2);
+            player->setBgPressReq(self, (daPlBase_c::BgPress_e)2);
         } else {
-            player->fn_80056370(self, daPlBase_c::BG_PRESS_HEAD);
+            player->setBgPressReq(self, daPlBase_c::BG_PRESS_HEAD);
         }
     }
 }
@@ -31,15 +31,15 @@ void daLiftBgBase_c::callBackW(dActor_c *self, dActor_c *other, u8 direction) {
         daPlBase_c *player = (daPlBase_c *)other;
         if (direction == 1) {
             if (self->mPosDelta.x > 0.f) {
-                player->fn_80056370(self, (daPlBase_c::BgPress_e)6);
+                player->setBgPressReq(self, (daPlBase_c::BgPress_e)6);
             } else {
-                player->fn_80056370(self, daPlBase_c::BG_PRESS_L);
+                player->setBgPressReq(self, daPlBase_c::BG_PRESS_L);
             }
         } else {
             if (self->mPosDelta.x < 0.0f) {
-                player->fn_80056370(self, (daPlBase_c::BgPress_e)5);
+                player->setBgPressReq(self, (daPlBase_c::BgPress_e)5);
             } else {
-                player->fn_80056370(self, daPlBase_c::BG_PRESS_R);
+                player->setBgPressReq(self, daPlBase_c::BG_PRESS_R);
             }
         }
     }

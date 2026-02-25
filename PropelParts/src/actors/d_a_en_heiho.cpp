@@ -193,7 +193,7 @@ void daEnHeiho_c::executeState_DieOther() {
 
 void daEnHeiho_c::setDamage(dActor_c *actor) {
     daPlBase_c *pl = (daPlBase_c *) actor;
-    if (pl->setDamage(this, daPlBase_c::DAMAGE_NONE)) {
+    if (pl->setDamage(this, daPlBase_c::DAMAGE_DEFAULT)) {
         setTurnByPlayerHit(actor);
     }
 }
