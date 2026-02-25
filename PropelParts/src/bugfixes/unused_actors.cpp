@@ -10,6 +10,5 @@ kmWrite16(0x8030cde8, 0x020E);
 // "Basic Platform - Water" (actor 591, sprite 486)
 const char* l_WATER_LIFT_res [] = {"lift_han_wood", NULL};
 const dActorData_c c_WATER_LIFT_actor_data = {fProfile::WATER_LIFT, 0, 0, 0, 0, 120, 120, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
-extern fProfile::fActorProfile_c g_profile_WATER_LIFT;
-dCustomProfile_c l_WATER_LIFT_profile(&g_profile_WATER_LIFT, "WATER_LIFT", SpriteId::WATER_LIFT, &c_WATER_LIFT_actor_data, l_WATER_LIFT_res);
+dCustomProfile_c l_WATER_LIFT_profile(SpriteId::WATER_LIFT, &c_WATER_LIFT_actor_data, l_WATER_LIFT_res);
 

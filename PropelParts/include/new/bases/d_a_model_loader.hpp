@@ -3,9 +3,6 @@
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/bases/d_res_mng.hpp>
 
-// Dummy class for model loader resources
-class dModelRes_c : public dBase_c { };
-
 // The real model loader
 class daModelLoader_c : public dActor_c {
 public:

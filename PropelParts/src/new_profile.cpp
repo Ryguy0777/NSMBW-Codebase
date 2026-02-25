@@ -83,6 +83,19 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char
     }
 }
 
+// Sprite only
+dCustomProfile_c::dCustomProfile_c(SpriteName spriteId, const dActorData_c *dActorData_c, const char** files) {
+    // Store sprite data
+    ProfileName profileId = dActorData_c->mProfileName;
+    if (spriteId < SPRITE_COUNT) {
+        dActorData_c::l_actor_data_tbl[spriteId] = *dActorData_c;
+        l_actor_file_tbl[spriteId] = files;
+    } else {
+        l_custom_actor_data_tbl[spriteId - SPRITE_COUNT] = *dActorData_c;
+        l_custom_actor_file_tbl[spriteId - SPRITE_COUNT] = files;
+    }
+}
+
 #ifdef IS_GAME_VERSION_DYNAMIC
 #error Dynamic compilation is unsupported for this patch.
 #endif

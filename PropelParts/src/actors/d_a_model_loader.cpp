@@ -4,56 +4,56 @@
 
 // Resource loader
 
-CUSTOM_ACTOR_PROFILE(MODEL_RES, dModelRes_c, fProfile::AC_AUTOSCROOL_SWICH, fProfile::DRAW_ORDER::AC_AUTOSCROOL_SWICH, 0);
-const dActorData_c c_MODEL_RES_actor_data = {fProfile::MODEL_RES, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
+extern fProfile::fActorProfile_c g_profile_DUMMY_ACTOR;
+const dActorData_c c_MODEL_RES_actor_data = {fProfile::DUMMY_ACTOR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
 
 const char* l_MODEL_RES0_res[] = {"modelLoaderRes0", NULL};
-dCustomProfile_c l_MODEL_RES0_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES0, &c_MODEL_RES_actor_data, l_MODEL_RES0_res);
+dCustomProfile_c l_MODEL_RES0_profile(SpriteId::MODEL_RES0, &c_MODEL_RES_actor_data, l_MODEL_RES0_res);
 
 const char* l_MODEL_RES1_res[] = {"modelLoaderRes1", NULL};
-dCustomProfile_c l_MODEL_RES1_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES1, &c_MODEL_RES_actor_data, l_MODEL_RES1_res);
+dCustomProfile_c l_MODEL_RES1_profile(SpriteId::MODEL_RES1, &c_MODEL_RES_actor_data, l_MODEL_RES1_res);
 
 const char* l_MODEL_RES2_res[] = {"modelLoaderRes2", NULL};
-dCustomProfile_c l_MODEL_RES2_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES2, &c_MODEL_RES_actor_data, l_MODEL_RES2_res);
+dCustomProfile_c l_MODEL_RES2_profile(SpriteId::MODEL_RES2, &c_MODEL_RES_actor_data, l_MODEL_RES2_res);
 
 const char* l_MODEL_RES3_res[] = {"modelLoaderRes3", NULL};
-dCustomProfile_c l_MODEL_RES3_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES3, &c_MODEL_RES_actor_data, l_MODEL_RES3_res);
+dCustomProfile_c l_MODEL_RES3_profile(SpriteId::MODEL_RES3, &c_MODEL_RES_actor_data, l_MODEL_RES3_res);
 
 const char* l_MODEL_RES4_res[] = {"modelLoaderRes4", NULL};
-dCustomProfile_c l_MODEL_RES4_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES4, &c_MODEL_RES_actor_data, l_MODEL_RES4_res);
+dCustomProfile_c l_MODEL_RES4_profile(SpriteId::MODEL_RES4, &c_MODEL_RES_actor_data, l_MODEL_RES4_res);
 
 const char* l_MODEL_RES5_res[] = {"modelLoaderRes5", NULL};
-dCustomProfile_c l_MODEL_RES5_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES5, &c_MODEL_RES_actor_data, l_MODEL_RES5_res);
+dCustomProfile_c l_MODEL_RES5_profile(SpriteId::MODEL_RES5, &c_MODEL_RES_actor_data, l_MODEL_RES5_res);
 
 const char* l_MODEL_RES6_res[] = {"modelLoaderRes6", NULL};
-dCustomProfile_c l_MODEL_RES6_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES6, &c_MODEL_RES_actor_data, l_MODEL_RES6_res);
+dCustomProfile_c l_MODEL_RES6_profile(SpriteId::MODEL_RES6, &c_MODEL_RES_actor_data, l_MODEL_RES6_res);
 
 const char* l_MODEL_RES7_res[] = {"modelLoaderRes7", NULL};
-dCustomProfile_c l_MODEL_RES7_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES7, &c_MODEL_RES_actor_data, l_MODEL_RES7_res);
+dCustomProfile_c l_MODEL_RES7_profile(SpriteId::MODEL_RES7, &c_MODEL_RES_actor_data, l_MODEL_RES7_res);
 
 const char* l_MODEL_RES8_res[] = {"modelLoaderRes8", NULL};
-dCustomProfile_c l_MODEL_RES8_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES8, &c_MODEL_RES_actor_data, l_MODEL_RES8_res);
+dCustomProfile_c l_MODEL_RES8_profile(SpriteId::MODEL_RES8, &c_MODEL_RES_actor_data, l_MODEL_RES8_res);
 
 const char* l_MODEL_RES9_res[] = {"modelLoaderRes9", NULL};
-dCustomProfile_c l_MODEL_RES9_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES9, &c_MODEL_RES_actor_data, l_MODEL_RES9_res);
+dCustomProfile_c l_MODEL_RES9_profile(SpriteId::MODEL_RES9, &c_MODEL_RES_actor_data, l_MODEL_RES9_res);
 
 const char* l_MODEL_RES10_res[] = {"modelLoaderRes10", NULL};
-dCustomProfile_c l_MODEL_RES10_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES10, &c_MODEL_RES_actor_data, l_MODEL_RES10_res);
+dCustomProfile_c l_MODEL_RES10_profile(SpriteId::MODEL_RES10, &c_MODEL_RES_actor_data, l_MODEL_RES10_res);
 
 const char* l_MODEL_RES11_res[] = {"modelLoaderRes11", NULL};
-dCustomProfile_c l_MODEL_RES11_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES11, &c_MODEL_RES_actor_data, l_MODEL_RES11_res);
+dCustomProfile_c l_MODEL_RES11_profile(SpriteId::MODEL_RES11, &c_MODEL_RES_actor_data, l_MODEL_RES11_res);
 
 const char* l_MODEL_RES12_res[] = {"modelLoaderRes12", NULL};
-dCustomProfile_c l_MODEL_RES12_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES12, &c_MODEL_RES_actor_data, l_MODEL_RES12_res);
+dCustomProfile_c l_MODEL_RES12_profile(SpriteId::MODEL_RES12, &c_MODEL_RES_actor_data, l_MODEL_RES12_res);
 
 const char* l_MODEL_RES13_res[] = {"modelLoaderRes13", NULL};
-dCustomProfile_c l_MODEL_RES13_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES13, &c_MODEL_RES_actor_data, l_MODEL_RES13_res);
+dCustomProfile_c l_MODEL_RES13_profile(SpriteId::MODEL_RES13, &c_MODEL_RES_actor_data, l_MODEL_RES13_res);
 
 const char* l_MODEL_RES14_res[] = {"modelLoaderRes14", NULL};
-dCustomProfile_c l_MODEL_RES14_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES14, &c_MODEL_RES_actor_data, l_MODEL_RES14_res);
+dCustomProfile_c l_MODEL_RES14_profile(SpriteId::MODEL_RES14, &c_MODEL_RES_actor_data, l_MODEL_RES14_res);
 
 const char* l_MODEL_RES15_res[] = {"modelLoaderRes15", NULL};
-dCustomProfile_c l_MODEL_RES15_profile(&g_profile_MODEL_RES, "MODEL_RES", SpriteId::MODEL_RES15, &c_MODEL_RES_actor_data, l_MODEL_RES15_res);
+dCustomProfile_c l_MODEL_RES15_profile(SpriteId::MODEL_RES15, &c_MODEL_RES_actor_data, l_MODEL_RES15_res);
 
 // The model loader itself
 

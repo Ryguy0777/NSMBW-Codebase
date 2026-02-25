@@ -813,7 +813,6 @@ namespace fProfile {
         EN_STAR_COIN_FAKE,
         DEBUG_MENU,
         AC_MODEL_LOADER,
-        MODEL_RES,
         EN_BLOCK_SWITCH,
         EN_PALACE_SWITCH,
         AC_LIFT_BG_PAIR_OBJ,

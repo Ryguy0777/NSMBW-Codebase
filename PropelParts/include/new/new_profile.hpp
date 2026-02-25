@@ -18,6 +18,8 @@ public:
     dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, ProfileName profileId);
     // Non-stage actors (scenes, bases, etc)
     dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char* name, ProfileName profileId);
+    // Sprite only
+    dCustomProfile_c(SpriteName spriteId, const dActorData_c *dActorData_c, const char** files=NULL);
 
     fProfile::fActorProfile_c mProfile;
 };
