@@ -27,8 +27,6 @@ public:
     int mPalaceType;
     dPSwManager_c::SwType_e mSwitchType;
     bool mIsDotted;
-
-    int test;
 };
 
 const u32 l_item_values[5] = {

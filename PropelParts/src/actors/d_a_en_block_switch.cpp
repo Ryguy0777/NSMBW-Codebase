@@ -21,8 +21,6 @@ sBgSetInfo l_switchblock_bgc_info = {
 };
 
 int daEnBlockSwitch_c::create() {
-    test = mParam & 1;
-
     Block_CreateClearSet(mPos.y);
 
     // Set collider

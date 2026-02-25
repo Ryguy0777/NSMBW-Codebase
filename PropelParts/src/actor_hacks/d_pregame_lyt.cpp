@@ -60,8 +60,9 @@ ulong pregameGetLevelNumberID(u8 world, u8 level) {
             return 3;
         case 23: // Castle
         case 24:
-            if (world == 7)
+            if (world == 7) {
                 return 5;
+            }
             return 4;
         case 25: // Toad houses
         case 26:
@@ -142,16 +143,22 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *this_) {
     char tplName[64];
     sprintf(tplName, "/LevelSamples/%02d-%02d.tpl", dInfo_c::m_startGameInfo.mWorld1+1, dInfo_c::m_startGameInfo.mLevel1+1);
     int entrynum = DVDConvertPathToEntrynum(tplName);
-    if (entrynum == -1) return;
+    if (entrynum == -1) {
+        return;
+    }
 
     // Load the file
     DVDFileInfo dvdHandle;
     bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
-    if (!fileLoaded) return;
+    if (!fileLoaded) {
+        return;
+    }
 
     // Allocate memory
     pregameTPLbuffer = EGG::Heap::alloc(dvdHandle.size, 0x20, mHeap::g_archiveHeap);
-    if (pregameTPLbuffer == nullptr) return;
+    if (pregameTPLbuffer == nullptr) {
+        return;
+    }
     
     // Read file
     s32 length = DVDReadPrio(&dvdHandle, pregameTPLbuffer, dvdHandle.size, 0, 2);

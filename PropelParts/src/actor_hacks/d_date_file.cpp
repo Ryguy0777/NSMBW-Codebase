@@ -66,16 +66,21 @@ extern "C" FileInfo *GetFileInfo(FileInfo *out, dMj2dGame_c *save) {
             if ((j > STAGE_CASTLE_2 && j < STAGE_CANNON) || j == STAGE_COIN_BATTLE || j == STAGE_UNK37 || j > STAGE_DOOMSHIP)
                 continue;
             u32 cond = save->getCourseDataFlag(i, j);
-            if (cond & dMj2dGame_c::GOAL_NORMAL)
+            if (cond & dMj2dGame_c::GOAL_NORMAL) {
                 out->mExitCount++;
-            if (cond & dMj2dGame_c::GOAL_SECRET)
+            }
+            if (cond & dMj2dGame_c::GOAL_SECRET) {
                 out->mExitCount++;
-            if (cond & dMj2dGame_c::COIN1_COLLECTED)
+            }
+            if (cond & dMj2dGame_c::COIN1_COLLECTED) {
                 out->mCoinCount++;
-            if (cond & dMj2dGame_c::COIN2_COLLECTED)
+            }
+            if (cond & dMj2dGame_c::COIN2_COLLECTED) {
                 out->mCoinCount++;
-            if (cond & dMj2dGame_c::COIN3_COLLECTED)
+            }
+            if (cond & dMj2dGame_c::COIN3_COLLECTED) {
                 out->mCoinCount++;
+            }
         }
     }
 

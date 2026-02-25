@@ -21,7 +21,7 @@ sBgSetInfo l_msgblock_bgc_info = {
 int daEnBlockMessage_c::create() {
     Block_CreateClearSet(mPos.y);
 
-    // set collider
+    // Set collider
     mBg.set(this, &l_msgblock_bgc_info, 3, mLayer, nullptr);
     mBg.mFlags = 0x260;
 
@@ -35,7 +35,7 @@ int daEnBlockMessage_c::create() {
 
     mBg.entry();
 
-    // setup tile renderer
+    // Setup tile renderer
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
     list->addPanelObjList(&mTile);
 
@@ -43,7 +43,7 @@ int daEnBlockMessage_c::create() {
     mTile.mPos.y = -(8 + mPos.y);
     mTile.mTileNumber = 0x9A;
 
-    // sprite settings
+    // Sprite settings
     mMessageId = mParam & 0xFF;
 
     changeState(StateID_Wait);
@@ -53,7 +53,7 @@ int daEnBlockMessage_c::create() {
 
 
 int daEnBlockMessage_c::doDelete() {
-    // remove tile renderer and collider
+    // Remove tile renderer and collider
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
     list->removePanelObjList(&mTile);
 
@@ -67,7 +67,7 @@ int daEnBlockMessage_c::execute() {
     mBg.calc();
     Block_ExecuteClearSet();
 
-    // update tile collider
+    // Update tile collider
     mTile.setPos(mPos.x-8, -(8+mPos.y), mPos.z);
     mTile.setScaleFoot(mScale.x);
 
@@ -79,22 +79,21 @@ int daEnBlockMessage_c::execute() {
 }
 
 void daEnBlockMessage_c::block_upmove() {
-    if (mInitialY >= mPos.y)
+    if (mInitialY >= mPos.y) {
         blockWasHit(false);
+    }
 }
 
 void daEnBlockMessage_c::block_downmove() {
-    if (mInitialY <= mPos.y)
+    if (mInitialY <= mPos.y) {
         blockWasHit(true);
+    }
 }
 
 void daEnBlockMessage_c::blockWasHit(bool isDown) {
     mPos.y = mInitialY;
 
     dMsgBoxWindow_c::m_instance->showMessage(mMessageId);
-
-    mBg.set(this, &l_msgblock_bgc_info, 3, mLayer, nullptr);
-    mBg.entry();
     
     changeState(StateID_Wait);
 }
@@ -104,16 +103,16 @@ void daEnBlockMessage_c::initializeState_Wait() {}
 void daEnBlockMessage_c::finalizeState_Wait() {}
 
 void daEnBlockMessage_c::executeState_Wait() {
-    // check if the block has been hit
+    // Check if the block has been hit
     int result = ObjBgHitCheck();
 
     if (result == 1) {
-        // hit from below
+        // Hit from below
         mAnotherFlag = 2;
         mIsGroundPound = false;
         changeState(StateID_UpMove);
     } else if (result == 2) {
-        // hit from above
+        // Hit from above
         mAnotherFlag = 1;
         mIsGroundPound = true;
         changeState(StateID_DownMove);

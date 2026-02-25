@@ -104,18 +104,21 @@ void daEnBlockFlag_c::initialize_downmove() {
 }
 
 void daEnBlockFlag_c::block_upmove() {
-    if (mInitialY >= mPos.y)
+    if (mInitialY >= mPos.y) {
         blockWasHit(false);
+    }
 }
 
 void daEnBlockFlag_c::block_downmove() {
-    if (mInitialY <= mPos.y)
+    if (mInitialY <= mPos.y) {
         blockWasHit(true);
+    }
 }
 
 void daEnBlockFlag_c::equaliseEvents() {
-    if (mFlagMode != SWAP_EVENTS)
+    if (mFlagMode != SWAP_EVENTS) {
         return;
+    }
 
     bool f1 = dSwitchFlagMng_c::checkEvent(mEventID1);
     bool f2 = dSwitchFlagMng_c::checkEvent(mEventID2);
@@ -148,9 +151,6 @@ void daEnBlockFlag_c::blockWasHit(bool isDown) {
             dSwitchFlagMng_c::m_instance->set(mEventID1, 0, false, false, false, false);
         }
     }
-
-    mBg.set(this, &l_eventblock_bgc_info, 3, mLayer, nullptr);
-    mBg.entry();
     
     changeState(StateID_Wait);
 }

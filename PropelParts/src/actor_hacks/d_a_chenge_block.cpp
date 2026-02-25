@@ -16,8 +16,9 @@ void SpawnTileGodEffect(const char* name, ulong owner, mVec3_c* position, const 
 u16 GetTileForTileGod(u32 settings, u32 blockType) {
 
     // If block is > 8, use custom tileset
-    if (blockType & 8)
+    if (blockType & 8) {
         return 0x8000 | ((blockType & 3) << 8) | ((settings & 0xFF00000) >> 20);
+    }
 
     // Else fall back to original behaviour
     return TileGodTiles[blockType];
@@ -34,9 +35,10 @@ void SpawnTileGodEffect(const char* name, ulong owner, mVec3_c* position, const 
         position->y -= 8;
         dEffActorMng_c::m_instance->createBlockFragEff(*position, shardSettings, -1);
 
-    // Else spawn original effect
-    } else
+        // Else spawn original effect
+    } else {
         mEf::createEffect(name, owner, (const mVec3_c*)position, rotation, scale);
+    }
 }
 
 

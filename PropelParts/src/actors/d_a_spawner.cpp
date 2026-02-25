@@ -8,17 +8,17 @@
 CUSTOM_ACTOR_PROFILE(AC_SPAWNER, daSpawner_c, fProfile::EN_BOYON, fProfile::DRAW_ORDER::DUMMY_ACTOR, 0);
 
 // If a stage actor is the new actor, create spritedata for it 
-const dActorData_c actorSpawnerSpriteData = {fProfile::AC_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
+const dActorData_c l_SPAWNER_actor_data = {fProfile::AC_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
 // Make a new object of dCustomProfile_c, the ctor call for it will assign profile data on game boot
-dCustomProfile_c actorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_SPAWNER", SpriteId::AC_SPAWNER, &actorSpawnerSpriteData);
+dCustomProfile_c l_SPAWNER_profile(&g_profile_AC_SPAWNER, "AC_SPAWNER", SpriteId::AC_SPAWNER, &l_SPAWNER_actor_data);
 
 // You can even assign multiple profile/sprite ids to the same profile!
-const dActorData_c multiActorSpawnerSpriteData = {fProfile::AC_MULTI_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
-dCustomProfile_c multiActorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_MULTI_SPAWNER", SpriteId::AC_MULTI_SPAWNER, &multiActorSpawnerSpriteData);
+const dActorData_c l_MULTI_SPAWNER_actor_data = {fProfile::AC_MULTI_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
+dCustomProfile_c l_MULTI_SPAWNER_profile(&g_profile_AC_SPAWNER, "AC_MULTI_SPAWNER", SpriteId::AC_MULTI_SPAWNER, &l_MULTI_SPAWNER_actor_data);
 
 // Third actor spawner variant
-const dActorData_c pairedActorSpawnerSpriteData = {fProfile::AC_SPAWNER_PAIRED, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
-dCustomProfile_c pairedActorSpawnerProfile(&g_profile_AC_SPAWNER, "AC_SPAWNER_PAIRED", SpriteId::AC_SPAWNER_PAIRED, &pairedActorSpawnerSpriteData);
+const dActorData_c l_SPAWNER_PAIRED_actor_data = {fProfile::AC_SPAWNER_PAIRED, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
+dCustomProfile_c l_SPAWNER_PAIRED_profile(&g_profile_AC_SPAWNER, "AC_SPAWNER_PAIRED", SpriteId::AC_SPAWNER_PAIRED, &l_SPAWNER_PAIRED_actor_data);
 
 int daSpawner_c::execute() {
     u16 eventIDs = (mEventNums[0] << 8) | mEventNums[1];

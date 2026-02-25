@@ -4,7 +4,6 @@
 
 // Resource loader
 
-extern fProfile::fActorProfile_c g_profile_DUMMY_ACTOR;
 const dActorData_c c_MODEL_RES_actor_data = {fProfile::DUMMY_ACTOR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
 
 const char* l_MODEL_RES0_res[] = {"modelLoaderRes0", NULL};
