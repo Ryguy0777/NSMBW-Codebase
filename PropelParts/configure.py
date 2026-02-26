@@ -55,6 +55,7 @@ class Config:
     Contains configuration options provided by the user
     """
     kamek_dir: Path
+    k_stdlib_dir: Path | None
     cw_dir: Path
     project_dir: Path
     build_dir: Path
@@ -75,6 +76,8 @@ class Config:
         deps_group = parser.add_argument_group('Dependency locations')
         deps_group.add_argument('--kamek', type=Path, required=True,
             help='Kamek folder, containing the Kamek binary ("Kamek.exe" or "Kamek") and the k_stdlib directory')
+        deps_group.add_argument('--kstdlib', type=Path,
+            help='Kamek\'s k_stdlib directory (default: <kamek dir>/k_stdlib)')
         deps_group.add_argument('--cw', type=Path, metavar='CODEWARRIOR', required=True,
             help=f'CodeWarrior folder, containing {MWCCEPPC_NAME}, {MWASMEPPC_NAME}, and license.dat, at minimum')
 
@@ -103,6 +106,10 @@ class Config:
 
         self = cls()
         self.kamek_dir = args.kamek.resolve()
+        if args.kstdlib is None:
+            self.k_stdlib_dir = self.kamek_dir / 'k_stdlib'
+        else:
+            self.k_stdlib_dir = args.kstdlib.resolve()
         self.cw_dir = args.cw.resolve()
         self.project_dir = project_dir.resolve()
         self.select_versions = args.select_version or None
@@ -124,10 +131,6 @@ class Config:
             return self.kamek_dir / 'Kamek.exe'
         else:
             return self.kamek_dir / 'Kamek'
-
-    @property
-    def k_stdlib_dir(self) -> Path:
-        return self.kamek_dir / 'k_stdlib'
 
     @property
     def mwcceppc_exe(self) -> Path:
