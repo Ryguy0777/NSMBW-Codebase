@@ -22,7 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import argparse
 from pathlib import Path
 import sys
 import subprocess
@@ -137,7 +136,7 @@ def main(argv=None):
         argv = sys.argv
 
     if len(argv) < 2:
-        print(f'usage: {argv[0]} /path/to/mwcceppc.exe [arguments to CodeWarrior, using host filepaths]...')
+        print(f'usage: {argv[0]} /path/to/(mwcceppc.exe or mwasmeppc.exe) [arguments to CodeWarrior, using host filepaths]...')
         return
 
     # Ignore this Python script's own filename
