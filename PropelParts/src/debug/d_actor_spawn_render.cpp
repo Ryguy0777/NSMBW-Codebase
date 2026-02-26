@@ -1,12 +1,12 @@
-#include <new/bases/d_actor_spawn_render.hpp>
+#include <propelparts/bases/d_actor_spawn_render.hpp>
 #include <nw4r/g3d/g3d_camera.h>
 #include <nw4r/math/math_triangular.h>
 #include <revolution/GX.h>
 #include <game/bases/d_s_stage.hpp>
 #include <game/bases/d_cd.hpp>
 #include <game/bases/d_actor.hpp>
-#include <new/bases/d_custom_profile.hpp>
-#include <new/bases/d_debug_config.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_debug_config.hpp>
 
 // Drawing helper functions
 void DrawSpawnRange(float tlX, float tlY, float trX, float trY, float blX, float blY, float brX, float brY, u8 r, u8 g, u8 b) {

@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_heiho_net.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_heiho_net.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <constants/sound_list.h>
 

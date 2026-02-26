@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/bases/d_a_lift_bg_base.hpp>
+#include <propelparts/bases/d_a_lift_bg_base.hpp>
 #include <game/bases/d_s_stage.hpp>
 #include <game/bases/d_a_player_base.hpp>
 

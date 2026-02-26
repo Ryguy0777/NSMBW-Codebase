@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_puchi_pakkun.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_puchi_pakkun.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_audio.hpp>
 #include <game/bases/d_s_stage.hpp>
 #include <game/bases/d_a_player_manager.hpp>

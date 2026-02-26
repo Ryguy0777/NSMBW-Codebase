@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_lift_bg_rail.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_lift_bg_rail.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 
 CUSTOM_ACTOR_PROFILE(AC_LIFT_BG_RAIL, daLiftBgRail_c, fProfile::EN_SLIP_PENGUIN, fProfile::DRAW_ORDER::EN_SLIP_PENGUIN);

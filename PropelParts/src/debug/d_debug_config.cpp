@@ -1,6 +1,6 @@
 // Source: https://github.com/CLF78/NSMASR-v2/blob/master/game/debug/config.cpp
 #include <kamek.h>
-#include <new/bases/d_debug_config.hpp>
+#include <propelparts/bases/d_debug_config.hpp>
 #include <constants/game_constants.h>
 #include <egg/core/eggHeap.h>
 #include <nw4r/db/mapfile.h>

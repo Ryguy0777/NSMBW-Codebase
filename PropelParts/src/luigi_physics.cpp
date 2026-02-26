@@ -1,7 +1,7 @@
 #include <kamek.h>
 
 #include <game/bases/d_a_player.hpp>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Source: https://github.com/luigi-phys/NSMBW-Updated/blob/luigi-physics/code/src/luigi_physics/patches.cpp
 

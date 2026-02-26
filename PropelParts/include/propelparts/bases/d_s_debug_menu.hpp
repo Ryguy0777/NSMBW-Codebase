@@ -1,6 +1,6 @@
 #pragma once
 #include <game/bases/d_scene.hpp>
-#include <new/bases/d_debug_text_writer.hpp>
+#include <propelparts/bases/d_debug_text_writer.hpp>
 
 // Debug Menu
 

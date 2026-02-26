@@ -1,7 +1,7 @@
 #pragma once
 
 #include <types.h>
-#include <new/course_actor_name.hpp>
+#include <propelparts/course_actor_name.hpp>
 #include <game/framework/f_profile.hpp>
 #include <game/bases/d_actor_data.hpp>
 

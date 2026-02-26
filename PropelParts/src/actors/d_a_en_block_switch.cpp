@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_block_switch.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_block_switch.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_info.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_SWITCH, daEnBlockSwitch_c, fProfile::EN_BLOCK, fProfile::DRAW_ORDER::EN_BLOCK, 0);

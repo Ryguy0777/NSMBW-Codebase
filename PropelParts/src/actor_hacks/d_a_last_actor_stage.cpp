@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_collision_render.hpp>
-#include <new/bases/d_actor_spawn_render.hpp>
+#include <propelparts/bases/d_collision_render.hpp>
+#include <propelparts/bases/d_actor_spawn_render.hpp>
 
 // Schedule various debugging renderers for drawing
 kmBranchDefCpp(0x80830BD8, NULL, int, void) {

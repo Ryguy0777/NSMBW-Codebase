@@ -1,11 +1,11 @@
 #include <kamek.h>
-#include <new/bases/d_custom_controller.hpp>
-#include <new/game_config.h>
+#include <propelparts/bases/d_custom_controller.hpp>
+#include <propelparts/game_config.h>
 #include <game/bases/d_fukidashi_manager.hpp>
 #include <game/snd/snd_scene_manager.hpp>
 #include <game/bases/d_game_key.hpp>
 #include <game/bases/d_ac_py_key.hpp>
-#include <new/lib/revolution/PAD.h>
+#include <propelparts/lib/revolution/PAD.h>
 
 dCustomController_c *dCustomController_c::m_instance = nullptr;
 PADStatus dCustomController_c::saPadStatus[4];
@@ -14,7 +14,7 @@ void dCustomController_c::makeInstance() {
 	dCustomController_c::m_instance = new(sizeof(dCustomController_c)) dCustomController_c;
 }
 
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 void dCustomController_c::changeRemoconMgrState(dRemoconMng_c::dConnect_c::dExtension_c *self, u32 extension) {
     switch (extension) {

@@ -1,7 +1,7 @@
 #include <kamek.h>
 #include <revolution/OS/OSError.h>
 #include <game/framework/f_profile.hpp>
-#include <new/bases/d_debug_config.hpp>
+#include <propelparts/bases/d_debug_config.hpp>
 
 void printActorInfo(u16 profId, void *parent, ulong settings, int group) {
     char *profName = dProf_getName(profId);

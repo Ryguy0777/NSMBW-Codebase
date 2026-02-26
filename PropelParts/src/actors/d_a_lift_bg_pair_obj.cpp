@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_lift_bg_pair_obj.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_lift_bg_pair_obj.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_en_pair_obj_parent.hpp>
 
 CUSTOM_ACTOR_PROFILE(AC_LIFT_BG_PAIR_OBJ, daLiftBgPairObj_c, fProfile::EN_PAIR_OBJ_CHILD, fProfile::DRAW_ORDER::EN_PAIR_OBJ_CHILD);

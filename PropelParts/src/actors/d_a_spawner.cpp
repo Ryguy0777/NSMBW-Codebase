@@ -1,7 +1,7 @@
 #include <kamek.h>
-#include <new/bases/d_a_spawner.hpp>
+#include <propelparts/bases/d_a_spawner.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 
 // To make a new profile id
 // Call one of the 4 profile macros from f_profile.hpp to make the profile itself

@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 #include <game/bases/d_a_player_manager.hpp>
 #include <game/bases/d_s_stage.hpp>
 #include <game/bases/d_game_key.hpp>

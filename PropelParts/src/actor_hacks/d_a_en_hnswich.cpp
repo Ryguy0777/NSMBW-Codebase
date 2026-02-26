@@ -1,9 +1,9 @@
 #include <kamek.h>
 #include <game/bases/d_a_en_hnswich.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_info.hpp>
 #include <game/snd/snd_scene_manager.hpp>
-#include <new/bases/d_msgbox_window.hpp>
+#include <propelparts/bases/d_msgbox_window.hpp>
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
 

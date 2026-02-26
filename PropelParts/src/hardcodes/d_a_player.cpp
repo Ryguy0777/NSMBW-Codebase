@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Remove the life counter decrement on death, for mods that may prefer "infinite" lives
 

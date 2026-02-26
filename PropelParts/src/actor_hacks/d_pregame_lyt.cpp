@@ -1,4 +1,4 @@
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef NEWER_PREGAME
 #include <kamek.h>
@@ -7,7 +7,7 @@
 #include <game/bases/d_info.hpp>
 #include <game/mLib/m_heap.hpp>
 #include <lib/revolution/TPL.h>
-#include <new/constants/message_list.h>
+#include <propelparts/constants/message_list.h>
 #include <lib/egg/core/eggMsgRes.h>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>

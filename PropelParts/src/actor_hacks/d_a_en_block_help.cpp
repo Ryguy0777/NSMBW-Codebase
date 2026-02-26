@@ -1,6 +1,6 @@
 #include <kamek.h>
 
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Disable the super guide block if super guide is disabled
 // Or if we're using the NewerSMBW pregame (incompatible with super guide)

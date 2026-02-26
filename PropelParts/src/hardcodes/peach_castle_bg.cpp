@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Remove the hardcoded static bg in 1-1
 #ifdef NO_1_1_BG

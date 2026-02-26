@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <game/bases/d_res_mng.hpp>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Patch the function that loads files from the Object folder on game initialization
 

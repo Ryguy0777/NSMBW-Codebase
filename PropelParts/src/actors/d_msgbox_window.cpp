@@ -1,13 +1,13 @@
 #include <kamek.h>
-#include <new/bases/d_msgbox_window.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_msgbox_window.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_pause_manager.hpp>
 #include <game/bases/d_audio.hpp>
 #include <game/snd/snd_audio_mgr.hpp>
 #include <game/bases/d_game_key.hpp>
 #include <constants/sound_list.h>
-#include <new/constants/message_list.h>
+#include <propelparts/constants/message_list.h>
 #include <game/bases/d_s_stage.hpp>
 
 dMsgBoxWindow_c *dMsgBoxWindow_c::m_instance = nullptr;

@@ -1,5 +1,5 @@
 #pragma once
-#include <new/bases/d_a_lift_bg_base.hpp>
+#include <propelparts/bases/d_a_lift_bg_base.hpp>
 #include <game/bases/d_rail.hpp>
 
 class daLiftBgRail_c : public daLiftBgBase_c {

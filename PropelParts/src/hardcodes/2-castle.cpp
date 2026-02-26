@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Disable the harcoded pick-a-path mechanic of 2-castle
 #ifdef NO_2_CASTLE_MAZE

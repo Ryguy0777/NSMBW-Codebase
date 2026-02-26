@@ -2,7 +2,7 @@
 PropelParts is still currently in development, so don't expect everything to be present or finished.
 
 ## Toggling Features
-Inside of the `/PropelParts/include/new/game_config.h` file, you will find several `#define`s that control whether certain features are active or not. Remove/un-comment them to disable/enable them, respectively.
+Inside of the `/PropelParts/include/propelparts/game_config.h` file, you will find several `#define`s that control whether certain features are active or not. Remove/un-comment them to disable/enable them, respectively.
 
 ### Completed Features
 These features are complete and should be fully functional.

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <new/lib/revolution/PAD.h>
+#include <propelparts/lib/revolution/PAD.h>
 #include <math.h>
 
 static const PADClampRegion ClampRegion = {

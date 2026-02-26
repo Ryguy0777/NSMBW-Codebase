@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_block_flag.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_block_flag.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>

@@ -1,4 +1,4 @@
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef PLAYER_1_CAN_CHANGE_CHARACTER
 // Source: https://github.com/Developers-Collective/mkwcat-gecko-codes-kamek-port/blob/kamek-ports/source/nsmbw/Kamek/src/Player1CanChangeCharacter.S

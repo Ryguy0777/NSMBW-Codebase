@@ -1,5 +1,5 @@
 #pragma once
-#include <new/bases/d_a_lift_bg_base.hpp>
+#include <propelparts/bases/d_a_lift_bg_base.hpp>
 #include <game/mLib/m_vec.hpp>
 
 class daLiftBgRotation_c : public daLiftBgBase_c {

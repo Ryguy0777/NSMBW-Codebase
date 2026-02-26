@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 
 // Assign unused (but otherwise functional) actors to their original sprite ids
 

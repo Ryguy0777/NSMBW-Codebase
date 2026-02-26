@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <game/bases/d_tag_processor.hpp>
-#include <new/constants/message_list.h>
+#include <propelparts/constants/message_list.h>
 
 // Add other colored switch blocks to the TagProcessor_c class
 kmBranchDefCpp(0x800e72b0, NULL, int, TagProcessor_c *this_, MsgRes_c *msgRes, char *param_3) {

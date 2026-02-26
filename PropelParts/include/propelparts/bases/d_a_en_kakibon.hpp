@@ -1,5 +1,5 @@
 #pragma once
-#include <new/bases/d_a_en_kuribon.hpp>
+#include <propelparts/bases/d_a_en_kuribon.hpp>
 
 class daEnKakibon_c : public daEnKuribon_c {
 public:

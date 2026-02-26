@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_kuribon.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_kuribon.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player.hpp>
 #include <game/bases/d_a_yoshi.hpp>
 #include <game/bases/d_audio.hpp>

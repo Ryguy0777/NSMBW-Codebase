@@ -1,8 +1,8 @@
 #include <kamek.h>
 #include <revolution/OS/OSError.h>
-#include <new/lib/revolution/PAD.h>
-#include <new/bases/d_custom_controller.hpp>
-#include <new/bases/d_debug_config.hpp>
+#include <propelparts/lib/revolution/PAD.h>
+#include <propelparts/bases/d_custom_controller.hpp>
+#include <propelparts/bases/d_debug_config.hpp>
 
 // Prolog hook
 // This is the equivalent of the prolog.S file from NewerSMBW

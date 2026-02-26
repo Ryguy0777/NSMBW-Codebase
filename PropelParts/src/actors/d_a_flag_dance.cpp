@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_flag_dance.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_flag_dance.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 #include <game/bases/d_audio.hpp>
 

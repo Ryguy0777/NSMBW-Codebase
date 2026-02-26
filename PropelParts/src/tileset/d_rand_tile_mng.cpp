@@ -1,7 +1,7 @@
 // Source: https://github.com/CLF78/NSMASR-v2/blob/master/game/course/tileset/rand.cpp
 #include <kamek.h>
 #include <game/bases/d_bg.hpp>
-#include <new/bases/d_rand_tile_mng.hpp>
+#include <propelparts/bases/d_rand_tile_mng.hpp>
 #include <game/bases/d_res_mng.hpp>
 
 // Extern for ASM call

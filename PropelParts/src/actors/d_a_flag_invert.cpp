@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_flag_invert.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_flag_invert.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 
 CUSTOM_ACTOR_PROFILE(AC_FLAG_INVERT, daFlagInvert_c, fProfile::AC_FLAGON, fProfile::DRAW_ORDER::AC_FLAGON, 0);

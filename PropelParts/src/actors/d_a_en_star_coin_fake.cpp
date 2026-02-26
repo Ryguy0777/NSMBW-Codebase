@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_star_coin_fake.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_star_coin_fake.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_coin.hpp>
 #include <game/mLib/m_effect.hpp>

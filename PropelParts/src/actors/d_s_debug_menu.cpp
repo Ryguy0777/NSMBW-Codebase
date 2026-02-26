@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_s_debug_menu.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_s_debug_menu.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/mLib/m_pad.h>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_a_player_manager.hpp>

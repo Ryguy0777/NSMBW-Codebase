@@ -1,4 +1,4 @@
-#include <new/bases/d_debug_text_writer.hpp>
+#include <propelparts/bases/d_debug_text_writer.hpp>
 #include <game/bases/d_font_manager.hpp>
 
 dDebugTextWriter_c::dDebugTextWriter_c() {

@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <game/bases/d_s_stage.hpp>
-#include <new/bases/d_msgbox_window.hpp>
+#include <propelparts/bases/d_msgbox_window.hpp>
 
 // Add new "manager" actors to the stage creation function
 

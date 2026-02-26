@@ -1,5 +1,5 @@
 #pragma once
-#include <new/bases/d_a_en_heiho.hpp>
+#include <propelparts/bases/d_a_en_heiho.hpp>
 
 class daEnHeihoBalloon_c : public daEnHeiho_c {
 public:

@@ -1,6 +1,6 @@
 #include <kamek.h>
 
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Disable the disabling of the fileselect stars
 // If the player has died more than 8 times in a level
@@ -16,7 +16,7 @@ kmWriteNop(0x8077dd2c);
 #include <game/bases/d_date_file.hpp>
 #include <game/bases/d_save_mng.hpp>
 #include <game/bases/d_game_com.hpp>
-#include <new/constants/message_list.h>
+#include <propelparts/constants/message_list.h>
 
 // Change layout name
 const char *newerDateFileName = "dateFile_newer/dateFile.arc";

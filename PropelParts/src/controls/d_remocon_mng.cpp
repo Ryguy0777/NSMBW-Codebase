@@ -1,7 +1,7 @@
 #include <kamek.h>
 #include <game/bases/d_remocon_mng.hpp>
-#include <new/bases/d_custom_controller.hpp>
-#include <new/game_config.h>
+#include <propelparts/bases/d_custom_controller.hpp>
+#include <propelparts/game_config.h>
 
 // Replaces InitializeNone
 kmBranchDefCpp(0x800dcc40, NULL, void, dRemoconMng_c::dConnect_c::dExtension_c *this_) {

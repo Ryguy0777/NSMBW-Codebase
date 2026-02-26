@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/bases/d_custom_controller.hpp>
+#include <propelparts/bases/d_custom_controller.hpp>
 
 // dRemoconMng_c state
 STATE_DEFINE(dRemoconMng_c::dConnect_c::dExtension_c, Classic);

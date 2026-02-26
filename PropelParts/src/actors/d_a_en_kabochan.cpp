@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_kabochan.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_kabochan.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_base.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_effect.hpp>

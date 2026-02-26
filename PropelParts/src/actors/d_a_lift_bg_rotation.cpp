@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_lift_bg_rotation.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_lift_bg_rotation.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_obj_center.hpp>
 #include <game/bases/d_a_obj_center2.hpp>
 

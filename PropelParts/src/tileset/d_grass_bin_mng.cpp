@@ -1,7 +1,7 @@
 #include <kamek.h>
 #include <game/bases/d_bg.hpp>
 #include <game/bases/d_res_mng.hpp>
-#include <new/bases/d_grass_bin_mng.hpp>
+#include <propelparts/bases/d_grass_bin_mng.hpp>
 #include <game/bases/d_s_stage.hpp>
 
 // Externs for ASM calls

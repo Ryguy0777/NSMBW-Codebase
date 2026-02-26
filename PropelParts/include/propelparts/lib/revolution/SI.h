@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#include <new/lib/revolution/SI/SIBios.h>
+#include <propelparts/lib/revolution/SI/SIBios.h>
 #include <revolution/SI/SIHardware.h>
 #include <revolution/SI/SISamplingRate.h>
 

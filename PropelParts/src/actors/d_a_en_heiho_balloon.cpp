@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_heiho_balloon.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_heiho_balloon.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_a_player_manager.hpp>

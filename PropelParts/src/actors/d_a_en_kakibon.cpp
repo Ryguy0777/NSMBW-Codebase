@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_kakibon.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_kakibon.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_KAKIBON, daEnKakibon_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 

@@ -1,6 +1,6 @@
 // Source: https://github.com/doldecomp/mkw/blob/main/lib/rvl/pad/rvlPad.c
 
-#include <new/lib/revolution/PAD.h>
+#include <propelparts/lib/revolution/PAD.h>
 
 #include <lib/revolution/OS.h>
 #include <revolution/OS/osContext.h>
@@ -18,7 +18,7 @@ inline s8 abs(s8 value) {
 u8 oslow_30e3 AT_ADDRESS(0x800030e3);
 u16 oslow_30e0 AT_ADDRESS(0x800030e0);
 
-#include <new/lib/revolution/SI.h>
+#include <propelparts/lib/revolution/SI.h>
 #include <lib/revolution/VI.h>
 
 #include <string.h>

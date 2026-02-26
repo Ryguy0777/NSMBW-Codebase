@@ -1,6 +1,6 @@
 #include <kamek.h>
-#include <new/bases/d_a_en_bomb_bros.hpp>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_a_en_bomb_bros.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_bg_parameter.hpp>
 

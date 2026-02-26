@@ -364,7 +364,7 @@ shared_flags = $
   -maxerrors 1 $
   -proc gekko $
   -d REVOLUTION $
-  -i include/new/nsmbw-updated $
+  -i include/propelparts/nsmbw-updated $
   -i include/lib $
   -i include/lib/MSL $
   -i include/lib/MSL/internal $

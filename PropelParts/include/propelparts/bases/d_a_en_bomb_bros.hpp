@@ -1,6 +1,6 @@
 #pragma once
 #include <game/bases/d_a_en_bros_base.hpp>
-#include <new/bases/d_a_bomb_projectile.hpp>
+#include <propelparts/bases/d_a_bomb_projectile.hpp>
 
 class daEnBombBros_c : public daEnBrosBase_c {
 public:

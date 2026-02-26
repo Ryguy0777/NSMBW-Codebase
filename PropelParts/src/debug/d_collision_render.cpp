@@ -1,6 +1,6 @@
 // Source: https://github.com/CLF78/NSMASR-v2/blob/master/game/debug/collisionRender.cpp
 #include <kamek.h>
-#include <new/bases/d_collision_render.hpp>
+#include <propelparts/bases/d_collision_render.hpp>
 #include <game/bases/d_actor.hpp>
 #include <game/bases/d_rc.hpp>
 #include <game/bases/d_bg_ctr.hpp>
@@ -8,7 +8,7 @@
 #include <nw4r/math/math_triangular.h>
 #include <revolution/GX.h>
 #include <game_versions_nsmbw.h>
-#include <new/bases/d_debug_config.hpp>
+#include <propelparts/bases/d_debug_config.hpp>
 
 extern void *bc_vtable;
 

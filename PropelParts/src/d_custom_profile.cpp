@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/bases/d_custom_profile.hpp>
+#include <propelparts/bases/d_custom_profile.hpp>
 
 // Sprites
 

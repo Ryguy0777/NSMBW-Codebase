@@ -1,6 +1,6 @@
 #include <kamek.h>
 
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Newer File Select screen
 
