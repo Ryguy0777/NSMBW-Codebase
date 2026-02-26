@@ -2,6 +2,9 @@ KOOPATLAS TODO:
 - Rename all members and files and stuff
 - Remove any hammer suit hacks
 - Convert file indentations to spaces
+- Remove all instances of one-line if/for/etc. that don't use braces
+- Clean up any ugly-looking code, rename stuff if needed
+- Fix Koopatlas class naming scheme to match official (dKP -> dKp)
 
 Miscellaneous TODO:
 - Implement internal-font portion of MoreFonts, then use that for Newer's pause menu layout
@@ -10,7 +13,7 @@ Miscellaneous TODO:
 - Revamp Star Coins Menu arrows to have idle animations and look more like the retail arrow layouts
 - Add succession scrolling to the Star Coins Menu
 - Add sparkles to the HUD stars
-- Make circle wipes be focused on player position (they might already be, but player doesn't work currently)
+- Focus circle wipes on the player position
 
 Bugs:
 - [Newer bug] Exiting from a "cave entrance" will scale the player incorrectly, they're slightly too small

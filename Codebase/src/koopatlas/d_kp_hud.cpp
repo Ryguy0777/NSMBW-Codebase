@@ -139,7 +139,6 @@ int dKPHud_c::execute() {
         return SUCCEEDED;
     }
 
-    //mDispHeader = true; // Temp, remove me once the map data is complete
     if (mDispHeader && (!(mLayout.isAnime(ANIM_SHOW_HEADER)))) {
         mDispHeader = false;
         loadHeaderInfo();
@@ -182,18 +181,18 @@ void dKPHud_c::loadInitially() {
     mDispFooter = /*(save->newerWorldName[0] != 0) &&*/ (world->mHudHue != 2000);
 
     //if (!dScKoopatlas_c::m_instance->mPathManager.isMoving)
-    //    enteredNode();
+        enteredNode();
 }
 
 #ifdef KOOPATLAS_DEV_ENABLED
 void dKPHud_c::enteredNode(dKPNode_s *node) {
-    /*if (node == 0)
-        node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
+    if (node == nullptr)
+        //node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
 
-    if (node->type == dKPNode_s::LEVEL && mInitalDispComplete) {*/
+    if (node->mNodeType == dKPNode_s::LEVEL && mInitalDispComplete) {
         mDispHeader = true;
-    //    mpHeaderNode = node;
-    //}
+        mpHeaderNode = node;
+    }
 }
 #elif defined(NEWER_MAP_HUD)
 void dKPHud_c::enteredNode(int world, int course) {
@@ -359,12 +358,14 @@ void dKPHud_c::loadFooterInfo() {
 void dKPHud_c::loadHeaderInfo() {
     dLevelInfo_c *levelInfo = &dLevelInfo_c::m_instance;
 #ifdef KOOPATLAS_DEV_ENABLED
-    //dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mpHeaderNode->levelNumber[0]-1, mpHeaderNode->levelNumber[1]-1);
-    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(3, 21); // Temp
+    dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mpHeaderNode->mLevelNum[0]-1, mpHeaderNode->mLevelNum[1]-1);
 #else
     dLevelInfo_c::entry_s *infEntry = levelInfo->getEntryFromSlotID(mWorldNo, mCourseNo);
 #endif
-    MsgRes_c *msgRes = dMessage_c::getMesRes();
+
+    u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
+    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(worldIdx);
+    mHeaderCol.colourise(world->mHudHue%1000, world->mHudSat, world->mHudLight);
 
     if (infEntry == nullptr) {
         const wchar_t *dummyName = getLevelName(0, 0);
@@ -380,6 +381,8 @@ void dKPHud_c::loadHeaderInfo() {
         }
         return;
     }
+
+    MsgRes_c *msgRes = dMessage_c::getMesRes();
 
     // Set the level name
     const wchar_t *levelName = getLevelName(infEntry->mDisplayWorld, infEntry->mDisplayLevel);
@@ -479,10 +482,6 @@ void dKPHud_c::loadHeaderInfo() {
 
     mpPicturePanes[Header_Centre]->SetSRTElement(8, totalWidth);
     mpPicturePanes[Header_Right]->SetSRTElement(0, totalWidth);
-
-    u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
-    dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(worldIdx);
-    mHeaderCol.colourise(world->mHudHue%1000, world->mHudSat, world->mHudLight);
 }
 
 void dKPHud_c::playShowAnim(int id) {

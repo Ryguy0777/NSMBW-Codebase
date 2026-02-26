@@ -308,30 +308,30 @@ void dKPMap_c::dMapRender_c::endRendering() { }
 
 void dKPMap_c::dMapRender_c::drawLayers() {
     dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
-    dKPMapData_c::MapFile_s *data = wm->mMapData.mpData;
+    dKPMapFile_s *data = wm->mMapData.mpData;
 
     if (data == nullptr) {
         return;
     }
 
-    mBaseZ = -100.0f - (2 * data->mLayerCount);
+    mBaseZ = -100.0f - (2 * data->mLayerNum);
 
 #ifdef KP_SKIP_TOP_LAYER_W1
     bool skipFirstLayer = (wm->mCurrentMapID == 0) && !(wm->mIsFirstPlay);
+#else
+    bool skipFirstLayer = false;
 #endif
 
     beginRendering();
 
-    for (int iLayer = data->mLayerCount - 1; iLayer >= 0; iLayer--) {
-#ifdef KP_SKIP_TOP_LAYER_W1
+    for (int iLayer = data->mLayerNum - 1; iLayer >= 0; iLayer--) {
         if (skipFirstLayer && iLayer == 0)
             continue;
-#endif
 
         dKPLayer_s *layer = data->mpLayers[iLayer];
         mRenderMtx[2][3] += 2.0f;
 
-        if (layer->mLayerType == dKPLayer_s::PATH) {
+        if (layer->mLayerType == dKPLayer_s::TYPE_PATH) {
             // Rebase the camera matrix
             mBaseZ = 3500.0f;
             nw4r::g3d::Camera cam3d(m3d::getCamera(0));
@@ -339,18 +339,18 @@ void dKPMap_c::dMapRender_c::drawLayers() {
             PSMTXTransApply(mRenderMtx, mRenderMtx, 0, 0, mBaseZ);
         }
 
-        // Invisible
-        if (layer->mLayerAlpha == 0)
+        // Invisible, skip drawing
+        if (layer->mAlpha == 0)
             continue;
 
-        TileReport("Checking layer %d with type %d\n", iLayer, layer->mLayerType);
+        TileReport("Checking layer %d with type %d\n", iLayer, layer->type);
 
-        GXColor layerClr = {255,255,255,layer->mLayerAlpha};
+        GXColor layerClr = {255,255,255,layer->mAlpha};
         GXSetTevColor(GX_TEVREG0, layerClr);
 
-        if (layer->mLayerType == dKPLayer_s::OBJECT) {
+        if (layer->mLayerType == dKPLayer_s::TYPE_OBJECT) {
             renderTileLayer(layer, data->mpSectors);
-        } else if (layer->mLayerType == dKPLayer_s::DOODAD) {
+        } else if (layer->mLayerType == dKPLayer_s::TYPE_DOODAD) {
             renderDoodadLayer(layer);
         }
     }
@@ -372,16 +372,16 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
 
     // Figure out -what- to render
     BoundReport("Regular render area: %d,%d to %d,%d\n", mMinX, mMinY, mMaxX, mMaxY);
-    BoundReport("Layer bounds: %d,%d to %d,%d\n", layer->mLeft, layer->mTop, layer->mRight, layer->mBottom);
+    BoundReport("Layer bounds: %d,%d to %d,%d\n", layer->left, layer->top, layer->right, layer->bottom);
     int toRenderMinX = max(mMinX, layer->mLeft);
     int toRenderMinY = max(mMinY, layer->mTop);
 
     int toRenderMaxX = min(mMaxX, layer->mRight);
     int toRenderMaxY = min(mMaxY, layer->mBottom);
 
-    int sectorBaseX = layer->mSectorLeft;
-    int sectorBaseY = layer->mSectorTop;
-    int sectorIndexStride = (layer->mSectorRight - layer->mSectorLeft + 1);
+    int sectorBaseX = layer->mSectorL;
+    int sectorBaseY = layer->mSectorU;
+    int sectorIndexStride = (layer->mSectorR - layer->mSectorL + 1);
 
     int sectorMinX = toRenderMinX / 16;
     int sectorMinY = toRenderMinY / 16;
@@ -455,21 +455,25 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
 }
 
 void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
-    for (int i = 0; i < layer->mDoodadCount; i++) {
+    for (int i = 0; i < layer->mDoodadNum; i++) {
         // TODO: Implement doodad culling
 
         dKPDoodad_s *doodad = layer->mpDoodads[i];
-        DoodadReport("Doodad @ %f,%f sized %f,%f with angle %f\n", doodad->mPos.x, doodad->mPos.y, doodad->mWidth, doodad->mHeight, doodad->mAngle);
+        DoodadReport("Doodad @ %f,%f sized %f,%f with angle %f\n", doodad->x, doodad->y, doodad->width, doodad->height, doodad->angle);
 
-        float effectiveX = doodad->mPos.x, effectiveY = doodad->mPos.y;
-        float effectiveWidth = doodad->mWidth, effectiveHeight = doodad->mHeight;
+        float effectiveX = doodad->mPos.x;
+        float effectiveY = doodad->mPos.y;
+        float effectiveWidth = doodad->mWidth;
+        float effectiveHeight = doodad->mHeight;
         float effectiveAngle = doodad->mAngle;
-        int effectiveAlpha = layer->mLayerAlpha;
+        int effectiveAlpha = layer->mAlpha;
+
+        //OSReport("[%d] mAnimNum:%02d\n", i, doodad->mAnimNum);
 
         // Animate it
-        if (doodad->mAnimCount > 0) {
-            for (int j = 0; j < doodad->mAnimCount; j++) {
-                dKPDoodad_s::Animation_s *anim = &doodad->mAnims[j];
+        if (doodad->mAnimNum > 0) {
+            for (int j = 0; j < doodad->mAnimNum; j++) {
+                dKPDoodad_s::Anim_s *anim = &doodad->mAnims[j];
 
                 if (anim->mInitialDelay == 0) {
                     u32 baseTick = anim->mBaseTick;
@@ -488,18 +492,18 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
 
                             // We've reached the end
                             switch (anim->mLoopType) {
-                                case dKPDoodad_s::Animation_s::CONTIGUOUS:
+                                case dKPDoodad_s::Anim_s::CONTIGUOUS:
                                     // Stop here
                                     elapsed = anim->mFrameCount - 1;
                                     break;
 
-                                case dKPDoodad_s::Animation_s::LOOP:
+                                case dKPDoodad_s::Anim_s::LOOP:
                                     // Start over
                                     elapsed = 0;
                                     anim->mBaseTick = cCounter_c::m_gameFrame;
                                     break;
 
-                                case dKPDoodad_s::Animation_s::REVERSE_LOOP:
+                                case dKPDoodad_s::Anim_s::REVERSE_LOOP:
                                     // Change direction
                                     anim->mIsReverse = !anim->mIsReverse;
                                     elapsed = (anim->mIsReverse) ? (anim->mFrameCount - 1) : 0;
@@ -518,48 +522,48 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
                     float value;
 
                     switch (anim->mCurveType) {
-                        case dKPDoodad_s::Animation_s::LINEAR:
+                        case dKPDoodad_s::Anim_s::LINEAR:
                             value = progress;
                             break;
-                        case dKPDoodad_s::Animation_s::SIN:
+                        case dKPDoodad_s::Anim_s::SIN:
                             value = (sin(((progress * M_PI * 2)) - (M_PI/2)) + 1) / 2;
                             break;
-                        case dKPDoodad_s::Animation_s::COS:
+                        case dKPDoodad_s::Anim_s::COS:
                             value = (cos(((progress * M_PI * 2)) - (M_PI/2)) + 1) / 2;
                             break;
                     }
 
-                    float delta = anim->mEnd - anim->mStart;
+                    float delta = anim->mEndVal - anim->mStartVal;
                     float frame;
 
                     if (anim->mIsReverse)
-                        frame = anim->mStart + ceil(delta * value);
+                        frame = anim->mStartVal + ceil(delta * value);
                     else
-                        frame = anim->mStart + (delta * value);
+                        frame = anim->mStartVal + (delta * value);
 
                     float scaleYMod;
 
                     // Apply it
                     switch (anim->mAnimType) {
-                        case dKPDoodad_s::Animation_s::X_POS:
+                        case dKPDoodad_s::Anim_s::X_POS:
                             effectiveX += frame;
                             break;
-                        case dKPDoodad_s::Animation_s::Y_POS:
+                        case dKPDoodad_s::Anim_s::Y_POS:
                             effectiveY += frame;
                             break;
-                        case dKPDoodad_s::Animation_s::ANGLE:
+                        case dKPDoodad_s::Anim_s::ANGLE:
                             effectiveAngle += frame;
                             break;
-                        case dKPDoodad_s::Animation_s::X_SCALE:
+                        case dKPDoodad_s::Anim_s::X_SCALE:
                             effectiveWidth = (effectiveWidth * frame / 100.0);
                             break;
-                        case dKPDoodad_s::Animation_s::Y_SCALE:
+                        case dKPDoodad_s::Anim_s::Y_SCALE:
                             effectiveHeight = (effectiveHeight * frame / 100.0);
 
                             scaleYMod = doodad->mHeight - effectiveHeight;
                             effectiveY += scaleYMod;
                             break;
-                        case dKPDoodad_s::Animation_s::OPACITY:
+                        case dKPDoodad_s::Anim_s::OPACITY:
                             effectiveAlpha = (effectiveAlpha * (frame * 2.55f)) / 255;
                             break;
                     }
@@ -570,7 +574,8 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
             }
         }
 
-        float halfW = effectiveWidth * 0.5f, halfH = effectiveHeight * 0.5f;
+        float halfW = effectiveWidth * 0.5f;
+        float halfH = effectiveHeight * 0.5f;
 
         nw4r::math::MTX34 doodadMtx;
         PSMTXTransApply(mRenderMtx, doodadMtx, effectiveX + halfW, -effectiveY - halfH, 0);
@@ -602,26 +607,26 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
 }
 
 void dKPMap_c::renderPathLayer(dKPLayer_s *layer) {
-    for (int i = 0; i < layer->mNodeCount; i++) {
+    for (int i = 0; i < layer->mNodeNum; i++) {
         dKPNode_s *node = layer->mpNodes[i];
 
         if (node->mNodeType == dKPNode_s::LEVEL) {
-            OSReport("Node %d: POS:%f,%f, %02d-%02d\n", i, node->mPosX, node->mPosY, node->mLevelNumber[0], node->mLevelNumber[1]);
             // Used for the "ending scene" where the W9 path appears
             // TODO: Dehardcode this, if possible
-            if (node->mLevelNumber[0] == 80) {
+            if (node->mLevelNum[0] == 80) {
                 continue;
             }
 
             mAng3_c angle(0x4000, 0x8000, 0x6000);
+            dKPCourseNode_c *course = node->mpCourseNode;
 
-            PSMTXTrans(node->mpNodeMdl->mMatrix, node->mPosX, -node->mPosY + 4.0, 498.0);
-            node->mpNodeMdl->mMatrix.ZXYrotM(angle.y, angle.x, angle.z);
-            node->mpNodeMdl->mModel.setLocalMtx(&node->mpNodeMdl->mMatrix);
-            node->mpNodeMdl->mModel.setScale(0.8f, 0.8f, 0.8f);
-            node->mpNodeMdl->mModel.calc(false);
+            PSMTXTrans(course->mMatrix, node->mPosX, -node->mPosY + 4.0, 498.0);
+            course->mMatrix.ZXYrotM(angle.y, angle.x, angle.z);
+            course->mModel.setLocalMtx(&course->mMatrix);
+            course->mModel.setScale(0.8f, 0.8f, 0.8f);
+            course->mModel.calc(false);
 
-            node->mpNodeMdl->mModel.entry();
+            course->mModel.entry();
         }
     }
 }

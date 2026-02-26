@@ -205,7 +205,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources2(void *ptr) {
         MapReport("Loading map: %s\n", wm->mpMapPath);
     }
 
-    bool result = wm->mMapData.load(wm->mpMapPath);
+    bool result = wm->mMapData.create(wm->mpMapPath);
     return (sPhase_c::METHOD_RESULT_e)result;
 }
 
@@ -264,10 +264,16 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     /*SpammyReport("Preparing path manager\n");
     wm->mPathManager.setup();*/
 
+    // TEMP TEMP TEMPTEMPTEMP!!!
+    dKPLayer_s *pathLayer = wm->mMapData.mpPathLayer;
+    for (int i = 0; i < pathLayer->mNodeNum; i++)
+        if (pathLayer->mpNodes[i]->mNodeType == dKPNode_s::LEVEL)
+            pathLayer->mpNodes[i]->createCourseNode();
+
     // And put the player into position
     //dKPNode_s *cNode = wm->mPathManager.currentNode;
-    //dKPNode_s *cNode = wm->mMapData.mpPathLayer->mpNodes[3];
-    //wm->mpPlayer->mPos = mVec3_c(cNode->mPosX, -cNode->mPosY, wm->mpPlayer->mPos.z);
+    dKPNode_s *cNode = wm->mMapData.mpPathLayer->mpNodes[8]; // test, remove me later
+    wm->mpPlayer->mPos = mVec3_c(cNode->mPosX, -cNode->mPosY, wm->mpPlayer->mPos.z);
 
     SpammyReport("Creating MAP\n");
     wm->mpMap = (dKPMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
@@ -303,11 +309,11 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
     }
 
     // TODO: Properly focus circle wipe on player, this doesn't work
-    daKPPlayer_c *player = daKPPlayer_c::m_instance;
+    //daKPPlayer_c *player = daKPPlayer_c::m_instance;
 
-    dWipeCircle_c::m_instance->mCenterPos.x = player->mPos.x;
-    dWipeCircle_c::m_instance->mCenterPos.y = player->mPos.y;
-    dWipeCircle_c::m_instance->mUseCenterPos = true;
+    //dWipeCircle_c::m_instance->mCenterPos.x = player->mPos.x;
+    //dWipeCircle_c::m_instance->mCenterPos.y = player->mPos.y;
+    //dWipeCircle_c::m_instance->mUseCenterPos = true;
 
     // Temp until pathmanager is complete
     wm->startMusic();

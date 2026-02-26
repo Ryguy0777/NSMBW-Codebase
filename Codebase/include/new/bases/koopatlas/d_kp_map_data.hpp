@@ -6,34 +6,14 @@
 
 #include <game/bases/d_dvd.hpp>
 #include <game/bases/d_heap_allocator.hpp>
-#include <game/mLib/m_mtx.hpp>
 #include <game/mLib/m_3d/mdl.hpp>
-#include <nw4r/math/math_types.h>
-#include <nw4r/lyt/lyt_common.h>
+#include <game/mLib/m_mtx.hpp>
 
 // Forward declarations
 struct dKPLayer_s;
-struct dKPPath_s;
 
-// Represents a World Editor entry
-// TODO: Figure out what to do with this
-struct dKPWorldDef_s {
-    const char *name;
-    GXColor fsTextColours[2];
-    GXColor fsHintColours[2];
-    GXColor hudTextColours[2];
-    u16 hudHintH;
-    s8 hudHintS, hudHintL;
-    u8 key, trackID;
-    u8 worldID;
-    u8 titleScreenWorld;
-    u8 titleScreenLevel;
-    u8 padding[3];
-};
-
-// Draws models for nodes
-// Currently only available for LEVEL nodes
-class dKPNodeMdl_c {
+// Course node renderer
+class dKPCourseNode_c {
 public:
     dHeapAllocator_c mAllocator;
     mMtx_c mMatrix;
@@ -44,21 +24,21 @@ public:
  * Doodads
  ******************************************************************************/
 struct dKPDoodad_s {
-    struct Animation_s {
-        enum LOOP_TYPE_e {
-            CONTIGUOUS,
+    struct Anim_s {
+        enum LoopType_e {
+            CONTIGUOUS = 0,
             LOOP,
             REVERSE_LOOP
         };
 
-        enum CURVE_TYPE_e {
-            LINEAR,
+        enum CurveType_e {
+            LINEAR = 0,
             SIN,
             COS
         };
 
-        enum ANIM_TYPE_e {
-            X_POS,
+        enum AnimType_e {
+            X_POS = 0,
             Y_POS,
             ANGLE,
             X_SCALE,
@@ -66,38 +46,68 @@ struct dKPDoodad_s {
             OPACITY
         };
 
-        LOOP_TYPE_e mLoopType;
-        CURVE_TYPE_e mCurveType;
+        LoopType_e mLoopType;
+        CurveType_e mCurveType;
         int mFrameCount;
-        ANIM_TYPE_e mAnimType;
-        int mStart;
-        int mEnd;
-        int mDelay;
-        int mInitialDelay;
+        AnimType_e mAnimType;
+        int mStartVal, mEndVal;
+        int mDelay, mInitialDelay;
 
         u32 mBaseTick;
         bool mIsReverse;
     };
 
-    nw4r::math::VEC2 mPos;
+    mVec2_c mPos;
     float mWidth, mHeight;
     float mAngle;
 
     GXTexObj *mpTexObj;
-    int mAnimCount;
-    Animation_s mAnims[1]; // Variable size
+    int mAnimNum;
+    Anim_s mAnims[1]; // variable size
 };
 
 /******************************************************************************
- * Paths
+ * Paths and Nodes
  ******************************************************************************/
+struct dKPPath_s;
+
 struct dKPNode_s {
-    enum NODE_TYPE_e {
-        PASS_THROUGH,
+    enum NodeType_e {
+        PASS_THROUGH = 0,
         STOP,
         LEVEL,
         CHANGE,
         WORLD_CHANGE
+    };
+
+    short mPosX, mPosY;
+    union {
+        dKPPath_s *mpExits[4];
+        struct {
+            dKPPath_s *mpExitL;
+            dKPPath_s *mpExitR;
+            dKPPath_s *mpExitU;
+            dKPPath_s *mpExitD;
+        };
+    };
+    dKPLayer_s *mpTileLayer;
+    dKPLayer_s *mpDoodadLayer;
+
+    u8 mReserved1;
+    u8 mReserved2;
+    u8 mReserved3;
+    u8 mNodeType;
+
+    bool isNew;
+
+    dKPCourseNode_c *mpCourseNode;
+
+    // The union is placed at the very end so
+    // we can leave out padding in the kpbin
+    union {
+        struct { u8 mLevelNum[2]; bool mHasSecretExit; };
+        struct { const char *mpDestMap; u8 mCurrID, mDestID, mFadeType, _; };
+        struct { u8 mWorldID, __[3]; };
     };
 
     dKPPath_s *getAnyExit() {
@@ -106,101 +116,87 @@ struct dKPNode_s {
                 return mpExits[i];
             }
         }
+
         return nullptr;
     }
 
-    bool checkOpenStatus();
-    void setupCourseNode();
+    bool chkOpenStatus();
+    void createCourseNode();
 
-    dKPPath_s *getOppositeExitTo(dKPPath_s *path, bool requirePathOpen=false);
-    // TODO: Remove this, just use the above
-    dKPPath_s *getOppositeAvailableExitTo(dKPPath_s *path) {
-        return getOppositeExitTo(path, true);
+    dKPPath_s *getAcrossPath(dKPPath_s *path, bool requireOpenState=false);
+    dKPPath_s *getOpenAcrossPath(dKPPath_s *path) {
+        return getAcrossPath(path, true);
     }
 
-    int getExitCount(bool requirePathOpen=false);
-    // TODO: Remove this, just use the above
-    int getAvailableExitCount() {
-        return getExitCount(true);
+    int getExitNum(bool requireOpenState=false);
+    int getOpenExitNum() {
+        return getExitNum(true);
     }
 
     void setLayerAlpha(u8 alpha);
-
-    short mPosX, mPosY;
-    union {
-        dKPPath_s *mpExits[4];
-        struct {
-            dKPPath_s *mpLeftExit;
-            dKPPath_s *mpRightExit;
-            dKPPath_s *mpUpExit;
-            dKPPath_s *mpDownExit;
-        };
-    };
-    dKPLayer_s *mpTileLayer, *mpDoodadLayer;
-
-    u8 mReserved1;
-    u8 mReserved2;
-    u8 mReserved3;
-    NODE_TYPE_e mNodeType;
-
-    bool mIsNewUnlock;
-
-    dKPNodeMdl_c *mpNodeMdl;
-
-    // The union is placed at the very end so we can leave out padding in the kpbin
-    union {
-        struct { u8 mLevelNumber[2]; bool mHasSecretExit; };
-        struct { const char *mpDestMap; u8 mID, mDestID, mTransition, _; };
-        struct { u8 mWorldID, __[3]; };
-    };
 };
 
 struct dKPPath_s {
-    enum PATH_STATUS_e {
-        LOCKED = 0,
-        OPEN = 1,
-        NEW_OPEN = 2,
-        ALWAYS_OPEN = 3
+    enum OpenStatus_e {
+        NOT_OPEN = 0,
+        OPEN,
+        NEWLY_OPEN,
+        ALWAYS_OPEN
     };
 
-    enum ANIM_TYPE_e {
-        WALK = 0, WALK_SAND = 1, WALK_SNOW = 2, WALK_WATER = 3,
-        JUMP = 4, JUMP_SAND = 5, JUMP_SNOW = 6, JUMP_WATER = 7,
-        LADDER = 8, LADDER_LEFT = 9, LADDER_RIGHT = 10, FALL = 11,
-        SWIM = 12, RUN = 13, PIPE = 14, DOOR = 15,
-        TJUMPED = 16, ENTER_CAVE_UP = 17, RESERVED_18 = 18, INVISIBLE = 19,
-        MAX_ANIM = 20
+    enum ActionType_e {
+        WALK = 0,
+        WALK_SAND,
+        WALK_SNOW,
+        WALK_WATER,
+        JUMP,
+        JUMP_SAND,
+        JUMP_SNOW,
+        JUMP_WATER,
+        LADDER,
+        LADDER_LEFT,
+        LADDER_RIGHT,
+        FALL,
+        SWIM,
+        RUN,
+        PIPE,
+        DOOR,
+        TJUMPED,
+        ENTER_CAVE_UP,
+        RESERVED_18,
+        INVISIBLE,
+
+        ACTION_NUM
     };
 
-    dKPNode_s *getOtherNodeTo(dKPNode_s *n) {
-        return (n == mpStart) ? mpEnd : mpStart;
-    }
-
-    void setLayerAlpha(u8 alpha);
-
-    dKPNode_s *mpStart, *mpEnd;
+    dKPNode_s *mpStartPoint, *mpEndPoint;
     dKPLayer_s *mpTileLayer, *mpDoodadLayer;
 
-    u8 mPathStatus; // Computed on-the-fly - default from Koopatlas is LOCKED or ALWAYS_OPEN
-    u8 mIsSecretPath;
-    u8 mPad[2];
+    dKPNode_s *getOtherNodeTo(dKPNode_s *n) {
+        return (n == mpStartPoint) ? mpEndPoint : mpStartPoint;
+    }
 
+    u8 mIsOpen; // computed on-the-fly - default from Koopatlas is NOT or ALWAYS
+    u8 mIsSecret;
+    u8 mPad[2];
     float mPathSpeed;
-    ANIM_TYPE_e mAnimType;
+    ActionType_e mAction;
+
+    void setLayerAlpha(u8 alpha);
 };
 
 /******************************************************************************
- * Tying it all together
+ * Layers
  ******************************************************************************/
 struct dKPLayer_s {
-    enum LAYER_TYPE_e {
-        OBJECT,
-        DOODAD,
-        PATH
+    enum LayerType_e {
+        TYPE_OBJECT = 0,
+        TYPE_DOODAD,
+        TYPE_PATH
     };
 
-    LAYER_TYPE_e mLayerType;
-    u8 mLayerAlpha;
+    LayerType_e mLayerType;
+    u8 mAlpha;
     u8 mPad[3];
 
     typedef u16 sector_s[16][16];
@@ -211,10 +207,10 @@ struct dKPLayer_s {
             union {
                 int mSectorBounds[4];
                 struct {
-                    int mSectorLeft;
-                    int mSectorTop;
-                    int mSectorRight;
-                    int mSectorBottom;
+                    int mSectorL;
+                    int mSectorU;
+                    int mSectorR;
+                    int mSectorD;
                 };
             };
             union {
@@ -226,18 +222,18 @@ struct dKPLayer_s {
                     int mBottom;
                 };
             };
-            u16 mIndices[1]; // Variable size
+            u16 mIndices[1]; // variable size
         };
 
         struct {
-            int mDoodadCount;
-            dKPDoodad_s *mpDoodads[1]; // Variable size
+            int mDoodadNum;
+            dKPDoodad_s *mpDoodads[1]; // variable size
         };
 
         struct {
-            int mNodeCount;
+            int mNodeNum;
             dKPNode_s **mpNodes;
-            int mPathCount;
+            int mPathNum;
             dKPPath_s **mpPaths;
         };
     };
@@ -245,57 +241,71 @@ struct dKPLayer_s {
     int findNodeID(dKPNode_s *node);
 };
 
+/******************************************************************************
+ * World Definitions
+ ******************************************************************************/
+struct dKPWorldDef_s {
+    const char *mpWorldName; // TODO: Repurpose for lighting data
+    GXColor fsTextColours[2];
+    GXColor fsHintColours[2];
+    GXColor hudTextColours[2];
+    u16 mHudHintH;
+    s8 mHudHintS;
+    s8 mHudHintL;
+    u8 mKeyID; // Internal index of the definition
+    u8 mTrackID;
+    u8 mLevelInfoID;
+    u8 mTitleWorldNo;
+    u8 mTitleLevelNo;
+    u8 mPad[3];
+};
+
+/******************************************************************************
+ * Map File
+ ******************************************************************************/
+struct dKPMapFile_s {
+    u32 mMagic; // "KP_m"
+    int mVersion;
+
+    int mLayerNum;
+    dKPLayer_s **mpLayers;
+
+    int mTilesetNum;
+    GXTexObj *mpTilesets;
+
+    u8 *mpUnlockData;
+
+    dKPLayer_s::sector_s *mpSectors;
+
+    const char *mpBgName;
+
+    dKPWorldDef_s *mpWorldDefs;
+    int mWorldDefNum;
+};
+
 class dKPMapData_c {
 public:
-    // Represents a KPBIN
-    struct MapFile_s {
-        u32 mMagic; // "KP_m"
-        int mVersion;
-
-        int mLayerCount;
-        dKPLayer_s **mpLayers;
-
-        int mTilesetCount;
-        GXTexObj *mpTilesets;
-
-        u8 *mpUnlockData;
-
-        dKPLayer_s::sector_s *mpSectors;
-
-        const char *mpBgName;
-
-        dKPWorldDef_s *mpWorlds;
-        int mWorldCount;
-    };
-
     dKPMapData_c();
     ~dKPMapData_c();
 
-    bool load(const char *filename);
-    const dKPWorldDef_s *getWorldDef(int id) const;
+    bool create(const char *filename);
+
+    const dKPWorldDef_s *findWorldDef(int id) const;
 
 private:
-    void bindReferences();
-
-    bool loadTilesets();
-    void freeTilesets();
-
     template <typename T>
-        inline T* bindRef(T*& pIndex) {
-            u32 index = (u32)pIndex;
-            OSReport("Index: %08x\n", index);
+        inline T* fixRef(T*& pIndex) {
+            unsigned int index = (unsigned int)pIndex;
             if (index == 0xFFFFFFFF || index == 0)
                 pIndex = nullptr;
             else
-                //pIndex = (T*)((u32)(&mpData[index]));
                 pIndex = (T*)(((char*)mpData) + index);
-            OSReport("PIndex: %08X\n", pIndex);
             return pIndex;
         }
 
     template <typename T>
-        inline T* bindRefSafe(T*& pIndex) {
-            u32 index = (u32)pIndex;
+        inline T* fixRefSafe(T*& pIndex) {
+            unsigned int index = (unsigned int)pIndex;
             if (index == 0xFFFFFFFF || index == 0)
                 pIndex = nullptr;
             else if (index < 0x80000000)
@@ -310,18 +320,24 @@ private:
         }
     }
 
-    dDvd::loader_c mFileLoader;
+    void initMapData();
 
-    bool mIsRefBound;
-    bool mTilesetsLoaded;
+    bool loadTilesets();
+    void freeTilesets();
+
+private:
+    dDvd::loader_c mMapLoader;
+
+    bool mIsDataInited;
+    bool mIsTilesetLoaded;
 
 public:
     dDvd::loader_c *mpTilesetLoaders;
-    MapFile_s *mpData;
+    dKPMapFile_s *mpData;
     dKPLayer_s *mpPathLayer;
 
     dDvd::loader_c mBgLoader;
 
-    dKPNodeMdl_c *mpNodeMdls;
+    dKPCourseNode_c *mpCourseNodes;
 };
 #endif

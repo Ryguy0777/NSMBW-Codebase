@@ -1,311 +1,341 @@
+#include <kamek.h>
 #include <new/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
+#include <new/bases/koopatlas/d_kp_map_data.hpp>
+
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_save_mng.hpp>
-
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
+#include <game/mLib/m_heap.hpp>
+#include <nw4r/g3d/res/g3d_resfile.h>
 
 dKPMapData_c::dKPMapData_c() {
     mpData = nullptr;
-    mpNodeMdls = nullptr;
+    mpCourseNodes = nullptr;
     mpTilesetLoaders = nullptr;
 
-    mIsRefBound = false;
-    mTilesetsLoaded = false;
+    mIsDataInited = false;
+    mIsTilesetLoaded = false;
 }
 
 dKPMapData_c::~dKPMapData_c() {
-    if (mpNodeMdls != nullptr)
-        delete[] mpNodeMdls;
+    if (mpCourseNodes != nullptr) {
+        delete[] mpCourseNodes;
+    }
 
     freeTilesets();
-    mFileLoader.freeResouce();
+    mBgLoader.freeResouce();
+    mMapLoader.freeResouce();
 }
 
-bool dKPMapData_c::load(const char *filename) {
-    mpData = (MapFile_s*)mFileLoader.request(filename, 0, mHeap::g_archiveHeap);
+bool dKPMapData_c::create(const char *filename) {
+    mpData = (dKPMapFile_s*)mMapLoader.request(filename, 0, mHeap::g_archiveHeap);
     if (mpData == nullptr) {
         return false;
     }
 
-    if (!mIsRefBound) {
-        bindReferences();
+    if (!mIsDataInited) {
+        initMapData();
     }
 
-    bool tilesetsLoaded = loadTilesets();
-    bool bgResLoaded = (mBgLoader.request(mpData->mpBgName, 0, nullptr) != nullptr);
+    bool tsSuccess = loadTilesets();
+    bool bgSuccess = (mBgLoader.request(mpData->mpBgName, 0, nullptr) != nullptr);
 
-    return tilesetsLoaded && bgResLoaded;
+    return tsSuccess && bgSuccess;
 }
-static dDvd::loader_c s_tempLoaders[5];
-bool dKPMapData_c::loadTilesets() {
-    if (mTilesetsLoaded)
-        return true;
 
-    if (mpTilesetLoaders == nullptr) {
-        OSReport("Creating %d loaders\n", mpData->mTilesetCount);
-        mpTilesetLoaders = new dDvd::loader_c[mpData->mTilesetCount];
-    }
-
-    bool result = true;
-
-    for (int i = 0; i < mpData->mTilesetCount; i++) {
-        char *filename = ((char*)mpData) + (mpData->mpTilesets[i].dummy[3] - 0x10000000);
-        EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
-        OSReport("Tileset %d: Name %s\n", i, filename);
-        result &= (s_tempLoaders[i].request(filename, 0, heap) != nullptr);
-        OSReport("result is %d\n", result);
-    }
-
-    if (result) {
-        mTilesetsLoaded = true;
-        OSReport("did this work?\n");
-
-        for (int i = 0; i < mpData->mTilesetCount; i++) {
-            mpData->mpTilesets[i].dummy[3] = (((u32)s_tempLoaders[i].GetBuffer() & ~0xC0000000) >> 5);
+const dKPWorldDef_s *dKPMapData_c::findWorldDef(int id) const {
+    for (int i = 0; i < mpData->mWorldDefNum; i++) {
+        if (mpData->mpWorldDefs[i].mKeyID == id) {
+            return &mpData->mpWorldDefs[i];
         }
     }
-
-    return mTilesetsLoaded;
+    return nullptr;
 }
 
-void dKPMapData_c::freeTilesets() {
-    if (mpTilesetLoaders != nullptr) {
-        for (int i = 0; i < mpData->mTilesetCount; i++) {
-            mpTilesetLoaders[i].freeResouce();
-        }
+void dKPMapData_c::initMapData() {
+    OSReport("Initing MapData\n");
 
-        delete[] mpTilesetLoaders;
-    }
+    mIsDataInited = true;
 
-    mBgLoader.freeResouce();
-}
+    // Init main file
+    fixRef(mpData->mpLayers);
+    fixRef(mpData->mpTilesets);
+    fixRef(mpData->mpUnlockData);
+    fixRef(mpData->mpSectors);
+    fixRef(mpData->mpBgName);
 
-void dKPMapData_c::bindReferences() {
-    MapReport("Binding ptr references\n");
-
-    if (mpData->mMagic != 'KP_m') {
-        OSReport("KPBIN magic doesn't match expected value!!!\n");
-        return;
-    }
-
-    mIsRefBound = true;
-
-    bindRef(mpData->mpLayers);
-    bindRef(mpData->mpTilesets);
-    bindRef(mpData->mpUnlockData);
-    bindRef(mpData->mpSectors);
-    bindRef(mpData->mpBgName);
+    // Init world definitions if the KPBIN supports them
     if (mpData->mVersion >= 2) {
-        bindRef(mpData->mpWorlds);
-        for (int i = 0; i < mpData->mWorldCount; i++) {
-            bindRef(mpData->mpWorlds[i].name);
+        fixRef(mpData->mpWorldDefs);
+        for (int i = 0; i < mpData->mWorldDefNum; i++) {
+            fixRef(mpData->mpWorldDefs[i].mpWorldName);
         }
     }
 
-    for (int iLayer = 0; iLayer < mpData->mLayerCount; iLayer++) {
-        dKPLayer_s *layer = bindRef(mpData->mpLayers[iLayer]);
+    // Iterate through all layers
+    for (int iLayer = 0; iLayer < mpData->mLayerNum; iLayer++) {
+        dKPLayer_s *layer = fixRef(mpData->mpLayers[iLayer]);
 
         switch (layer->mLayerType) {
-            case dKPLayer_s::OBJECT:
-                bindRef(layer->mpTileset);
+            case dKPLayer_s::TYPE_OBJECT:
+                fixRef(layer->mpTileset);
                 break;
 
-            case dKPLayer_s::DOODAD:
-                for (int iDood = 0; iDood < layer->mDoodadCount; iDood++) {
-                    dKPDoodad_s *doodad = bindRef(layer->mpDoodads[iDood]);
+            case dKPLayer_s::TYPE_DOODAD:
+                for (int iDoodad = 0; iDoodad < layer->mDoodadNum; iDoodad++) {
+                    dKPDoodad_s *doodad = fixRef(layer->mpDoodads[iDoodad]);
 
-                    bindRef(doodad->mpTexObj);
+                    fixRef(doodad->mpTexObj);
                     fixTexObjSafe(doodad->mpTexObj);
                 }
                 break;
 
-            case dKPLayer_s::PATH:
+            case dKPLayer_s::TYPE_PATH:
                 mpPathLayer = layer;
 
-                bindRef(layer->mpPaths);
-                bindRef(layer->mpNodes);
+                fixRef(layer->mpPaths);
+                fixRef(layer->mpNodes);
 
-                for (int iPath = 0; iPath < layer->mPathCount; iPath++) {
-                    dKPPath_s *path = bindRef(layer->mpPaths[iPath]);
+                // Init all paths
+                for (int iPath = 0; iPath < layer->mPathNum; iPath++) {
+                    dKPPath_s *path = fixRef(layer->mpPaths[iPath]);
 
-                    bindRef(path->mpStart);
-                    bindRef(path->mpEnd);
+                    fixRef(path->mpStartPoint);
+                    fixRef(path->mpEndPoint);
 
-                    bindRef(path->mpTileLayer);
-                    bindRef(path->mpDoodadLayer);
+                    fixRef(path->mpTileLayer);
+                    fixRef(path->mpDoodadLayer);
                 }
 
-                for (int iNode = 0; iNode < layer->mNodeCount; iNode++) {
-                    dKPNode_s *node = bindRef(layer->mpNodes[iNode]);
+                // Init nodes
+                for (int iNode = 0; iNode < layer->mNodeNum; iNode++) {
+                    dKPNode_s *node = fixRef(layer->mpNodes[iNode]);
 
-                    for (int i = 0; i < 4; i++)
-                        bindRef(node->mpExits[i]);
+                    for (int i = 0; i < 4; i++) {
+                        fixRef(node->mpExits[i]);
+                    }
 
-                    bindRef(node->mpTileLayer);
-                    bindRef(node->mpDoodadLayer);
+                    fixRef(node->mpTileLayer);
+                    fixRef(node->mpDoodadLayer);
 
                     if (node->mNodeType == dKPNode_s::CHANGE) {
-                        bindRef(node->mpDestMap);
-                        MapReport("Change Node: %x, %s\n", node->mpDestMap, node->mpDestMap);
+                        fixRef(node->mpDestMap);
+                        OSReport("Map Change: %x, %s\n", node->mpDestMap, node->mpDestMap);
                     }
                 }
+                break;
+
+            default:
+                OSReport("WARNING: Detected unknown layer [%d] with type %02d!\n", iLayer, layer->mLayerType);
                 break;
         }
     }
 
-    // Now setup the node models
-    MapReport("Setting up Nodes\n");
+    // Next up, make all of the course node models
+
+    // Count how many we need...
     int count = 0;
-
-    // Count how many we need
-    for (int nodeIdx = 0; nodeIdx < mpPathLayer->mNodeCount; nodeIdx++) {
-        if (mpPathLayer->mpNodes[nodeIdx]->mNodeType == dKPNode_s::LEVEL)
-            count++;
-    }
-
-    mpNodeMdls = new dKPNodeMdl_c[count];
-
-    int modelIdx = 0;
-
-    // Bind them to LEVEL nodes
-    for (int nodeIdx = 0; nodeIdx < mpPathLayer->mNodeCount; nodeIdx++) {
+    for (int nodeIdx = 0; nodeIdx < mpPathLayer->mNodeNum; nodeIdx++) {
         if (mpPathLayer->mpNodes[nodeIdx]->mNodeType == dKPNode_s::LEVEL) {
-            mpPathLayer->mpNodes[nodeIdx]->mpNodeMdl = &mpNodeMdls[modelIdx];
-            modelIdx++;
+            count++;
+        }
+    }
+
+    // Make an array here...
+    mpCourseNodes = new dKPCourseNode_c[count];
+
+    // Now assign them to nodes
+    int courseIdx = 0;
+    for (int nodeIdx = 0; nodeIdx < mpPathLayer->mNodeNum; nodeIdx++) {
+        if (mpPathLayer->mpNodes[nodeIdx]->mNodeType == dKPNode_s::LEVEL) {
+            mpPathLayer->mpNodes[nodeIdx]->mpCourseNode = &mpCourseNodes[courseIdx];
+            courseIdx++;
         }
     }
 }
 
-// HELPER FUNCTIONS
-const dKPWorldDef_s *dKPMapData_c::getWorldDef(int id) const {
-    for (int i = 0; i < mpData->mWorldCount; i++) {
-        if (mpData->mpWorlds[i].key == id)
-            return &mpData->mpWorlds[i];
+bool dKPMapData_c::loadTilesets() {
+    if (mIsTilesetLoaded) {
+        return true;
     }
-    return nullptr;
+
+    if (mpTilesetLoaders == nullptr) {
+        mpTilesetLoaders = new dDvd::loader_c[mpData->mTilesetNum];
+    }
+
+    bool result = true;
+
+    for (int i = 0; i < mpData->mTilesetNum; i++) {
+        char *filename = ((char*)mpData) + (mpData->mpTilesets[i].dummy[3] - 0x10000000);
+        EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
+
+        result &= (mpTilesetLoaders[i].request(filename, 0, heap) != nullptr);
+        OSReport("fn: %s\n", filename);
+    }
+
+    if (result) {
+        mIsTilesetLoaded = true;
+
+        for (int i = 0; i < mpData->mTilesetNum; i++) {
+            mpData->mpTilesets[i].dummy[3] = (((u32)mpTilesetLoaders[i].GetBuffer() & ~0xC0000000) >> 5);
+        }
+    }
+
+    return mIsTilesetLoaded;
 }
 
-dKPPath_s *dKPNode_s::getOppositeExitTo(dKPPath_s *path, bool requirePathOpen) {
-    for (int i = 0; i < 4; i++) {
-        dKPPath_s *check = mpExits[i];
+void dKPMapData_c::freeTilesets() {
+    if (mpTilesetLoaders != nullptr) {
+        bool result = true;
 
-        if (check != nullptr && check != path) {
-            if (requirePathOpen && !check->mPathStatus) {
-                continue;
+        for (int i = 0; i < mpData->mTilesetNum; i++) {
+            result &= mpTilesetLoaders[i].freeResouce();
+            if (result) {
+                OSReport("tileset [%d] was freed!\n", i);
             }
-
-            return check;
         }
+
+        if (!result) {
+            OSReport("failed to free!\n");
+            return;
+        }
+
+        delete[] mpTilesetLoaders;
+        mpTilesetLoaders = nullptr;
     }
-    return nullptr;
 }
 
-int dKPNode_s::getExitCount(bool requirePathOpen) {
-    int exitCount = 0;
 
+/******************************************************************************
+ * HELPER FUNCTIONS
+ ******************************************************************************/
+bool dKPNode_s::chkOpenStatus() {
     for (int i = 0; i < 4; i++) {
-        if ((mpExits[i] != nullptr) && (requirePathOpen ? mpExits[i]->mPathStatus : true)) {
-            exitCount++;
-        }
-    }
-    return exitCount;
-}
-
-bool dKPNode_s::checkOpenStatus() {
-    for (int i = 0; i < 4; i++) {
-        if ((mpExits[i] != nullptr) && (mpExits[i]->mPathStatus)) {
-            return true;
+        if (mpExits[i]) {
+            if (mpExits[i]->mIsOpen) {
+                return true;
+            }
         }
     }
     return false;
 }
 
-void dKPNode_s::setupCourseNode() {
-    int world = mLevelNumber[0];
-    int level = mLevelNumber[1];
+void dKPNode_s::createCourseNode() {
+    int world = mLevelNum[0];
+    int level = mLevelNum[1];
 
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-    int conds = save->getCourseDataFlag(world-1, level-1);
+    u32 conds = save->getCourseDataFlag(world-1, level-1);
 
-    bool isOpen = checkOpenStatus();
+    bool isOpen = this->chkOpenStatus();
     bool exitComplete = false;
     bool secretComplete = false;
 
-    if (conds & dMj2dGame_c::GOAL_NORMAL)
+    if (conds & dMj2dGame_c::GOAL_NORMAL) {
         exitComplete = true;
-    if (conds & dMj2dGame_c::GOAL_SECRET)
+    }
+    if (conds & dMj2dGame_c::GOAL_SECRET) {
         secretComplete = true;
+    }
 
     const char *colour;
 
-    SpammyReport("Level %02d-%02d, isOpen: %d, exits complete: N:%d S:%d", world, level, isOpen, exitComplete, secretComplete);
+    //OSReport("Level %d-%d, isOpen: %d, exitComplete: %d", world, level, isUnlocked, exitComplete);
 
-    // Default: Non-unlocked levels AND completed one-time levels
+    // Default: Locked levels AND completed one-time levels
     colour = "g3d/black.brres";
 
-    // One-time levels
+    // Open one-time levels
     if ((level >= 30) && (level <= 37)) {
-        if (isOpen && !exitComplete)
+        if (isOpen && !exitComplete) {
             colour = "g3d/red.brres";
+        }
     }
 
-    // Shops
+    // Shop houses
     else if (level == 99) {
         colour = "g3d/shop.brres";
     }
 
     else if (isOpen) {
         if (mHasSecretExit) {
-            if (exitComplete && secretComplete)
+            if (exitComplete && secretComplete) {
                 colour = "g3d/blue.brres";
-            else if (exitComplete || secretComplete)
+            } else if (exitComplete || secretComplete) {
                 colour = "g3d/purple.brres";
-            else
+            } else {
                 colour = "g3d/red.brres";
+            }
         } else {
-            if (exitComplete)
+            if (exitComplete) {
                 colour = "g3d/blue.brres";
-            else
+            } else {
                 colour = "g3d/red.brres";
+            }
         }
     }
 
-    mpNodeMdl->mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], nullptr, 0x20);
+    mpCourseNode->mAllocator.createFrmHeap(-1, mHeap::g_gameHeaps[0], 0, 0x20);
 
-    nw4r::g3d::ResFile rf = dResMng_c::m_instance->getRes("cobCourse", colour);
-    mpNodeMdl->mModel.create(rf.GetResMdl("cobCourse"), &mpNodeMdl->mAllocator, 0x224, 1, nullptr);
-    PSMTXIdentity(mpNodeMdl->mMatrix);
-    dGameCom::SetSoftLight_MapObj(mpNodeMdl->mModel, 0);
+    nw4r::g3d::ResFile res(dResMng_c::m_instance->getRes("cobCourse", colour));
+    mpCourseNode->mModel.create(res.GetResMdl("cobCourse"), &mpCourseNode->mAllocator, 0x224, 1, 0);
+    PSMTXIdentity(mpCourseNode->mMatrix);
+    dGameCom::SetSoftLight_MapObj(mpCourseNode->mModel, 0);
 
-    mpNodeMdl->mAllocator.adjustFrmHeap();
+    mpCourseNode->mAllocator.adjustFrmHeap();
+}
+
+dKPPath_s *dKPNode_s::getAcrossPath(dKPPath_s *path, bool requireOpenState) {
+    for (int i = 0; i < 4; i++) {
+        dKPPath_s *check = mpExits[i];
+
+        if ((check != nullptr) && (check != path)) {
+            if (requireOpenState && !check->mIsOpen) {
+                continue;
+            }
+            return check;
+        }
+    }
+    return nullptr;
+}
+
+int dKPNode_s::getExitNum(bool requireOpenState) {
+    int count = 0;
+
+    for (int i = 0; i < 4; i++) {
+        if (mpExits[i] && (requireOpenState ? mpExits[i]->mIsOpen : true)) {
+            count++;
+        }
+    }
+    return count;
 }
 
 void dKPNode_s::setLayerAlpha(u8 alpha) {
-    if (mpTileLayer)
-        mpTileLayer->mLayerAlpha = alpha;
-    if (mpDoodadLayer)
-        mpDoodadLayer->mLayerAlpha = alpha;
+    if (mpTileLayer) {
+        mpTileLayer->mAlpha = alpha;
+    }
+    if (mpDoodadLayer) {
+        mpDoodadLayer->mAlpha = alpha;
+    }
 }
 
 void dKPPath_s::setLayerAlpha(u8 alpha) {
-    if (mpTileLayer)
-        mpTileLayer->mLayerAlpha = alpha;
-    if (mpDoodadLayer)
-        mpDoodadLayer->mLayerAlpha = alpha;
+    if (mpTileLayer) {
+        mpTileLayer->mAlpha = alpha;
+    }
+    if (mpDoodadLayer) {
+        mpDoodadLayer->mAlpha = alpha;
+    }
 }
 
 int dKPLayer_s::findNodeID(dKPNode_s *node) {
-    for (int i = 0; i < mNodeCount; i++) {
+    for (int i = 0; i < mNodeNum; i++) {
         if (mpNodes[i] == node) {
             return i;
         }
     }
-
     return -1;
 }
-
 #endif

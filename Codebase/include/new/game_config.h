@@ -26,11 +26,11 @@
 //#define NEWER_FILE_SELECT
 //#define NEWER_PAUSE_MENU
 //#define NEWER_STAR_COINS_MENU
-#define NEWER_MAP_HUD
+//#define NEWER_MAP_HUD
 
 // See 'koopatlas_config.h'
 //#define KOOPATLAS_ENABLED
 
-//#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
+#define KOOPATLAS_DEV_ENABLED // Temporary, this is used to enable ONLY ported portions of KP
 
 //#define QUICK_RESTART

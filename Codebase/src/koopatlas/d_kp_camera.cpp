@@ -202,7 +202,7 @@ void dKPCamera_c::calcCameras() {
 
 void dKPCamera_c::updateCameras() {
     nw4r::g3d::Camera cam0 = m3d::getCamera(0);
-    //mCamera3D.setG3DCamera(cam0);
+    mCamera3D.setG3DCamera(cam0);
     mScreen.CopyToG3D(cam0);
 
     nw4r::g3d::Camera cam1(m3d::getCamera(1));

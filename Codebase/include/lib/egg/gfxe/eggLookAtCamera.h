@@ -1,13 +1,10 @@
 #pragma once
-
-#include <types.h>
-#include <lib/egg/gfxe/eggFrustum.h>
-#include <nw4r/math.h>
+#include <lib/egg/gfxe/eggBaseCamera.h>
 
 namespace EGG {
 
 /// @unofficial
-class LookAtCamera /*: public BaseCamera*/ {
+class LookAtCamera : public BaseCamera {
 public:
     virtual nw4r::math::MTX34 getViewMatrix();
     virtual nw4r::math::MTX34 getViewMatrix() const;
@@ -16,20 +13,9 @@ public:
     virtual void loadMatrix();
     virtual void loadOldMatrix();
     virtual nw4r::math::VEC3 getPosition();
-    virtual void draw(EGG::LookAtCamera *);
+    virtual void draw(EGG::BaseCamera *);
     virtual void doDraw();
-    virtual Mtx *getViewMatrixOld();
-
-    void setG3DCamera(nw4r::g3d::Camera &);
-
-private:
-    nw4r::math::MTX34 mViewMatrix;
-    nw4r::math::MTX34 mViewMatrixOld;
-
-public:
-    nw4r::math::VEC3 mCamPos;
-    nw4r::math::VEC3 mTarget;
-    nw4r::math::VEC3 mCamUp;
+    virtual nw4r::math::MTX34 *getViewMatrixOld();
 };
 
 } // namespace EGG
