@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_fireball_nipper.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
 

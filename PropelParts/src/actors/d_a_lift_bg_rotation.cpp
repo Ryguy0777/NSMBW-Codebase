@@ -1,13 +1,13 @@
 #include <kamek.h>
 #include <new/bases/d_a_lift_bg_rotation.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_obj_center.hpp>
 #include <game/bases/d_a_obj_center2.hpp>
 
 CUSTOM_ACTOR_PROFILE(AC_LIFT_BG_ROTATION, daLiftBgRotation_c, fProfile::EN_SLIP_PENGUIN, fProfile::DRAW_ORDER::EN_SLIP_PENGUIN);
 
 const dActorData_c c_LIFT_BG_ROTATION_actor_data = {fProfile::AC_LIFT_BG_ROTATION, 8, -8, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
-dCustomProfile_c l_LIFT_BG_ROTATION_profile(&g_profile_AC_LIFT_BG_ROTATION, "AC_LIFT_BG_ROTATION", SpriteId::AC_LIFT_BG_ROTATION, &c_LIFT_BG_ROTATION_actor_data);
+dCustomProfile_c l_LIFT_BG_ROTATION_profile(&g_profile_AC_LIFT_BG_ROTATION, "AC_LIFT_BG_ROTATION", CourseActor::AC_LIFT_BG_ROTATION, &c_LIFT_BG_ROTATION_actor_data);
 
 bool daLiftBgRotation_c::initMovement() {
     mRotationIdx = (mParam >> 24) & 0xFF;

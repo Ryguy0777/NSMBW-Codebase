@@ -1,7 +1,7 @@
 #include <kamek.h>
 #include <new/bases/d_a_spawner.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 
 // To make a new profile id
 // Call one of the 4 profile macros from f_profile.hpp to make the profile itself
@@ -10,15 +10,15 @@ CUSTOM_ACTOR_PROFILE(AC_SPAWNER, daSpawner_c, fProfile::EN_BOYON, fProfile::DRAW
 // If a stage actor is the new actor, create spritedata for it 
 const dActorData_c l_SPAWNER_actor_data = {fProfile::AC_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
 // Make a new object of dCustomProfile_c, the ctor call for it will assign profile data on game boot
-dCustomProfile_c l_SPAWNER_profile(&g_profile_AC_SPAWNER, "AC_SPAWNER", SpriteId::AC_SPAWNER, &l_SPAWNER_actor_data);
+dCustomProfile_c l_SPAWNER_profile(&g_profile_AC_SPAWNER, "AC_SPAWNER", CourseActor::AC_SPAWNER, &l_SPAWNER_actor_data);
 
 // You can even assign multiple profile/sprite ids to the same profile!
 const dActorData_c l_MULTI_SPAWNER_actor_data = {fProfile::AC_MULTI_SPAWNER, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
-dCustomProfile_c l_MULTI_SPAWNER_profile(&g_profile_AC_SPAWNER, "AC_MULTI_SPAWNER", SpriteId::AC_MULTI_SPAWNER, &l_MULTI_SPAWNER_actor_data);
+dCustomProfile_c l_MULTI_SPAWNER_profile(&g_profile_AC_SPAWNER, "AC_MULTI_SPAWNER", CourseActor::AC_MULTI_SPAWNER, &l_MULTI_SPAWNER_actor_data);
 
 // Third actor spawner variant
 const dActorData_c l_SPAWNER_PAIRED_actor_data = {fProfile::AC_SPAWNER_PAIRED, 8, -16, 0, 0, 0x18, 0x18, 0, 0, 0, 0, 0};
-dCustomProfile_c l_SPAWNER_PAIRED_profile(&g_profile_AC_SPAWNER, "AC_SPAWNER_PAIRED", SpriteId::AC_SPAWNER_PAIRED, &l_SPAWNER_PAIRED_actor_data);
+dCustomProfile_c l_SPAWNER_PAIRED_profile(&g_profile_AC_SPAWNER, "AC_SPAWNER_PAIRED", CourseActor::AC_SPAWNER_PAIRED, &l_SPAWNER_PAIRED_actor_data);
 
 int daSpawner_c::execute() {
     u16 eventIDs = (mEventNums[0] << 8) | mEventNums[1];

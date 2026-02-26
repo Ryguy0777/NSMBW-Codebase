@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_heiho_net.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <constants/sound_list.h>
 
@@ -15,7 +15,7 @@ STATE_DEFINE(daEnHeihoNet_c, Attack);
 
 const char* l_HEIHO_NET_res[] = {"heiho_net", NULL};
 const dActorData_c c_HEIHO_NET_actor_data = {fProfile::EN_HEIHO_NET, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_HEIHO_NET_profile(&g_profile_EN_HEIHO_NET, "EN_HEIHO_NET", SpriteId::EN_HEIHO_NET, &c_HEIHO_NET_actor_data, l_HEIHO_NET_res);
+dCustomProfile_c l_HEIHO_NET_profile(&g_profile_EN_HEIHO_NET, "EN_HEIHO_NET", CourseActor::EN_HEIHO_NET, &c_HEIHO_NET_actor_data, l_HEIHO_NET_res);
 
 const float daEnHeihoNet_c::smc_CLIMB_SPEED = 0.5f;
 

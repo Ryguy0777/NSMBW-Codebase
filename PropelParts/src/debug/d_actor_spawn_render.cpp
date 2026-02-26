@@ -5,7 +5,7 @@
 #include <game/bases/d_s_stage.hpp>
 #include <game/bases/d_cd.hpp>
 #include <game/bases/d_actor.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <new/bases/d_debug_config.hpp>
 
 // Drawing helper functions
@@ -117,10 +117,10 @@ void dActorSpawnRender_c::drawXlu() {
 
     for (u32 i = 0; i != mapActorCount; i++) {
         dActorData_c *mapActorInfo;
-        if (data->mMapActorID < SPRITE_COUNT) {
+        if (data->mMapActorID < COURSE_ACTOR_COUNT) {
             mapActorInfo = dActorData_c::getMapActorInfo(data->mMapActorID);
         } else {
-            mapActorInfo = &l_custom_actor_data_tbl[data->mMapActorID - SPRITE_COUNT];
+            mapActorInfo = &l_custom_actor_data_tbl[data->mMapActorID - COURSE_ACTOR_COUNT];
         }
 
         if (mapActorInfo->mFlags & ACTOR_CREATE_GLOBAL) {

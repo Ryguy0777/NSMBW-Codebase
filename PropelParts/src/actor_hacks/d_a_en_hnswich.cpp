@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <game/bases/d_a_en_hnswich.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_info.hpp>
 #include <game/snd/snd_scene_manager.hpp>
 #include <new/bases/d_msgbox_window.hpp>
@@ -15,7 +15,7 @@ extern "C" void *daEnHnswich_c_classinit();
 fProfile::fActorProfile_c g_profile_EN_PALACE_SWITCH = { &daEnHnswich_c_classinit, fProfile::EN_BOSS_KOOPA_BIG_SWITCH, fProfile::DRAW_ORDER::EN_BOSS_KOOPA_BIG_SWITCH, 0x4 };
 const char* l_PALACE_SWITCH_res [] = {"switch_palace", NULL};
 const dActorData_c c_PALACE_SWITCH_actor_data = {fProfile::EN_PALACE_SWITCH, 8, -16, 0, 0, 8, 8, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
-dCustomProfile_c l_PALACE_SWITCH_profile(&g_profile_EN_PALACE_SWITCH, "EN_PALACE_SWITCH", SpriteId::EN_PALACE_SWITCH, &c_PALACE_SWITCH_actor_data, l_PALACE_SWITCH_res);
+dCustomProfile_c l_PALACE_SWITCH_profile(&g_profile_EN_PALACE_SWITCH, "EN_PALACE_SWITCH", CourseActor::EN_PALACE_SWITCH, &c_PALACE_SWITCH_actor_data, l_PALACE_SWITCH_res);
 
 #if GAME_REVISION < GAME_REVISION_K
 #define PALACE_SWITCH_ID 787

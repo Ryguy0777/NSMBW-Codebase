@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_large_kabochan.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_base.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_effect.hpp>
@@ -9,7 +9,7 @@ CUSTOM_ACTOR_PROFILE(EN_LARGE_KABOCHAN, daEnLargeKabochan_c, fProfile::EN_LARGE_
 
 const char* l_LARGE_KABOCHAN_res [] = {"kabochan", NULL};
 const dActorData_c c_LARGE_KABOCHAN_actor_data = {fProfile::EN_LARGE_KABOCHAN, 8, -16, 0, 20, 20, 20, 0, 0, 0, 0, 0};
-dCustomProfile_c l_LARGE_KABOCHAN_profile(&g_profile_EN_LARGE_KABOCHAN, "EN_LARGE_KABOCHAN", SpriteId::EN_LARGE_KABOCHAN, &c_LARGE_KABOCHAN_actor_data, l_LARGE_KABOCHAN_res);
+dCustomProfile_c l_LARGE_KABOCHAN_profile(&g_profile_EN_LARGE_KABOCHAN, "EN_LARGE_KABOCHAN", CourseActor::EN_LARGE_KABOCHAN, &c_LARGE_KABOCHAN_actor_data, l_LARGE_KABOCHAN_res);
 
 const float daEnLargeKabochan_c::smc_WALK_SPEED = 0.5f;
 const float daEnLargeKabochan_c::smc_WALK_SPEED_CRACK = 0.75f;

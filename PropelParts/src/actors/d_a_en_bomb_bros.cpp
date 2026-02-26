@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_bomb_bros.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_bg_parameter.hpp>
 
@@ -8,7 +8,7 @@ CUSTOM_ACTOR_PROFILE(EN_BOMBBROS, daEnBombBros_c, fProfile::EN_HAMMERBROS, fProf
 
 const char* l_BOMBBROS_res [] = {"bros_bombhei", "bros", NULL};
 const dActorData_c c_BOMBROS_actor_data = {fProfile::EN_BOMBBROS, 8, -16, 0, 16, 8, 16, 0, 0, 0, 0, 0};
-dCustomProfile_c l_BOMBBROS_profile(&g_profile_EN_BOMBBROS, "EN_BOMBBROS", SpriteId::EN_BOMBBROS, &c_BOMBROS_actor_data, l_BOMBBROS_res);
+dCustomProfile_c l_BOMBBROS_profile(&g_profile_EN_BOMBBROS, "EN_BOMBBROS", CourseActor::EN_BOMBBROS, &c_BOMBROS_actor_data, l_BOMBBROS_res);
 
 daEnBombBros_c::daEnBombBros_c() : daEnBrosBase_c() {
     mNodeCallback.mpOwner = this;

@@ -1,14 +1,12 @@
 #include <kamek.h>
-#include <new/new_profile.hpp>
-
-//#define DEBUG_PROFILE_CALL
+#include <new/bases/d_custom_profile.hpp>
 
 // Sprites
 
-dActorData_c l_custom_actor_data_tbl[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
+dActorData_c l_custom_actor_data_tbl[CourseActor::TOTAL_COURSE_ACTOR_COUNT - COURSE_ACTOR_COUNT];
 
-extern const char** l_actor_file_tbl[SPRITE_COUNT];
-const char** l_custom_actor_file_tbl[SpriteId::TOTAL_SPRITE_COUNT - SPRITE_COUNT];
+extern const char** l_actor_file_tbl[COURSE_ACTOR_COUNT];
+const char** l_custom_actor_file_tbl[CourseActor::TOTAL_COURSE_ACTOR_COUNT - COURSE_ACTOR_COUNT];
 
 // Profiles
 
@@ -21,7 +19,7 @@ const char* custom_s_table[fProfile::TOTAL_ACTOR_COUNT - fProfile::PROFILE_COUNT
 // Custom profile ctors
 
 // Stage actor with sprite
-dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, SpriteName spriteId, const dActorData_c *dActorData_c, const char** files) {
+dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const char* name, CourseActorName courseActorId, const dActorData_c *dActorData_c, const char** files) {
     // Store profile in the class
     mProfile.mpClassInit = profile->mpClassInit;
     mProfile.mExecuteOrder = profile->mExecuteOrder;
@@ -30,12 +28,12 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fActorProfile_c *profile, const cha
 
     // Store sprite data
     ProfileName profileId = dActorData_c->mProfileName;
-    if (spriteId < SPRITE_COUNT) {
-        dActorData_c::l_actor_data_tbl[spriteId] = *dActorData_c;
-        l_actor_file_tbl[spriteId] = files;
+    if (courseActorId < COURSE_ACTOR_COUNT) {
+        dActorData_c::l_actor_data_tbl[courseActorId] = *dActorData_c;
+        l_actor_file_tbl[courseActorId] = files;
     } else {
-        l_custom_actor_data_tbl[spriteId - SPRITE_COUNT] = *dActorData_c;
-        l_custom_actor_file_tbl[spriteId - SPRITE_COUNT] = files;
+        l_custom_actor_data_tbl[courseActorId - COURSE_ACTOR_COUNT] = *dActorData_c;
+        l_custom_actor_file_tbl[courseActorId - COURSE_ACTOR_COUNT] = files;
     }
 
     // Store profile data
@@ -84,15 +82,15 @@ dCustomProfile_c::dCustomProfile_c(fProfile::fBaseProfile_c *profile, const char
 }
 
 // Sprite only
-dCustomProfile_c::dCustomProfile_c(SpriteName spriteId, const dActorData_c *dActorData_c, const char** files) {
+dCustomProfile_c::dCustomProfile_c(CourseActorName courseActorId, const dActorData_c *dActorData_c, const char** files) {
     // Store sprite data
     ProfileName profileId = dActorData_c->mProfileName;
-    if (spriteId < SPRITE_COUNT) {
-        dActorData_c::l_actor_data_tbl[spriteId] = *dActorData_c;
-        l_actor_file_tbl[spriteId] = files;
+    if (courseActorId < COURSE_ACTOR_COUNT) {
+        dActorData_c::l_actor_data_tbl[courseActorId] = *dActorData_c;
+        l_actor_file_tbl[courseActorId] = files;
     } else {
-        l_custom_actor_data_tbl[spriteId - SPRITE_COUNT] = *dActorData_c;
-        l_custom_actor_file_tbl[spriteId - SPRITE_COUNT] = files;
+        l_custom_actor_data_tbl[courseActorId - COURSE_ACTOR_COUNT] = *dActorData_c;
+        l_custom_actor_file_tbl[courseActorId - COURSE_ACTOR_COUNT] = files;
     }
 }
 
@@ -116,11 +114,11 @@ kmCallDefAsm(0x80068440) {
     mr r4, r30
 
     // Check if original sprite (using cr7 because cr0 is in use)
-    cmpwi cr7, r0, SPRITE_COUNT*0x28
+    cmpwi cr7, r0, COURSE_ACTOR_COUNT*0x28
     blt+ cr7, notCustom
 
     // Subtract using sub rather than subi because r0
-    li r12, SPRITE_COUNT*0x28
+    li r12, COURSE_ACTOR_COUNT*0x28
     sub r0, r0, r12
 
     // Override table address
@@ -135,11 +133,11 @@ kmCallDefAsm(0x80068440) {
 
 kmCallDefAsm(0x80068E18) {
     // Check if original sprite
-    cmpwi r0, SPRITE_COUNT*0x28
+    cmpwi r0, COURSE_ACTOR_COUNT*0x28
     blt+ notCustom
 
     // Subtract using sub rather than subi because r0
-    li r12, SPRITE_COUNT*0x28
+    li r12, COURSE_ACTOR_COUNT*0x28
     sub r0, r0, r12
 
     // Override table address
@@ -154,11 +152,11 @@ kmCallDefAsm(0x80068E18) {
 
 kmCallDefAsm(0x80068F50) {
     // Check if original sprite
-    cmpwi r0, SPRITE_COUNT*0x28;
+    cmpwi r0, COURSE_ACTOR_COUNT*0x28;
     blt+ notCustom
 
     // Subtract using sub rather than subi because r0
-    li r12, SPRITE_COUNT*0x28
+    li r12, COURSE_ACTOR_COUNT*0x28
     sub r0, r0, r12
 
     // Override table address
@@ -173,11 +171,11 @@ kmCallDefAsm(0x80068F50) {
 
 kmCallDefAsm(0x807FC8D8) {
     // Check if original sprite
-    cmpwi r0, SPRITE_COUNT*0x28;
+    cmpwi r0, COURSE_ACTOR_COUNT*0x28;
     blt+ notCustom
 
     // Subtract using sub rather than subi because r0
-    li r12, SPRITE_COUNT*0x28
+    li r12, COURSE_ACTOR_COUNT*0x28
     sub r0, r0, r12
 
     // Override table address
@@ -192,11 +190,11 @@ kmCallDefAsm(0x807FC8D8) {
 
 kmCallDefAsm(0x8006894C) {
     // Check if original sprite (using cr7 because cr0 is in use)
-    cmpwi cr7, r4, SPRITE_COUNT*0x28;
+    cmpwi cr7, r4, COURSE_ACTOR_COUNT*0x28;
     blt+ cr7, notCustom
 
     // Subtract
-    subi r4, r4, SPRITE_COUNT*0x28
+    subi r4, r4, COURSE_ACTOR_COUNT*0x28
 
     // Override table address
     lis r0, l_custom_actor_data_tbl@h
@@ -276,11 +274,11 @@ kmCallDefAsm(0x8091FD3C) {
     mr r21, r25
 
     // Check if original sprite
-    cmpwi r0, SPRITE_COUNT*4;
+    cmpwi r0, COURSE_ACTOR_COUNT*4;
     blt+ notCustom
 
     // Subtract using sub rather than subi because r0
-    li r12, SPRITE_COUNT*4
+    li r12, COURSE_ACTOR_COUNT*4
     sub r0, r0, r12
 
     // Override table address

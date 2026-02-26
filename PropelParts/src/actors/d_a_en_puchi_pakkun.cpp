@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_puchi_pakkun.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_audio.hpp>
 #include <game/bases/d_s_stage.hpp>
 #include <game/bases/d_a_player_manager.hpp>
@@ -19,7 +19,7 @@ STATE_DEFINE(daEnPuchiPakkun_c, IceWait);
 
 const char* l_PUCHI_PAKKUN_res[] = {"pakkun_puchi", NULL};
 const dActorData_c c_PUCHI_PAKKUN_actor_data = {fProfile::EN_PUCHI_PAKKUN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_PUCHI_PAKKUN_profile(&g_profile_EN_PUCHI_PAKKUN, "EN_PUCHI_PAKKUN", SpriteId::EN_PUCHI_PAKKUN, &c_PUCHI_PAKKUN_actor_data, l_PUCHI_PAKKUN_res);
+dCustomProfile_c l_PUCHI_PAKKUN_profile(&g_profile_EN_PUCHI_PAKKUN, "EN_PUCHI_PAKKUN", CourseActor::EN_PUCHI_PAKKUN, &c_PUCHI_PAKKUN_actor_data, l_PUCHI_PAKKUN_res);
 
 const s16 l_nipper_angleY[] = { 0x4000, -0x4000 };
 const s16 l_nipper_turn_angleY[] = { 0x3999, -0x3999 };

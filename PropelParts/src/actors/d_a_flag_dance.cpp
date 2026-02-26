@@ -1,13 +1,13 @@
 #include <kamek.h>
 #include <new/bases/d_a_flag_dance.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 #include <game/bases/d_audio.hpp>
 
 CUSTOM_ACTOR_PROFILE(AC_FLAG_DANCE, daFlagDance_c, fProfile::AC_FLAGON, fProfile::DRAW_ORDER::AC_FLAGON, 0);
 
 const dActorData_c c_FLAG_DANCE_actor_data = {fProfile::AC_FLAG_DANCE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
-dCustomProfile_c l_FLAG_DANCE_profile(&g_profile_AC_FLAG_DANCE, "AC_FLAG_DANCE", SpriteId::AC_FLAG_DANCE, &c_FLAG_DANCE_actor_data);
+dCustomProfile_c l_FLAG_DANCE_profile(&g_profile_AC_FLAG_DANCE, "AC_FLAG_DANCE", CourseActor::AC_FLAG_DANCE, &c_FLAG_DANCE_actor_data);
 
 int daFlagDance_c::create() {
     mDanceType = mParam & 0xF;

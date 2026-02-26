@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_kuribon.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player.hpp>
 #include <game/bases/d_a_yoshi.hpp>
 #include <game/bases/d_audio.hpp>
@@ -17,7 +17,7 @@ STATE_DEFINE(daEnKuribon_c, Recover);
 
 const char* l_KURIBON_res[] = {"kuribon", NULL};
 const dActorData_c c_KURIBON_actor_data = {fProfile::EN_KURIBON, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KURIBON_profile(&g_profile_EN_KURIBON, "EN_KURIBON", SpriteId::EN_KURIBON, &c_KURIBON_actor_data, l_KURIBON_res);
+dCustomProfile_c l_KURIBON_profile(&g_profile_EN_KURIBON, "EN_KURIBON", CourseActor::EN_KURIBON, &c_KURIBON_actor_data, l_KURIBON_res);
 
 const float daEnKuribon_c::smc_WALK_SPEED = 0.5f;
 const float daEnKuribon_c::smc_THROW_SPEED_X = 4.0f;

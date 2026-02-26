@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_effect_spawner.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 #include <game/bases/d_audio.hpp>
 #include <game/mLib/m_effect.hpp>
@@ -8,7 +8,7 @@
 CUSTOM_ACTOR_PROFILE(AC_EFFECT_SPAWNER, daEffectSpawner_c, fProfile::LIFT_TORIDE_ROLL, fProfile::DRAW_ORDER::LIFT_TORIDE_ROLL, 0);
 
 const dActorData_c c_EFFECT_SPAWNER_actor_data = {fProfile::AC_EFFECT_SPAWNER, 8, -16, 0, 0, 24, 24, 0, 0, 0, 0, 0};
-dCustomProfile_c l_EFFECT_SPAWNER_profile(&g_profile_AC_EFFECT_SPAWNER, "AC_EFFECT_SPAWNER", SpriteId::AC_EFFECT_SPAWNER, &c_EFFECT_SPAWNER_actor_data);
+dCustomProfile_c l_EFFECT_SPAWNER_profile(&g_profile_AC_EFFECT_SPAWNER, "AC_EFFECT_SPAWNER", CourseActor::AC_EFFECT_SPAWNER, &c_EFFECT_SPAWNER_actor_data);
 
 int daEffectSpawner_c::create() {
     mPlayEffect = (mParam >> 16) & 1;

@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_heiho_balloon.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_a_player_manager.hpp>
@@ -12,7 +12,7 @@ STATE_DEFINE(daEnHeihoBalloon_c, BalloonFall);
 
 const char* l_HEIHO_BALLOON_res[] = {"heiho", "obj_balloon", NULL};
 const dActorData_c c_HEIHO_BALLOON_actor_data = {fProfile::EN_HEIHO_BALLOON, 8, -16, 0, 8, 16, 16, 0, 16, 0, 0, 0};
-dCustomProfile_c l_HEIHO_BALLOON_profile(&g_profile_EN_HEIHO_BALLOON, "EN_HEIHO_BALLOON", SpriteId::EN_HEIHO_BALLOON, &c_HEIHO_BALLOON_actor_data, l_HEIHO_BALLOON_res);
+dCustomProfile_c l_HEIHO_BALLOON_profile(&g_profile_EN_HEIHO_BALLOON, "EN_HEIHO_BALLOON", CourseActor::EN_HEIHO_BALLOON, &c_HEIHO_BALLOON_actor_data, l_HEIHO_BALLOON_res);
 
 int daEnHeihoBalloon_c::create() {
     mIsFloating = true;

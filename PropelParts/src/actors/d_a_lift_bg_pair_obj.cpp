@@ -1,12 +1,12 @@
 #include <kamek.h>
 #include <new/bases/d_a_lift_bg_pair_obj.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_en_pair_obj_parent.hpp>
 
 CUSTOM_ACTOR_PROFILE(AC_LIFT_BG_PAIR_OBJ, daLiftBgPairObj_c, fProfile::EN_PAIR_OBJ_CHILD, fProfile::DRAW_ORDER::EN_PAIR_OBJ_CHILD);
 
 const dActorData_c c_LIFT_BG_PAIR_OBJ_actor_data = {fProfile::AC_LIFT_BG_PAIR_OBJ, 8, -8, 0, 0, 0, 0, 0, 0, 0, 0, ACTOR_CREATE_GLOBAL};
-dCustomProfile_c l_LIFT_BG_PAIR_OBJ_profile(&g_profile_AC_LIFT_BG_PAIR_OBJ, "AC_LIFT_BG_PAIR_OBJ", SpriteId::AC_LIFT_BG_PAIR_OBJ, &c_LIFT_BG_PAIR_OBJ_actor_data);
+dCustomProfile_c l_LIFT_BG_PAIR_OBJ_profile(&g_profile_AC_LIFT_BG_PAIR_OBJ, "AC_LIFT_BG_PAIR_OBJ", CourseActor::AC_LIFT_BG_PAIR_OBJ, &c_LIFT_BG_PAIR_OBJ_actor_data);
 
 bool daLiftBgPairObj_c::initMovement() {
     mPairObjIdx = (mParam >> 24) & 0xFF;

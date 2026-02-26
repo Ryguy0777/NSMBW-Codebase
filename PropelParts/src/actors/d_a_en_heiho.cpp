@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_heiho.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_base.hpp>
 #include <game/bases/d_audio.hpp>
 #include <constants/sound_list.h>
@@ -16,7 +16,7 @@ STATE_DEFINE(daEnHeiho_c, Idle);
 
 const char* l_HEIHO_res[] = {"heiho", NULL};
 const dActorData_c c_HEIHO_actor_data = {fProfile::EN_HEIHO, 8, -16, 0, 12, 8, 12, 0, 0, 0, 0, 0};
-dCustomProfile_c l_HEIHO_profile(&g_profile_EN_HEIHO, "EN_HEIHO", SpriteId::EN_HEIHO, &c_HEIHO_actor_data, l_HEIHO_res);
+dCustomProfile_c l_HEIHO_profile(&g_profile_EN_HEIHO, "EN_HEIHO", CourseActor::EN_HEIHO, &c_HEIHO_actor_data, l_HEIHO_res);
 
 const float daEnHeiho_c::smc_WALK_SPEED = 0.6f;
 

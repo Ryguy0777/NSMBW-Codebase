@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_block_message.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <new/bases/d_msgbox_window.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_MESSAGE, daEnBlockMessage_c, fProfile::EN_BLOCK, fProfile::DRAW_ORDER::EN_BLOCK, 0);
@@ -8,7 +8,7 @@ CUSTOM_ACTOR_PROFILE(EN_BLOCK_MESSAGE, daEnBlockMessage_c, fProfile::EN_BLOCK, f
 STATE_DEFINE(daEnBlockMessage_c, Wait);
 
 const dActorData_c c_BLOCK_MESSAGE_actor_data = {fProfile::EN_BLOCK_MESSAGE, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
-dCustomProfile_c l_BLOCK_MESSAGE_profile(&g_profile_EN_BLOCK_MESSAGE, "EN_BLOCK_MESSAGE", SpriteId::EN_BLOCK_MESSAGE, &c_BLOCK_MESSAGE_actor_data);
+dCustomProfile_c l_BLOCK_MESSAGE_profile(&g_profile_EN_BLOCK_MESSAGE, "EN_BLOCK_MESSAGE", CourseActor::EN_BLOCK_MESSAGE, &c_BLOCK_MESSAGE_actor_data);
 
 sBgSetInfo l_msgblock_bgc_info = {
     mVec2_c(-8, 8),

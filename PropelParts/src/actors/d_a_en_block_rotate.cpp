@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_block_rotate.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_a_player_base.hpp>
 #include <constants/sound_list.h>
@@ -15,7 +15,7 @@ STATE_DEFINE(daEnBlockRotate_c, Flipping);
 
 const char* l_BLOCK_ROTATE_res[] = {"block_rotate", NULL};
 const dActorData_c c_BLOCK_ROTATE_actor_data = {fProfile::EN_BLOCK_ROTATE, 8, -16, 8, 0, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
-dCustomProfile_c l_BLOCK_ROTATE_profile(&g_profile_EN_BLOCK_ROTATE, "EN_BLOCK_ROTATE", SpriteId::EN_BLOCK_ROTATE, &c_BLOCK_ROTATE_actor_data, l_BLOCK_ROTATE_res);
+dCustomProfile_c l_BLOCK_ROTATE_profile(&g_profile_EN_BLOCK_ROTATE, "EN_BLOCK_ROTATE", CourseActor::EN_BLOCK_ROTATE, &c_BLOCK_ROTATE_actor_data, l_BLOCK_ROTATE_res);
 
 sBgSetInfo l_flipblock_bgc_info = {
     mVec2_c(-8, 16),

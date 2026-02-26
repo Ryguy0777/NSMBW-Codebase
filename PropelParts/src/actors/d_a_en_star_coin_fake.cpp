@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_star_coin_fake.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_coin.hpp>
 #include <game/mLib/m_effect.hpp>
@@ -11,7 +11,7 @@ CUSTOM_ACTOR_PROFILE(EN_STAR_COIN_FAKE, daEnStarCoinFake_c, fProfile::EN_STAR_CO
 
 const char* l_STAR_COIN_FAKE_res[] = {"star_coin", NULL};
 const dActorData_c c_STAR_COIN_FAKE_actor_data = {fProfile::EN_STAR_COIN_FAKE, 0, 0, 0, 0, 32, 32, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
-dCustomProfile_c l_STAR_COIN_FAKE_profile(&g_profile_EN_STAR_COIN_FAKE, "EN_STAR_COIN_FAKE", SpriteId::EN_STAR_COIN_FAKE, &c_STAR_COIN_FAKE_actor_data, l_STAR_COIN_FAKE_res);
+dCustomProfile_c l_STAR_COIN_FAKE_profile(&g_profile_EN_STAR_COIN_FAKE, "EN_STAR_COIN_FAKE", CourseActor::EN_STAR_COIN_FAKE, &c_STAR_COIN_FAKE_actor_data, l_STAR_COIN_FAKE_res);
 
 const sCcDatNewF l_fakeStarCoin_cc = {
     {0.0f, -3.0f},

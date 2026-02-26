@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_kabo_kuribo.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_base.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <constants/sound_list.h>
@@ -11,7 +11,7 @@ CUSTOM_ACTOR_PROFILE(EN_KABOKURIBO, daEnKaboKuribo_c, fProfile::EN_KURIBO, fProf
 
 const char* l_KABOKURIBO_res [] = {"kabokuribo", NULL};
 const dActorData_c c_KABOKURIBO_actor_data = {fProfile::EN_KABOKURIBO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KABOKURIBO_profile(&g_profile_EN_KABOKURIBO, "EN_KABOKURIBO", SpriteId::EN_KABOKURIBO, &c_KABOKURIBO_actor_data, l_KABOKURIBO_res);
+dCustomProfile_c l_KABOKURIBO_profile(&g_profile_EN_KABOKURIBO, "EN_KABOKURIBO", CourseActor::EN_KABOKURIBO, &c_KABOKURIBO_actor_data, l_KABOKURIBO_res);
 
 void daEnKaboKuribo_c::Normal_VsPlHitCheck(dCc_c *self, dCc_c *other) {
     dActor_c *player = other->mpOwner;

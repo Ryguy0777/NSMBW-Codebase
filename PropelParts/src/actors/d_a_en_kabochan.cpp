@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_kabochan.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_base.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_effect.hpp>
@@ -9,7 +9,7 @@ CUSTOM_ACTOR_PROFILE(EN_KABOCHAN, daEnKabochan_c, fProfile::EN_KURIBO, fProfile:
 
 const char* l_KABOCHAN_res [] = {"kabochan", NULL};
 const dActorData_c c_KABOCHAN_actor_data = {fProfile::EN_KABOCHAN, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KABOCHAN_profile(&g_profile_EN_KABOCHAN, "EN_KABOCHAN", SpriteId::EN_KABOCHAN, &c_KABOCHAN_actor_data, l_KABOCHAN_res);
+dCustomProfile_c l_KABOCHAN_profile(&g_profile_EN_KABOCHAN, "EN_KABOCHAN", CourseActor::EN_KABOCHAN, &c_KABOCHAN_actor_data, l_KABOCHAN_res);
 
 bool daEnKabochan_c::hitCallback_HipAttk(dCc_c *self, dCc_c *other) {
     daPlBase_c *player = (daPlBase_c *)other->mpOwner;

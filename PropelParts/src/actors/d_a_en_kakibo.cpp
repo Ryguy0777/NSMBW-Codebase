@@ -1,12 +1,12 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_kakibo.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_KAKIBO, daEnKakibo_c, fProfile::EN_KURIBO, fProfile::DRAW_ORDER::EN_KURIBO, 0x12);
 
 const char* l_KAKIBO_res [] = {"kakibo", NULL};
 const dActorData_c c_KAKIBO_actor_data = {fProfile::EN_KAKIBO, 8, -16, 0, 8, 8, 8, 0, 0, 0, 0, 0};
-dCustomProfile_c l_KAKIBO_profile(&g_profile_EN_KAKIBO, "EN_KAKIBO", SpriteId::EN_KAKIBO, &c_KAKIBO_actor_data, l_KAKIBO_res);
+dCustomProfile_c l_KAKIBO_profile(&g_profile_EN_KAKIBO, "EN_KAKIBO", CourseActor::EN_KAKIBO, &c_KAKIBO_actor_data, l_KAKIBO_res);
 
 void daEnKakibo_c::executeState_Walk() {
     // Update model & do speed calculations

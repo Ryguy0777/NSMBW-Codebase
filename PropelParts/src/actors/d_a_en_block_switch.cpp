@@ -1,6 +1,6 @@
 #include <kamek.h>
 #include <new/bases/d_a_en_block_switch.hpp>
-#include <new/new_profile.hpp>
+#include <new/bases/d_custom_profile.hpp>
 #include <game/bases/d_info.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_SWITCH, daEnBlockSwitch_c, fProfile::EN_BLOCK, fProfile::DRAW_ORDER::EN_BLOCK, 0);
@@ -10,7 +10,7 @@ STATE_DEFINE(daEnBlockSwitch_c, HitWait);
 STATE_DEFINE(daEnBlockSwitch_c, Dotted);
 
 const dActorData_c c_BLOCK_SWITCH_actor_data = {fProfile::EN_BLOCK_SWITCH, 8, -8, 8, -8, 16, 16, 0, 0, 0, 0, ACTOR_CREATE_MAPOBJ};
-dCustomProfile_c l_BLOCK_SWITCH_profile(&g_profile_EN_BLOCK_SWITCH, "EN_BLOCK_SWITCH", SpriteId::EN_BLOCK_SWITCH, &c_BLOCK_SWITCH_actor_data);
+dCustomProfile_c l_BLOCK_SWITCH_profile(&g_profile_EN_BLOCK_SWITCH, "EN_BLOCK_SWITCH", CourseActor::EN_BLOCK_SWITCH, &c_BLOCK_SWITCH_actor_data);
 
 sBgSetInfo l_switchblock_bgc_info = {
     mVec2_c(-8, 8),
