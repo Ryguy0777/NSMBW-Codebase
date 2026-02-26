@@ -1,3 +1,9 @@
+startSound__10daPlBase_cFUlb=0x80057e70
+DWORD_ARRAY_802f5108=0x802f5108
+getPowerChangeSpeedData__10daPlBase_cFR21sPowerChangeSpeedData=0x8004bf80
+
+FLOAT_ARRAY_802eedc0=0x802eedc0
+
 StateID_Vanish__19daEnPairObjParent_c=0x80b19a88
 
 stopBgm__11SndSceneMgrFUi=0x8019be60

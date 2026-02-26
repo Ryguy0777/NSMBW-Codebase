@@ -132,6 +132,8 @@ public:
 
     void checkBombBreak(mVec2_c, mVec2_c);
 
+    bool getSakaUpDown(u8 direction);
+
     dActor_c *mpOwner;
     sBcSensorBase *mpSensorFoot;
     sBcSensorBase *mpSensorHead;

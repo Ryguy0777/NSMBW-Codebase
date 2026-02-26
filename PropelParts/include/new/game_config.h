@@ -21,3 +21,5 @@
 //#define NEWER_FILE_SELECT
 
 //#define QUICK_RESTART
+
+//#define LUIGI_PHYSICS

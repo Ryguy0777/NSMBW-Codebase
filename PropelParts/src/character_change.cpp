@@ -5,6 +5,7 @@
 // originally from: https://github.com/mkwcat/gecko-codes/blob/master/source/nsmbw/Player-1-Can-Change-Character.cpp
 
 #include <kamek.h>
+#include <types.h>
 #include <constants/sound_list.h>
 
 extern int DWORD_8093CDF0;
