@@ -171,7 +171,6 @@ static int s_jumpAnmID[4] = {-1, -1, -1, -1};
 static float s_jumpAnmRate[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
 kmBranchDefCpp(0x80128120, 0x8012812c, void, dAcPy_c *_this) {
-    OSReport("%x\n", offsetof(dAcPy_c, mSubstate)); // 14A4
     _this->mSubstate = 0;
     s_jumpAnmID[_this->mPlayerNo] = -1;
     s_jumpAnmRate[_this->mPlayerNo] = 0.5;
@@ -192,7 +191,6 @@ extern "C" {
 extern int DWORD_ARRAY_802f5108[3];
 
 int dAcPy_c__getJump2AnimID(dAcPy_c *_this) {
-    OSReport("%x\n", offsetof(dAcPy_c, mJumpCounter)); // 1564
     if (_this->isStatus(daPlBase_c::STATUS_KANI_JUMP)) {
         return 68;
     }
