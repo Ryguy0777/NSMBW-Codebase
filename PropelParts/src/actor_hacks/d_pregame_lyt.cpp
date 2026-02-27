@@ -122,14 +122,13 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *this_) {
     ulong category = BMG_CATEGORY_LEVEL_NAMES + dInfo_c::m_startGameInfo.mWorld1+1;
     ulong id = dInfo_c::m_startGameInfo.mLevel1+1;
     
-    if (msgRes->getMsgEntry(category, id) == nullptr) {
-        // The bmg entry for the level name doesn't exist, go to the fallback
-        category = BMG_CATEGORY_LEVEL_NAMES;
-        id = 0;
+    if (msgRes->getMsgEntry(category, id)) {
+        LevelNameShadow->setMessage(msgRes, category, id, 0);
+        LevelName->setMessage(msgRes, category, id, 0);
+    } else {
+        LevelNameShadow->SetString(L"NO LEVEL NAME", 0);
+        LevelName->SetString(L"NO LEVEL NAME", 0);
     }
-
-    LevelNameShadow->setMessage(msgRes, category, id, 0);
-    LevelName->setMessage(msgRes, category, id, 0);
 
     ulong number = pregameGetLevelNumberID(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1);
 

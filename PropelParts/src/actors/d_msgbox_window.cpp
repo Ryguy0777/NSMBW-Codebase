@@ -174,9 +174,19 @@ void dMsgBoxWindow_c::showMessage(unsigned long id, bool canCancel, int delay, b
 
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 
-    mpTextBoxes[T_title_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TITLE, id, 0);
-    mpTextBoxes[T_msg_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
-    mpTextBoxes[T_msgS_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
+    if (msgRes->getMsgEntry(BMG_CATEGORY_MESSAGE_BOX_TITLE, id)) {
+        mpTextBoxes[T_title_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TITLE, id, 0);
+    } else {
+        mpTextBoxes[T_title_00]->SetString(L"MISSING TITLE ENTRY", 0);
+    }
+
+    if (msgRes->getMsgEntry(BMG_CATEGORY_MESSAGE_BOX_TEXT, id)) {
+        mpTextBoxes[T_msg_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
+        mpTextBoxes[T_msgS_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TEXT, id, 0);
+    } else {
+        mpTextBoxes[T_msg_00]->SetString(L"MISSING TEXT ENTRY", 0);
+        mpTextBoxes[T_msgS_00]->SetString(L"MISSING TEXT ENTRY", 0);
+    }
 
     mpPicturePanes[P_button_00]->SetVisible(mCanCancel);
 
