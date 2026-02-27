@@ -132,39 +132,39 @@ kmCall(0x80135290, daPlBase_c__slipPowerSet_0); // Originally daPlBase_c::normal
 kmCall(0x8004ba98, daPlBase_c__slipPowerSet_1); // Originally daPlBase_c::slipPowerSet(1)
 kmCall(0x8004baa8, daPlBase_c__slipPowerSet_0); // Originally daPlBase_c::slipPowerSet(0)
 
-kmWrite32(0x802ef118, 0x3D23D70A); // 0.04f
-kmWrite32(0x802ef208, 0x3D23D70A); // ^^^
+kmWriteFloat(0x802ef118, 0.04f);
+kmWriteFloat(0x802ef208, 0.04f);
 
-kmWrite32(0x802f591c, 0x3FCCCCCD); // 1.6f
-kmWrite32(0x802f5920, 0x3F800000); // 1.0f
-kmWrite32(0x802f5924, 0x3E800000); // 0.25f
-kmWrite32(0x802f5928, 0xBE3851EC); // -0.18f
-kmWrite32(0x802f5930, 0xBE3851EC); // ^^^
-kmWrite32(0x802f5934, 0xBE800000); // -0.25f
-kmWrite32(0x802f5950, 0xBE99999A); // -0.3f
-kmWrite32(0x802f5954, 0xBCF5C28F); // -0.03f
-kmWrite32(0x802f5958, 0xBE800000); // -0.25f
-kmWrite32(0x802f5964, 0x40000000); // 2.0f
-kmWrite32(0x802f5968, 0x3F99999A); // 1.2f
-kmWrite32(0x802f5990, 0xBD0F5C29); // -0.035f
-kmWrite32(0x802f5994, 0xBD4CCCCD); // -0.05f
-kmWrite32(0x802f5998, 0xBD99999A); // -0.075f
+kmWriteFloat(0x802f591c, 1.6f);
+kmWriteFloat(0x802f5920, 1.0f);
+kmWriteFloat(0x802f5924, 0.25f);
+kmWriteFloat(0x802f5928, -0.18f);
+kmWriteFloat(0x802f5930, -0.18f);
+kmWriteFloat(0x802f5934, -0.25f);
+kmWriteFloat(0x802f5950, -0.3f);
+kmWriteFloat(0x802f5954, -0.03f);
+kmWriteFloat(0x802f5958, -0.25f);
+kmWriteFloat(0x802f5964, 2.0f);
+kmWriteFloat(0x802f5968, 1.2f);
+kmWriteFloat(0x802f5990, -0.035f);
+kmWriteFloat(0x802f5994, -0.05f);
+kmWriteFloat(0x802f5998, -0.075f);
 // I don't think the following are relevant
-kmWrite32(0x802f59c0, 0xBE3851EC); // -0.18f
-kmWrite32(0x802f59c4, 0xBE800000); // -0.25f
-kmWrite32(0x802f59dc, 0xBDCCCCCD); // -0.1f
-kmWrite32(0x802f59e0, 0xBDCCCCCD); // ^^^
-kmWrite32(0x802f59e4, 0xBDA3D70A); // -0.08f
-kmWrite32(0x802f59ec, 0xBEAE147B); // -0.34f
+kmWriteFloat(0x802f59c0, -0.18f);
+kmWriteFloat(0x802f59c4, -0.25f);
+kmWriteFloat(0x802f59dc, -0.1f);
+kmWriteFloat(0x802f59e0, -0.1f);
+kmWriteFloat(0x802f59e4, -0.08f);
+kmWriteFloat(0x802f59ec, -0.34f);
 
-kmWrite32(0x802f58b8, 0x3D4CCCCD); // 0.05f
-kmWrite32(0x802f58bc, 0x3D4CCCCD); // ^^^
-kmWrite32(0x802f58c0, 0x3D23D70A); // 0.04f
+kmWriteFloat(0x802f58b8, 0.05f);
+kmWriteFloat(0x802f58bc, 0.05f);
+kmWriteFloat(0x802f58c0, 0.04f);
 
-kmWrite32(0x8042db68, 0xBD4CCCCD); // -0.05f
-kmWrite32(0x8042db70, 0xBD0F5C29); // -0.035f
-kmWrite32(0x8042db6c, 0xBDA7EF9E); // -0.082f
-kmWrite32(0x8042bb3c, 0x40000000); // 2.0f
+kmWriteFloat(0x8042db68, -0.05f);
+kmWriteFloat(0x8042db70, -0.035f);
+kmWriteFloat(0x8042db6c, -0.082f);
+kmWriteFloat(0x8042bb3c, 2.0f);
 
 
 static int s_jumpAnmID[4] = {-1, -1, -1, -1};
@@ -291,9 +291,10 @@ void dAcPy_c__jumpExecAirWithPhysics(dAcPy_c *_this)
             //_this->setForceNeutralJumpFall(false); // TODO: Figure out equivalent in NSMBW (May be unnecessary)
         }
     }
+    int anmID;
     switch (dAcPy_c__getPhysicsAnimType(_this)) {
         case 0:
-            const int anmID = dAcPy_c__getJump3AnimID(_this);
+            anmID = dAcPy_c__getJump3AnimID(_this);
             if (anmID != -1) {
                 const float rate = dPyMdlMng_c::m_hio.mPyAnm.mAnm[anmID].mRate;
                 float blendDuration;

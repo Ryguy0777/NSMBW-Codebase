@@ -9,7 +9,7 @@
 kmWrite16(0x8030a6b0, 0x0035);
 
 // Make it's hitbox ever so slightly taller to fix the collision detection with mini players
-kmWrite32(0x80ad2d3c, 0x40900000);
+kmWriteFloat(0x80ad2d3c, 4.5f);
 
 
 // Fix the player collision function to kill the goomba when jumped on by a mini player
