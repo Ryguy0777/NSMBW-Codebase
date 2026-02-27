@@ -52,6 +52,9 @@ kmWriteNop(0x807B0110);
 // Fix star effects on maps
 kmWrite32(0x800D52F0, 0x41820010);
 
+// Remove dScStage_c::setNextScene behavior(s) specific to the WORLD_MAP scene
+kmWrite16(0x8010252A, 0xFFFF);
+
 // Fix StockItem effects
 // TODO: This makes the button effect spawn, however it is offset up and right. Player effects seem to still not appear
 // Look into what causes the effects to be offset/broken entirely
@@ -256,9 +259,6 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     // Need Player before we can set up paths
     SpammyReport("Creating player\n");
     wm->mpPlayer = (daKPPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
-    wm->mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[0]);
-    wm->mpPlayer->bindPats();
-    wm->mpPlayer->mpPyMdlMng->mpMdl->setAnm(dPyMdlBase_c::WAIT, 1.2f, 10.0f, 0.0f);
 
     // Since we've got all the resources, set up the path data too
     /*SpammyReport("Preparing path manager\n");
@@ -308,12 +308,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
         return (sPhase_c::METHOD_RESULT_e)false;
     }
 
-    // TODO: Properly focus circle wipe on player, this doesn't work
-    //daKPPlayer_c *player = daKPPlayer_c::m_instance;
-
-    //dWipeCircle_c::m_instance->mCenterPos.x = player->mPos.x;
-    //dWipeCircle_c::m_instance->mCenterPos.y = player->mPos.y;
-    //dWipeCircle_c::m_instance->mUseCenterPos = true;
+    // TODO: Set circle wipe to focus on the player position
 
     // Temp until pathmanager is complete
     wm->startMusic();
@@ -897,6 +892,7 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
                 if (!isThere) daPyMng_c::mCreateItem[i] = 0;
             }
 
+            mpPlayer->chkUpdateMdl();
             returnToNormalState();
         }
     }
@@ -927,7 +923,7 @@ void dScKoopatlas_c::finalizeState_EasyPairingWait() { }
 void dScKoopatlas_c::initializeState_PowerupsWait() { }
 void dScKoopatlas_c::executeState_PowerupsWait() {
     if (!mpStockItem->mIsVisible) {
-        mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[0]);
+        mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[daPyMng_c::mPlayerType[0]]);
         //mpPlayer->bindPats();
 
         returnToNormalState();

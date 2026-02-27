@@ -14,6 +14,10 @@ public:
     int execute();
     int draw();
 
+    void createMdl();
+    void chkUpdateMdl();
+    void calcMdl();
+
     void startAnimation(int id, float frame, float unk, float updateRate);
     void bindPats();
 

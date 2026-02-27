@@ -6,6 +6,11 @@ KOOPATLAS TODO:
 - Clean up any ugly-looking code, rename stuff if needed
 - Fix Koopatlas class naming scheme to match official (dKP -> dKp)
 
+Nitpicky Shit:
+- Player is not centered on the course node, needs to be moved up 4 units like with the model itself
+- Same as above, but for the pointlight effect
+- Course open sound plays even when no actual course is opened (only if its on another map)
+
 Miscellaneous TODO:
 - Implement internal-font portion of MoreFonts, then use that for Newer's pause menu layout
 - Add support for overiding the BMG font via userdata
@@ -34,5 +39,6 @@ Planned Features/TODO:
 - Togglable option for level nodes to not render (specifically to de-hardcode that one node in the W1 map)
 - Dehardcoded effect/model positions (maybe)
 - Make map background based on the W2 quicksand
-- Allow Koopatlas layouts (HUD, SCM) to be used in the retail World Maps
+- Allow Koopatlas layouts to be used in the retail World Maps
+  - HUD still needs to be finished
 - Add interactable signposts (maybe)

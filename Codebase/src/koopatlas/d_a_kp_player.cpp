@@ -24,29 +24,7 @@ static const char *mdlNames[] = {"MB_model", "SMB_model", "PLMB_model", "PMB_mod
 static const char *patNames[] = {"PB_switch_swim", "PB_switch_swim", "PLMB_switch_swim", "PLB_switch_swim"};
 
 int daKPPlayer_c::create() {
-    mpPyMdlMng = new dPyMdlMng_c(dPyMdlMng_c::MODEL_MARIO);
-
-    dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
-    pyMdl->mSceneType = 1;
-    pyMdl->mPlayerID = 0;
-
-    pyMdl->mAllocator.createFrmHeap(0xC000, mHeap::g_gameHeaps[0], 0, 0x20, mHeap::OPT_0);
-    pyMdl->createModel();
-
-    /*for (int i = 0; i < 4; i++) {
-        nw4r::g3d::ResMdl mdl = pyMdl->mModelResFile.GetResMdl(mdlNames[i]);
-        nw4r::g3d::ResAnmTexPat pat = pyMdl->mModelResFile.GetResAnmTexPat(patNames[i]);
-
-        mTexPats[i].create(mdl, pat, &pyMdl->mAllocator, 0, 1);
-    }*/
-
-    pyMdl->mAllocator.adjustFrmHeap();
-
-    pyMdl->setPlayerMode(3);
-    pyMdl->initialize();
-
-    pyMdl->setAnm(dPyMdlBase_c::WAIT, 1.2, 10.0, 0.0);
-    mpPyMdlMng->calc(mVec3_c(0.0, 100.0, -100.0), mAng3_c(0,0,0), mVec3_c(2.0, 2.0, 2.0));
+    createMdl();
 
     mPos = mVec3_c(0.0f, 0.0f, 3000.0f);
     mAngle = mAng3_c(0x1800, 0, 0);
@@ -84,19 +62,9 @@ int daKPPlayer_c::execute() {
     //if (dScKoopatlas_c::m_instance->chkMapIdleState())
     //	dScKoopatlas_c::m_instance->pathManager.execute();
 
+    calcMdl();
     mpPyMdlMng->play();
     //pats[((dPlayerModel_c*)mpPyMdlMng->mdlClass)->currentPlayerModelID].process();
-
-    mMtx_c matrix;
-    PSMTXScale(matrix, mScale.x, mScale.y, mScale.z);
-    PSMTXTrans(matrix, mPos.x, mPos.y + mJumpOffset, mPos.z);
-    if (dScKoopatlas_c::m_instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED)) {
-        matrix.trans(0, 0, 600.0f);
-    }
-    matrix.XrotM(mAngle.x);
-    matrix.YrotM(mAngle.y);
-    // Z is unused for now
-    mpPyMdlMng->calc(matrix);
 
     if (dScKoopatlas_c::m_instance->chkMapIdleState()) {
         if (mHasEffect) {
@@ -134,6 +102,56 @@ int daKPPlayer_c::draw() {
 
     mpPyMdlMng->draw();
     return true;
+}
+
+void daKPPlayer_c::createMdl() {
+    int plyType = daPyMng_c::mPlayerType[0];
+
+    mpPyMdlMng = new dPyMdlMng_c((dPyMdlMng_c::ModelType_e)plyType);
+
+    dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
+    pyMdl->mSceneType = 1;
+    pyMdl->mPlayerType = plyType;
+
+    pyMdl->mAllocator.createFrmHeap(0xC000, mHeap::g_gameHeaps[0], 0, 0x20, mHeap::OPT_0);
+    pyMdl->createModel();
+
+    /*for (int i = 0; i < 4; i++) {
+        nw4r::g3d::ResMdl mdl = pyMdl->mModelResFile.GetResMdl(mdlNames[i]);
+        nw4r::g3d::ResAnmTexPat pat = pyMdl->mModelResFile.GetResAnmTexPat(patNames[i]);
+
+        mTexPats[i].create(mdl, pat, &pyMdl->mAllocator, 0, 1);
+    }*/
+
+    pyMdl->mAllocator.adjustFrmHeap();
+
+    pyMdl->setPlayerMode(daPyMng_c::mPlayerMode[plyType]);
+    pyMdl->initialize();
+
+    pyMdl->setAnm(dPyMdlBase_c::WAIT, 1.2, 10.0, 0.0);
+}
+
+void daKPPlayer_c::chkUpdateMdl() {
+    if (mpPyMdlMng->mpMdl->mPlayerType == daPyMng_c::mPlayerType[0]) {
+        return;
+    }
+
+    createMdl();
+    startAnimation(mCurrentAnim, mCurrentFrame, mCurrentUnk, mCurrentUpdateRate);
+}
+
+void daKPPlayer_c::calcMdl() {
+    mMtx_c matrix;
+	PSMTXScale(matrix, mScale.x, mScale.y, mScale.z);
+	PSMTXTransApply(matrix, matrix, mPos.x, mPos.y + mJumpOffset, mPos.z);
+
+	if (dScKoopatlas_c::m_instance->mWarpZoneHacks && (mCurrentAnim == dPyMdlBase_c::JUMP || mCurrentAnim == dPyMdlBase_c::JUMPED)) {
+        PSMTXTransApply(matrix, matrix, 0, 0, 600.0f);
+    }
+	matrix.XrotM(mAngle.x);
+	matrix.YrotM(mAngle.y);
+
+	mpPyMdlMng->calc(matrix);
 }
 
 void daKPPlayer_c::startAnimation(int id, float frame, float unk, float updateRate) {
