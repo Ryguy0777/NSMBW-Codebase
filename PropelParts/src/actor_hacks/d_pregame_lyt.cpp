@@ -132,8 +132,18 @@ kmBranchDefCpp(0x80B6BDD0, NULL, void, dPreGameLyt_c *this_) {
 
     ulong number = pregameGetLevelNumberID(dInfo_c::m_startGameInfo.mWorld1, dInfo_c::m_startGameInfo.mLevel1);
 
-    LevelNumShadow->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
-    LevelNum->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES, number)) {
+        LevelNumShadow->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
+        LevelNum->setMessage(msgRes, BMG_CATEGORY_LEVEL_NAMES, number, 0);
+    } else {
+        char worldNumString[13];
+        sprintf(worldNumString, "World %d-%d\n", dInfo_c::m_instance->mDisplayCourseWorld, dInfo_c::m_instance->mDisplayCourseNum);
+        size_t newsize = strlen(worldNumString) + 1;
+        wchar_t *wcWorldNumString = new wchar_t[newsize];
+        mbstowcs(wcWorldNumString, worldNumString, newsize);
+        LevelNumShadow->SetString(wcWorldNumString, 0);
+        LevelNum->SetString(wcWorldNumString, 0);
+    }
 
     nw4r::lyt::Picture *LevelSample;
     LevelSample = this_->mLayout.findPictureByName("LevelSample");

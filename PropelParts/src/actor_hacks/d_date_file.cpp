@@ -92,12 +92,11 @@ void setFileInfo(dDateFile_c *this_, dMj2dGame_c *save) {
     MsgRes_c *msgRes = dMessage_c::getMesRes();
 
     ulong id = save->getCurrentWorld()+1;
-    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, id) == nullptr) {
-        // The bmg entry for the world name doesn't exist, go to the fallback
-        id = 0;
+    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, id)) {
+        this_->mpTextBoxes[this_->T_worldNumber_01]->setMessage(msgRes, BMG_CATEGORY_WORLD_NAMES, id, 0);
+    } else {
+        this_->mpTextBoxes[this_->T_worldNumber_01]->SetString(L"NO WORLD NAME", 0);
     }
-
-    this_->mpTextBoxes[this_->T_worldNumber_01]->setMessage(msgRes, BMG_CATEGORY_WORLD_NAMES, id, 0);
 
     // TODO: Implement file colors once a way to store them is decided
 
