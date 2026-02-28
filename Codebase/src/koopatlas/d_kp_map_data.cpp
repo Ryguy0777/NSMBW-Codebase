@@ -13,7 +13,7 @@
 dKPMapData_c::dKPMapData_c() {
     mpData = nullptr;
     mpCourseNodes = nullptr;
-    mpTilesetLoaders = nullptr;
+    mpTilesetBuffers = nullptr;
 
     mIsDataInited = false;
     mIsTilesetLoaded = false;
@@ -161,49 +161,76 @@ bool dKPMapData_c::loadTilesets() {
         return true;
     }
 
-    if (mpTilesetLoaders == nullptr) {
-        mpTilesetLoaders = new dDvd::loader_c[mpData->mTilesetNum];
+    if (mpTilesetBuffers == nullptr) {
+        mpTilesetBuffers = new void*[mpData->mTilesetNum];
     }
 
-    bool result = true;
+    bool result = false;
 
     for (int i = 0; i < mpData->mTilesetNum; i++) {
         char *filename = ((char*)mpData) + (mpData->mpTilesets[i].dummy[3] - 0x10000000);
         EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
 
-        result &= (mpTilesetLoaders[i].request(filename, 0, heap) != nullptr);
         OSReport("fn: %s\n", filename);
+        //result &= (mpTilesetLoaders[i].request(filename, 0, heap) != nullptr);
+
+        OSReport("loading file\n");
+        bool isCompressed = false;
+
+        int entrynum = DVDConvertPathToEntrynum(filename);
+        if (entrynum == -1) {
+            // Check for an LZ-compressed file
+            strcat(filename, ".LZ");
+            entrynum = DVDConvertPathToEntrynum(filename);
+            if (entrynum == -1) continue;
+
+            isCompressed = true;
+        }
+        OSReport("entrynum: %d\n", entrynum);
+
+        // Load the file
+        DVDFileInfo dvdHandle;
+        bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
+        if (!fileLoaded) continue;
+        OSReport("loaded file!\n");
+
+        // Allocate memory
+        mpTilesetBuffers[i] = EGG::Heap::alloc(dvdHandle.size, 0x20, heap);
+        if (mpTilesetBuffers[i] == nullptr) continue;
+        OSReport("buffer is valid!\n");
+
+        /*void *newBuf = EGG::Heap::alloc(CXGetUncompressedSize(), 0x20, heap);
+        if (newBuf == nullptr) {OSReport("uh oh...\n");};
+        if (isCompressed) {
+            CXUncompressLZ(tilesetBuffer, newBuf);
+        }*/
+
+        // Read file
+        s32 length = DVDReadPrio(&dvdHandle, mpTilesetBuffers[i], dvdHandle.size, 0, 2);
+        if (length > 0) {
+            OSReport("read!\n, file is length %04d\n", length);
+            mpData->mpTilesets[i].dummy[3] = (((u32)mpTilesetBuffers[i] & ~0xC0000000) >> 5);
+            result = true;
+        }
+
+        // Unload file
+        DVDClose(&dvdHandle);
     }
 
     if (result) {
         mIsTilesetLoaded = true;
-
-        for (int i = 0; i < mpData->mTilesetNum; i++) {
-            mpData->mpTilesets[i].dummy[3] = (((u32)mpTilesetLoaders[i].GetBuffer() & ~0xC0000000) >> 5);
-        }
     }
-
     return mIsTilesetLoaded;
 }
 
 void dKPMapData_c::freeTilesets() {
-    if (mpTilesetLoaders != nullptr) {
-        bool result = true;
+    for (int i = 0; i < mpData->mTilesetNum; i++) {
+        EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
 
-        for (int i = 0; i < mpData->mTilesetNum; i++) {
-            result &= mpTilesetLoaders[i].freeResouce();
-            if (result) {
-                OSReport("tileset [%d] was freed!\n", i);
-            }
+        if (mpTilesetBuffers[i] != nullptr) {
+            EGG::Heap::free(mpTilesetBuffers[i], heap);
+            mpTilesetBuffers[i] = nullptr;
         }
-
-        if (!result) {
-            OSReport("failed to free!\n");
-            return;
-        }
-
-        delete[] mpTilesetLoaders;
-        mpTilesetLoaders = nullptr;
     }
 }
 
