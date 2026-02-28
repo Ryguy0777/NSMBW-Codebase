@@ -23,3 +23,10 @@
 //#define QUICK_RESTART
 
 //#define LUIGI_PHYSICS
+
+#define MARIO_MDL_CLASS dMarioMdl_c
+#define LUIGI_MDL_CLASS dMarioMdl_c
+#define BLUE_TOAD_MDL_CLASS dKinopioMdl_c
+#define YELLOW_TOAD_MDL_CLASS dKinopioMdl_c
+#define RED_TOAD_MDL_CLASS dKinopioMdl_c
+#define YOSHI_MDL_CLASS dYoshiMdl_c

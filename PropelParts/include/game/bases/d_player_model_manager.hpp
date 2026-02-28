@@ -240,7 +240,16 @@ enum AnmID_e {
 
 class dPyMdlMng_c {
 public:
-    enum ModelType_e {};
+    enum ModelType_e {
+        MODEL_NONE = -1,
+        MODEL_MARIO = 0,
+        MODEL_LUIGI = 1,
+        MODEL_TOAD_BLUE = 2,
+        MODEL_TOAD_YELLOW = 3,
+        MODEL_TOAD_RED = 4,
+        MODEL_YOSHI = 5,
+    };
+    
     enum SceneType_e {
         SCENE_TYPE_0
     };
