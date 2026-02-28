@@ -1,9 +1,9 @@
 #pragma once
-#include <game/bases/d_a_player_base.hpp>
+#include <game/bases/d_player_model_base.hpp>
 
 class dYoshiMdl_c : public dPyMdlBase_c {
 public:
     dYoshiMdl_c(u8 index);
 
-    u8 mPad[0x404-0x20C];
+    u8 mPad[0x20C];
 };
