@@ -9,6 +9,7 @@
 #include <game/bases/d_save_mng.hpp>
 #include <game/mLib/m_heap.hpp>
 #include <nw4r/g3d/res/g3d_resfile.h>
+#include <lib/revolution/CX/CXUncompression.h>
 
 dKPMapData_c::dKPMapData_c() {
     mpData = nullptr;
@@ -171,10 +172,6 @@ bool dKPMapData_c::loadTilesets() {
         char *filename = ((char*)mpData) + (mpData->mpTilesets[i].dummy[3] - 0x10000000);
         EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
 
-        OSReport("fn: %s\n", filename);
-        //result &= (mpTilesetLoaders[i].request(filename, 0, heap) != nullptr);
-
-        OSReport("loading file\n");
         bool isCompressed = false;
 
         int entrynum = DVDConvertPathToEntrynum(filename);
@@ -186,29 +183,34 @@ bool dKPMapData_c::loadTilesets() {
 
             isCompressed = true;
         }
-        OSReport("entrynum: %d\n", entrynum);
 
         // Load the file
         DVDFileInfo dvdHandle;
         bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
         if (!fileLoaded) continue;
-        OSReport("loaded file!\n");
 
         // Allocate memory
         mpTilesetBuffers[i] = EGG::Heap::alloc(dvdHandle.size, 0x20, heap);
         if (mpTilesetBuffers[i] == nullptr) continue;
-        OSReport("buffer is valid!\n");
-
-        /*void *newBuf = EGG::Heap::alloc(CXGetUncompressedSize(), 0x20, heap);
-        if (newBuf == nullptr) {OSReport("uh oh...\n");};
-        if (isCompressed) {
-            CXUncompressLZ(tilesetBuffer, newBuf);
-        }*/
 
         // Read file
         s32 length = DVDReadPrio(&dvdHandle, mpTilesetBuffers[i], dvdHandle.size, 0, 2);
         if (length > 0) {
-            OSReport("read!\n, file is length %04d\n", length);
+
+            // Gotta decompress this first
+            if (isCompressed) {
+                int size = CXGetUncompressedSize(mpTilesetBuffers[i]);
+                void *bufLZ = mpTilesetBuffers[i];
+
+                mpTilesetBuffers[i] = EGG::Heap::alloc(size, 0x20, heap);
+                CXUncompressLZ(bufLZ, mpTilesetBuffers[i]);
+
+                if (bufLZ != nullptr) {
+                    EGG::Heap::free(bufLZ, heap);
+                    bufLZ = nullptr;
+                }
+            }
+
             mpData->mpTilesets[i].dummy[3] = (((u32)mpTilesetBuffers[i] & ~0xC0000000) >> 5);
             result = true;
         }
