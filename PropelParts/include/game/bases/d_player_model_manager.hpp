@@ -314,17 +314,17 @@ public:
     }
 
     u32 getFlags2() const {
-        return mpMdl->m_17c;
+        return mpMdl->mVisibilityFlags;
     }
 
     mVec3_c &getHatPos() const { return mpMdl->mHatPosMaybe; }
 
     float getSomeScale() {
-        return m_hio.get_08((dPyMdlBase_HIO_c::ScaleIndex_e) mpMdl->m_152);
+        return m_hio.get_08((dPyMdlBase_HIO_c::ScaleIndex_e) mpMdl->mPowerupID);
     }
 
     float getSomeScale2() {
-        return m_hio.m_08[mpMdl->m_152];
+        return m_hio.m_08[mpMdl->mPowerupID];
     }
 
     dPyMdlBase_c *mpMdl;

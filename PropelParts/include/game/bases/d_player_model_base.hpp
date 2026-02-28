@@ -8,16 +8,18 @@ class dAcPy_c;
 
 class dPyMdlBase_c {
 public:
+    dPyMdlBase_c(u8 index);
     virtual ~dPyMdlBase_c();
-    virtual int getFaceJointIdx();
+
+    virtual int getFaceJointIdx() const;
     virtual void createModel();
     virtual void initialize();
     virtual void play();
     virtual void _calc();
     virtual void calc2();
     virtual void draw();
-    virtual void getBodyMdl();
-    virtual void getAnmResFile();
+    virtual m3d::mdl_c *getBodyMdl();
+    virtual const void *getAnmResFile() const;
     virtual void setPlayerMode(int);
     virtual void setColorType(u8);
     virtual void setDark(int);
@@ -27,10 +29,10 @@ public:
     virtual void onStarEffect();
     virtual void offStarEffect();
     virtual void getJointMtx(mMtx_c *, int);
-    virtual void getHeadPropelJointMtx(mMtx_c *);
+    virtual bool getHeadPropelJointMtx(mMtx_c *);
     virtual void vf58(); ///< @unofficial
     virtual void setAnm(int, float, float, float);
-    virtual void setPersonalAnm(int, nw4r::g3d::ResAnmChr *, int);
+    virtual bool setPersonalAnm(int, nw4r::g3d::ResAnmChr *, int);
     virtual void setBodyAnm(int, float, float, float);
     virtual void releaseBodyAnm(float);
     virtual void copyAnm();
@@ -43,10 +45,10 @@ public:
     virtual void setBodyFrame();
     virtual void setRate(float);
     virtual void setBodyRate();
-    virtual void setPropelRollSpeed(s16) const;
-    virtual s16 getPropelRollSpeed();
+    virtual void setPropelRollSpeed(s16);
+    virtual s16 getPropelRollSpeed() const;
     virtual void setPropelRollAngle(s16);
-    virtual s16 getPropelRollAngle() const;
+    virtual s16 getPropelRollAngle();
     virtual void setPropelScale(float);
     virtual float *getLegLengthP(u8);
     virtual void updateBonusCap();
@@ -67,7 +69,7 @@ public:
 
     u32 get151CheckVal() { return 2; }
 
-    u8 mPad1[0x1c];
+    mAllocator_c mAllocator;
     dAcPy_c *mpOwner;
     dPyMdlBase_c *mpSpinLiftParentMdl;
     m3d::anmChr_c mAnm;
@@ -77,14 +79,16 @@ public:
     mMtx_c mMtx;
     u8 mPad5[0xc];
     mVec3_c mScale;
-    u8 mPad6[0x1];
-    u8 m_151;
-    u8 m_152;
+    u8 mPlayerNo;
+    u8 mCharaID;
+    u8 mPowerupID;
+    u8 mCurColorType;
     int mCurrAnmID;
     u8 mPad7[8];
     u32 mFlags;
-    u8 mPad8[0x18];
-    u32 m_17c;
+    u32 mFlags2;
+    u8 mPad8[0x14];
+    u32 mVisibilityFlags;
     u8 mPad9[0x7c];
     s16 m_1fc;
     s16 m_1fe;
