@@ -79,7 +79,7 @@ public:
     u8 mPad2[6];
     u32 m_68c;
 
-    int mCharIDs[4];
+    int mPlayerStates[4];
     int mPlayerCount;
     int mPaneIdx;
 
@@ -91,8 +91,8 @@ public:
 
     u8 mPad4[10];
 
-    int mCharIDsCopy[4];
-    int mCharIDsCopy2[4];
+    int mPlayerType[4];
+    int mPlayerType2[4];
 
     u8 mPad5[10];
 };

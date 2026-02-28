@@ -47,10 +47,12 @@ int daKPPlayer_c::doDelete() {
 }
 
 int daKPPlayer_c::execute() {
-    if (daPyMng_c::mCreateItem[0] & CREATE_ITEM_STAR_POWER) {
+    if (daPyMng_c::mCreateItem[mPlyType] & CREATE_ITEM_STAR_POWER) {
         mpPyMdlMng->mpMdl->onStarAnm();
         mpPyMdlMng->mpMdl->onStarEffect();
-        dKPMusic_c::m_instance->startStarSe();
+        dKPMusic_c::m_instance->onStarSe();
+    } else {
+        dKPMusic_c::m_instance->offStarSe();
     }
 
     if (mIsSpinning) {
@@ -105,13 +107,12 @@ int daKPPlayer_c::draw() {
 }
 
 void daKPPlayer_c::createMdl() {
-    int plyType = daPyMng_c::mPlayerType[0];
-
-    mpPyMdlMng = new dPyMdlMng_c((dPyMdlMng_c::ModelType_e)plyType);
+    mPlyType = daPyMng_c::mPlayerType[0];
+    mpPyMdlMng = new dPyMdlMng_c((dPyMdlMng_c::ModelType_e)mPlyType);
 
     dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
     pyMdl->mSceneType = 1;
-    pyMdl->mPlayerType = plyType;
+    pyMdl->mPlayerType = mPlyType;
 
     pyMdl->mAllocator.createFrmHeap(0xC000, mHeap::g_gameHeaps[0], 0, 0x20, mHeap::OPT_0);
     pyMdl->createModel();
@@ -125,14 +126,14 @@ void daKPPlayer_c::createMdl() {
 
     pyMdl->mAllocator.adjustFrmHeap();
 
-    pyMdl->setPlayerMode(daPyMng_c::mPlayerMode[plyType]);
+    pyMdl->setPlayerMode(daPyMng_c::mPlayerMode[mPlyType]);
     pyMdl->initialize();
 
     pyMdl->setAnm(dPyMdlBase_c::WAIT, 1.2, 10.0, 0.0);
 }
 
 void daKPPlayer_c::chkUpdateMdl() {
-    if (mpPyMdlMng->mpMdl->mPlayerType == daPyMng_c::mPlayerType[0]) {
+    if (mPlyType == daPyMng_c::mPlayerType[0]) {
         return;
     }
 

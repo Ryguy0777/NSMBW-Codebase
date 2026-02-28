@@ -863,9 +863,7 @@ void dScKoopatlas_c::finalizeState_TitleConfirmHitWait() { }
 /**********************************************************************/
 // StateID_PlayerChangeWait : Wait for the user to do something on the
 // Add/Drop Players screen
-void dScKoopatlas_c::initializeState_PlayerChangeWait() {
-    dKPMusic_c::m_instance->updStarVolume(2);
-}
+void dScKoopatlas_c::initializeState_PlayerChangeWait() { }
 void dScKoopatlas_c::executeState_PlayerChangeWait() {
     int nowPressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
@@ -881,7 +879,6 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
             }
 
             mpEasyPairing->mIsVisible = true;
-            dKPMusic_c::m_instance->updStarVolume(1);
             mStateMgr.changeState(StateID_EasyPairingWait);
         }
     } else {
@@ -889,7 +886,9 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
             for (int i = 0; i < 4; i++) {
                 bool isThere = dGameCom::PlayerEnterCheck(i);
                 daPyMng_c::mPlayerEntry[i] = isThere ? 1 : 0;
-                if (!isThere) daPyMng_c::mCreateItem[i] = 0;
+                if (!isThere) {
+                    daPyMng_c::mCreateItem[i] = 0;
+                }
             }
 
             mpPlayer->chkUpdateMdl();

@@ -12,11 +12,13 @@ public:
     dKPMusic_c();
 
     void start(int id);
-    void startStarSe();
 
     void execute();
     void pause();
     void stop();
+
+    void onStarSe();
+    void offStarSe();
 
     void updTrackVolume(bool isOpenMenu);
     void updStarVolume(int);

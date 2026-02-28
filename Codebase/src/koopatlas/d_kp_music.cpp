@@ -89,14 +89,6 @@ void dKPMusic_c::start(int id) {
     }
 }
 
-void dKPMusic_c::startStarSe() {
-    if (mIsStarPlaying)
-        return;
-
-    SndAudioMgr::sInstance->startSound(&sStarHandle, SE_BGM_CS_STAR, 1);
-    mIsStarPlaying = true;
-}
-
 void dKPMusic_c::execute() {
     if (!mIsPlaying)
         return;
@@ -204,6 +196,24 @@ void dKPMusic_c::stop() {
 
     if (sStarHandle.IsAttachedSound())
         sStarHandle.Stop(15);
+}
+
+void dKPMusic_c::onStarSe() {
+    if (mIsStarPlaying) {
+        return;
+    }
+
+    SndAudioMgr::sInstance->startSound(&sStarHandle, SE_BGM_CS_STAR, 1);
+    mIsStarPlaying = true;
+}
+
+void dKPMusic_c::offStarSe() {
+    if (!mIsStarPlaying) {
+        return;
+    }
+
+    sStarHandle.Stop(15);
+    mIsStarPlaying = false;
 }
 
 void dKPMusic_c::updTrackVolume(bool isOpenMenu) {

@@ -35,6 +35,7 @@ public:
     mEf::levelEffect_c mEffect;
     dPyMdlMng_c *mpPyMdlMng;
 
+    int mPlyType;
     int mCurrentAnim;
     int mSoundName;
     int mStepSndTimer;
