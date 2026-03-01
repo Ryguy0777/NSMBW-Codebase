@@ -62,7 +62,7 @@ public:
     bool chkMapIdleState();
 
     void startMusic();
-    void startLevel(dLevelInfo_c::entry_s *level);
+    void startGame(dLevelInfo_c::entry_s *level);
 
     void openMenu(int starSndMode, int soundID);
     void returnToNormalState();
@@ -130,7 +130,7 @@ public:
     dKPDirector_c *mpDirector;
 
     dKPMapData_c mMapData;
-    dWMPathManager_c mPathManager;
+    dKpPathManager_c mPathManager;
     dDvd::loader_c mMapListLoader;
 
     const char *mpMapPath;

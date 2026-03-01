@@ -181,7 +181,7 @@ void dKPHud_c::loadInitially() {
     dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
     mDispFooter = /*(save->newerWorldName[0] != 0) &&*/ (world->mHudHue != 2000);
 
-    if (!dScKoopatlas_c::m_instance->mPathManager.isMoving) {
+    if (!dScKoopatlas_c::m_instance->mPathManager.mIsMoving) {
         enteredNode();
     }
 }
@@ -189,7 +189,7 @@ void dKPHud_c::loadInitially() {
 #ifdef KOOPATLAS_DEV_ENABLED
 void dKPHud_c::enteredNode(dKPNode_s *node) {
     if (node == nullptr) {
-        node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
+        node = dScKoopatlas_c::m_instance->mPathManager.mpCurrentNode;
     }
 
     if (node->mNodeType == dKPNode_s::LEVEL && mInitalDispComplete) {

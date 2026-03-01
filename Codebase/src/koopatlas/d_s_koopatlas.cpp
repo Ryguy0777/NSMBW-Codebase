@@ -262,10 +262,10 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
 
     // Since we've got all the resources, set up the path data too
     SpammyReport("Preparing path manager\n");
-    wm->mPathManager.setup();
+    wm->mPathManager.create();
 
     // And put the player into position
-    dKPNode_s *cNode = wm->mPathManager.currentNode;
+    dKPNode_s *cNode = wm->mPathManager.mpCurrentNode;
     wm->mpPlayer->mPos = mVec3_c(cNode->mPosX, -cNode->mPosY, wm->mpPlayer->mPos.z);
 
     SpammyReport("Creating MAP\n");
@@ -392,12 +392,15 @@ int dScKoopatlas_c::create() {
         save->setCurrentWorld(6);
     }
 
-    /*if ((MaybeFinishingLevel[0] == WORLD_8 && MaybeFinishingLevel[1] == STAGE_CASTLE_2) && save->isCourseDataFlag(7, 24, dMj2dGame_c::GOAL_NORMAL)) {
+    int world = dKpPathManager_c::s_cmpData.mPrevLevelID[0];
+    int level = dKpPathManager_c::s_cmpData.mPrevLevelID[1];
+    bool isFirstClear = dKpPathManager_c::s_cmpData.mChkSavePrompt;
+    if (((world == WORLD_8) && (level == STAGE_CASTLE_2)) && save->isCourseDataFlag(7, 24, dMj2dGame_c::GOAL_NORMAL) && isFirstClear) {
         SpammyReport("After 8-Castle: Sending player to Map 7\n");
         mCurrentMapID = 7; // KoopaPlanetUnd
         save->setCurrentWorld(7);
         mIsAfter8Castle = true;
-    }*/
+    }
 
     mIsEndingScene = (mParam & 0x20000000);
     if (mIsEndingScene) {
@@ -475,7 +478,7 @@ void dScKoopatlas_c::startMusic() {
     dKPMusic_c::m_instance->start(musicID);
 }
 
-void dScKoopatlas_c::startLevel(dLevelInfo_c::entry_s *entry) {
+void dScKoopatlas_c::startGame(dLevelInfo_c::entry_s *entry) {
     dInfo_c::StartGameInfo_s startInfo;
     startInfo.mMovieType = 0;
     startInfo.mEntrance = 0xFF;
@@ -691,13 +694,14 @@ static int completionMsgIdx = 0;
 // StateID_Normal : Main/idle state, waiting for input
 void dScKoopatlas_c::initializeState_Normal() { }
 void dScKoopatlas_c::executeState_Normal() {
-    if (mPathManager.completionMessagePending) {
-        MapReport("Going to set CompletionMsg\n");
+    if (mPathManager.mIsCmpMsgActive) {
+        MapReport("Going to display a Completion Msg\n");
         mStateMgr.changeState(StateID_CompletionMsgWindow);
         return;
     }
 
-    if (mPathManager.doingThings()) {
+    // Path manager is busy, wait for that to be over
+    if (mPathManager.isPathMgrActive()) {
         return;
     }
 
@@ -1153,8 +1157,8 @@ void dScKoopatlas_c::finalizeState_SaveError() { }
 /**********************************************************************/
 // StateID_CompletionMsgWindow : Display a completion message
 void dScKoopatlas_c::initializeState_CompletionMsgWindow() {
-    //MapReport("CompletionMsg beginning with type %d\n", mPathManager.completionMessageType);
-    //mpYesNoWindow->setType(yesNoTypes[mPathManager.completionMessageType]);
+    MapReport("Completion message beginning with type %d\n", mPathManager.mCmpMsgType);
+    
     mpYesNoWindow->setType(dYesNoWindow_c::SAVE_DATA_CREATED); // Actual window type doesn't matter
     mpYesNoWindow->setIsActive(true);
     mSetupCompletionMessage = true;
@@ -1164,8 +1168,7 @@ void dScKoopatlas_c::executeState_CompletionMsgWindow() {
         MsgRes_c *msgRes = dMessage_c::getMesRes();
         LytTextBox_c *T_questionS_00 = mpYesNoWindow->getTextBox(0);
         LytTextBox_c *T_question_00 = mpYesNoWindow->getTextBox(1);
-        //int type = mPathManager.completionMessageType;
-        int type = completionMsgIdx;
+        int type = mPathManager.mCmpMsgType;
 
         const wchar_t *message = dMessage_c::getMsg(BMG_CATEGORY_KOOPATLAS, type);
 
@@ -1173,7 +1176,7 @@ void dScKoopatlas_c::executeState_CompletionMsgWindow() {
         T_question_00->setMessage(msgRes, BMG_CATEGORY_KOOPATLAS, type, 0);
 
         // Append a world name if needed
-        if (type >= dWMPathManager_c::CMP_MSG_COINS && type <= dWMPathManager_c::CMP_MSG_WORLD) {
+        if (type >= dKpPathManager_c::CMP_MSG_COINS && type <= dKpPathManager_c::CMP_MSG_WORLD) {
             wchar_t nameBuffer[36];
 
             wcscpy(nameBuffer, getKoopatlasWorldName(dGameCom::rndInt(8)));
@@ -1198,8 +1201,8 @@ void dScKoopatlas_c::executeState_CompletionMsgWindow() {
     }
 }
 void dScKoopatlas_c::finalizeState_CompletionMsgWindow() {
-    //mPathManager.completionMessagePending = false;
-    //mPathManager.completionMessageType = 0;
+    mPathManager.mIsCmpMsgActive = false;
+    mPathManager.mCmpMsgType = 0;
 }
 
 /**********************************************************************/

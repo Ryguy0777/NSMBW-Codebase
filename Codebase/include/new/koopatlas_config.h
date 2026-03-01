@@ -7,7 +7,10 @@
     #define KP_MAP_REPORT           // Prints general map info (layouts, texmaps, general data) to the log
     #define KP_SPAMMY_DEBUG         // Prints map setup and path info to the log, this "spams" the log
 
-    #define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths -- TODO: Remove me
+    //#define KP_PATH_MNG_REPORT      // Prints occasional info from the Path Manager
+    //#define KP_UNLOCK_DEBUG         // Prints debugging info about path unlock conditions
+
+    #define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths -- TODO: Remove me(?)
     //#define KP_CHK_SET_DEFAULT_NODE // When loading into a map, hold -, +, and 1 to be set on path node 0
 
     #define KP_MUSIC_REPORT         // Prints music related info to the log
@@ -31,5 +34,8 @@
     // Hides the completion stars on the HUD if the LevelInfo world is 15 (F)
     // Intended for Newer's scrapped "Cutland" world
     #define KP_HIDE_STARS_W15
+
+    // Plays the "invalid choice" sound when trying to enter completed one-time courses
+    #define KP_PLAY_INVALID_SND
 
 #endif

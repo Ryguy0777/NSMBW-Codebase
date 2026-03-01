@@ -19,351 +19,37 @@
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <new/constants/koopatlas_constants.h>
 
-// Reset static completion candidates
-/*kmCallDefCpp(0x800B2FF0, void) {
-    //TODO
-}*/
+dKpPathManager_c::CompletionData_s dKpPathManager_c::s_cmpData;
+u8 *dKpPathManager_c::sp_openPathData;
+u8 *dKpPathManager_c::sp_openNodeData;
 
-// TODO: Update these with the struct in the class
-bool CanFinishCoins = false;
-bool CanFinishExits = false;
-bool CanFinishWorld = false;
-bool CanFinishAlmostAllCoins = false;
-bool CanFinishAllCoins = false;
-bool CanFinishAllExits = false;
-bool CanFinishEverything = false;
-void ResetAllCompletionCandidates() {
-    // This is called by File Select, btw
-    MaybeFinishingLevel[0] = 0xFF;
-    LastLevelPlayed[0] |= 0x80;
-    CanFinishCoins = false;
-    CanFinishExits = false;
-    CanFinishWorld = false;
-    CanFinishAlmostAllCoins = false;
-    CanFinishAllCoins = false;
-    CanFinishAllExits = false;
-    CanFinishEverything = false;
-}
-
-int getPressedDir(int buttons) {
-    if (buttons & WPAD_BUTTON_UP) return 0;
-    else if (buttons & WPAD_BUTTON_DOWN) return 1;
-    else if (buttons & WPAD_BUTTON_RIGHT) return 2;
-    else if (buttons & WPAD_BUTTON_LEFT) return 3;
-    return -1;
-}
-
-void dWMPathManager_c::setup() {
-    dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
-
-    isMoving = false;
-    isJumping = false;
-    scaleAnimProgress = -1;
-    timer = 0.0;
-    currentPath = 0;
-    reverseThroughPath = false;
-
-    shouldRequestSave = ((wm->mParam & dScKoopatlas_c::REQUEST_SAVE) != 0);
-    checkedForMoveAfterEndLevel = ((wm->mParam & dScKoopatlas_c::CHECK_AUTOWALK) != 0);
-    afterFortressMode = ((wm->mParam & dScKoopatlas_c::AFTER_FORTRESS) != 0);
-
-    pathLayer = wm->mMapData.mpPathLayer;
-
-    SpammyReport("setting up PathManager\n");
-    dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-
-    mustComplainToMapCreator = false;
-
-    SpammyReport("Unlocking paths\n");
-    isEnteringLevel = false;
-    levelStartWait = -1;
-    unlockPaths();
-
-    waitAfterInitialPlayerAnim = -1;
-    if (dScStage_c::m_exitMode == dScStage_c::EXIT_LOSE) {
-        mustPlayAfterDeathAnim = true;
-        daKPPlayer_c::m_instance->mVisible = false;
-        dScStage_c::m_exitMode = dScStage_c::EXIT_CLEAR;
-    } else if (dScStage_c::m_exitMode == dScStage_c::EXIT_CLEAR && LastLevelPlayed[0] < 0x80 && !wm->mIsAfter8Castle) {
-        mustPlayAfterWinAnim = true;
-        daKPPlayer_c::m_instance->mVisible = false;
+dKpPathManager_c::~dKpPathManager_c() {
+    bool isEnter8Castle = (s_cmpData.mPrevLevelID[0] == 7) && (s_cmpData.mPrevLevelID[1] == 24) && s_cmpData.mChkSavePrompt;
+    if (!mIsCourseIn && !isEnter8Castle) {
+        clearPathData();
     }
 
-    SpammyReport("done\n");
-
-    // Figure out what path node to start at
-    if (wm->mParam & dScKoopatlas_c::CHANGE_NODE) {
-        // Start off from a "Change"
-        u8 changeID = (wm->mParam >> 20) & 0xFF;
-        SpammyReport("entering at Change ID %d\n", changeID);
-        SpammyReport("Path layer: %p\n", pathLayer);
-        SpammyReport("Node count: %d\n", pathLayer->mNodeNum);
-
-        bool found = false;
-
-        for (int i = 0; i < pathLayer->mNodeNum; i++) {
-            dKPNode_s *node = pathLayer->mpNodes[i];
-            SpammyReport("Checking node: %p\n", node);
-
-            if (node->mNodeType == dKPNode_s::CHANGE && node->mCurrID == changeID) {
-                found = true;
-                currentNode = node;
-
-                SpammyReport("Found CHANGE node: %d %p\n", changeID, node);
-
-                // Figure out where we should move to
-                dKPPath_s *exitTo = nullptr;
-
-                for (int i = 0; i < 4; i++) {
-                    dKPPath_s *candidateExit = node->mpExits[i];
-                    //OSReport("Candidate exit: %p\n", candidateExit);
-                    if (!candidateExit)
-                        continue;
-
-                    // Find out if this path is a candidate
-                    dKPNode_s *srcNode = node;
-                    dKPPath_s *path = candidateExit;
-
-                    while (true) {
-                        dKPNode_s *destNode = (path->mpStartPoint == srcNode) ? path->mpEndPoint : path->mpStartPoint;
-                        //OSReport("Path: %p nodes %p to %p\n", path, srcNode, destNode);
-                        int ct = destNode->getOpenExitNum();
-                        //OSReport("Dest Node available exits: %d; type: %d\n", ct, destNode->type);
-                        if (destNode == node || ct > 2 || destNode->mNodeType == dKPNode_s::LEVEL || destNode->mNodeType == dKPNode_s::CHANGE) {
-                            exitTo = candidateExit;
-                            //OSReport("Accepting this node\n");
-                            break;
-                        }
-
-                        if (ct == 1) {
-                            break;
-                        }
-
-                        // Where to next?
-                        path = destNode->getOpenAcrossPath(path);
-                        srcNode = destNode;
-                    }
-
-                    if (exitTo) {
-                        break;
-                    }
-                }
-
-                if (!exitTo) {
-                    exitTo = node->getAnyExit();
-                }
-                startMovementTo(exitTo);
-                break;
-            }
-        }
-
-        if (!found) {
-            currentNode = pathLayer->mpNodes[0];
-            mustComplainToMapCreator = true;
-        }
-
-        waitAtStart = 1;
-    } else {
-        if (!countdownToFadeIn) {
-            waitAtStart = 50;
-        } else {
-            waitAtStart = 1;
-        }
-
-        if (wm->mIsFirstPlay) {
-            waitAtStart = 280;
-        }
-
-        int currNode = save->getCurrentPathNode();
-        SpammyReport("Saved path node: %d\n", currNode);
-        if (currNode >= pathLayer->mNodeNum) {
-            SpammyReport("Path node out of bounds (%d), using node 0\n", pathLayer->mNodeNum);
-            currentNode = pathLayer->mpNodes[0];
-        } else {
-#ifdef KP_CHK_SET_DEFAULT_NODE
-            int prevHeld = dGameKey_c::m_instance->mRemocon[0]->mPrevDownButtons;
-            if ((prevHeld & WPAD_BUTTON_MINUS) && (prevHeld & WPAD_BUTTON_PLUS) && (prevHeld & WPAD_BUTTON_1)) {
-                SpammyReport("Debug toggled! Going to node 0\n");
-                currentNode = pathLayer->mpNodes[0];
-            } else {
-                currentNode = pathLayer->mpNodes[currNode];
-            }
-#else
-            currentNode = pathLayer->mpNodes[currNode];
-#endif
-        }
-
-        // Set the player position to a specific course
-        int destWorld = -1;
-        int destLevel = -1;
-        bool saveNode = true;
-
-        if (wm->mIsAfterKamekCutscene) {
-            destWorld = 8;
-            destLevel = 1;
-        } else if (wm->mIsAfter8Castle) {
-            destWorld = 8;
-            destLevel = 5;
-        } else if (wm->mIsEndingScene) {
-            destWorld = 80;
-            destLevel = 80;
-            saveNode = false;
-        }
-
-        if (destWorld > -1) {
-            for (int i = 0; i < pathLayer->mNodeNum; i++) {
-                dKPNode_s *node = pathLayer->mpNodes[i];
-                if (node->mNodeType == dKPNode_s::LEVEL && node->mLevelNum[0] == destWorld && node->mLevelNum[1] == destLevel) {
-                    currentNode = node;
-                    if (saveNode) {
-                        save->setCurrentPathNode(i);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    for (int i = 0; i < pathLayer->mNodeNum; i++) {
-        if (pathLayer->mpNodes[i]->mNodeType == dKPNode_s::LEVEL) {
-            pathLayer->mpNodes[i]->createCourseNode();
-        }
-    }
-
-    // Did we just clear a course for the first time?
-    if (MaybeFinishingLevel[0] != 0xFF) {
-        if (save->isCourseDataFlag(MaybeFinishingLevel[0], MaybeFinishingLevel[1], dMj2dGame_c::GOAL_NORMAL)) {
-            shouldRequestSave = true;
-        }
-    }
-
-    // Do we have any completions?
-    if (LastLevelPlayed[0] < 0x80) {
-        u32 conds = save->getCourseDataFlag(LastLevelPlayed[0], LastLevelPlayed[1]);
-        dLevelInfo_c::entry_s *entry = dLevelInfo_c::m_instance.getEntryFromSlotID(LastLevelPlayed[0], LastLevelPlayed[1]);
-
-        // Count exits
-        int exits = 0;
-        int exitNum = 0;
-
-        if (entry->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL) {
-            exitNum++;
-            if (conds & dMj2dGame_c::GOAL_NORMAL) {
-                exits++;
-            }
-        }
-        if (entry->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET) {
-            exitNum++;
-            if (conds & dMj2dGame_c::GOAL_SECRET) {
-                exits++;
-            }
-        }
-
-        completionMessageWorldNum = entry->mDisplayWorld;
-
-        // Do message checks
-        int flag = 0;
-        int totalFlag = 0;
-
-        if (CanFinishCoins) {
-            totalFlag |= 1;
-            if ((conds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
-                flag |= 1;
-                completionMessageType = CMP_MSG_COINS;
-            }
-        }
-        if (CanFinishExits) {
-            totalFlag |= 2;
-            if (exits == exitNum) {
-                flag |= 2;
-                completionMessageType = CMP_MSG_EXITS;
-            }
-        }
-        if (CanFinishWorld && flag == totalFlag) {
-            shouldRequestSave = true;
-            completionMessageType = CMP_MSG_WORLD;
-        }
-
-        if (CanFinishAlmostAllCoins) {
-            if ((conds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
-                completionMessageType = CMP_MSG_GLOBAL_COINS_EXC_W9;
-            }
-        }
-
-        int glbFlag = 0;
-        int glbTotalFlag = 0;
-
-        if (CanFinishAllCoins) {
-            glbTotalFlag |= 1;
-            if ((conds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
-                glbFlag |= 1;
-                completionMessageType = CMP_MSG_GLOBAL_COINS;
-            }
-        }
-        if (CanFinishAllExits) {
-            glbTotalFlag |= 2;
-            if (exits == exitNum) {
-                glbFlag |= 2;
-                completionMessageType = CMP_MSG_GLOBAL_EXITS;
-            }
-        }
-        if (CanFinishEverything && glbFlag == glbTotalFlag) {
-            //save->titleScreenWorld = 3;
-            //save->titleScreenLevel = 10;
-
-            shouldRequestSave = true;
-            completionMessageType = CMP_MSG_EVERYTHING;
-        }
-    }
-
-    ResetAllCompletionCandidates();
-
-    if (wm->mIsAfterKamekCutscene || wm->mIsAfter8Castle || wm->mIsEndingScene) {
-        copyWorldDefToSave(wm->mMapData.findWorldDef(1));
-    }
-
-    finalisePathUnlocks();
-}
-
-static u8 *PathAvailabilityData = 0;
-static u8 *NodeAvailabilityData = 0;
-
-void ClearOldPathAvailabilityData() {
-    // This is called by File Select
-    if (PathAvailabilityData) {
-        delete[] PathAvailabilityData;
-        PathAvailabilityData = 0;
-    }
-    if (NodeAvailabilityData) {
-        delete[] NodeAvailabilityData;
-        NodeAvailabilityData = 0;
-    }
-}
-
-dWMPathManager_c::~dWMPathManager_c() {
-    bool isEnter8Castle = (MaybeFinishingLevel[0] == 7) && (MaybeFinishingLevel[1] == 24);
-    if (!isEnteringLevel && !isEnter8Castle) {
-        ClearOldPathAvailabilityData();
-    }
-
-    if (isEnteringLevel) {
-        ResetAllCompletionCandidates();
+    if (mIsCourseIn) {
+        resetCompletionData();
 
         dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-        if ((enteredLevel->mDisplayLevel >= 21 && enteredLevel->mDisplayLevel <= 27 && enteredLevel->mDisplayLevel != 26)
-                || (enteredLevel->mDisplayLevel >= 29 && enteredLevel->mDisplayLevel <= 42)) {
-            if (!save->isCourseDataFlag(enteredLevel->mWorldSlot, enteredLevel->mLevelSlot, dMj2dGame_c::GOAL_NORMAL)) {
-                MaybeFinishingLevel[0] = enteredLevel->mWorldSlot;
-                MaybeFinishingLevel[1] = enteredLevel->mLevelSlot;
+        if ((mEnteredLevel->mDisplayLevel >= 21 && mEnteredLevel->mDisplayLevel <= 27 && mEnteredLevel->mDisplayLevel != 26)
+                || (mEnteredLevel->mDisplayLevel >= 29 && mEnteredLevel->mDisplayLevel <= 42)) {
+            if (!save->isCourseDataFlag(mEnteredLevel->mWorldSlot, mEnteredLevel->mLevelSlot, dMj2dGame_c::GOAL_NORMAL)) {
+                s_cmpData.mChkSavePrompt = true;
             }
         }
 
-        LastLevelPlayed[0] = enteredLevel->mWorldSlot;
-        LastLevelPlayed[1] = enteredLevel->mLevelSlot;
+        s_cmpData.mPrevLevelID[0] = mEnteredLevel->mWorldSlot;
+        s_cmpData.mPrevLevelID[1] = mEnteredLevel->mLevelSlot;
+
+        if (mPenguinSlideHandle.IsAttachedSound()) {
+            mPenguinSlideHandle.Stop(5);
+        }
 
         // Now, a fuckton of checks for the various possible things we can finish!
         dLevelInfo_c *lvlInfo = &dLevelInfo_c::m_instance;
-        u32 theseConds = save->getCourseDataFlag(enteredLevel->mWorldSlot, enteredLevel->mLevelSlot);
+        u32 theseConds = save->getCourseDataFlag(mEnteredLevel->mWorldSlot, mEnteredLevel->mLevelSlot);
 
         int coinNum = 0;
         int exitNum = 0;
@@ -390,7 +76,7 @@ dWMPathManager_c::~dWMPathManager_c() {
                 }
 
                 // Collection for this world
-                if (entry->mDisplayWorld == enteredLevel->mDisplayWorld) {
+                if (entry->mDisplayWorld == mEnteredLevel->mDisplayWorld) {
                     totalCoinNum++;
                     if ((entryConds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
                         coinNum++;
@@ -445,8 +131,8 @@ dWMPathManager_c::~dWMPathManager_c() {
         }
 
         // Don't consider non-levels for this
-        if (!(enteredLevel->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL)) {
-            goto cannotFinishAnything;
+        if (!(mEnteredLevel->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL)) {
+            return;
         }
 
         // Check if we're candidates for any of these
@@ -467,26 +153,26 @@ dWMPathManager_c::~dWMPathManager_c() {
         // Check if we could obtain every star coin
         if ((theseConds & dMj2dGame_c::COIN_MASK) != dMj2dGame_c::COIN_MASK) {
             if ((coinNum + 1) == totalCoinNum) {
-                CanFinishCoins = true;
+                s_cmpData.mIsCmpCoins = true;
                 everythingFlag |= 1;
             }
             if ((glbCoinNum + 1) == totalGlbCoinNum) {
-                CanFinishAllCoins = true;
+                s_cmpData.mIsCmpAllCoins = true;
                 gEverythingFlag |= 1;
             }
             if ((glbCoinNumExcW9 + 1) == totalGlbCoinNumExcW9)
-                CanFinishAlmostAllCoins = true;
+                s_cmpData.mIsCmpCoinsExcW9 = true;
         }
 
         // Check if we could obtain every exit
         int elExits = 0, elTotalExits = 0;
-        if (enteredLevel->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL) {
+        if (mEnteredLevel->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL) {
             elTotalExits++;
             if (theseConds & dMj2dGame_c::GOAL_NORMAL) {
                 elExits++;
             }
         }
-        if (enteredLevel->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET) {
+        if (mEnteredLevel->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET) {
             elTotalExits++;
             if (theseConds & dMj2dGame_c::GOAL_SECRET) {
                 elExits++;
@@ -495,44 +181,631 @@ dWMPathManager_c::~dWMPathManager_c() {
 
         if ((elExits + 1) == elTotalExits) {
             if ((exitNum + 1) == totalExitNum) {
-                CanFinishExits = true;
+                s_cmpData.mIsCmpExits = true;
                 everythingFlag |= 2;
             }
             if ((glbExitNum + 1) == totalGlbExitNum) {
-                CanFinishAllExits = true;
+                s_cmpData.mIsCmpAllExits = true;
                 gEverythingFlag |= 2;
             }
         }
 
         // And could we obtain EVERYTHING?
-        if ((CanFinishCoins || CanFinishExits) && everythingFlag == 3) {
-            CanFinishWorld = true;
+        if ((s_cmpData.mIsCmpCoins || s_cmpData.mIsCmpExits) && everythingFlag == 3) {
+            s_cmpData.mIsCmpWorld = true;
         }
-        if ((CanFinishAllCoins || CanFinishAllExits) && gEverythingFlag == 3) {
-            CanFinishEverything = true;
+        if ((s_cmpData.mIsCmpAllCoins || s_cmpData.mIsCmpAllExits) && gEverythingFlag == 3) {
+            s_cmpData.mIsCmpAll = true;
         }
-    }
-
-cannotFinishAnything:
-    if (penguinSlideSound.IsAttachedSound()) {
-        penguinSlideSound.Stop(5);
     }
 }
 
-void dWMPathManager_c::unlockPaths() {
-    u8 *oldPathAvData = PathAvailabilityData;
-    PathAvailabilityData = new u8[pathLayer->mPathNum];
+void dKpPathManager_c::create() {
+    // Only reset data if coming from the File Select
+    if (dScene_c::m_oldScene == fProfile::GAME_SETUP) {
+        resetCompletionData();
+    }
 
-    u8 *oldNodeAvData = NodeAvailabilityData;
-    NodeAvailabilityData = new u8[pathLayer->mPathNum];
+    dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
+
+    mpCurrentPath = nullptr;
+    mIsMoving = false;
+    mIsJumpAnm = false;
+    mScaleDuration = -1;
+    mTimer = 0.0;
+    mReverseOnPath = false;
+
+    mDispSavePrompt = ((wm->mParam & dScKoopatlas_c::REQUEST_SAVE) != 0);
+    mDidAutoWalkCheck = ((wm->mParam & dScKoopatlas_c::CHECK_AUTOWALK) != 0);
+    mAutoWalkMode = ((wm->mParam & dScKoopatlas_c::AFTER_FORTRESS) != 0);
+
+    mpPathLayer = wm->mMapData.mpPathLayer;
+
+    SpammyReport("Setting up PathManager\n");
+    dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+
+    mustComplainToMapCreator = false;
+
+    SpammyReport("Unlocking paths\n");
+    mIsCourseIn = false;
+    mCourseInDelay = -1;
+    unlockPaths();
+
+    mInitialPlyAnmDelay = -1;
+    if (dScStage_c::m_exitMode == dScStage_c::EXIT_LOSE) {
+        mDoCourseFailAnm = true;
+        daKPPlayer_c::m_instance->mVisible = false;
+        dScStage_c::m_exitMode = dScStage_c::EXIT_CLEAR;
+    } else if ((dScStage_c::m_exitMode == dScStage_c::EXIT_CLEAR) && s_cmpData.mPrevLevelID[0] < 0x80 && !wm->mIsAfter8Castle) {
+        mDoCourseClearAnm = true;
+        daKPPlayer_c::m_instance->mVisible = false;
+    }
+
+    SpammyReport("done\n");
+
+    // Figure out what path node to start at
+    if (wm->mParam & dScKoopatlas_c::CHANGE_NODE) {
+        // Start off from a "Change"
+        u8 changeID = (wm->mParam >> 20) & 0xFF;
+        SpammyReport("entering at Change ID %d\n", changeID);
+        SpammyReport("Path layer: %p\n", mpPathLayer);
+        SpammyReport("Node count: %d\n", mpPathLayer->mNodeNum);
+
+        bool found = false;
+
+        for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+            dKPNode_s *node = mpPathLayer->mpNodes[i];
+            SpammyReport("Checking node: %p\n", node);
+
+            if (node->mNodeType == dKPNode_s::CHANGE && node->mCurrID == changeID) {
+                found = true;
+                mpCurrentNode = node;
+
+                SpammyReport("Found CHANGE node: %d %p\n", changeID, node);
+
+                // Figure out where we should move to
+                dKPPath_s *exitTo = nullptr;
+
+                for (int i = 0; i < 4; i++) {
+                    dKPPath_s *candidateExit = node->mpExits[i];
+                    //SpammyReport("Candidate exit: %p\n", candidateExit);
+                    if (!candidateExit)
+                        continue;
+
+                    // Find out if this path is a candidate
+                    dKPNode_s *srcNode = node;
+                    dKPPath_s *path = candidateExit;
+
+                    while (true) {
+                        dKPNode_s *destNode = (path->mpStartPoint == srcNode) ? path->mpEndPoint : path->mpStartPoint;
+                        //SpammyReport("Path: %p nodes %p to %p\n", path, srcNode, destNode);
+                        int ct = destNode->getOpenExitNum();
+                        //SpammyReport("Dest Node available exits: %d; type: %d\n", ct, destNode->type);
+                        if (destNode == node || ct > 2 || destNode->mNodeType == dKPNode_s::LEVEL || destNode->mNodeType == dKPNode_s::CHANGE) {
+                            exitTo = candidateExit;
+                            //SpammyReport("Accepting this node\n");
+                            break;
+                        }
+
+                        if (ct == 1) {
+                            break;
+                        }
+
+                        // Where to next?
+                        path = destNode->getOpenAcrossPath(path);
+                        srcNode = destNode;
+                    }
+
+                    if (exitTo) {
+                        break;
+                    }
+                }
+
+                if (!exitTo) {
+                    exitTo = node->getAnyExit();
+                }
+                startMovementTo(exitTo);
+                break;
+            }
+        }
+
+        if (!found) {
+            mpCurrentNode = mpPathLayer->mpNodes[0];
+            mustComplainToMapCreator = true;
+        }
+
+        mInitialDelay = 1;
+    } else {
+        if (!mPathFadeInDelay) {
+            mInitialDelay = 50;
+        } else {
+            mInitialDelay = 1;
+        }
+
+        if (wm->mIsFirstPlay) {
+            mInitialDelay = 280;
+        }
+
+        int currNode = save->getCurrentPathNode();
+        SpammyReport("Saved path node: %d\n", currNode);
+        if (currNode >= mpPathLayer->mNodeNum) {
+            SpammyReport("Path node out of bounds (%d), using node 0\n", mpPathLayer->mNodeNum);
+            mpCurrentNode = mpPathLayer->mpNodes[0];
+        } else {
+#ifdef KP_CHK_SET_DEFAULT_NODE
+            int prevHeld = dGameKey_c::m_instance->mRemocon[0]->mPrevDownButtons;
+            if ((prevHeld & WPAD_BUTTON_MINUS) && (prevHeld & WPAD_BUTTON_PLUS) && (prevHeld & WPAD_BUTTON_1)) {
+                OSReport("Debug Mode toggled! Putting player at node 0\n");
+                mpCurrentNode = mpPathLayer->mpNodes[0];
+            } else {
+                mpCurrentNode = mpPathLayer->mpNodes[currNode];
+            }
+#else
+            mpCurrentNode = mpPathLayer->mpNodes[currNode];
+#endif
+        }
+
+        // Set the player position to a specific course
+        int destWorld = -1;
+        int destLevel = -1;
+        bool saveNode = true;
+
+        if (wm->mIsAfterKamekCutscene) {
+            destWorld = 8;
+            destLevel = 1;
+        } else if (wm->mIsAfter8Castle) {
+            destWorld = 8;
+            destLevel = 5;
+        } else if (wm->mIsEndingScene) {
+            destWorld = 80;
+            destLevel = 80;
+            saveNode = false;
+        }
+
+        if (destWorld > -1) {
+            for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+                dKPNode_s *node = mpPathLayer->mpNodes[i];
+                if (node->mNodeType == dKPNode_s::LEVEL && node->mLevelNum[0] == destWorld && node->mLevelNum[1] == destLevel) {
+                    mpCurrentNode = node;
+                    if (saveNode) {
+                        save->setCurrentPathNode(i);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+        if (mpPathLayer->mpNodes[i]->mNodeType == dKPNode_s::LEVEL) {
+            mpPathLayer->mpNodes[i]->createCourseNode();
+        }
+    }
+
+    // Do we have any completions?
+    if (s_cmpData.mPrevLevelID[0] < 0x80) {
+        u32 conds = save->getCourseDataFlag(s_cmpData.mPrevLevelID[0], s_cmpData.mPrevLevelID[1]);
+        dLevelInfo_c::entry_s *entry = dLevelInfo_c::m_instance.getEntryFromSlotID(s_cmpData.mPrevLevelID[0], s_cmpData.mPrevLevelID[1]);
+
+        // Check if we should display a save prompt
+        if (s_cmpData.mChkSavePrompt) {
+            if (conds & dMj2dGame_c::GOAL_NORMAL) {
+                mDispSavePrompt = true;
+            }
+        }
+
+        // Count exits
+        int exits = 0;
+        int exitNum = 0;
+
+        if (entry->mFlag & dLevelInfo_c::FLAG_GOAL_NORMAL) {
+            exitNum++;
+            if (conds & dMj2dGame_c::GOAL_NORMAL) {
+                exits++;
+            }
+        }
+        if (entry->mFlag & dLevelInfo_c::FLAG_GOAL_SECRET) {
+            exitNum++;
+            if (conds & dMj2dGame_c::GOAL_SECRET) {
+                exits++;
+            }
+        }
+
+        // Do message checks
+        int flag = 0;
+        int totalFlag = 0;
+
+        if (s_cmpData.mIsCmpCoins) {
+            totalFlag |= 1;
+            if ((conds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
+                flag |= 1;
+                mCmpMsgType = CMP_MSG_COINS;
+            }
+        }
+        if (s_cmpData.mIsCmpExits) {
+            totalFlag |= 2;
+            if (exits == exitNum) {
+                flag |= 2;
+                mCmpMsgType = CMP_MSG_EXITS;
+            }
+        }
+        if (s_cmpData.mIsCmpWorld && flag == totalFlag) {
+            mDispSavePrompt = true;
+            mCmpMsgType = CMP_MSG_WORLD;
+        }
+
+        if (s_cmpData.mIsCmpCoinsExcW9) {
+            if ((conds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
+                mCmpMsgType = CMP_MSG_GLOBAL_COINS_EXC_W9;
+            }
+        }
+
+        int glbFlag = 0;
+        int glbTotalFlag = 0;
+
+        if (s_cmpData.mIsCmpAllCoins) {
+            glbTotalFlag |= 1;
+            if ((conds & dMj2dGame_c::COIN_MASK) == dMj2dGame_c::COIN_MASK) {
+                glbFlag |= 1;
+                mCmpMsgType = CMP_MSG_GLOBAL_COINS;
+            }
+        }
+        if (s_cmpData.mIsCmpAllExits) {
+            glbTotalFlag |= 2;
+            if (exits == exitNum) {
+                glbFlag |= 2;
+                mCmpMsgType = CMP_MSG_GLOBAL_EXITS;
+            }
+        }
+        if (s_cmpData.mIsCmpAll && glbFlag == glbTotalFlag) {
+            //save->titleScreenWorld = 3;
+            //save->titleScreenLevel = 10;
+
+            mDispSavePrompt = true;
+            mCmpMsgType = CMP_MSG_EVERYTHING;
+        }
+    }
+
+    resetCompletionData();
+
+    if (wm->mIsAfterKamekCutscene || wm->mIsAfter8Castle || wm->mIsEndingScene) {
+        copyWorldDefToSave(wm->mMapData.findWorldDef(1));
+    }
+
+    finalisePathUnlocks();
+}
+
+void dKpPathManager_c::execute() {
+    dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
+
+    // Entering a course
+    if (mIsCourseIn) {
+        if (mCourseInDelay > 0) {
+            mCourseInDelay--;
+
+            if (mCourseInDelay == 0) {
+                dScKoopatlas_c::m_instance->startGame(mEnteredLevel);
+            }
+        }
+        return;
+    }
+
+    if (mInitialDelay > 0) {
+        mInitialDelay--;
+
+        if (mInitialDelay == 0) {
+            if (mDoCourseFailAnm) {
+                daKPPlayer_c::m_instance->mVisible = true;
+                daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::ENDING_WAIT, 1.0f, 0.0f, 0.0f);
+                mInitialPlyAnmDelay = 60;
+
+                SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_COURSE_MISS, 1);
+            } else if (mDoCourseClearAnm) {
+                daKPPlayer_c::m_instance->mVisible = true;
+                if (dScKoopatlas_c::m_instance->mIsAfter8Castle) {
+                    mInitialPlyAnmDelay = 1;
+                } else {
+                    daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::DM_SURP_WAIT, 1.0f, 0.0f, 0.0f);
+                    mInitialPlyAnmDelay = 38;
+
+                    nw4r::snd::SoundHandle something;
+                    if (!wm->mIsEndingScene) {
+                        SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_JUMP, 1);
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    if (mInitialPlyAnmDelay > 0) {
+        mInitialPlyAnmDelay--;
+
+        if (mInitialPlyAnmDelay == 0) {
+            daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.0f, 0.0f, 0.0f);
+        }
+
+        if (mDoCourseClearAnm && (mInitialPlyAnmDelay == 9) && !wm->mIsEndingScene) {
+            SndAudioMgr::sInstance->startSystemSe(SE_PLY_LAND_ROCK, 1);
+        }
+        return;
+    }
+
+    // Handle path unlocking
+    if (mPathFadeInDelay > 0) {
+        mPathFadeInDelay--;
+
+        if (mPathFadeInDelay <= 0) {
+            if (mIsCamBoundsValid) {
+                dKPCamera_c::m_instance->mCurrentX = mpCurrentNode->mPosX;
+                dKPCamera_c::m_instance->mCurrentY = -mpCurrentNode->mPosY;
+                dKPCamera_c::m_instance->panToBounds(mCamMinX, mCamMinY, mCamMaxX, mCamMaxY);
+
+                mIsCamPanToPaths = true;
+            } else {
+                mPathUnlockAlpha = 0;
+            }
+
+            SndAudioMgr::sInstance->startSystemSe(SE_OBJ_GEN_LOAD, 1);
+        }
+    }
+
+    if (mIsCamPanToPaths) {
+        if (dKPCamera_c::m_instance->mIsPanning) {
+            return;
+        }
+
+        mIsCamPanToPaths = false;
+        mPathUnlockAlpha = 0;
+    }
+
+    if (mPathUnlockAlpha != -1) {
+        mPathUnlockAlpha += PATH_ALPHA_INC;
+
+        for (int i = 0; i < mpPathLayer->mPathNum; i++) {
+            dKPPath_s *path = mpPathLayer->mpPaths[i];
+
+            if (path->mIsOpen == dKPPath_s::NEWLY_OPEN) {
+                path->setLayerAlpha(mPathUnlockAlpha);
+            }
+        }
+
+        for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+            dKPNode_s *node = mpPathLayer->mpNodes[i];
+
+            if (node->mIsNewlyOpen) {
+                node->setLayerAlpha(mPathUnlockAlpha);
+            }
+        }
+
+        // We've reached the end
+        if (mPathUnlockAlpha == PATH_OPEN_ALPHA) {
+            mPathUnlockAlpha = -1;
+
+            mNodeUnlockDuration = 15;
+
+            for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+                dKPNode_s *node = mpPathLayer->mpNodes[i];
+
+                if (node->mIsNewlyOpen && node->mNodeType == dKPNode_s::LEVEL) {
+                    mVec3_c effPos(node->mPosX, -node->mPosY + 4.0, 3300.0f);
+                    mAng3_c effAng(0x2000, 0, 0);
+                    mVec3_c effScale(0.8f, 0.8f, 0.8f);
+                    mEf::createEffect("Wm_cs_pointlight", 0, &effPos, &effAng, &effScale);
+
+                    SndAudioMgr::sInstance->startSystemSe(SE_OBJ_GEN_NEW_COURSE, 1);
+                }
+            }
+        }
+
+        return;
+    }
+
+    if (mNodeUnlockDuration > 0) {
+        mNodeUnlockDuration--;
+
+        if (mNodeUnlockDuration == 0) {
+            mPanBackDelay = 20;
+        }
+        return;
+    }
+
+    if (mPanBackDelay > 0) {
+        mPanBackDelay--;
+
+        if (mPanBackDelay == 0 && mIsCamBoundsValid) {
+            dKPCamera_c::m_instance->panToPosition(mpCurrentNode->mPosX, -mpCurrentNode->mPosY, STD_ZOOM);
+            mIsCamPanFromPaths = true;
+        }
+        return;
+    }
+
+    if (mIsCamPanFromPaths) {
+        if (dKPCamera_c::m_instance->mIsPanning) {
+            return;
+        }
+        mIsCamPanFromPaths = false;
+        dKPCamera_c::m_instance->mFollowPlayer = true;
+    }
+
+    if (mCmpAnimDuration > 0) {
+        mCmpAnimDuration--;
+        if (mCmpAnimDuration == 60) {
+            SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CLEAR_MULTI, 1);
+        } else if (mCmpAnimDuration == 0) {
+            daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.0f, 0.0f, 0.0f);
+        }
+        return;
+    }
+
+    if (mCmpMsgDelay > 0) {
+        mCmpMsgDelay--;
+
+        if (mCmpMsgDelay == 0) {
+            mIsCmpMsgActive = true;
+        }
+        return;
+    }
+
+    // Just in case
+    if (mIsCmpMsgActive) {
+        return;
+    }
+
+    if (mCmpMsgType > 0) {
+        PathMngReport("We have a completion message type: %d\n", mCmpMsgType);
+        mCmpAnimDuration = 154;
+
+        int soundID;
+        if (mCmpMsgType == CMP_MSG_GLOBAL_COINS) {
+            soundID = STRM_BGM_STAR_COIN_CMPLT_ALL;
+            mCmpMsgDelay = 240 - mCmpAnimDuration;
+        } else if (mCmpMsgType == CMP_MSG_EVERYTHING) {
+            soundID = STRM_BGM_ALL_CMPLT_5STARS;
+            mCmpMsgDelay = 216 - mCmpAnimDuration;
+        } else {
+            soundID = STRM_BGM_STAR_COIN_CMPLT_WORLD;
+            mCmpMsgDelay = 1; //138;
+        }
+
+        SndAudioMgr::sInstance->startSystemSe(soundID, 1);
+        daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::COIN_COMP, 1.0f, 0.0f, 0.0f);
+        return;
+    }
+
+    // Go no further for the ending
+    if (dScKoopatlas_c::m_instance->mIsEndingScene) {
+        if (!mEndingSceneComplete) {
+            if (!mDidEndingSceneSave) {
+                mDidEndingSceneSave = true;
+
+                dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
+                //save->titleScreenWorld = 3;
+                //save->titleScreenLevel = 9;
+
+                dCourseSelectManager_c::m_instance->saveGame(false);
+            } else {
+                if (!dSaveMng_c::m_instance->isNandBusy()) {
+                    dScRestartCrsin_c::startTitle(false, 0);
+                    mEndingSceneComplete = true;
+                }
+            }
+        }
+        return;
+    }
+
+    // Check if we should auto-walk to the next point
+    if (mDispSavePrompt && !mDidAutoWalkCheck) {
+        mDidAutoWalkCheck = true;
+
+        // TODO: Control this via WorldInfo
+        static const int endLevels[11][3] = {
+            {1, 38, 1}, // W1 right
+            {2, 38, 2}, // W2 up
+            {3, 38, 0}, // W3 left
+            {4, 38, 1}, // W4 right
+            {5, 38, 1}, // W5 right
+            {6, 38, 2}, // W6 up
+            {7, 38, 1}, // W7 right
+            {10, 5, 2}, // GW up
+            {10, 10, 0}, // MM left
+            {10, 15, 3}, // CC down
+            {10, 25, 1}, // SC right
+        };
+
+        int w = (s_cmpData.mPrevLevelID[0] & 0x7F) + 1;
+        int l = s_cmpData.mPrevLevelID[1] + 1;
+
+        for (int i = 0; i < 11; i++) {
+            if (endLevels[i][0] == w && endLevels[i][1] == l) {
+                mAutoWalkMode = true;
+                startMovementTo(mpCurrentNode->mpExits[endLevels[i][2]]);
+                return;
+            }
+        }
+    }
+
+    if (mAutoWalkMode) {
+        if (mIsMoving) {
+            moveThroughPath(-1);
+        } else {
+            mAutoWalkMode = false;
+        }
+        return;
+    }
+
+    if (mDispSavePrompt) {
+        dScKoopatlas_c::m_instance->showSaveWindow();
+        mDispSavePrompt = false;
+        return;
+    }
+
+    if (!mInitialLoadComplete) {
+        dScKoopatlas_c::m_instance->startMusic();
+        dKPHud_c::m_instance->loadInitially();
+        mInitialLoadComplete = true;
+        return;
+    }
+
+    // Prevent the player from reversing on a path after triggering a Map Change
+    if (mDisableInput && mIsMoving) {
+        moveThroughPath(-1);
+        return;
+    }
+
+    int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
+
+    // Left, right, up, down
+    int pressedDir = getPressedDir(pressed);
+
+    if (mIsMoving) {
+        moveThroughPath(pressedDir);
+    } else {
+        if (pressedDir >= 0) {
+            // Use an exit if possible
+            if (canUseExit(mpCurrentNode->mpExits[pressedDir])) {
+                startMovementTo(mpCurrentNode->mpExits[pressedDir]);
+            } else {
+                // TODO: maybe remove this? got to see how it looks
+                static u16 directions[] = {-0x4000,0x4000,-0x7FFF,0};
+                daKPPlayer_c::m_instance->setTargetRotY(directions[pressedDir]);
+            }
+        } else if (pressed & WPAD_BUTTON_2) {
+            activatePoint();
+        }
+    }
+}
+
+bool dKpPathManager_c::isPathMgrActive() {
+    if (mIsCourseIn || (mNodeUnlockDuration > 0) || (mCmpMsgDelay > 0) ||
+            (mInitialDelay > 0) || (mInitialPlyAnmDelay > 0) ||
+            mIsCamPanToPaths || mIsCamPanFromPaths ||
+            (mPanBackDelay > 0) || !mInitialLoadComplete ||
+            (mPathFadeInDelay > 0) || (mPathUnlockAlpha != -1) ||
+            dScKoopatlas_c::m_instance->mIsEndingScene) {
+        return true;
+    }
+
+    if (mIsMoving) {
+        return true;
+    }
+    return false;
+}
+
+void dKpPathManager_c::unlockPaths() {
+    u8 *oldPathAvData = sp_openPathData;
+    sp_openPathData = new u8[mpPathLayer->mPathNum];
+
+    u8 *oldNodeAvData = sp_openPathData;
+    sp_openPathData = new u8[mpPathLayer->mPathNum];
 
     SpammyReport("Unlocking paths\n");
 
     // Unlock all needed paths
-    for (int i = 0; i < pathLayer->mPathNum; i++) {
-        dKPPath_s *path = pathLayer->mpPaths[i];
+    for (int i = 0; i < mpPathLayer->mPathNum; i++) {
+        dKPPath_s *path = mpPathLayer->mpPaths[i];
 
-        PathAvailabilityData[i] = path->mIsOpen;
+        sp_openPathData[i] = path->mIsOpen;
 
         //SpammyReport("Path %d: %d\n", i, path->isAvailable);
         // If this path is not "always open", then reset its alpha
@@ -541,8 +814,8 @@ void dWMPathManager_c::unlockPaths() {
 
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
 
-    cachedTotalStarCoinCount = dGameCom::getStarCoinCount();
-    cachedUnspentStarCoinCount = cachedTotalStarCoinCount - save->mSpentStarCoins;
+    mCollectStarCoinNum = dGameCom::getStarCoinCount();
+    mUnspentStarCoinNum = mCollectStarCoinNum - save->mSpentStarCoins;
 
     u8 *in = (u8*)dScKoopatlas_c::m_instance->mMapData.mpData->mpUnlockData;
     SpammyReport("UNLOCKING PATHS: Unlock data @ %p\n", in);
@@ -567,11 +840,11 @@ void dWMPathManager_c::unlockPaths() {
             u16 pathID = (one << 8) | two;
             UnlockCmdReport("[%p] Cmd %d: Affected %d: PathID: %d\n", in, cmdID, i, pathID);
 
-            dKPPath_s *path = pathLayer->mpPaths[pathID];
+            dKPPath_s *path = mpPathLayer->mpPaths[pathID];
             UnlockCmdReport("[%p] Cmd %d: Affected %d: Path: %p\n", in, cmdID, i, path);
             path->mIsOpen = value ? dKPPath_s::OPEN : dKPPath_s::NOT_OPEN;
             UnlockCmdReport("[%p] Cmd %d: Affected %d: IsAvailable written\n", in, cmdID, i);
-            PathAvailabilityData[pathID] = value ? dKPPath_s::OPEN : dKPPath_s::NOT_OPEN;
+            sp_openPathData[pathID] = value ? dKPPath_s::OPEN : dKPPath_s::NOT_OPEN;
             UnlockCmdReport("[%p] Cmd %d: Affected %d: AvailabilityData written\n", in, cmdID, i);
             // NEWLY_AVAILABLE is set later, when that stuff is figured out
 
@@ -586,9 +859,9 @@ void dWMPathManager_c::unlockPaths() {
 
     SpammyReport("UNLOCKING PATHS: All complete @ %p\n", in);
 
-    for (int i = 0; i < pathLayer->mNodeNum; i++) {
-        dKPNode_s *node = pathLayer->mpNodes[i];
-        NodeAvailabilityData[i] = node->chkOpenStatus();
+    for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+        dKPNode_s *node = mpPathLayer->mpNodes[i];
+        sp_openNodeData[i] = node->chkOpenStatus();
 
         // Set special UNLOCKED data flag
         if (node->mNodeType == node->LEVEL && node->chkOpenStatus() && node->mLevelNum[1] != 99) {
@@ -597,22 +870,22 @@ void dWMPathManager_c::unlockPaths() {
     }
 
     // Did anything become newly available?!
-    newlyAvailablePaths = 0;
-    newlyAvailableNodes = 0;
+    mNewOpenPathNum = 0;
+    mNewOpenNodeNum = 0;
 
     dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
     bool forceFlag = (wm->mIsAfter8Castle || wm->mIsAfterKamekCutscene);
 
     if (!wm->mIsEndingScene && (oldPathAvData || forceFlag)) {
-        for (int i = 0; i < pathLayer->mPathNum; i++) {
-            if ((PathAvailabilityData[i] > 0) && (forceFlag || oldPathAvData[i] == 0)) {
-                if (forceFlag && PathAvailabilityData[i] == dKPPath_s::ALWAYS_OPEN) {
+        for (int i = 0; i < mpPathLayer->mPathNum; i++) {
+            if ((sp_openPathData[i] > 0) && (forceFlag || oldPathAvData[i] == 0)) {
+                if (forceFlag && sp_openPathData[i] == dKPPath_s::ALWAYS_OPEN) {
                     continue;
                 }
 
-                dKPPath_s *path = pathLayer->mpPaths[i];
+                dKPPath_s *path = mpPathLayer->mpPaths[i];
                 path->mIsOpen = dKPPath_s::NEWLY_OPEN;
-                newlyAvailablePaths++;
+                mNewOpenPathNum++;
 
                 // Set this path's alpha to 0, we'll fade it in later
                 path->setLayerAlpha(PATH_LOCK_ALPHA);
@@ -620,11 +893,11 @@ void dWMPathManager_c::unlockPaths() {
         }
 
         // Check nodes too
-        for (int i = 0; i < pathLayer->mNodeNum; i++) {
-            if ((NodeAvailabilityData[i] > 0) && (forceFlag || oldNodeAvData[i] == 0)) {
-                dKPNode_s *node = pathLayer->mpNodes[i];
+        for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+            if ((sp_openNodeData[i] > 0) && (forceFlag || oldNodeAvData[i] == 0)) {
+                dKPNode_s *node = mpPathLayer->mpNodes[i];
                 node->mIsNewlyOpen = true;
-                newlyAvailableNodes++;
+                mNewOpenNodeNum++;
             }
         }
     }
@@ -636,16 +909,16 @@ void dWMPathManager_c::unlockPaths() {
 
     if (wm->mIsEndingScene) {
         dKPNode_s *yoshiHouse = nullptr;
-        for (int i = 0; i < pathLayer->mNodeNum; i++) {
-            dKPNode_s *node = pathLayer->mpNodes[i];
+        for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+            dKPNode_s *node = mpPathLayer->mpNodes[i];
 
             if (node->mNodeType != dKPNode_s::LEVEL) {
                 continue;
             }
-            if (node->mLevelNum[0] != 1) {
+            if (node->mLevelNum[0] != YOSHI_HOUSE_WORLD) {
                 continue;
             }
-            if (node->mLevelNum[1] != 41) {
+            if (node->mLevelNum[1] != YOSHI_HOUSE_STAGE) {
                 continue;
             }
 
@@ -653,31 +926,31 @@ void dWMPathManager_c::unlockPaths() {
             break;
         }
 
-        if (yoshiHouse) {
-            dKPNode_s *currentNode = yoshiHouse;
+        if (yoshiHouse != nullptr) {
+            dKPNode_s *mpCurrentNode = yoshiHouse;
             dKPPath_s *nextPath = yoshiHouse->mpExitR;
 
             while (true) {
                 if (nextPath->mIsOpen == dKPPath_s::OPEN) {
                     nextPath->mIsOpen = dKPPath_s::NEWLY_OPEN;
-                    newlyAvailablePaths++;
+                    mNewOpenPathNum++;
                     nextPath->setLayerAlpha(PATH_LOCK_ALPHA);
                 }
 
-                dKPNode_s *nextNode = nextPath->getOtherNodeTo(currentNode);
-                if (!nextNode) {
+                dKPNode_s *nextNode = nextPath->getOtherNodeTo(mpCurrentNode);
+                if (nextNode == nullptr) {
                     break;
                 }
 
                 if (nextNode->chkOpenStatus()) {
                     nextNode->mIsNewlyOpen = true;
-                    newlyAvailableNodes++;
+                    mNewOpenNodeNum++;
                 }
 
-                currentNode = nextNode;
+                mpCurrentNode = nextNode;
                 nextPath = nextNode->getAcrossPath(nextPath);
 
-                if (!nextPath) {
+                if (nextPath == nullptr) {
                     break;
                 }
             }
@@ -685,23 +958,23 @@ void dWMPathManager_c::unlockPaths() {
     }
 
     // Now set all node alphas
-    for (int i = 0; i < pathLayer->mNodeNum; i++) {
-        dKPNode_s *node = pathLayer->mpNodes[i];
+    for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
+        dKPNode_s *node = mpPathLayer->mpNodes[i];
 
         node->setLayerAlpha((node->chkOpenStatus() & !node->mIsNewlyOpen) ? PATH_OPEN_ALPHA : PATH_LOCK_ALPHA);
     }
 }
 
-void dWMPathManager_c::finalisePathUnlocks() {
+void dKpPathManager_c::finalisePathUnlocks() {
     // If anything was new, set it as such
-    if (newlyAvailablePaths || newlyAvailableNodes) {
-        countdownToFadeIn = 30;
+    if (mNewOpenPathNum || mNewOpenNodeNum) {
+        mPathFadeInDelay = 30;
         findCameraBoundsForUnlockedPaths();
     }
-    unlockingAlpha = -1;
+    mPathUnlockAlpha = -1;
 }
 
-bool dWMPathManager_c::evaluateUnlockCondition(u8 *&in, dMj2dGame_c *save, int stack) {
+bool dKpPathManager_c::evaluateUnlockCondition(u8 *&in, dMj2dGame_c *save, int stack) {
     UnlockCmdReport("[%p] CondStk:%d begin\n", in, stack);
     u8 controlByte = *(in++);
 
@@ -723,7 +996,7 @@ bool dWMPathManager_c::evaluateUnlockCondition(u8 *&in, dMj2dGame_c *save, int s
                 one = *(in++);
                 two = *(in++);
 
-                compareOne = (one & 0x80) ? cachedUnspentStarCoinCount : cachedTotalStarCoinCount;
+                compareOne = (one & 0x80) ? mUnspentStarCoinNum : mCollectStarCoinNum;
                 compareTwo = ((one & 0x7F) << 8) | two;
 
                 switch (subConditionType) {
@@ -787,337 +1060,38 @@ bool dWMPathManager_c::evaluateUnlockCondition(u8 *&in, dMj2dGame_c *save, int s
     return value;
 }
 
-
-bool dWMPathManager_c::doingThings() {
-    if (isEnteringLevel || (waitAfterUnlock > 0) || (completionAnimDelay > 0) ||
-            (waitAtStart > 0) || (waitAfterInitialPlayerAnim > 0) ||
-            panningCameraToPaths || panningCameraFromPaths ||
-            (waitBeforePanBack > 0) || !initialLoading ||
-            (countdownToFadeIn > 0) || (unlockingAlpha != -1) ||
-            dScKoopatlas_c::m_instance->mIsEndingScene) {
-        return true;
-    }
-
-    if (isMoving) {
-        return true;
-    }
-    return false;
+int dKpPathManager_c::getPressedDir(int buttons) {
+    if (buttons & WPAD_BUTTON_UP) return 0;
+    else if (buttons & WPAD_BUTTON_DOWN) return 1;
+    else if (buttons & WPAD_BUTTON_RIGHT) return 2;
+    else if (buttons & WPAD_BUTTON_LEFT) return 3;
+    return -1;
 }
 
-void dWMPathManager_c::execute() {
-    dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
-
-    if (isEnteringLevel) {
-        if (levelStartWait > 0) {
-            levelStartWait--;
-            if (levelStartWait == 0) {
-                dScKoopatlas_c::m_instance->startLevel(enteredLevel);
-            }
-        }
-        return;
-    }
-
-    if (waitAtStart > 0) {
-        waitAtStart--;
-        if (waitAtStart == 0) {
-            if (mustPlayAfterDeathAnim) {
-                daKPPlayer_c::m_instance->mVisible = true;
-                daKPPlayer_c::m_instance->startAnimation(175, 1.0f, 0.0f, 0.0f);
-                waitAfterInitialPlayerAnim = 60;
-
-                SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_COURSE_MISS, 1);
-            } else if (mustPlayAfterWinAnim) {
-                daKPPlayer_c::m_instance->mVisible = true;
-                if (dScKoopatlas_c::m_instance->mIsAfter8Castle) {
-                    waitAfterInitialPlayerAnim = 1;
-                } else {
-                    daKPPlayer_c::m_instance->startAnimation(168, 1.0f, 0.0f, 0.0f);
-                    waitAfterInitialPlayerAnim = 38;
-
-                    nw4r::snd::SoundHandle something;
-                    if (!wm->mIsEndingScene) {
-                        SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_JUMP, 1);
-                    }
-                }
-            }
-        }
-        return;
-    }
-
-    if (waitAfterInitialPlayerAnim > 0) {
-        waitAfterInitialPlayerAnim--;
-        if (waitAfterInitialPlayerAnim == 0) {
-            daKPPlayer_c::m_instance->startAnimation(169, 1.0f, 0.0f, 0.0f);
-        }
-
-        if (mustPlayAfterWinAnim && (waitAfterInitialPlayerAnim == 9) && !wm->mIsEndingScene) {
-            nw4r::snd::SoundHandle something;
-            SndAudioMgr::sInstance->startSystemSe(SE_PLY_LAND_ROCK, 1);
-        }
-        return;
-    }
-
-    // Handle path unlocking
-    if (countdownToFadeIn > 0) {
-        countdownToFadeIn--;
-        if (countdownToFadeIn <= 0) {
-            if (camBoundsValid) {
-                dKPCamera_c::m_instance->mCurrentX = currentNode->mPosX;
-                dKPCamera_c::m_instance->mCurrentY = -currentNode->mPosY;
-                dKPCamera_c::m_instance->panToBounds(camMinX, camMinY, camMaxX, camMaxY);
-
-                panningCameraToPaths = true;
-            } else {
-                unlockingAlpha = 0;
-            }
-
-            SndAudioMgr::sInstance->startSystemSe(SE_OBJ_GEN_LOAD, 1);
-        } else {
-            return;
-        }
-    }
-
-    if (panningCameraToPaths) {
-        if (dKPCamera_c::m_instance->mIsPanning) {
-            return;
-        }
-
-        panningCameraToPaths = false;
-        unlockingAlpha = 0;
-    }
-
-    if (unlockingAlpha != -1) {
-        unlockingAlpha += PATH_ALPHA_INC;
-
-        for (int i = 0; i < pathLayer->mPathNum; i++) {
-            dKPPath_s *path = pathLayer->mpPaths[i];
-
-            if (path->mIsOpen == dKPPath_s::NEWLY_OPEN) {
-                path->setLayerAlpha(unlockingAlpha);
-            }
-        }
-
-        for (int i = 0; i < pathLayer->mNodeNum; i++) {
-            dKPNode_s *node = pathLayer->mpNodes[i];
-
-            if (node->mIsNewlyOpen) {
-                node->setLayerAlpha(unlockingAlpha);
-            }
-        }
-
-        // We've reached the end
-        if (unlockingAlpha == PATH_OPEN_ALPHA) {
-            unlockingAlpha = -1;
-
-            waitAfterUnlock = 15;
-
-            for (int i = 0; i < pathLayer->mNodeNum; i++) {
-                dKPNode_s *node = pathLayer->mpNodes[i];
-
-                if (node->mIsNewlyOpen && node->mNodeType == dKPNode_s::LEVEL) {
-                    mVec3_c effPos(node->mPosX, -node->mPosY, 3300.0f);
-                    mAng3_c effAng(0x2000, 0, 0);
-                    mVec3_c effScale(0.8f, 0.8f, 0.8f);
-                    mEf::createEffect("Wm_cs_pointlight", 0, &effPos, &effAng, &effScale);
-
-                    SndAudioMgr::sInstance->startSystemSe(SE_OBJ_GEN_NEW_COURSE, 1);
-                }
-            }
-        }
-
-        return;
-    }
-
-    if (waitAfterUnlock > 0) {
-        waitAfterUnlock--;
-        if (waitAfterUnlock == 0) {
-            waitBeforePanBack = 20;
-        }
-        return;
-    }
-
-    if (waitBeforePanBack > 0) {
-        waitBeforePanBack--;
-        if (waitBeforePanBack == 0 && camBoundsValid) {
-            dKPCamera_c::m_instance->panToPosition(currentNode->mPosX, -currentNode->mPosY, STD_ZOOM);
-            panningCameraFromPaths = true;
-        }
-        return;
-    }
-
-    if (panningCameraFromPaths) {
-        if (dKPCamera_c::m_instance->mIsPanning) {
-            return;
-        }
-        panningCameraFromPaths = false;
-        dKPCamera_c::m_instance->mFollowPlayer = true;
-    }
-
-    if (dmGladDuration > 0) {
-        dmGladDuration--;
-        if (dmGladDuration == 60) {
-            SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CLEAR_MULTI, 1);
-        } else if (dmGladDuration == 0) {
-            daKPPlayer_c::m_instance->startAnimation(169, 1.0f, 0.0f, 0.0f);
-        }
-        return;
-    }
-
-    if (completionAnimDelay > 0) {
-        completionAnimDelay--;
-        if (completionAnimDelay == 0) {
-            completionMessagePending = true;
-        }
-        return;
-    }
-
-    // Just in case
-    if (completionMessagePending) {
-        return;
-    }
-
-    if (completionMessageType > 0) {
-        OSReport("We have a completion message type: %d\n", completionMessageType);
-
-        int soundID;
-        if (completionMessageType == CMP_MSG_GLOBAL_COINS) {
-            soundID = STRM_BGM_STAR_COIN_CMPLT_ALL;
-            completionAnimDelay = 240 - 154;
-        } else if (completionMessageType == CMP_MSG_EVERYTHING) {
-            soundID = STRM_BGM_ALL_CMPLT_5STARS;
-            completionAnimDelay = 216 - 154;
-        } else {
-            soundID = STRM_BGM_STAR_COIN_CMPLT_WORLD;
-            completionAnimDelay = 1;//138;
-        }
-
-        SndAudioMgr::sInstance->startSystemSe(soundID, 1);
-        daKPPlayer_c::m_instance->startAnimation(176, 1.0f, 0.0f, 0.0f);
-        dmGladDuration = 154;
-        return;
-    }
-
-    if (dScKoopatlas_c::m_instance->mIsEndingScene) {
-        // WE GO NO FURTHER
-        if (!waitingForEndingTransition) {
-            if (!savingForEnding) {
-                savingForEnding = true;
-
-                dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-                //save->titleScreenWorld = 3;
-                //save->titleScreenLevel = 9;
-
-                dCourseSelectManager_c::m_instance->saveGame(false);
-            } else {
-                if (!dSaveMng_c::m_instance->isNandBusy()) {
-                    dScRestartCrsin_c::startTitle(false, 0);
-                    waitingForEndingTransition = true;
-                }
-            }
-        }
-        return;
-    }
-
-    if (shouldRequestSave && !checkedForMoveAfterEndLevel) {
-        checkedForMoveAfterEndLevel = true;
-
-        // TODO: Control this via WorldInfo
-        static const int endLevels[11][3] = {
-            {1, 38, 1}, // W1 right
-            {2, 38, 2}, // W2 up
-            {3, 38, 0}, // W3 left
-            {4, 38, 1}, // W4 right
-            {5, 38, 1}, // W5 right
-            {6, 38, 2}, // W6 up
-            {7, 38, 1}, // W7 right
-            {10, 5, 2}, // GW up
-            {10, 10, 0}, // MM left
-            {10, 15, 3}, // CC down
-            {10, 25, 1}, // SC right
-        };
-
-        int w = (LastLevelPlayed[0] & 0x7F) + 1;
-        int l = LastLevelPlayed[1] + 1;
-
-        for (int i = 0; i < 11; i++) {
-            if (endLevels[i][0] == w && endLevels[i][1] == l) {
-                afterFortressMode = true;
-                startMovementTo(currentNode->mpExits[endLevels[i][2]]);
-                return;
-            }
-        }
-    }
-
-    if (afterFortressMode) {
-        if (isMoving) {
-            moveThroughPath(-1);
-        } else {
-            afterFortressMode = false;
-        }
-        return;
-    }
-
-    if (shouldRequestSave) {
-        dScKoopatlas_c::m_instance->showSaveWindow();
-        shouldRequestSave = false;
-        return;
-    }
-
-    if (!initialLoading) {
-        dScKoopatlas_c::m_instance->startMusic();
-        dKPHud_c::m_instance->loadInitially();
-        initialLoading = true;
-        return;
-    }
-
-    int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
-
-    // Left, right, up, down
-    int pressedDir = getPressedDir(pressed);
-
-    if (isMoving) {
-        moveThroughPath(pressedDir);
-    } else {
-        if (pressedDir >= 0) {
-            // Use an exit if possible
-            if (canUseExit(currentNode->mpExits[pressedDir])) {
-                startMovementTo(currentNode->mpExits[pressedDir]);
-            } else {
-                // TODO: maybe remove this? got to see how it looks
-                static u16 directions[] = {-0x4000,0x4000,-0x7FFF,0};
-                daKPPlayer_c::m_instance->setTargetRotY(directions[pressedDir]);
-            }
-        } else if (pressed & WPAD_BUTTON_2) {
-            activatePoint();
-        }
-    }
-}
-
-
-void dWMPathManager_c::startMovementTo(dKPPath_s *path) {
+void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
     if (!path->mIsOpen) {
         return;
     }
 
     SpammyReport("Moving to path %p [%d,%d to %d,%d]\n", path, path->mpStartPoint->mPosX, path->mpStartPoint->mPosY, path->mpEndPoint->mPosX, path->mpEndPoint->mPosY);
 
-    if ((currentNode != nullptr) && (dKPHud_c::m_instance)) {
+    if ((mpCurrentNode != nullptr) && (dKPHud_c::m_instance)) {
         dKPHud_c::m_instance->leftNode();
     }
 
-    calledEnteredNode = false;
+    mIsEnterNode = false;
 
-    isMoving = true;
-    reverseThroughPath = (path->mpEndPoint == currentNode);
+    mIsMoving = true;
+    mReverseOnPath = (path->mpEndPoint == mpCurrentNode);
 
-    currentPath = path;
+    mpCurrentPath = path;
 
-    // calculate direction of the path
+    // Calculate direction of the path
     short deltaX = path->mpEndPoint->mPosX - path->mpStartPoint->mPosX;
     short deltaY = path->mpEndPoint->mPosY - path->mpStartPoint->mPosY;
     u16 direction = (u16)(atan2(deltaX, deltaY) / ((M_PI * 2) / 65536.0));
 
-    if (reverseThroughPath) {
+    if (mReverseOnPath) {
         direction += 0x8000;
     }
 
@@ -1190,20 +1164,20 @@ void dWMPathManager_c::startMovementTo(dKPPath_s *path) {
         {dPyMdlBase_c::WAIT, 2.0f, 10.0f, -1, 1.0f, SE_NULL, SE_NULL, nullptr, nullptr},
     };
 
-    isJumping = (path->mAction >= dKPPath_s::JUMP && path->mAction <= dKPPath_s::JUMP_SAND);
+    mIsJumpAnm = (path->mAction >= dKPPath_s::JUMP && path->mAction <= dKPPath_s::JUMP_SAND);
 
     float playerScale = 1.6f;
 
     if (path->mAction == dKPPath_s::ENTER_CAVE_UP) {
-        scaleAnimProgress = 60;
+        mScaleDuration = 60;
         // What direction does this path go in?
         static u16 directions[] = {-0x4000,0x4000,-0x7FFF,0};
-        isScalingUp = (deltaY < 0) ^ reverseThroughPath;
+        mIsScaleUp = (deltaY < 0) ^ mReverseOnPath;
 
-        if (!isScalingUp) {
+        if (!mIsScaleUp) {
             playerScale = 0.0f;
         }
-    } else if (scaleAnimProgress >= 0) {
+    } else if (mScaleDuration >= 0) {
         // Keep the current scale
         playerScale = player->mScale.x;
     }
@@ -1227,32 +1201,32 @@ void dWMPathManager_c::startMovementTo(dKPPath_s *path) {
     }
 
     if (sc_pathActions[id].mForceAngle != -1) {
-        forcedRotation = true;
+        mIsForceAngle = true;
         player->setTargetRotY(sc_pathActions[id].mForceAngle);
     } else if (id == dKPPath_s::JUMP_WATER || id == dKPPath_s::RESERVED_18) {
-        // keep the current rotation
-        forcedRotation = true;
+        // Keep the current rotation
+        mIsForceAngle = true;
         dPyMdlBase_c::scPyAnmData[dPyMdlBase_c::DM_NOTICE].mPlayMode = m3d::FORWARD_LOOP;
 
         SndAudioMgr::sInstance->startSystemSe(SE_OBJ_WARP_CANNON_SHOT, 1);
         dKPMap_c::m_instance->spinLaunchStar();
     } else {
-        forcedRotation = false;
+        mIsForceAngle = false;
         player->setTargetRotY(direction);
     }
 
     player->startAnimation(whichAnim, updateRate, sc_pathActions[id].mAnmUnk, 0.0f);
 
-    moveSpeed = (sc_pathActions[id].mForceSpeed >= 0.0f) ? sc_pathActions[id].mForceSpeed : 3.0f;
-    moveSpeed = path->mPathSpeed * moveSpeed * 1.3f;
+    mMoveSpeed = (sc_pathActions[id].mForceSpeed >= 0.0f) ? sc_pathActions[id].mForceSpeed : 3.0f;
+    mMoveSpeed = path->mPathSpeed * mMoveSpeed * 1.3f;
 
     if (path->mAction == dKPPath_s::SWIM) {
         // Penguin
         if (player->mpPyMdlMng->mpMdl->mPlayerMode == 3) {
-            moveSpeed *= 1.1f;
+            mMoveSpeed *= 1.1f;
         // Mini
         } else if (player->mpPyMdlMng->mpMdl->mPlayerMode == 5) {
-            moveSpeed *= 2.0f;
+            mMoveSpeed *= 2.0f;
         }
     }
 
@@ -1278,11 +1252,11 @@ void dWMPathManager_c::startMovementTo(dKPPath_s *path) {
 
     if (path->mAction == dKPPath_s::SWIM) {
         if (player->mpPyMdlMng->mpMdl->mPlayerMode == 5) {
-            if (!swimming) {
-                if (firstPathDone) {
+            if (!mIsSwimAnm) {
+                if (mDoPlayPenguinSlide) {
                     SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_PNGN_SLIDE, 1);
                 }
-                SndAudioMgr::sInstance->startSound(&penguinSlideSound, SE_EMY_PENGUIN_SLIDE, 1);
+                SndAudioMgr::sInstance->startSound(&mPenguinSlideHandle, SE_EMY_PENGUIN_SLIDE, 1);
             }
             player->mHasSound = false;
         } else if (player->mpPyMdlMng->mpMdl->mPlayerMode == 3) {
@@ -1290,13 +1264,13 @@ void dWMPathManager_c::startMovementTo(dKPPath_s *path) {
             player->mSoundName = SE_PLY_FOOTNOTE_WATER;
         }
 
-        swimming = true;
+        mIsSwimAnm = true;
     } else {
-        if (swimming && penguinSlideSound.IsAttachedSound()) {
-            penguinSlideSound.Stop(10);
-            penguinSlideSound.DetachSound();
+        if (mIsSwimAnm && mPenguinSlideHandle.IsAttachedSound()) {
+            mPenguinSlideHandle.Stop(10);
+            mPenguinSlideHandle.DetachSound();
         }
-        swimming = false;
+        mIsSwimAnm = false;
 
         if (sc_pathActions[id].mStartSoundID != SE_NULL) {
             SndAudioMgr::sInstance->startSystemSe(sc_pathActions[id].mStartSoundID, 1);
@@ -1309,15 +1283,21 @@ void dWMPathManager_c::startMovementTo(dKPPath_s *path) {
             }
         }
     }
+
+    // Fixes the player stopping for a frame before walking again
+    if (mIsPassThrough) {
+        moveThroughPath(-1);
+        mIsPassThrough = false;
+    }
 }
 
-void dWMPathManager_c::moveThroughPath(int pressedDir) {
-    dKPNode_s *from = reverseThroughPath ? currentPath->mpEndPoint : currentPath->mpStartPoint;
-    dKPNode_s* to = reverseThroughPath ? currentPath->mpStartPoint : currentPath->mpEndPoint;
+void dKpPathManager_c::moveThroughPath(int pressedDir) {
+    dKPNode_s *from = mReverseOnPath ? mpCurrentPath->mpEndPoint : mpCurrentPath->mpStartPoint;
+    dKPNode_s* to = mReverseOnPath ? mpCurrentPath->mpStartPoint : mpCurrentPath->mpEndPoint;
 
     daKPPlayer_c *player = daKPPlayer_c::m_instance;
 
-    if (pressedDir >= 0 && !calledEnteredNode) {
+    if (pressedDir >= 0 && !mIsEnterNode) {
         int deltaX = to->mPosX - from->mPosX;
         int deltaY = to->mPosY - from->mPosY;
 
@@ -1333,7 +1313,7 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
         } else if (atanResult > 315 || atanResult < 45) {
             reverseDir = 2; // moving Down, so reversing requires Up
         }
-        OSReport("Delta: %d, %d; Degrees: %d (Atan result is %f); Calced dir is %d; Pressed dir is %d\n",
+        PathMngReport("Delta: %d, %d; Degrees: %d (Atan result is %f); Calced dir is %d; Pressed dir is %d\n",
             deltaX, deltaY, atanResult, atan2(deltaX, deltaY), reverseDir, pressedDir);
 
         if (reverseDir == pressedDir) {
@@ -1352,18 +1332,18 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
             };
 
             bool allowReverse = true;
-            for (int i = 0;;i++) {
+            for (int i = 0;; i++) {
                 if (sc_noReverseList[i] == dKPPath_s::ACTION_NUM) {
                     break;
                 }
-                if (sc_noReverseList[i] == currentPath->mAction) {
+                if (sc_noReverseList[i] == mpCurrentPath->mAction) {
                     allowReverse = false;
                 }
             }
 
             if (allowReverse) {
-                reverseThroughPath = !reverseThroughPath;
-                if (!forcedRotation) {
+                mReverseOnPath = !mReverseOnPath;
+                if (!mIsForceAngle) {
                     player->setTargetRotY(player->mTargetRotY + 0x8000);
                 }
 
@@ -1376,22 +1356,28 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 
     // Process the player scale
     // TODO: make this part of player
-    if (scaleAnimProgress >= 0) {
-        float soFar = scaleAnimProgress * (1.6f / 60.0f);
-        float sc = isScalingUp ? soFar : (1.6f - soFar);
+    if (mScaleDuration >= 0) {
+        float soFar = mScaleDuration * (1.6f / 60.0f);
+        float sc = mIsScaleUp ? soFar : (1.6f - soFar);
         player->mScale.x = player->mScale.y = player->mScale.z = sc;
 
-        scaleAnimProgress--;
+        mScaleDuration--;
     }
+
+    // TODO: Test if this fixes the cave entrance scale issue
+    /*if (mScaleDuration == 0 && mIsScaleUp) {
+        mScaleDuration = -1;
+        player->mScale.x = player->mScale.y = player->mScale.z = 1.6f;
+    }*/
 
     int deltaX = to->mPosX - from->mPosX;
     int deltaY = to->mPosY - from->mPosY;
 
     Vec movePos = {deltaX, deltaY, 0.0f};
     PSVECNormalize(&movePos, &movePos);
-    PSVECScale(&movePos, &movePos, moveSpeed);
+    PSVECScale(&movePos, &movePos, mMoveSpeed);
 
-    if (isJumping) {
+    if (mIsJumpAnm) {
         bool isFalling;
 
         if (from->mPosY == to->mPosY) {
@@ -1428,14 +1414,14 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
             }
 
             float a;
-            if (timer > 0.0) {
-                a = -timer;
+            if (mTimer > 0.0) {
+                a = -mTimer;
             } else {
-                a =  timer;
+                a = mTimer;
             }
 
             player->mJumpOffset = -sin(a * M_PI / len) * top;
-            timer -= movePos.y;
+            mTimer -= movePos.y;
 
             if (endY > startY) {
                 // Moving down
@@ -1455,13 +1441,13 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
     player->mPos.y -= movePos.y;
 
     // Show HUD course info if we're about to reach a level
-    if (to->mNodeType == dKPNode_s::LEVEL && !calledEnteredNode) {
+    if (to->mNodeType == dKPNode_s::LEVEL && !mIsEnterNode) {
         Vec remainDist = {to->mPosX - player->mPos.x, to->mPosY + player->mPos.y, 0.0f};
         float distToEnd = PSVECMag(&remainDist);
-        //OSReport("Distance: %f; To:%d,%d; Player:%f,%f; Diff:%f,%f\n", distToEnd, to->mPosX, to->mPosY, player->mPos.x, player->mPos.y, remainDist.x, remainDist.y);
+        //PathMngReport("Distance: %f; To:%d,%d; Player:%f,%f; Diff:%f,%f\n", distToEnd, to->mPosX, to->mPosY, player->mPos.x, player->mPos.y, remainDist.x, remainDist.y);
 
         if (distToEnd < 64.0f && (dKPHud_c::m_instance != nullptr)) {
-            calledEnteredNode = true;
+            mIsEnterNode = true;
             dKPHud_c::m_instance->enteredNode(to);
         }
     }
@@ -1474,12 +1460,12 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
             (from->mPosX == to->mPosX && from->mPosY == to->mPosY)
        ) {
 
-        currentNode = to;
+        mpCurrentNode = to;
         player->mPos.x = to->mPosX;
         player->mPos.y = -to->mPosY;
 
-        isJumping = false;
-        timer = 0.0;
+        mIsJumpAnm = false;
+        mTimer = 0.0;
 
         SpammyReport("Reached path end (%p) with node type %d\n", to, to->mNodeType);
 
@@ -1508,16 +1494,16 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
         if (to->mNodeType == dKPNode_s::WORLD_CHANGE) {
             dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
 
-            OSReport("Activating world change %d\n", to->mWorldID);
+            PathMngReport("Activating world change %d\n", to->mWorldID);
             const dKPWorldDef_s *world = dScKoopatlas_c::m_instance->mMapData.findWorldDef(to->mWorldID);
             if (world) {
                 bool visiblyChange = true;
                 /*if (strncmp(save->newerWorldName, world->name, 32) == 0) {
-                    OSReport("Already here, but setting BGM track\n");
+                    PathMngReport("Already here, but setting BGM track\n");
                     visiblyChange = false;
                 }*/
 
-                OSReport("Found!\n");
+                PathMngReport("Found!\n");
                 copyWorldDefToSave(world);
 
                 bool wzHack = false;
@@ -1561,26 +1547,28 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 
                 dKPMusic_c::m_instance->start(world->mTrackID);
             } else if (to->mWorldID == 0) {
-                OSReport("No world\n");
+                PathMngReport("No world\n");
                 //save->currentMapMusic = 0;
                 dKPMusic_c::m_instance->start(0);
                 //save->newerWorldName[0] = 0;
                 dKPHud_c::m_instance->hideFooter();
             } else {
-                OSReport("Not found!\n");
+                PathMngReport("Not found!\n");
             }
         }
 
         // Go to another map
         if (to->mNodeType == dKPNode_s::CHANGE) {
+            mIsPassThrough = true;
+            mDisableInput = true;
 
             // Should we continue moving?
             if (to->getOpenExitNum() == 1) {
-                OSReport("Stopping");
-                isMoving = false;
+                PathMngReport("Stopping\n");
+                mIsMoving = false;
             } else {
-                OSReport("Continuing");
-                startMovementTo(to->getOpenAcrossPath(currentPath));
+                PathMngReport("Continuing\n");
+                startMovementTo(to->getOpenAcrossPath(mpCurrentPath));
             }
 
             dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
@@ -1595,9 +1583,9 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
             dFader_c::setFader((dFader_c::fader_type_e)to->mFadeType);
 
             // OR param and set next scene
-            u32 param = (shouldRequestSave ? dScKoopatlas_c::REQUEST_SAVE : 0);
-            param |= (checkedForMoveAfterEndLevel ? dScKoopatlas_c::CHECK_AUTOWALK : 0);
-            param |= (afterFortressMode ? dScKoopatlas_c::AFTER_FORTRESS : 0);
+            u32 param = (mDispSavePrompt ? dScKoopatlas_c::REQUEST_SAVE : 0);
+            param |= (mDidAutoWalkCheck ? dScKoopatlas_c::CHECK_AUTOWALK : 0);
+            param |= (mAutoWalkMode ? dScKoopatlas_c::AFTER_FORTRESS : 0);
 
             dScene_c::setNextScene(fProfile::WORLD_MAP, dScKoopatlas_c::CHANGE_NODE | (to->mDestID << 20) | param, 0);
 
@@ -1609,12 +1597,12 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
 
             SpammyReport("Stopping at this point\n");
 
-            isMoving = false;
-            swimming = false;
+            mIsMoving = false;
+            mIsSwimAnm = false;
 
             dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
-            save->setCurrentPathNode(pathLayer->findNodeID(to));
-            if (!calledEnteredNode && (dKPHud_c::m_instance != nullptr)) {
+            save->setCurrentPathNode(mpPathLayer->findNodeID(to));
+            if (!mIsEnterNode && (dKPHud_c::m_instance != nullptr)) {
                 dKPHud_c::m_instance->enteredNode();
             }
 
@@ -1624,8 +1612,8 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
             int pressedDir = getPressedDir(held);
             if (pressedDir >= 0) {
                 // Use an exit if possible
-                if (canUseExit(currentNode->mpExits[pressedDir])) {
-                    startMovementTo(currentNode->mpExits[pressedDir]);
+                if (canUseExit(mpCurrentNode->mpExits[pressedDir])) {
+                    startMovementTo(mpCurrentNode->mpExits[pressedDir]);
                     movingAgain = true;
                 } else {
                     // TODO: maybe remove this? got to see how it looks
@@ -1639,16 +1627,18 @@ void dWMPathManager_c::moveThroughPath(int pressedDir) {
                 player->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.2, 10.0, 0.0);
             }
 
+        // Pass-through point
         } else {
-            startMovementTo(to->getOpenAcrossPath(currentPath));
+            mIsPassThrough = true;
+            startMovementTo(to->getOpenAcrossPath(mpCurrentPath));
             SpammyReport("Pass-through node, continuing to next path\n");
         }
     }
 
-    firstPathDone = true;
+    mDoPlayPenguinSlide = true;
 }
 
-void dWMPathManager_c::copyWorldDefToSave(const dKPWorldDef_s *world) {
+void dKpPathManager_c::copyWorldDefToSave(const dKPWorldDef_s *world) {
     OSReport("copyWorldDefToSave(): TODO!!!\n");
     /*SaveBlock *save = GetSaveFile()->GetBlock(-1);
 
@@ -1673,14 +1663,14 @@ void dWMPathManager_c::copyWorldDefToSave(const dKPWorldDef_s *world) {
     save->titleScreenLevel = world->titleScreenLevel;*/
 }
 
-void dWMPathManager_c::activatePoint() {
-    if (levelStartWait >= 0) {
+void dKpPathManager_c::activatePoint() {
+    if (mCourseInDelay >= 0) {
         return;
     }
 
-    if (currentNode->mNodeType == dKPNode_s::LEVEL) {
-        int world = currentNode->mLevelNum[0] - 1;
-        int level = currentNode->mLevelNum[1] - 1;
+    if (mpCurrentNode->mNodeType == dKPNode_s::LEVEL) {
+        int world = mpCurrentNode->mLevelNum[0] - 1;
+        int level = mpCurrentNode->mLevelNum[1] - 1;
 
         // Shop override
         if (level == 98) {
@@ -1697,8 +1687,9 @@ void dWMPathManager_c::activatePoint() {
 
             SpammyReport("One-time course flags: %x", conds);
             if (conds & dMj2dGame_c::GOAL_MASK) {
-                // TODO: Make this togglable
+#ifdef KP_PLAY_INVALID_SND
                 SndAudioMgr::sInstance->startSystemSe(SE_SYS_INVALID, 1);
+#endif
                 return;
             }
         }
@@ -1724,9 +1715,9 @@ void dWMPathManager_c::activatePoint() {
         daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::COURSE_IN, 1.2, 10.0, 0.0);
         daKPPlayer_c::m_instance->setTargetRotY(0);
 
-        isEnteringLevel = true;
-        levelStartWait = 40;
-        enteredLevel = dLevelInfo_c::m_instance.getEntryFromSlotID(world, level);
+        mIsCourseIn = true;
+        mCourseInDelay = 40;
+        mEnteredLevel = dLevelInfo_c::m_instance.getEntryFromSlotID(world, level);
 
         dKPMusic_c::m_instance->stop();
     }
@@ -1736,7 +1727,7 @@ void dWMPathManager_c::activatePoint() {
 // 0 - Unlock ALL normal paths
 // 1 - Unlock ALL secret paths
 // 2 - Unlock current node's normal & secret paths
-void dWMPathManager_c::unlockAllPaths(char type) {
+void dKpPathManager_c::unlockAllPaths(char type) {
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
 
     // Unlock all normal or secret paths
@@ -1754,9 +1745,9 @@ void dWMPathManager_c::unlockAllPaths(char type) {
 
     // Unlocks current path, regular and secret
     if (type == 2) {
-        if (currentNode->mNodeType == dKPNode_s::LEVEL) {
-            int w = currentNode->mLevelNum[0] - 1;
-            int l = currentNode->mLevelNum[1] - 1;
+        if (mpCurrentNode->mNodeType == dKPNode_s::LEVEL) {
+            int w = mpCurrentNode->mLevelNum[0] - 1;
+            int l = mpCurrentNode->mLevelNum[1] - 1;
 
             save->onCourseDataFlag(w, l, dMj2dGame_c::COIN_MASK | dMj2dGame_c::GOAL_MASK);
             unlockPaths();
@@ -1764,33 +1755,33 @@ void dWMPathManager_c::unlockAllPaths(char type) {
     }
 
     // Can't change node models - the price we pay for not using anims
-    // for (int i = 0; i < pathLayer->nodeCount; i++) {
-    // 	dKPNode_s *node = pathLayer->nodes[i];
+    // for (int i = 0; i < mpPathLayer->nodeCount; i++) {
+    // 	dKPNode_s *node = mpPathLayer->nodes[i];
     // 	node->setupNodeExtra();
     // }
 
     // TODO: Update node models, once the CLR anims are implemented
 }
 
-void dWMPathManager_c::findCameraBoundsForUnlockedPaths() {
+void dKpPathManager_c::findCameraBoundsForUnlockedPaths() {
     dKPMapData_c *data = &dScKoopatlas_c::m_instance->mMapData;
 
-    camMinX = 10000;
-    camMaxX = 0;
-    camMinY = 10000;
-    camMaxY = 0;
+    mCamMinX = 10000;
+    mCamMaxX = 0;
+    mCamMinY = 10000;
+    mCamMaxY = 0;
 
-    nodeStackLength = 0;
+    mNodeStackLen = 0;
     for (int i = 0; i < data->mpPathLayer->mNodeNum; i++) {
         data->mpPathLayer->mpNodes[i]->mIsSetInPanBounds = false;
     }
 
-    visitNodeForCamCheck(currentNode);
-    OSReport("Worked out camera bounds: %d,%d to %d,%d with validity %d\n", camMinX, camMinY, camMaxX, camMaxY, camBoundsValid);
+    visitNodeForCamCheck(mpCurrentNode);
+    PathMngReport("Worked out camera bounds: %d,%d to %d,%d with validity %d\n", mCamMinX, mCamMinY, mCamMaxX, mCamMaxY, mIsCamBoundsValid);
 }
 
-void dWMPathManager_c::visitNodeForCamCheck(dKPNode_s *node) {
-    nodeStackLength++;
+void dKpPathManager_c::visitNodeForCamCheck(dKPNode_s *node) {
+    mNodeStackLen++;
     node->mIsSetInPanBounds = true;
 
     for (int i = 0; i < 4; i++) {
@@ -1799,7 +1790,7 @@ void dWMPathManager_c::visitNodeForCamCheck(dKPNode_s *node) {
             continue;
         }
 
-        OSReport("Checking path %p, whose status is %d\n", path, path->mIsOpen);
+        PathMngReport("Checking path %p, whose status is %d\n", path, path->mIsOpen);
         if (path->mIsOpen == dKPPath_s::NEWLY_OPEN) {
             addNodeToCameraBounds(path->mpStartPoint);
             addNodeToCameraBounds(path->mpEndPoint);
@@ -1814,36 +1805,64 @@ void dWMPathManager_c::visitNodeForCamCheck(dKPNode_s *node) {
         }
 
         if (otherNode->mNodeType == otherNode->LEVEL) {
-            OSReport("Not travelling to %p because it's level %d-%d\n", otherNode, otherNode->mLevelNum[0], otherNode->mLevelNum[1]);
+            PathMngReport("Not travelling to %p because it's level %d-%d\n", otherNode, otherNode->mLevelNum[0], otherNode->mLevelNum[1]);
             continue;
         }
         if (otherNode->mNodeType == otherNode->CHANGE) {
-            OSReport("Not travelling to %p because it's a change\n", otherNode);
+            PathMngReport("Not travelling to %p because it's a change\n", otherNode);
             continue;
         }
         if (otherNode->mNodeType == otherNode->WORLD_CHANGE) {
-            OSReport("Not travelling to %p because it's a world change\n", otherNode);
+            PathMngReport("Not travelling to %p because it's a world change\n", otherNode);
             continue;
         }
 
         visitNodeForCamCheck(otherNode);
     }
 
-    nodeStackLength--;
+    mNodeStackLen--;
 }
 
-void dWMPathManager_c::addNodeToCameraBounds(dKPNode_s *node) {
-    camBoundsValid = true;
-    OSReport("Adding node to camera bounds: %p at %d,%d\n", node, node->mPosX, node->mPosY);
+void dKpPathManager_c::addNodeToCameraBounds(dKPNode_s *node) {
+    mIsCamBoundsValid = true;
+    PathMngReport("Adding node to camera bounds: %p at %d,%d\n", node, node->mPosX, node->mPosY);
 
-    if (node->mPosX < camMinX)
-        camMinX = node->mPosX;
-    if (node->mPosX > camMaxX)
-        camMaxX = node->mPosX;
-    if (node->mPosY < camMinY)
-        camMinY = node->mPosY;
-    if (node->mPosY > camMaxY)
-        camMaxY = node->mPosY;
+    if (node->mPosX < mCamMinX) {
+        mCamMinX = node->mPosX;
+    }
+    if (node->mPosX > mCamMaxX) {
+        mCamMaxX = node->mPosX;
+    }
+    if (node->mPosY < mCamMinY) {
+        mCamMinY = node->mPosY;
+    }
+    if (node->mPosY > mCamMaxY) {
+        mCamMaxY = node->mPosY;
+    }
+}
+
+void dKpPathManager_c::resetCompletionData() {
+    s_cmpData.mPrevLevelID[0] = 0xFF;
+    s_cmpData.mIsCmpCoins = false;
+    s_cmpData.mIsCmpExits = false;
+    s_cmpData.mIsCmpWorld = false;
+
+    s_cmpData.mIsCmpCoinsExcW9 = false;
+    s_cmpData.mIsCmpAllCoins = false;
+    s_cmpData.mIsCmpAllExits = false;
+    s_cmpData.mIsCmpAll = false;
+}
+
+void dKpPathManager_c::clearPathData() {
+    if (sp_openPathData != nullptr) {
+        delete[] sp_openPathData;
+        sp_openPathData = nullptr;
+    }
+
+    if (sp_openNodeData != nullptr) {
+        delete[] sp_openNodeData;
+        sp_openNodeData = nullptr;
+    }
 }
 
 #endif

@@ -49,11 +49,13 @@ public:
         P_SLIP = 0x8B,
         DM_NOTICE = 0xA5,
         DM_NOTI_WAIT = 0xA6,
+        DM_SURP_WAIT = 0xA8,
         WAIT_SELECT = 0xA9,
         COURSE_IN = 0xAA,
         DEMO_TALK = 0xAB,
         BUSY_WAIT = 0xAC,
         ENDING_WAIT = 0xAF,
+        COIN_COMP = 0xB0,
     };
 
     // @unofficial

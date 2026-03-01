@@ -10,8 +10,6 @@ KOOPATLAS TODO:
 
 Nitpicky Shit:
 - Player is not centered on the course node, needs to be moved up 4 units like with the model itself
-- Same as above, but for the pointlight effect
-- Course open sound plays even when no actual course is opened (only if its on another map)
 
 Miscellaneous TODO:
 - Implement internal-font portion of MoreFonts, then use that for Newer's pause menu layout
@@ -24,12 +22,9 @@ Miscellaneous TODO:
 
 Bugs:
 - [Newer bug] Exiting from a "cave entrance" will scale the player incorrectly, they're slightly too small
-- Make it so the player can't reverse on a path after going through a map change node
-  - This fixes the disaster that happens when entering a course after doing this, where the paths completely break
 
 Planned Features/TODO:
 - Add support for "back entrances" where a course will auto-begin when walking onto the node
-- Support for P1 being other characters (maybe make this part of P1 Change define)
 - Subplayer support (maybe)
 - Map View (togglable)
 - World Select (rsm's, not retail)
