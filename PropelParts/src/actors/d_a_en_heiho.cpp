@@ -531,9 +531,8 @@ void daEnHeiho_c::executeState_Dizzy() {
 
     WaterCheck(mPos, 1.0f);
 
-    mVec3_c effectPos(mPos.x, mPos.y + 24.0f, 0.0f);
-    mVec3_c effectScale(1.0f, 1.0f, 1.0f);
-    mDizzyEffect.createEffect("Wm_en_spindamage", 0, &effectPos, nullptr, &effectScale);
+    mVec3_c effectPos(mPos.x, mPos.y + mCenterOffs.y * 2, 0.0f);
+    mDizzyEffect.createEffect("Wm_en_spindamage", 0, &effectPos, nullptr, &mScale);
 
     if (mTimer > 600) {
         changeState(*const_cast<sStateIDIf_c*>(mStateMgr.getOldStateID()));

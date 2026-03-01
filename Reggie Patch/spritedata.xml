@@ -450,13 +450,52 @@
     <checkbox nybble="8.4" title="Starts Behind Fence" comment="When enabled, the Shy Guy will be placed on the reverse side of the Chainlink Fence."/>
   </sprite> <!-- #503: Climbing Shy Guy -->
   
-  <sprite id="504" name="Large Shy Guy" notes="">
+  <sprite id="504" name="Large Shy Guy" notes="A large Shy guy that walks around. Will be stunned when jumped on, though it cannot be killed by normal jumps.">
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
   </sprite> <!-- #504: Large Shy Guy -->
   
-  <sprite id="505" name="Giant Shy Guy" notes="">
+  <sprite id="505" name="Giant Shy Guy" notes="A giant Shy guy that walks around. Can not be damaged by jumps, but other methods like fireballs will kill it.">
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
   </sprite> <!-- #505: Giant Shy Guy -->
   
-  <sprite id="506" name="Mega Shy Guy" notes="">
+  <sprite id="506" name="Mega Shy Guy" notes="A mega Shy gy that walks around. Will kill otther actors it comes into contact with, and can only die from contact with a star.">
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
   </sprite> <!-- #506: Mega Shy Guy -->
   
   <sprite id="507" name="Magic Platform - Path Controlled" notes="A path controlled platform made out of tile objects.">

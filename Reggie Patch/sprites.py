@@ -182,7 +182,7 @@ class SpriteImage_Shyguy(SLib.SpriteImage_StaticMultiple):  # 487
             self.offset = (-1, -7)
         else:
             self.image = ImageCache['Shyguy']
-            self.offset = (-2.5, -7.5)
+            self.offset = (-2.5, -6.5)
         
         if type == 4:
             self.aux[0].setSize(distance, 8)
@@ -434,6 +434,48 @@ class SpriteImage_ShyguyClimb(SLib.SpriteImage_StaticMultiple):  # 503
             self.offset = (-2, -5)
 
 
+class SpriteImage_ShyguyLarge(SLib.SpriteImage_Static):  # 504
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['ShyguyLarge'],
+            (-13, -30),
+        )
+    
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ShyguyLarge', 'shyguy_large.png')
+
+
+class SpriteImage_ShyguyGiant(SLib.SpriteImage_Static):  # 505
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['ShyguyGiant'],
+            (-22, -52.5),
+        )
+    
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ShyguyGiant', 'shyguy_giant.png')
+
+
+class SpriteImage_ShyguyMega(SLib.SpriteImage_Static):  # 506
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            1.5,
+            ImageCache['ShyguyMega'],
+            (-31, -76),
+        )
+    
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ShyguyMega', 'shyguy_mega.png')
+
+
 class SpriteImage_StarCoinFake(SLib.SpriteImage_Static):  # 510
     def __init__(self, parent, scale=1.5):
         super().__init__(
@@ -528,6 +570,9 @@ ImageClasses = {
     501: SpriteImage_Goombud,
     502: SpriteImage_ShyguyBubble,
     503: SpriteImage_ShyguyClimb,
+    504: SpriteImage_ShyguyLarge,
+    505: SpriteImage_ShyguyGiant,
+    506: SpriteImage_ShyguyMega,
     510: SpriteImage_StarCoinFake,
     528: SpriteImage_SwitchBlock,
     529: SpriteImage_SwitchPalace,

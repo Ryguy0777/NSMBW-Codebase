@@ -16,10 +16,10 @@ const char* l_HEIHO_LARGE_res[] = {"heiho", NULL};
 const dActorData_c c_HEIHO_LARGE_actor_data = {fProfile::EN_HEIHO_LARGE, 8, -16, 0, 24, 16, 24, 0, 0, 0, 0, 0};
 dCustomProfile_c l_HEIHO_LARGE_profile(&g_profile_EN_HEIHO_LARGE, "EN_HEIHO_LARGE", CourseActor::EN_HEIHO_LARGE, &c_HEIHO_LARGE_actor_data, l_HEIHO_LARGE_res);
 
-const dActorData_c c_HEIHO_GIANT_actor_data = {fProfile::EN_HEIHO_GIANT, 8, -16, 0, 36, 24, 36, 0, 0, 0, 0, 0};
+const dActorData_c c_HEIHO_GIANT_actor_data = {fProfile::EN_HEIHO_GIANT, 8, -16, 0, 36, 27, 39, 0, 0, 0, 0, 0};
 dCustomProfile_c l_HEIHO_GIANT_profile(&g_profile_EN_HEIHO_LARGE, "EN_HEIHO_GIANT", CourseActor::EN_HEIHO_GIANT, &c_HEIHO_GIANT_actor_data, l_HEIHO_LARGE_res);
 
-const dActorData_c c_HEIHO_MEGA_actor_data = {fProfile::EN_HEIHO_MEGA, 8, -16, 0, 48, 32, 48, 0, 0, 0, 0, 0};
+const dActorData_c c_HEIHO_MEGA_actor_data = {fProfile::EN_HEIHO_MEGA, 8, -16, 0, 48, 35, 51, 0, 0, 0, 0, 0};
 dCustomProfile_c l_HEIHO_MEGA_profile(&g_profile_EN_HEIHO_LARGE, "EN_HEIHO_MEGA", CourseActor::EN_HEIHO_MEGA, &c_HEIHO_MEGA_actor_data, l_HEIHO_LARGE_res);
 
 const sBcSensorLine l_heiho_large_foot = { 1, -0x8000, 0x8000, 0 };
@@ -66,7 +66,7 @@ int daEnHeihoLarge_c::create() {
         mWalkSpeed = 0.25f;
 
         mCenterOffs.set(0.0f, 36.0f, 0.0f);
-        mVisibleAreaSize.set(48.0f, 72.0f);
+        mVisibleAreaSize.set(54.0f, 78.0f);
         mVisibleAreaOffset.set(0.0f, 36.0f);
 
         mEatBehaviour = EAT_TYPE_NONE;
@@ -96,7 +96,7 @@ int daEnHeihoLarge_c::create() {
         mWalkSpeed = 0.125f;
 
         mCenterOffs.set(0.0f, 48.0f, 0.0f);
-        mVisibleAreaSize.set(64.0f, 96.0f);
+        mVisibleAreaSize.set(70.0f, 102.0f);
         mVisibleAreaOffset.set(0.0f, 48.0f);
 
         mEatBehaviour = EAT_TYPE_NONE;
@@ -433,7 +433,9 @@ void daEnHeihoLarge_c::executeState_Walk() {
     if (mBc.mFlags & 0x15 << mDirection & 0x3f) {
         changeState(StateID_Turn);
     }
-    WaterCheck(mPos, 1.0f);
+    if (mLargeType == HEIHO_LARGE) {
+        WaterCheck(mPos, 1.0f);
+    }
     return;
 }
 
@@ -458,7 +460,9 @@ void daEnHeihoLarge_c::executeState_Turn() {
         mSpeed.y = 0.0f;
     }
 
-    WaterCheck(mPos, 1.0f);
+    if (mLargeType == HEIHO_LARGE) {
+        WaterCheck(mPos, 1.0f);
+    }
 
     // Face our new direction, and exit state when finished
     bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x800);
@@ -492,7 +496,9 @@ void daEnHeihoLarge_c::executeState_Dizzy() {
         mSpeed.y = 0.0f;
     }
 
-    WaterCheck(mPos, 1.0f);
+    if (mLargeType == HEIHO_LARGE) {
+        WaterCheck(mPos, 1.0f);
+    }
 
     mVec3_c effectPos(mPos.x, mPos.y + mCenterOffs.y * 2, 0.0f);
     mDizzyEffect.createEffect("Wm_en_spindamage", 0, &effectPos, nullptr, &mScale);
