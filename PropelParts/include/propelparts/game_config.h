@@ -30,3 +30,6 @@
 #define YELLOW_TOAD_MDL_CLASS dKinopioMdl_c
 #define RED_TOAD_MDL_CLASS dKinopioMdl_c
 #define YOSHI_MDL_CLASS dYoshiMdl_c
+
+#define ENABLE_LH_COMPRESSION
+//#define ENABLE_LRC_COMPRESSION

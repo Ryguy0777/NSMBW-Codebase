@@ -5,6 +5,12 @@ namespace std {
 
 struct random_access_iterator_tag {};
 
+// Backported from C++17
+template <class T>
+inline size_t size(const T &t) {
+    return sizeof(T) / sizeof(t[0]);
+}
+
 } // namespace std
 
 #endif

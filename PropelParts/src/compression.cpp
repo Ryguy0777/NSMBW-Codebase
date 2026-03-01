@@ -1,7 +1,10 @@
+#include <cstdalign>
 #include <cstddef>
 #include <game/mLib/m_dvd.hpp>
+#include <iterator>
 #include <kamek.h>
 #include <lib/revolution/dvd.h>
+#include <propelparts/game_config.h>
 
 namespace mDvd {
 extern mDvd::TUncompressInfo_c<EGG::StreamDecompSZS> s_UncompressInfoSZS;
@@ -17,18 +20,28 @@ extern int ConvertPathToEntrynum(const char *path, u8 *outType);
 
 namespace {
 union {
-#define BUFFER_OF(type, name) __declspec(align(alignof(type))) u8 name[sizeof(type)];
+#define BUFFER_OF(type, name) alignas(alignof(type)) u8 name[sizeof(type)];
     BUFFER_OF(EGG::StreamDecompSZS, m_SZS);
     BUFFER_OF(EGG::StreamDecompLZ, m_LZ);
+#if defined(ENABLE_LH_COMPRESSION)
     BUFFER_OF(EGG::StreamDecompLH, m_LH);
+#endif
+#if defined(ENABLE_LRC_COMPRESSION)
     BUFFER_OF(EGG::StreamDecompLRC, m_LRC);
+#endif
     BUFFER_OF(EGG::StreamDecompRL, m_RL);
 #undef BUFFER_OF
 } l_UnionObjectBufferData;
 
 const mDvd::UncompressInfo_c *const l_AutoStreamDecompInfoArray[] = {
-  &mDvd::s_UncompressInfoSZS, &mDvd::s_UncompressInfoLZ, &mDvd::s_UncompressInfoLH,
-  &mDvd::s_UncompressInfoLRC, &mDvd::s_UncompressInfoRL,
+  &mDvd::s_UncompressInfoSZS,
+#if defined(ENABLE_LH_COMPRESSION)
+  &mDvd::s_UncompressInfoLH,
+#endif
+#if defined(ENABLE_LRC_COMPRESSION)
+  &mDvd::s_UncompressInfoLRC,
+#endif
+  &mDvd::s_UncompressInfoRL, &mDvd::s_UncompressInfoLZ
 };
 } // namespace
 
@@ -37,8 +50,7 @@ kmWritePointer(&mDvd::UncompressInfo_c::m_UnionObjectBuffer, &l_UnionObjectBuffe
 kmBranchDefCpp(mDvd::initDefaultAutoStreamDecompInfo, 0, void) {
     mDvd::initAutoStreamDecompInfo(
       l_AutoStreamDecompInfoArray,
-      l_AutoStreamDecompInfoArray +
-        sizeof(l_AutoStreamDecompInfoArray) / sizeof(mDvd::UncompressInfo_c *)
+      l_AutoStreamDecompInfoArray + std::size(l_AutoStreamDecompInfoArray)
     );
 }
 
