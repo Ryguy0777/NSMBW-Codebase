@@ -113,6 +113,10 @@ int dKPHud_c::create() {
     mLayout.AllAnimeEndSetup();
     mLayout.AnimeStartSetup(ANIM_SHOW_LIVES, false);
 
+    mLayout.ReverseAnimeStartSetup(ANIM_SHOW_FOOTER, false);
+    mLayout.ReverseAnimeStartSetup(ANIM_SHOW_HEADER, false);
+    mLayout.ReverseAnimeStartSetup(ANIM_HIDE_ALL, false);
+
     mHeaderCol.setTexMap(mpPicturePanes[Header_Right]->GetMaterial()->GetTexMapAry());
     mHeaderCol.applyAlso(mpPicturePanes[Header_Centre]->GetMaterial()->GetTexMapAry());
     mFooterCol.setTexMap(mpPicturePanes[Footer]->GetMaterial()->GetTexMapAry());
