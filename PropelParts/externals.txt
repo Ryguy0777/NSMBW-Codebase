@@ -129,6 +129,9 @@ codeAddr=0x800014e0
 
 sException__Q24nw4r2dbFv=0x803DA860
 
+initAutoStreamDecompInfo__4mDvdFPCPCQ24mDvd16UncompressInfo_cPCPCQ24mDvd16UncompressInfo_c=0x8016B1D0
+initDefaultAutoStreamDecompInfo__4mDvdFv=0x8016B1E0
+
 TileGodTiles=0x80936868
 TileTable=0x802EFCB8
 

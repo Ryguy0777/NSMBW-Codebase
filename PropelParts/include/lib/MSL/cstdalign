@@ -1,0 +1,4 @@
+#ifndef MSL_CPP_CSTDALIGN_H
+#define MSL_CPP_CSTDALIGN_H
+#include <stdalign.h>
+#endif
