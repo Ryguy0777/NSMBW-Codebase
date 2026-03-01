@@ -506,9 +506,7 @@ void daEnHeiho_c::executeState_Jump() {
 }
 
 void daEnHeiho_c::initializeState_Dizzy() {
-    mRecoverState = (sStateIDIf_c*)mStateMgr.getOldStateID();
-
-    if (mRecoverState == &StateID_Sleep) {
+    if (mStateMgr.getOldStateID()->isEqual(StateID_Sleep)) {
         playChrAnim("dizzy_sleep", m3d::FORWARD_LOOP, 0.0f, 1.0f);
     } else {
         playChrAnim("dizzy", m3d::FORWARD_LOOP, 0.0f, 1.0f);
@@ -538,7 +536,7 @@ void daEnHeiho_c::executeState_Dizzy() {
     mDizzyEffect.createEffect("Wm_en_spindamage", 0, &effectPos, nullptr, &effectScale);
 
     if (mTimer > 600) {
-        changeState(*mRecoverState);
+        changeState(*const_cast<sStateIDIf_c*>(mStateMgr.getOldStateID()));
         mHealth = 1;
     }
     mTimer++;

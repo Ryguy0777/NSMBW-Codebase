@@ -78,7 +78,6 @@ public:
     int mJumpCounter;
 
     mEf::levelEffect_c mDizzyEffect;
-    sStateIDIf_c *mRecoverState;
 
     // Settings variables
     HEIHO_TYPE_e mType;

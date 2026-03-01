@@ -35,7 +35,7 @@ public:
     virtual bool isBgmSync() const;
 
     u8 mCracked;
-    bool mHitByFire;
+    u8 mFireHitCount;
     m3d::anmMatClr_c mAnmClr;
 
     mEf::levelEffect_c mBreakEffect;

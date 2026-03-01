@@ -2,6 +2,7 @@
 #include <propelparts/bases/d_a_en_large_kabochan.hpp>
 #include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_a_player_base.hpp>
+#include <game/bases/d_actor_manager.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_effect.hpp>
 
@@ -42,13 +43,24 @@ bool daEnLargeKabochan_c::hitCallback_HipAttk(dCc_c *self, dCc_c *other) {
 }
 
 bool daEnLargeKabochan_c::hitCallback_Fire(dCc_c *self, dCc_c *other) {
-    if (mHitByFire) {
+    if (mFireHitCount == 0) {
+        mVec3_c center = getCenterPos();
+        u8 direction = getTrgToSrcDir_Main(other->mpOwner->getCenterPos().x, getCenterPos().x);
+        dActorMng_c::m_instance->createUpCoin(center, direction, 2, 0);
         return dEn_c::hitCallback_Fire(self, other);
     } else {
-        mHitByFire = true;
+        ulong sndID;
+        if (mFireHitCount == 3) {
+            sndID = SE_EMY_KURIBO_L_DAMAGE_01;
+        } else if (mFireHitCount == 2) {
+            sndID = SE_EMY_KURIBO_L_DAMAGE_02;
+        } else {
+            sndID = SE_EMY_KURIBO_L_DAMAGE_03;
+        }
+        mFireHitCount--;
         boyonBegin();
         nw4r::math::VEC2 soundPos = dAudio::cvtSndObjctPos(mPos);
-        dAudio::g_pSndObjEmy->startSound(SE_EMY_KURIBO_M_DAMAGE, soundPos, 0);
+        dAudio::g_pSndObjEmy->startSound(sndID, soundPos, 0);
     }
     return true;
 }
@@ -187,6 +199,9 @@ void daEnLargeKabochan_c::initialize() {
     mVisibleAreaSize.set(40.0f, 40.0f);
 
     mEatBehaviour = EAT_TYPE_NONE;
+
+    mFireHitCount = 3;
+    mIceMng.setIceStatus(1, 0, 4);
 }
 
 void daEnLargeKabochan_c::setWalkSpeed() {
