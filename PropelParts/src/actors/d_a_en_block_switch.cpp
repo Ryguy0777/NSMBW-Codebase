@@ -2,6 +2,8 @@
 #include <propelparts/bases/d_a_en_block_switch.hpp>
 #include <propelparts/bases/d_custom_profile.hpp>
 #include <game/bases/d_info.hpp>
+#include <game/bases/d_objblock_mng.hpp>
+#include <game/bases/d_s_stage.hpp>
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_SWITCH, daEnBlockSwitch_c, fProfile::EN_BLOCK, fProfile::DRAW_ORDER::EN_BLOCK, 0);
 
@@ -48,10 +50,21 @@ int daEnBlockSwitch_c::create() {
     mTile.mPos.y = -(8 + mPos.y);
     mTile.mTileNumber = 0xB5 + mPalaceType - (mIsDotted * 0x10);
 
-    if (mIsDotted) {
-        changeState(StateID_Dotted);
-    } else {
-        changeState(StateID_Wait);
+    mInitialPos.set(mPos.x, mPos.y, 500.0f);
+
+    int blockCheck = dObjBlockMng_c::m_instance->create_objblock_check(&mInitialPos, dScStage_c::m_instance->mCurrFile);
+    switch (blockCheck) {
+        case 1:
+            changeState(StateID_HitWait);
+            break;
+        case 2:
+            mGiveCoin = true;
+        default:
+            if (mIsDotted) {
+                changeState(StateID_Dotted);
+            } else {
+                changeState(StateID_Wait);
+            }
     }
     
     return SUCCEEDED;
@@ -88,14 +101,14 @@ int daEnBlockSwitch_c::execute() {
 
 void daEnBlockSwitch_c::initialize_upmove() {
     // Create propeller on block hit
-    if (mPalaceType == 3) {
+    if (mPalaceType == 3 || mGiveCoin) {
         createItem();
     }
 }
 
 void daEnBlockSwitch_c::initialize_downmove() {
     // Same as upmove
-    if (mPalaceType == 3) {
+    if (mPalaceType == 3 || mGiveCoin) {
         createItem();
     }
 }
@@ -115,14 +128,21 @@ void daEnBlockSwitch_c::block_downmove() {
 void daEnBlockSwitch_c::blockWasHit(bool isDown) {
     mPos.y = mInitialY;
     
+    if (mPalaceType != 3 && !mGiveCoin) {
+        createItem();
+    }
     changeState(StateID_HitWait);
 }
 
 void daEnBlockSwitch_c::createItem() {
     mVec3_c mItemPos = mVec3_c(mPos.x, mPos.y-8.0f, mPos.z);
-    dActor_c::construct(fProfile::EN_ITEM, mPlayerID << 16 | (mIsGroundPound * 3) << 18 | l_item_values[mPalaceType] & 0b11111, &mItemPos, nullptr, mLayer);
+    u32 itemID = l_item_values[mPalaceType];
+    if (mGiveCoin) {
+        itemID = 2;
+    }
+    dActor_c::construct(fProfile::EN_ITEM, mPlayerID << 16 | (mIsGroundPound * 3) << 18 | itemID & 0b11111, &mItemPos, nullptr, mLayer);
     // Play item spawn sound
-    item_sound_set(mPos, l_item_values[mPalaceType], mPlayerID, 0, 0);
+    item_sound_set(mPos, itemID, mPlayerID, 0, 0);
 }
 
 void daEnBlockSwitch_c::initializeState_Wait() {
@@ -156,10 +176,7 @@ void daEnBlockSwitch_c::executeState_Wait() {
 
 void daEnBlockSwitch_c::initializeState_HitWait() {
     mTile.mTileNumber = 0x32;
-
-    if (mPalaceType != 3) {
-        createItem();
-    }
+    dObjBlockMng_c::m_instance->set_objblock_check(&mInitialPos, dScStage_c::m_instance->mCurrFile, 0, 0);
 }
 
 void daEnBlockSwitch_c::finalizeState_HitWait() {}

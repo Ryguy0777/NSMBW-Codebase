@@ -33,7 +33,7 @@ public:
     void item_ivy_set(u8, u8);
     void yossy_set(ulong);
     void item_sound_set(mVec3_c& position, int type, s8 player_no, u8, u8);
-    void continue_star_check(int *item_type, s8 player_no); ///< @unofficial
+    void continue_star_check(int *item_type, s8 player_no);
     int player_bigmario_check(s8 player_no);
     int playernumber_set();
 

@@ -27,6 +27,8 @@ public:
     int mPalaceType;
     dPSwManager_c::SwType_e mSwitchType;
     bool mIsDotted;
+    mVec3_c mInitialPos;
+    bool mGiveCoin;
 };
 
 const u32 l_item_values[5] = {

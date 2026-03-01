@@ -40,6 +40,7 @@ public:
 
     int mFlipsRemaining;
     int mCoinsRemaining;
+    mVec3_c mInitialPos;
 
     int mContents;
     bool mIndestructible;

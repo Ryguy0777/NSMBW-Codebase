@@ -5,6 +5,8 @@
 #include <game/bases/d_a_player_base.hpp>
 #include <constants/sound_list.h>
 #include <game/bases/d_eff_actor_manager.hpp>
+#include <game/bases/d_objblock_mng.hpp>
+#include <game/bases/d_s_stage.hpp>
 
 
 CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL, fProfile::DRAW_ORDER::RIVER_BARREL, 0x2);
@@ -86,7 +88,18 @@ int daEnBlockRotate_c::create() {
     mContents = mParam & 0xF;
     mIndestructible = mParam >> 4 & 1;
 
-    changeState(StateID_Wait);
+    mInitialPos.set(mPos.x, mPos.y, 500.0f);
+
+    int blockCheck = dObjBlockMng_c::m_instance->create_objblock_check(&mInitialPos, dScStage_c::m_instance->mCurrFile);
+    switch (blockCheck) {
+        case 1:
+            changeState(StateID_HitWait);
+            break;
+        case 2:
+            mContents = 1;
+        default:
+            changeState(StateID_Wait);
+    }
 
     return SUCCEEDED;
 }
@@ -201,6 +214,10 @@ void daEnBlockRotate_c::blockWasHit(bool isDown) {
         if (mContents == 10 && mCoinsRemaining > 0) {
             changeState(StateID_Wait);
         } else {
+            // Spawn item if we haven't already
+            if (!l_early_items[mContents]) {
+                createItem();
+            }
             changeState(StateID_HitWait);
         }
     } else {
@@ -293,6 +310,8 @@ void daEnBlockRotate_c::executeState_Wait() {
 }
 
 void daEnBlockRotate_c::initializeState_HitWait() {
+    dObjBlockMng_c::m_instance->set_objblock_check(&mInitialPos, dScStage_c::m_instance->mCurrFile, 0, 0);
+
     // Setup tile renderer
     dPanelObjMgr_c *list = dBg_c::m_bg_p->getPanelObjMgr(0);
     list->addPanelObjList(&mTile);
@@ -303,11 +322,6 @@ void daEnBlockRotate_c::initializeState_HitWait() {
 
     // Remove model
     mFlipBlockModel.remove();
-
-    // Spawn item if we haven't already
-    if (!l_early_items[mContents]) {
-        createItem();
-    }
 }
 
 void daEnBlockRotate_c::finalizeState_HitWait() {}
