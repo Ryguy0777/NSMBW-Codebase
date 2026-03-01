@@ -27,7 +27,6 @@ import json
 from pathlib import Path
 import re
 import sys
-import os
 from typing import Any, Dict, List, Optional, Set
 
 
@@ -58,7 +57,6 @@ class Config:
     kamek_dir: Path
     k_stdlib_dir: Path | None
     cw_dir: Path
-    wine_cmd: Optional[str]
     project_dir: Path
     build_dir: Path
     output_dir: Path
@@ -82,9 +80,6 @@ class Config:
             help='Kamek\'s k_stdlib directory (default: <kamek dir>/k_stdlib)')
         deps_group.add_argument('--cw', type=Path, metavar='CODEWARRIOR', required=True,
             help=f'CodeWarrior folder, containing {MWCCEPPC_NAME}, {MWASMEPPC_NAME}, and license.dat, at minimum')
-        deps_group.add_argument('--wine', type=Path, metavar='WINE',
-            help='use the specified Wine (or wibo) command to run CodeWarrior (default: "wine" on non-Windows platforms, no Wine on Windows, ' +
-                 'unless "wine" and "winepath" (or "wibo") are present in the cw directory)')
 
         proj_group = parser.add_argument_group('Project location')
         proj_group.add_argument('--project-dir', type=Path, metavar='PROJECT',
@@ -116,7 +111,6 @@ class Config:
         else:
             self.k_stdlib_dir = args.kstdlib.resolve()
         self.cw_dir = args.cw.resolve()
-        self.wine_cmd = str(args.wine) if args.wine else None
         self.project_dir = project_dir.resolve()
         self.select_versions = args.select_version or None
         self.build_dir = (args.build_dir or project_dir / DEFAULT_BUILD_DIR_NAME).resolve()
@@ -326,10 +320,6 @@ class TranslationUnit:
         return config.build_dir / self.source_file.relative_to(config.src_dir).with_suffix(suffix)
 
 
-def get_cw_wrapper_prefix(config: Config) -> str:
-    quote = '"' if sys.platform == 'win32' else "'"
-
-
 def make_ninja_file(config: Config) -> str:
     """
     Make the overall Ninja file
@@ -346,18 +336,6 @@ def make_ninja_file(config: Config) -> str:
 
     quote = '"' if sys.platform == 'win32' else "'"
 
-    cw_wrapper = Path(__file__).parent / CW_WRAPPER_SCRIPT_NAME
-    cw_wrapper_prefix = ''
-    if config.wine_cmd:
-        cw_wrapper_prefix = f'--cmd {quote}{ninja_escape(config.wine_cmd)}{quote} '
-    elif sys.platform != 'win32' and sys.platform != 'cygwin' and sys.platform != 'msys':
-        if os.path.exists(config.cw_dir / 'wine') and os.path.exists(config.cw_dir / 'winepath'):
-            cw_wrapper_prefix = f'--cmd {quote}{ninja_escape(config.cw_dir / "wine")}{quote} '
-        elif os.path.exists(config.cw_dir / 'wibo'):
-            cw_wrapper_prefix = f'--cmd {quote}{ninja_escape(config.cw_dir / "wibo")}{quote} '
-        else:
-            cw_wrapper_prefix = f'--cmd wine '
-
     lines = []
     lines.append(f'# NOTE: "builddir" has special significance to Ninja (see the manual)')
     lines.append(f'builddir = {ninja_escape(config.build_dir)}')
@@ -365,8 +343,9 @@ def make_ninja_file(config: Config) -> str:
     lines.append(f'')
     lines.append(f'mwcceppc = {ninja_escape(config.mwcceppc_exe)}')
     lines.append(f'mwasmeppc = {ninja_escape(config.mwasmeppc_exe)}')
-    lines.append(f"cc = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {cw_wrapper_prefix}{quote}$mwcceppc{quote}")
-    lines.append(f"as = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {cw_wrapper_prefix}{quote}$mwasmeppc{quote}")
+    cw_wrapper = Path(__file__).parent / CW_WRAPPER_SCRIPT_NAME
+    lines.append(f"cc = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {quote}$mwcceppc{quote}")
+    lines.append(f"as = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {quote}$mwasmeppc{quote}")
     lines.append(f'kamek = {ninja_escape(config.kamek_exe)}')
     lines.append(f'kstdlib = {ninja_escape(config.k_stdlib_dir)}')
     if use_addrmap:

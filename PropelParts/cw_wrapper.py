@@ -34,8 +34,9 @@ from typing import Any
 ARGS_INDICATING_MAKEFILES = {'-Mfile', '-MMfile', '-MDfile', '-MMDfile'}
 ARGS_INDICATING_PATHS = {'-i', '-include', '-ir', *ARGS_INDICATING_MAKEFILES, '-o', '-precompile', '-prefix'}
 
-command = None
-path_command = None
+
+def is_windows():
+    return sys.platform == 'win32'
 
 
 def makefile_escape(thing: Any) -> str:
@@ -53,27 +54,15 @@ def makefile_unescape(thing: str) -> str:
     return str(thing).replace('\\ ', ' ').replace('\\\\', '\\')
 
 
-def path_conversion_command():
-    """
-    Return the name of the command to use for path conversions
-    """
-    global command
-    command_path = Path(command)
-    if command_path.name.startswith('wine'):
-        return [command_path.with_name('winepath' + command_path.name[4:])]
-    elif command_path.name.startswith('wibo'):
-        return [command, 'path']
-    return None
-
 def host_to_guest(path: Path) -> str:
     """
     Convert a host path to a string CodeWarrior will be happy with
     """
-    if path_command is None:
+    if is_windows():
         return str(path.resolve())
     else:
         return subprocess.check_output(
-            path_command + ['-w', str(path)],
+            ['winepath', '-w', str(path)],
             encoding='utf-8',
             stderr=subprocess.DEVNULL,
         ).rstrip('\n')
@@ -83,11 +72,11 @@ def guest_to_host(path_str: str) -> Path:
     """
     Convert a path string from CodeWarrior to a path for the host system
     """
-    if path_command is None:
+    if is_windows():
         return Path(path_str)
     else:
         return Path(subprocess.check_output(
-            path_command + ['-u', path_str],
+            ['winepath', '-u', path_str],
             encoding='utf-8',
             stderr=subprocess.DEVNULL,
         ).rstrip('\n'))
@@ -147,25 +136,13 @@ def main(argv=None):
         argv = sys.argv
 
     if len(argv) < 2:
-        print(f'usage: {argv[0]} [--cmd /path/to/(wine or wibo)] /path/to/(mwcceppc.exe or mwasmeppc.exe) [arguments to CodeWarrior, using host filepaths]...')
+        print(f'usage: {argv[0]} /path/to/(mwcceppc.exe or mwasmeppc.exe) [arguments to CodeWarrior, using host filepaths]...')
         return
 
     # Ignore this Python script's own filename
     argv.pop(0)
 
-    # Check if the user specified a command to invoke CodeWarrior with
-    global command
-    if argv[0] == '--cmd':
-        argv.pop(0)
-        # Argument is a path to the command (e.g. "wine" or "wibo")
-        command = argv.pop(0)
-        path_command = path_conversion_command()
-    elif sys.platform != 'win32':
-        # Default to "wine" on non-Windows platforms
-        command = 'wine'
-        path_command = 'winepath'
-
-    # First non-positional argument is the path to CodeWarrior
+    # First argument is the path to CodeWarrior
     cw_exe = Path(argv.pop(0))
 
     # Next, we scan for any arguments we recognize, and translate any
@@ -192,8 +169,8 @@ def main(argv=None):
 
     # Time to invoke CodeWarrior!
     cmd = [cw_exe, *argv]
-    if command is not None:
-        cmd.insert(0, command)
+    if not is_windows():
+        cmd.insert(0, 'wine')
     proc = subprocess.run(cmd)
     if proc.returncode != 0:
         exit(proc.returncode)
