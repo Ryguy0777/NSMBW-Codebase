@@ -796,8 +796,8 @@ void dKpPathManager_c::unlockPaths() {
     u8 *oldPathAvData = sp_openPathData;
     sp_openPathData = new u8[mpPathLayer->mPathNum];
 
-    u8 *oldNodeAvData = sp_openPathData;
-    sp_openPathData = new u8[mpPathLayer->mPathNum];
+    u8 *oldNodeAvData = sp_openNodeData;
+    sp_openNodeData = new u8[mpPathLayer->mPathNum];
 
     SpammyReport("Unlocking paths\n");
 
