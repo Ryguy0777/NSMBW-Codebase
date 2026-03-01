@@ -15,7 +15,11 @@ public:
         LOOP_COUNT,
     };
 
-    enum Exit_e { };
+    enum Exit_e {
+        EXIT_CLEAR,
+        EXIT_LOSE,
+        EXIT_EXIT,
+    };
 
     char pad[0x1198];
     u8 mCurrWorld;

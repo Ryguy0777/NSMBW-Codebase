@@ -93,12 +93,12 @@ struct dKPNode_s {
     dKPLayer_s *mpTileLayer;
     dKPLayer_s *mpDoodadLayer;
 
-    u8 mReserved1;
+    u8 mIsSetInPanBounds; // Used when setting up panning bounds for path unlocks
     u8 mReserved2;
     u8 mReserved3;
     u8 mNodeType;
 
-    bool isNew;
+    bool mIsNewlyOpen;
 
     dKPCourseNode_c *mpCourseNode;
 
@@ -254,7 +254,7 @@ struct dKPWorldDef_s {
     s8 mHudHintL;
     u8 mKeyID; // Internal index of the definition
     u8 mTrackID;
-    u8 mLevelInfoID;
+    u8 mWorldID;
     u8 mTitleWorldNo;
     u8 mTitleLevelNo;
     u8 mPad[3];

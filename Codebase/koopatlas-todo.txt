@@ -6,6 +6,7 @@ KOOPATLAS TODO:
 - Clean up any ugly-looking code, rename stuff if needed
 - Fix Koopatlas class naming scheme to match official (dKP -> dKp)
 - Maybe make base Koopatlas actor for everything to inherit from (stop execution when needed, other general stuff)
+- Move constants to `koopatlas_constants.h` (only stuff that users may wish to modify)
 
 Nitpicky Shit:
 - Player is not centered on the course node, needs to be moved up 4 units like with the model itself

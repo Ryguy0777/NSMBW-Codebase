@@ -232,6 +232,7 @@ public:
     inline int getCurrentWorld() {return mCurrentWorld;};
     inline void setCurrentWorld(int world) {mCurrentWorld = world;};
 
+    inline int getCurrentPathNode() {return mCurrentPathNode;};
     inline void setCurrentPathNode(int node) {mCurrentPathNode = node;};
 
     inline int getGameCompletion() {return mGameCompletion;};

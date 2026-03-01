@@ -25,7 +25,7 @@
 #include <new/bases/koopatlas/d_kp_hud.hpp>
 #include <new/bases/koopatlas/d_kp_map_data.hpp>
 #include <new/bases/koopatlas/d_kp_music.hpp>
-// #include "koopatlas/pathmanager.h"
+#include <new/bases/koopatlas/d_kp_path_manager.hpp>
 #include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
 // #include "koopatlas/shop.h"
 
@@ -130,7 +130,7 @@ public:
     dKPDirector_c *mpDirector;
 
     dKPMapData_c mMapData;
-    //dKPPathManager_c mPathManager;
+    dWMPathManager_c mPathManager;
     dDvd::loader_c mMapListLoader;
 
     const char *mpMapPath;

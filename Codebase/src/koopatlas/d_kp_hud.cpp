@@ -2,6 +2,7 @@
 #include <new/game_config.h>
 
 #if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
+#include <new/bases/koopatlas/d_s_koopatlas.hpp>
 #include <new/bases/koopatlas/d_kp_hud.hpp>
 #include <new/level_info_utils.hpp>
 #include <new/constants/message_list.h>
@@ -180,14 +181,16 @@ void dKPHud_c::loadInitially() {
     dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(save->mWorldInfoIdx);
     mDispFooter = /*(save->newerWorldName[0] != 0) &&*/ (world->mHudHue != 2000);
 
-    //if (!dScKoopatlas_c::m_instance->mPathManager.isMoving)
+    if (!dScKoopatlas_c::m_instance->mPathManager.isMoving) {
         enteredNode();
+    }
 }
 
 #ifdef KOOPATLAS_DEV_ENABLED
 void dKPHud_c::enteredNode(dKPNode_s *node) {
-    if (node == nullptr)
-        //node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
+    if (node == nullptr) {
+        node = dScKoopatlas_c::m_instance->mPathManager.currentNode;
+    }
 
     if (node->mNodeType == dKPNode_s::LEVEL && mInitalDispComplete) {
         mDispHeader = true;
@@ -214,20 +217,23 @@ void dKPHud_c::leftNode() {
 }
 
 void dKPHud_c::hideAll() {
-    if (!mLayout.isAnime(ANIM_HIDE_ALL))
+    if (!mLayout.isAnime(ANIM_HIDE_ALL)) {
         mLayout.AnimeStartSetup(ANIM_HIDE_ALL, false);
+    }
     mLayout.GetAnimGroup()[ANIM_HIDE_ALL].mFrameCtrl.mFlags = 1; // NO_LOOP
 }
 
 void dKPHud_c::unhideAll() {
-    if (!mLayout.isAnime(ANIM_HIDE_ALL))
+    if (!mLayout.isAnime(ANIM_HIDE_ALL)) {
         mLayout.AnimeStartSetup(ANIM_HIDE_ALL, true);
+    }
     mLayout.GetAnimGroup()[ANIM_HIDE_ALL].mFrameCtrl.mFlags = 3; // NO_LOOP | REVERSE
 }
 
 void dKPHud_c::hideFooter() {
-    if (mFooterVisible)
+    if (mFooterVisible) {
         playHideAnim(ANIM_SHOW_FOOTER);
+    }
 }
 
 void dKPHud_c::showFooter() {

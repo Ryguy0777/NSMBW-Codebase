@@ -261,18 +261,11 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     wm->mpPlayer = (daKPPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
 
     // Since we've got all the resources, set up the path data too
-    /*SpammyReport("Preparing path manager\n");
-    wm->mPathManager.setup();*/
-
-    // TEMP TEMP TEMPTEMPTEMP!!!
-    dKPLayer_s *pathLayer = wm->mMapData.mpPathLayer;
-    for (int i = 0; i < pathLayer->mNodeNum; i++)
-        if (pathLayer->mpNodes[i]->mNodeType == dKPNode_s::LEVEL)
-            pathLayer->mpNodes[i]->createCourseNode();
+    SpammyReport("Preparing path manager\n");
+    wm->mPathManager.setup();
 
     // And put the player into position
-    //dKPNode_s *cNode = wm->mPathManager.currentNode;
-    dKPNode_s *cNode = wm->mMapData.mpPathLayer->mpNodes[8]; // test, remove me later
+    dKPNode_s *cNode = wm->mPathManager.currentNode;
     wm->mpPlayer->mPos = mVec3_c(cNode->mPosX, -cNode->mPosY, wm->mpPlayer->mPos.z);
 
     SpammyReport("Creating MAP\n");
@@ -309,9 +302,6 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
     }
 
     // TODO: Set circle wipe to focus on the player position
-
-    // Temp until pathmanager is complete
-    wm->startMusic();
 
     SpammyReport("KPInitPhase_ChkChildProcess returning true\n");
     return (sPhase_c::METHOD_RESULT_e)true;
@@ -423,8 +413,9 @@ int dScKoopatlas_c::create() {
 }
 
 int dScKoopatlas_c::doDelete() {
-    if (!mMusicPersist)
+    if (!mMusicPersist) {
         dKPMusic_c::m_instance->stop();
+    }
 
     m3d::removeLightMgr(0);
     m3d::removeLightMgr(1);
@@ -504,8 +495,9 @@ void dScKoopatlas_c::startLevel(dLevelInfo_c::entry_s *entry) {
 void dScKoopatlas_c::openMenu(int starSndMode, int soundID) {
     dKPMusic_c::m_instance->updTrackVolume(true);
     dKPMusic_c::m_instance->updStarVolume(starSndMode);
-    if (soundID > -1)
+    if (soundID > -1) {
         SndAudioMgr::sInstance->startSystemSe(soundID, 1);
+    }
     mpHud->hideAll();
 }
 
@@ -699,14 +691,15 @@ static int completionMsgIdx = 0;
 // StateID_Normal : Main/idle state, waiting for input
 void dScKoopatlas_c::initializeState_Normal() { }
 void dScKoopatlas_c::executeState_Normal() {
-    /*if (mPathManager.completionMessagePending) {
+    if (mPathManager.completionMessagePending) {
         MapReport("Going to set CompletionMsg\n");
-        mStateMgr.changeState(StateID_CompletionMsg);
+        mStateMgr.changeState(StateID_CompletionMsgWindow);
         return;
     }
 
-    if (mPathManager.doingThings())
-        return;*/
+    if (mPathManager.doingThings()) {
+        return;
+    }
 
     int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
@@ -1157,18 +1150,6 @@ void dScKoopatlas_c::executeState_SaveError() {
 }
 void dScKoopatlas_c::finalizeState_SaveError() { }
 
-// TODO: Move into PathManager once ported
-enum CompletionType_e {
-    CMP_MSG_NULL = 0,
-    CMP_MSG_COINS,
-    CMP_MSG_EXITS,
-    CMP_MSG_WORLD,
-    CMP_MSG_GLOBAL_COINS_EXC_W9,
-    CMP_MSG_GLOBAL_COINS,
-    CMP_MSG_GLOBAL_EXITS,
-    CMP_MSG_EVERYTHING
-};
-
 /**********************************************************************/
 // StateID_CompletionMsgWindow : Display a completion message
 void dScKoopatlas_c::initializeState_CompletionMsgWindow() {
@@ -1192,7 +1173,7 @@ void dScKoopatlas_c::executeState_CompletionMsgWindow() {
         T_question_00->setMessage(msgRes, BMG_CATEGORY_KOOPATLAS, type, 0);
 
         // Append a world name if needed
-        if (type >= CMP_MSG_COINS && type <= CMP_MSG_WORLD) {
+        if (type >= dWMPathManager_c::CMP_MSG_COINS && type <= dWMPathManager_c::CMP_MSG_WORLD) {
             wchar_t nameBuffer[36];
 
             wcscpy(nameBuffer, getKoopatlasWorldName(dGameCom::rndInt(8)));

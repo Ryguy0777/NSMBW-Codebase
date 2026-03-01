@@ -61,8 +61,9 @@ int daKPPlayer_c::execute() {
         sLib::chaseAngle(&mAngle.y.mAngle, mTargetRotY, 0xC00);
     }
 
-    //if (dScKoopatlas_c::m_instance->chkMapIdleState())
-    //	dScKoopatlas_c::m_instance->pathManager.execute();
+    if (dScKoopatlas_c::m_instance->chkMapIdleState()) {
+    	dScKoopatlas_c::m_instance->mPathManager.execute();
+    }
 
     calcMdl();
     mpPyMdlMng->play();
