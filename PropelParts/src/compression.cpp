@@ -36,14 +36,15 @@ union {
 } l_UnionObjectBufferData;
 
 const mDvd::UncompressInfo_c *const l_AutoStreamDecompInfoArray[] = {
-  &mDvd::s_UncompressInfoSZS,
 #if defined(ENABLE_LH_COMPRESSION)
   &mDvd::s_UncompressInfoLH,
 #endif
 #if defined(ENABLE_LRC_COMPRESSION)
   &mDvd::s_UncompressInfoLRC,
 #endif
-  &mDvd::s_UncompressInfoRL, &mDvd::s_UncompressInfoLZ
+  &mDvd::s_UncompressInfoLZ,
+  &mDvd::s_UncompressInfoSZS,
+  &mDvd::s_UncompressInfoRL
 };
 } // namespace
 

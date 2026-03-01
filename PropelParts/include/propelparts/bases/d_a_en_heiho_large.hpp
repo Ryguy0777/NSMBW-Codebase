@@ -46,7 +46,7 @@ public:
     void reactYoshiFumiProc(dActor_c *player);
 
     STATE_FUNC_DECLARE(daEnHeihoLarge_c, Walk);
-	STATE_FUNC_DECLARE(daEnHeihoLarge_c, Turn);
+    STATE_FUNC_DECLARE(daEnHeihoLarge_c, Turn);
     STATE_FUNC_DECLARE(daEnHeihoLarge_c, Dizzy);
 
     dHeapAllocator_c mAllocator;
