@@ -9,27 +9,21 @@
 #include <new/bases/koopatlas/d_kp_map.hpp>
 #include <new/bases/koopatlas/d_kp_camera.hpp>
 
-const int dKPMap_c::sc_effectGroups[] = {1,0,4,5,7,8,9,10,11,12,13,14};
-const int dKPMap_c::sc_effectPrios[] = {141,142,143,129,144,145,146,147,148,149,150,151};
+const int dKpMap_c::sc_effectGroups[] = {1,0,4,5,7,8,9,10,11,12,13,14};
+const int dKpMap_c::sc_effectPrios[] = {141,142,143,129,144,145,146,147,148,149,150,151};
 
-// TODO: Instance is needed for pathmanager usage, remove that requirement asp
-dKPMap_c *dKPMap_c::m_instance = nullptr;
-
-dKPMap_c *dKPMap_c_classInit() {
-    dKPMap_c *c = new dKPMap_c;
-
-    dKPMap_c::m_instance = c;
-    return c;
+dKpMap_c *dKpMap_c_classInit() {
+    return new dKpMap_c;
 }
 
 // Replace WM_MAP actor
-kmWritePointer(0x80984710, &dKPMap_c_classInit);
+kmWritePointer(0x80984710, &dKpMap_c_classInit);
 
-dKPMap_c::dKPMap_c() {
+dKpMap_c::dKpMap_c() {
     mDispLaunchStar = false;
 }
 
-int dKPMap_c::create() {
+int dKpMap_c::create() {
     mRender.mAllocator.attach(mHeap::g_gameHeaps[0], 0x20);
     mRender.create(&mRender.mAllocator, nullptr);
 
@@ -90,14 +84,14 @@ int dKPMap_c::create() {
     }
 
     mAllocator.adjustFrmHeap();
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPMap_c::doDelete() {
-    return true;
+int dKpMap_c::doDelete() {
+    return SUCCEEDED;
 }
 
-int dKPMap_c::execute() {
+int dKpMap_c::execute() {
     mBgSrtAnm.play();
 
     mBgModel.setLocalMtx(&mBgMtx);
@@ -113,10 +107,10 @@ int dKPMap_c::execute() {
         mLaunchStarModel.setScale(0.035f, 0.035f, 0.035f);
         mLaunchStarModel.calc(false);
     }
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPMap_c::draw() {
+int dKpMap_c::draw() {
     mRender.entry();
     mBgModel.entry();
 
@@ -128,14 +122,14 @@ int dKPMap_c::draw() {
         mEffectProcs[i].entry();
     }
 
-    dKPMapData_c *dataCls = &dScKoopatlas_c::m_instance->mMapData;
-    if (dataCls->mpPathLayer) {
+    dKpMapData_c *dataCls = &dScKoopatlas_c::m_instance->mMapData;
+    if (dataCls->mpPathLayer != nullptr) {
         renderPathLayer(dataCls->mpPathLayer);
     }
-    return true;
+    return SUCCEEDED;
 }
 
-void dKPMap_c::spinLaunchStar() {
+void dKpMap_c::spinLaunchStar() {
     nw4r::g3d::ResFile lsRes = dResMng_c::m_instance->getRes("StarRing", "g3d/StarRing.brres");
     nw4r::g3d::ResAnmChr lsAnm = lsRes.GetResAnmChr("StarRing_shot");
     mLaunchStarAnm.setAnm(mLaunchStarModel, lsAnm, m3d::FORWARD_LOOP);
@@ -143,7 +137,7 @@ void dKPMap_c::spinLaunchStar() {
 }
 
 // TODO: Try to find a way to dehardcode this, if possible
-/*void dKPMap_c::spawnMapEffects() {
+/*void dKpMap_c::spawnMapEffects() {
     int mapID = dScKoopatlas_c::m_instance->mCurrentMapID;
 
     const S16Vec efRot = {0x1800, 0, 0};
@@ -212,31 +206,32 @@ void dKPMap_c::spinLaunchStar() {
 
 
 
-dKPMap_c::dMapRender_c::dMapRender_c() { }
+dKpMap_c::MapRender_c::MapRender_c() { }
 
-void dKPMap_c::dMapRender_c::drawOpa() { }
+void dKpMap_c::MapRender_c::drawOpa() { }
 
-void dKPMap_c::dMapRender_c::drawXlu() {
+void dKpMap_c::MapRender_c::drawXlu() {
     drawLayers();
 }
 
-void dKPMap_c::dMapRender_c::loadTexture(GXTexObj *obj) {
-    if (mpCurrentTexture == obj)
+void dKpMap_c::MapRender_c::loadTexture(GXTexObj *obj) {
+    if (mpCurrentTexture == obj) {
         return;
+    }
 
     GXLoadTexObj(obj, GX_TEXMAP0);
     mpCurrentTexture = obj;
 }
 
-void dKPMap_c::dMapRender_c::loadCamera() {
+void dKpMap_c::MapRender_c::loadCamera() {
     GXLoadPosMtxImm(mRenderMtx, GX_PNMTX0);
 }
 
-void dKPMap_c::dMapRender_c::loadCamera(nw4r::math::MTX34 matrix) {
+void dKpMap_c::MapRender_c::loadCamera(nw4r::math::MTX34 matrix) {
     GXLoadPosMtxImm(matrix, GX_PNMTX0);
 }
 
-void dKPMap_c::dMapRender_c::beginRendering() {
+void dKpMap_c::MapRender_c::beginRendering() {
     mpCurrentTexture = nullptr;
 
     nw4r::g3d::Camera cam3d(m3d::getCamera(0));
@@ -245,7 +240,7 @@ void dKPMap_c::dMapRender_c::beginRendering() {
 
     GXSetCurrentMtx(GX_PNMTX0);
 
-    dKPCamera_c *camera = dKPCamera_c::m_instance;
+    dKpCamera_c *camera = dKpCamera_c::m_instance;
     mMinX = ((int)camera->mScreenLeft) / 24;
     mMinY = ((int)(-camera->mScreenTop) - 23) / 24;
     mMaxX = (((int)(camera->mScreenLeft + camera->mScreenWidth)) + 23) / 24;
@@ -304,12 +299,11 @@ void dKPMap_c::dMapRender_c::beginRendering() {
     GXSetTevColor(GX_TEVREG1, regColor1);
 }
 
-void dKPMap_c::dMapRender_c::endRendering() { }
+void dKpMap_c::MapRender_c::endRendering() { }
 
-void dKPMap_c::dMapRender_c::drawLayers() {
+void dKpMap_c::MapRender_c::drawLayers() {
     dScKoopatlas_c *wm = dScKoopatlas_c::m_instance;
-    dKPMapFile_s *data = wm->mMapData.mpData;
-
+    dKpMapFile_s *data = wm->mMapData.mpData;
     if (data == nullptr) {
         return;
     }
@@ -325,13 +319,14 @@ void dKPMap_c::dMapRender_c::drawLayers() {
     beginRendering();
 
     for (int iLayer = data->mLayerNum - 1; iLayer >= 0; iLayer--) {
-        if (skipFirstLayer && iLayer == 0)
+        if (skipFirstLayer && iLayer == 0) {
             continue;
+        }
 
-        dKPLayer_s *layer = data->mpLayers[iLayer];
+        dKpLayer_s *layer = data->mpLayers[iLayer];
         mRenderMtx[2][3] += 2.0f;
 
-        if (layer->mLayerType == dKPLayer_s::TYPE_PATH) {
+        if (layer->mLayerType == dKpLayer_s::TYPE_PATH) {
             // Rebase the camera matrix
             mBaseZ = 3500.0f;
             nw4r::g3d::Camera cam3d(m3d::getCamera(0));
@@ -340,17 +335,18 @@ void dKPMap_c::dMapRender_c::drawLayers() {
         }
 
         // Invisible, skip drawing
-        if (layer->mAlpha == 0)
+        if (layer->mAlpha == 0) {
             continue;
+        }
 
         TileReport("Checking layer %d with type %d\n", iLayer, layer->type);
 
         GXColor layerClr = {255,255,255,layer->mAlpha};
         GXSetTevColor(GX_TEVREG0, layerClr);
 
-        if (layer->mLayerType == dKPLayer_s::TYPE_OBJECT) {
+        if (layer->mLayerType == dKpLayer_s::TYPE_OBJECT) {
             renderTileLayer(layer, data->mpSectors);
-        } else if (layer->mLayerType == dKPLayer_s::TYPE_DOODAD) {
+        } else if (layer->mLayerType == dKpLayer_s::TYPE_DOODAD) {
             renderDoodadLayer(layer);
         }
     }
@@ -358,14 +354,16 @@ void dKPMap_c::dMapRender_c::drawLayers() {
     endRendering();
 }
 
-void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sector_s *sectors) {
+void dKpMap_c::MapRender_c::renderTileLayer(dKpLayer_s *layer, dKpLayer_s::sector_s *sectors) {
     //TileReport("Rendering layer %p\n", layer);
 
     // Don't render it if we don't need to
-    if (mMaxX < layer->mLeft || mMinX > layer->mRight)
+    if (mMaxX < layer->mLeft || mMinX > layer->mRight) {
         return;
-    if (mMaxY < layer->mTop || mMinY > layer->mBottom)
+    }
+    if (mMaxY < layer->mTop || mMinY > layer->mBottom) {
         return;
+    }
 
     loadCamera();
     loadTexture(layer->mpTileset);
@@ -401,10 +399,11 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
         for (int sectorX = sectorMinX; sectorX <= sectorMaxX; sectorX++) {
             u16 index = layer->mIndices[baseIndex + sectorX - sectorBaseX];
             TileReport("Sector index @ %d,%d: %d\n", sectorX, sectorY, index);
-            if (index == 0xFFFF)
+            if (index == 0xFFFF) {
                 continue;
+            }
 
-            dKPLayer_s::sector_s *sector = &sectors[index];
+            dKpLayer_s::sector_s *sector = &sectors[index];
 
             int iMinX = (sectorX == sectorMinX) ? (toRenderMinX & 0xF) : 0;
             int iMaxX = (sectorX == sectorMaxX) ? (toRenderMaxX & 0xF) : 15;
@@ -415,8 +414,9 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
             for (int inY = iMinY; inY <= iMaxY; inY++) {
                 for (int inX = iMinX; inX <= iMaxX; inX++) {
                     u16 tileID = (*sector)[inY][inX];
-                    if (tileID == 0xFFFF)
+                    if (tileID == 0xFFFF) {
                         continue;
+                    }
 
                     s16 worldX = (worldSectorX | inX) * 24;
                     s16 worldY = -((worldSectorY | inY) * 24);
@@ -454,11 +454,11 @@ void dKPMap_c::dMapRender_c::renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sect
     //TileReport("Layer complete\n");
 }
 
-void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
+void dKpMap_c::MapRender_c::renderDoodadLayer(dKpLayer_s *layer) {
     for (int i = 0; i < layer->mDoodadNum; i++) {
         // TODO: Implement doodad culling
 
-        dKPDoodad_s *doodad = layer->mpDoodads[i];
+        dKpDoodad_s *doodad = layer->mpDoodads[i];
         DoodadReport("Doodad @ %f,%f sized %f,%f with angle %f\n", doodad->x, doodad->y, doodad->width, doodad->height, doodad->angle);
 
         float effectiveX = doodad->mPos.x;
@@ -473,7 +473,7 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
         // Animate it
         if (doodad->mAnimNum > 0) {
             for (int j = 0; j < doodad->mAnimNum; j++) {
-                dKPDoodad_s::Anim_s *anim = &doodad->mAnims[j];
+                dKpDoodad_s::Anim_s *anim = &doodad->mAnims[j];
 
                 if (anim->mInitialDelay == 0) {
                     u32 baseTick = anim->mBaseTick;
@@ -492,18 +492,18 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
 
                             // We've reached the end
                             switch (anim->mLoopType) {
-                                case dKPDoodad_s::Anim_s::CONTIGUOUS:
+                                case dKpDoodad_s::Anim_s::CONTIGUOUS:
                                     // Stop here
                                     elapsed = anim->mFrameCount - 1;
                                     break;
 
-                                case dKPDoodad_s::Anim_s::LOOP:
+                                case dKpDoodad_s::Anim_s::LOOP:
                                     // Start over
                                     elapsed = 0;
                                     anim->mBaseTick = cCounter_c::m_gameFrame;
                                     break;
 
-                                case dKPDoodad_s::Anim_s::REVERSE_LOOP:
+                                case dKpDoodad_s::Anim_s::REVERSE_LOOP:
                                     // Change direction
                                     anim->mIsReverse = !anim->mIsReverse;
                                     elapsed = (anim->mIsReverse) ? (anim->mFrameCount - 1) : 0;
@@ -522,13 +522,13 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
                     float value;
 
                     switch (anim->mCurveType) {
-                        case dKPDoodad_s::Anim_s::LINEAR:
+                        case dKpDoodad_s::Anim_s::LINEAR:
                             value = progress;
                             break;
-                        case dKPDoodad_s::Anim_s::SIN:
+                        case dKpDoodad_s::Anim_s::SIN:
                             value = (sin(((progress * M_PI * 2)) - (M_PI/2)) + 1) / 2;
                             break;
-                        case dKPDoodad_s::Anim_s::COS:
+                        case dKpDoodad_s::Anim_s::COS:
                             value = (cos(((progress * M_PI * 2)) - (M_PI/2)) + 1) / 2;
                             break;
                     }
@@ -536,34 +536,35 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
                     float delta = anim->mEndVal - anim->mStartVal;
                     float frame;
 
-                    if (anim->mIsReverse)
+                    if (anim->mIsReverse) {
                         frame = anim->mStartVal + ceil(delta * value);
-                    else
+                    } else {
                         frame = anim->mStartVal + (delta * value);
+                    }
 
                     float scaleYMod;
 
                     // Apply it
                     switch (anim->mAnimType) {
-                        case dKPDoodad_s::Anim_s::X_POS:
+                        case dKpDoodad_s::Anim_s::X_POS:
                             effectiveX += frame;
                             break;
-                        case dKPDoodad_s::Anim_s::Y_POS:
+                        case dKpDoodad_s::Anim_s::Y_POS:
                             effectiveY += frame;
                             break;
-                        case dKPDoodad_s::Anim_s::ANGLE:
+                        case dKpDoodad_s::Anim_s::ANGLE:
                             effectiveAngle += frame;
                             break;
-                        case dKPDoodad_s::Anim_s::X_SCALE:
+                        case dKpDoodad_s::Anim_s::X_SCALE:
                             effectiveWidth = (effectiveWidth * frame / 100.0);
                             break;
-                        case dKPDoodad_s::Anim_s::Y_SCALE:
+                        case dKpDoodad_s::Anim_s::Y_SCALE:
                             effectiveHeight = (effectiveHeight * frame / 100.0);
 
                             scaleYMod = doodad->mHeight - effectiveHeight;
                             effectiveY += scaleYMod;
                             break;
-                        case dKPDoodad_s::Anim_s::OPACITY:
+                        case dKpDoodad_s::Anim_s::OPACITY:
                             effectiveAlpha = (effectiveAlpha * (frame * 2.55f)) / 255;
                             break;
                     }
@@ -581,7 +582,7 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
         PSMTXTransApply(mRenderMtx, doodadMtx, effectiveX + halfW, -effectiveY - halfH, 0);
 
         if (effectiveAngle != 0) {
-            Mtx rotMtx;
+            nw4r::math::MTX34 rotMtx;
             PSMTXRotRad(rotMtx, 'z', (-effectiveAngle)*0.01745329252f);
 
             PSMTXConcat(doodadMtx, rotMtx, doodadMtx);
@@ -606,27 +607,17 @@ void dKPMap_c::dMapRender_c::renderDoodadLayer(dKPLayer_s *layer) {
     }
 }
 
-void dKPMap_c::renderPathLayer(dKPLayer_s *layer) {
+void dKpMap_c::renderPathLayer(dKpLayer_s *layer) {
     for (int i = 0; i < layer->mNodeNum; i++) {
-        dKPNode_s *node = layer->mpNodes[i];
+        dKpNode_s *node = layer->mpNodes[i];
 
-        if (node->mNodeType == dKPNode_s::LEVEL) {
+        if (node->mNodeType == dKpNode_s::LEVEL) {
             // Used for the "ending scene" where the W9 path appears
-            // TODO: Dehardcode this, if possible
-            if (node->mLevelNum[0] == 80) {
+            if (node->mLevelNum[0] == WORLD_ID_NO_DRAW) {
                 continue;
             }
 
-            mAng3_c angle(0x4000, 0x8000, 0x6000);
-            dKPCourseNode_c *course = node->mpCourseNode;
-
-            PSMTXTrans(course->mMatrix, node->mPosX, -node->mPosY + 4.0, 498.0);
-            course->mMatrix.ZXYrotM(angle.y, angle.x, angle.z);
-            course->mModel.setLocalMtx(&course->mMatrix);
-            course->mModel.setScale(0.8f, 0.8f, 0.8f);
-            course->mModel.calc(false);
-
-            course->mModel.entry();
+            node->mpNodeMdl->draw();
         }
     }
 }

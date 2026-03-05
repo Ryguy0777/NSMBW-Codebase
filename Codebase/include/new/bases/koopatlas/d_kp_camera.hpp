@@ -5,21 +5,20 @@
 #include <new/koopatlas_config.h>
 
 #include <new/bases/koopatlas/d_s_koopatlas.hpp>
+#include <new/constants/koopatlas_constants.h>
 #include <lib/egg/gfxe/eggLookAtCamera.h>
 #include <lib/egg/gfxe/eggOrthoData.h>
 #include <lib/egg/gfxe/eggScreen.h>
 
-#define STD_ZOOM 2.8f
-
 template <typename T>
-inline T min(T one, T two) { return (one < two) ? one : two; }
+inline T min(T a, T b) { return (a < b) ? a : b; }
 
 template <typename T>
 inline T max(T a, T b) { return (a > b) ? a : b; }
 
-class dKPCamera_c : public dBase_c {
+class dKpCamera_c : public dBase_c {
 public:
-    dKPCamera_c();
+    dKpCamera_c();
 
     int create();
     int execute();
@@ -31,7 +30,7 @@ public:
     void setPosAndTarget(float camPosZ);
 
     void panToBounds(float left, float top, float right, float bottom);
-    void panToPosition(float x, float y, float zoom=STD_ZOOM);
+    void panToPosition(float x, float y, float zoom=CAMERA_ZOOM);
 
     EGG::Screen mScreen;
     EGG::LookAtCamera mCamera3D;
@@ -65,9 +64,9 @@ public:
     float mPanCurrentStep;
     float mPanTotalSteps;
 
-    bool mFollowPlayer;
+    bool mDoFollowPlayer;
     bool mIsPanning;
 
-    static dKPCamera_c *m_instance;
+    static dKpCamera_c *m_instance;
 };
 #endif

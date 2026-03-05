@@ -1,12 +1,9 @@
 KOOPATLAS TODO:
-- Rename all members and files and stuff
 - Remove any hammer suit hacks
-- Convert file indentations to spaces
-- Remove all instances of one-line if/for/etc. that don't use braces
-- Clean up any ugly-looking code, rename stuff if needed
-- Fix Koopatlas class naming scheme to match official (dKP -> dKp)
-- Maybe make base Koopatlas actor for everything to inherit from (stop execution when needed, other general stuff)
 - Move constants to `koopatlas_constants.h` (only stuff that users may wish to modify)
+- Stop drawing everything when director is drawing the capture
+  - Maybe rename director or move its functionality into dScKoopatlas_c?
+- Once main branch changes are merged, remove compression override from mapdata tileset loading
 
 Nitpicky Shit:
 - Player is not centered on the course node, needs to be moved up 4 units like with the model itself
@@ -17,11 +14,15 @@ Miscellaneous TODO:
 - Move pane_userdata hacks to whatever the right place is
 - Revamp Star Coins Menu arrows to have idle animations and look more like the retail arrow layouts
 - Add succession scrolling to the Star Coins Menu
-- Add sparkles to the HUD stars
 - Focus circle wipes on the player position
+- Maybe allow tile/doodad layers to use separate unlock alphas, for people who want locked paths to be translucent
+  - Since having translucent doodads might not look right/looks weird to people
+- Maybe make base Koopatlas actor for everything to inherit from (stop execution when needed, other general stuff)
 
 Bugs:
 - [Newer bug] Exiting from a "cave entrance" will scale the player incorrectly, they're slightly too small
+- Effects are currently broken (partially?), player star works, HUD star sparkles don't work, StockItem effects are offset, etc.
+- Tileset decompression issues, and general issues with loading
 
 Planned Features/TODO:
 - Add support for "back entrances" where a course will auto-begin when walking onto the node
@@ -39,3 +40,4 @@ Planned Features/TODO:
 - Allow Koopatlas layouts to be used in the retail World Maps
   - HUD still needs to be finished
 - Add interactable signposts (maybe)
+- Togglable option to use the beta Star Coins menu instead of the final one

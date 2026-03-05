@@ -30,11 +30,11 @@
 
 #define EFFECT_PROC_COUNT 12
 
-class dKPMap_c : public dBase_c {
+class dKpMap_c : public dBase_c {
 public:
-    class dMapRender_c : public m3d::proc_c {
+    class MapRender_c : public m3d::proc_c {
     public:
-        dMapRender_c();
+        MapRender_c();
 
         void drawOpa();
         void drawXlu();
@@ -50,8 +50,8 @@ public:
 
         void drawLayers();
 
-        void renderTileLayer(dKPLayer_s *layer, dKPLayer_s::sector_s *sector);
-        void renderDoodadLayer(dKPLayer_s *layer);
+        void renderTileLayer(dKpLayer_s *layer, dKpLayer_s::sector_s *sector);
+        void renderDoodadLayer(dKpLayer_s *layer);
 
     public:
         mAllocator_c mAllocator;
@@ -67,7 +67,7 @@ public:
         int mMaxY;
     };
 
-    dKPMap_c();
+    dKpMap_c();
 
     int create();
     int doDelete();
@@ -75,11 +75,11 @@ public:
     int draw();
 
     void spinLaunchStar();
-
     void spawnMapEffects();
-    void renderPathLayer(dKPLayer_s *layer);
 
-    dMapRender_c mRender;
+    void renderPathLayer(dKpLayer_s *layer);
+
+    MapRender_c mRender;
     dScEffectProc_c mEffectProcs[EFFECT_PROC_COUNT];
 
     mEf::levelEffect_c mEffects[7];
@@ -95,7 +95,6 @@ public:
     m3d::anmChr_c mLaunchStarAnm;
     mMtx_c mLaunchStarMtx;
 
-    static dKPMap_c *m_instance;
     static const int sc_effectGroups[EFFECT_PROC_COUNT];
     static const int sc_effectPrios[EFFECT_PROC_COUNT];
 };

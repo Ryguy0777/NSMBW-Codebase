@@ -55,7 +55,7 @@ public:
 
     bool isPathMgrActive();
 
-    bool canUseExit(dKPPath_s *path) {
+    bool canUseExit(dKpPath_s *path) {
         OSReport("Checking usability of path %p\n", path);
         if (path != nullptr) {
             OSReport("Open status: %d\n", path->mIsOpen);
@@ -65,29 +65,29 @@ public:
     }
 
     int getPressedDir(int buttons);
-    void startMovementTo(dKPPath_s *path);
+    void startMovementTo(dKpPath_s *path);
     void moveThroughPath(int pressedDir);
 
     void activatePoint();
     void unlockAllPaths(char type);
 
-    void copyWorldDefToSave(const dKPWorldDef_s *world);
+    void copyWorldDefToSave(const dKpWorldDef_s *world);
 private:
     void unlockPaths();
     void finalisePathUnlocks();
     bool evaluateUnlockCondition(u8 *&in, dMj2dGame_c *save, int stack);
 
-    void visitNodeForCamCheck(dKPNode_s *node);
+    void visitNodeForCamCheck(dKpNode_s *node);
     void findCameraBoundsForUnlockedPaths();
-    void addNodeToCameraBounds(dKPNode_s *node);
+    void addNodeToCameraBounds(dKpNode_s *node);
 
 public:
     static void clearPathData();
     static void resetCompletionData();
 
-    dKPLayer_s *mpPathLayer;
-    dKPNode_s *mpCurrentNode;
-    dKPPath_s *mpCurrentPath;
+    dKpLayer_s *mpPathLayer;
+    dKpNode_s *mpCurrentNode;
+    dKpPath_s *mpCurrentPath;
     dLevelInfo_c::entry_s *mEnteredLevel;
     nw4r::snd::SoundHandle mPenguinSlideHandle;
 
@@ -97,6 +97,7 @@ public:
     int mCmpAnimDuration;
     int mCmpMsgDelay;
     int mCmpMsgType;
+    int mCmpMsgWorldNo;
 
     int mCourseInDelay;
     int mInitialDelay;

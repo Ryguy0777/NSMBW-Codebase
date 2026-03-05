@@ -9,21 +9,16 @@
 #include <game/mLib/m_3d/mdl.hpp>
 #include <game/mLib/m_mtx.hpp>
 
-// Forward declarations
-struct dKPLayer_s;
+#include <new/bases/koopatlas/d_kp_node_mdl.hpp>
 
-// Course node renderer
-class dKPCourseNode_c {
-public:
-    dHeapAllocator_c mAllocator;
-    mMtx_c mMatrix;
-    m3d::mdl_c mModel;
-};
+// Forward declarations
+struct dKpLayer_s;
+struct dKpNode_s;
 
 /******************************************************************************
  * Doodads
  ******************************************************************************/
-struct dKPDoodad_s {
+struct dKpDoodad_s {
     struct Anim_s {
         enum LoopType_e {
             CONTIGUOUS = 0,
@@ -69,9 +64,9 @@ struct dKPDoodad_s {
 /******************************************************************************
  * Paths and Nodes
  ******************************************************************************/
-struct dKPPath_s;
+struct dKpPath_s;
 
-struct dKPNode_s {
+struct dKpNode_s {
     enum NodeType_e {
         PASS_THROUGH = 0,
         STOP,
@@ -82,16 +77,16 @@ struct dKPNode_s {
 
     short mPosX, mPosY;
     union {
-        dKPPath_s *mpExits[4];
+        dKpPath_s *mpExits[4];
         struct {
-            dKPPath_s *mpExitL;
-            dKPPath_s *mpExitR;
-            dKPPath_s *mpExitU;
-            dKPPath_s *mpExitD;
+            dKpPath_s *mpExitL;
+            dKpPath_s *mpExitR;
+            dKpPath_s *mpExitU;
+            dKpPath_s *mpExitD;
         };
     };
-    dKPLayer_s *mpTileLayer;
-    dKPLayer_s *mpDoodadLayer;
+    dKpLayer_s *mpTileLayer;
+    dKpLayer_s *mpDoodadLayer;
 
     u8 mIsSetInPanBounds; // Used when setting up panning bounds for path unlocks
     u8 mReserved2;
@@ -100,7 +95,7 @@ struct dKPNode_s {
 
     bool mIsNewlyOpen;
 
-    dKPCourseNode_c *mpCourseNode;
+    dKpNodeMdl_c *mpNodeMdl;
 
     // The union is placed at the very end so
     // we can leave out padding in the kpbin
@@ -110,7 +105,7 @@ struct dKPNode_s {
         struct { u8 mWorldID, __[3]; };
     };
 
-    dKPPath_s *getAnyExit() {
+    dKpPath_s *getAnyExit() {
         for (int i = 0; i < 4; i++) {
             if (mpExits[i]) {
                 return mpExits[i];
@@ -121,10 +116,9 @@ struct dKPNode_s {
     }
 
     bool chkOpenStatus();
-    void createCourseNode();
 
-    dKPPath_s *getAcrossPath(dKPPath_s *path, bool requireOpenState=false);
-    dKPPath_s *getOpenAcrossPath(dKPPath_s *path) {
+    dKpPath_s *getAcrossPath(dKpPath_s *path, bool requireOpenState=false);
+    dKpPath_s *getOpenAcrossPath(dKpPath_s *path) {
         return getAcrossPath(path, true);
     }
 
@@ -136,7 +130,7 @@ struct dKPNode_s {
     void setLayerAlpha(u8 alpha);
 };
 
-struct dKPPath_s {
+struct dKpPath_s {
     enum OpenStatus_e {
         NOT_OPEN = 0,
         OPEN,
@@ -169,10 +163,10 @@ struct dKPPath_s {
         ACTION_NUM
     };
 
-    dKPNode_s *mpStartPoint, *mpEndPoint;
-    dKPLayer_s *mpTileLayer, *mpDoodadLayer;
+    dKpNode_s *mpStartPoint, *mpEndPoint;
+    dKpLayer_s *mpTileLayer, *mpDoodadLayer;
 
-    dKPNode_s *getOtherNodeTo(dKPNode_s *n) {
+    dKpNode_s *getOtherNodeTo(dKpNode_s *n) {
         return (n == mpStartPoint) ? mpEndPoint : mpStartPoint;
     }
 
@@ -188,7 +182,7 @@ struct dKPPath_s {
 /******************************************************************************
  * Layers
  ******************************************************************************/
-struct dKPLayer_s {
+struct dKpLayer_s {
     enum LayerType_e {
         TYPE_OBJECT = 0,
         TYPE_DOODAD,
@@ -227,24 +221,24 @@ struct dKPLayer_s {
 
         struct {
             int mDoodadNum;
-            dKPDoodad_s *mpDoodads[1]; // variable size
+            dKpDoodad_s *mpDoodads[1]; // variable size
         };
 
         struct {
             int mNodeNum;
-            dKPNode_s **mpNodes;
+            dKpNode_s **mpNodes;
             int mPathNum;
-            dKPPath_s **mpPaths;
+            dKpPath_s **mpPaths;
         };
     };
 
-    int findNodeID(dKPNode_s *node);
+    int findNodeID(dKpNode_s *node);
 };
 
 /******************************************************************************
  * World Definitions
  ******************************************************************************/
-struct dKPWorldDef_s {
+struct dKpWorldDef_s {
     const char *mpWorldName; // TODO: Repurpose for lighting data
     GXColor fsTextColours[2];
     GXColor fsHintColours[2];
@@ -263,53 +257,55 @@ struct dKPWorldDef_s {
 /******************************************************************************
  * Map File
  ******************************************************************************/
-struct dKPMapFile_s {
+struct dKpMapFile_s {
     u32 mMagic; // "KP_m"
     int mVersion;
 
     int mLayerNum;
-    dKPLayer_s **mpLayers;
+    dKpLayer_s **mpLayers;
 
     int mTilesetNum;
     GXTexObj *mpTilesets;
 
     u8 *mpUnlockData;
 
-    dKPLayer_s::sector_s *mpSectors;
+    dKpLayer_s::sector_s *mpSectors;
 
     const char *mpBgName;
 
-    dKPWorldDef_s *mpWorldDefs;
+    dKpWorldDef_s *mpWorldDefs;
     int mWorldDefNum;
 };
 
-class dKPMapData_c {
+class dKpMapData_c {
 public:
-    dKPMapData_c();
-    ~dKPMapData_c();
+    dKpMapData_c();
+    ~dKpMapData_c();
 
     bool create(const char *filename);
 
-    const dKPWorldDef_s *findWorldDef(int id) const;
+    const dKpWorldDef_s *findWorldDef(int id) const;
 
 private:
     template <typename T>
         inline T* fixRef(T*& pIndex) {
             unsigned int index = (unsigned int)pIndex;
-            if (index == 0xFFFFFFFF || index == 0)
+            if (index == 0xFFFFFFFF || index == 0) {
                 pIndex = nullptr;
-            else
+            } else {
                 pIndex = (T*)(((char*)mpData) + index);
+            }
             return pIndex;
         }
 
     template <typename T>
         inline T* fixRefSafe(T*& pIndex) {
             unsigned int index = (unsigned int)pIndex;
-            if (index == 0xFFFFFFFF || index == 0)
+            if (index == 0xFFFFFFFF || index == 0) {
                 pIndex = nullptr;
-            else if (index < 0x80000000)
+            } else if (index < 0x80000000) {
                 pIndex = (T*)(((char*)mpData) + index);
+            }
             return pIndex;
         }
 
@@ -333,11 +329,9 @@ private:
 
 public:
     void **mpTilesetBuffers;
-    dKPMapFile_s *mpData;
-    dKPLayer_s *mpPathLayer;
+    dKpMapFile_s *mpData;
+    dKpLayer_s *mpPathLayer;
 
     dDvd::loader_c mBgLoader;
-
-    dKPCourseNode_c *mpCourseNodes;
 };
 #endif

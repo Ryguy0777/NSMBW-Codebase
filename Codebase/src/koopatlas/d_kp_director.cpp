@@ -5,15 +5,15 @@
 #include <new/bases/koopatlas/d_kp_director.hpp>
 #include <game/bases/d_info.hpp>
 
-dKPDirector_c *dKPDirector_c_classInit() {
-    dKPDirector_c *c = new dKPDirector_c;
+dKpDirector_c *dKpDirector_c_classInit() {
+    dKpDirector_c *c = new dKpDirector_c;
     return c;
 }
 
 // Replace WM_DIRECTOR actor
-kmWritePointer(0x80987BD8, &dKPDirector_c_classInit);
+kmWritePointer(0x80987BD8, &dKpDirector_c_classInit);
 
-int dKPDirector_c::create() {
+int dKpDirector_c::create() {
     mAllocator.createFrmHeapToCurrent(-1, EGG::Heap::sCurrentHeap, nullptr, 0x20, mHeap::OPT_0);
 
     mpSimpleCapture = new dSimpleCapture_c;
@@ -28,15 +28,15 @@ int dKPDirector_c::create() {
     mAllocator.adjustFrmHeapRestoreCurrent();
 
     mDoRenderCapture = false;
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPDirector_c::doDelete() {
+int dKpDirector_c::doDelete() {
     mpSimpleCapture->destroy();
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPDirector_c::execute() {
+int dKpDirector_c::execute() {
     if (mRenderModeDelay == 0) {
         if (mDoRenderCapture) {
             dInfo_c::m_instance->mIsWorldSelect = 1;
@@ -45,10 +45,10 @@ int dKPDirector_c::execute() {
     } else {
         mRenderModeDelay--;
     }
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPDirector_c::draw() {
+int dKpDirector_c::draw() {
     // Create the capture
     if (mDoRenderCapture) {
         mpSimpleCapture->entry();
@@ -62,10 +62,10 @@ int dKPDirector_c::draw() {
         mpSimpleCaptureDraw->mpCaptureTexture = mpSimpleCapture->mpCaptureTexture;
         mpSimpleCaptureDraw->entry();
     }
-    return true;
+    return SUCCEEDED;
 }
 
-void dKPDirector_c::toggleCaptureDisp(bool value) {
+void dKpDirector_c::toggleCaptureDisp(bool value) {
     mDoRenderCapture = value;
     if (value) {
         mRenderModeDelay = 1;

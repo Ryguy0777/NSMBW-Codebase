@@ -8,8 +8,9 @@ bool s_worldInfoLoaded = false;
 dWorldInfo_c dWorldInfo_c::m_instance;
 
 bool dWorldInfo_c::loadWorldInfo() {
-    if (s_worldInfoLoaded)
+    if (s_worldInfoLoaded) {
         return true;
+    }
 
     void *data = s_worldInfoLoader.request("/WorldInfo.bin", 0, nullptr);
     if (data) {

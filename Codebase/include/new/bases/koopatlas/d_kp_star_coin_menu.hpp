@@ -12,7 +12,7 @@
 #include <new/bases/d_world_info.hpp>
 #include <new/bases/koopatlas/d_kp_common.hpp>
 
-class dKPStarCoinMenu_c : public dBase_c {
+class dKpStarCoinMenu_c : public dBase_c {
 public:
     enum P_PANE_e {
         DPadLeft, DPadRight,
@@ -27,7 +27,7 @@ public:
         T_COUNT
     };
 
-    enum ANIMS_e {
+    enum ANIM_e {
         ANIM_SHOW_ALL = 0,
         ANIM_SHOW_SECTION,
         ANIM_HIDE_SECTION,
@@ -37,14 +37,14 @@ public:
         ANIM_HIDE_RIGHT_ARROW
     };
 
-    enum _Constants {
+    enum CONSTANT_e {
         ROW_COUNT = 9,
         COLUMN_COUNT = 2,
         SHINE_COUNT = 5,
         MAX_SECTION_COUNT = 16,
     };
 
-    dKPStarCoinMenu_c();
+    dKpStarCoinMenu_c();
 
     int create();
     int doDelete();
@@ -59,20 +59,20 @@ public:
     void leftArrowDisp(bool value);
     void rightArrowDisp(bool value);
 
-    void loadInfo();
+    void loadMenuInfo();
     void loadSectionInfo();
 
-    void displayMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2 = 0, int bodyMsgCount2 = 0);
+    void dispSecretMessage(int titleMsg, int bodyMsgStart, int bodyMsgCount, int bodyMsgStart2 = 0, int bodyMsgCount2 = 0);
 
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Initial);
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, ShowWait);
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, ShowSectionWait);
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, Wait);
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, HideSectionWait);
-    STATE_FUNC_DECLARE(dKPStarCoinMenu_c, HideWait);
+    STATE_FUNC_DECLARE(dKpStarCoinMenu_c, Initial);
+    STATE_FUNC_DECLARE(dKpStarCoinMenu_c, ShowWait);
+    STATE_FUNC_DECLARE(dKpStarCoinMenu_c, ShowSectionWait);
+    STATE_FUNC_DECLARE(dKpStarCoinMenu_c, Wait);
+    STATE_FUNC_DECLARE(dKpStarCoinMenu_c, HideSectionWait);
+    STATE_FUNC_DECLARE(dKpStarCoinMenu_c, HideWait);
 
     LytBase_c mLayout;
-    sFStateMgr_c<dKPStarCoinMenu_c, sStateMethodUsr_FI_c> mStateMgr;
+    sFStateMgr_c<dKpStarCoinMenu_c, sStateMethodUsr_FI_c> mStateMgr;
 
     nw4r::lyt::Pane *mpRootPane;
     nw4r::lyt::Picture *mpShines[COLUMN_COUNT][SHINE_COUNT];
@@ -82,10 +82,13 @@ public:
     LytTextBox_c *mpLevelNames[COLUMN_COUNT][ROW_COUNT];
     LytTextBox_c *mpTextBoxes[T_COUNT];
 
-    int mCurrentWorld;
-    int mCurrentWorldIndex;
+    int mCurrWorld;
+    int mCurrWorldIdx;
     int mWorldIndices[MAX_SECTION_COUNT];
-    int mOpenWorldCount;
+    int mOpenWorldNum;
+
+    int mSecretCodeIdx;
+    int mMinusKeyPressIdx;
 
     bool mHasLayoutLoaded;
     bool mIsVisible;
@@ -93,6 +96,7 @@ public:
     bool mRightArrowActive;
     bool mWillExit;
 
-    static dKPStarCoinMenu_c *m_instance;
+    static const int sc_secretCode[];
+    static const int sc_secretKeys;
 };
 #endif

@@ -10,14 +10,14 @@ public:
     dTexMapColouriser_c();
     ~dTexMapColouriser_c();
 
-    void resetAndClear();
-    void setTexMap(nw4r::lyt::TexMap *tm);
-    void applyAlso(nw4r::lyt::TexMap *tm);
-    void colourise(int h, int s, int l);
+    void destroy();
+    void initTexMap(nw4r::lyt::TexMap *tm);
+    void copyTexMap(nw4r::lyt::TexMap *tm); ///< Only call this after using `initTexMap()`
+    void setColor(int h, int s, int l);
 
 private:
-    nw4r::lyt::TexMap *mTexMap;
-    u16 *mSourceImage;
-    u16 *mNewImage;
+    nw4r::lyt::TexMap *mpTexMap;
+    u16 *mpSourceImg;
+    u16 *mpNewImg;
 };
 #endif

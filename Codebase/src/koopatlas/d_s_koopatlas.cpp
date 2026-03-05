@@ -34,16 +34,8 @@
 #include <game/snd/snd_scene_manager.hpp>
 #include <lib/egg/gfxe/eggStateGX.h>
 
-void dScKoopatlas_c_painter();
-
-// Reset stage exit mode after a Game Over
-extern int m_exitMode__10dScStage_c;
-kmBranchDefAsm(0x809216EC, 0x809216F0) {
-    lis r4, m_exitMode__10dScStage_c@h
-    ori r4, r4, m_exitMode__10dScStage_c@l
-    li r5, 0
-    stw r5, 0(r4)
-    blr
+kmBranchDefCpp(0x809216EC, 0x809216F0, void) {
+    dScStage_c::m_exitMode = dScStage_c::EXIT_CLEAR;
 }
 
 // Fixes a crash when equipping stars
@@ -60,9 +52,9 @@ kmWrite16(0x8010252A, 0xFFFF);
 // Look into what causes the effects to be offset/broken entirely
 kmWriteNop(0x807B0A04);
 
-STATE_DEFINE(dScKoopatlas_c, Limbo);
+STATE_DEFINE(dScKoopatlas_c, SceneChangeWait);
 STATE_DEFINE(dScKoopatlas_c, ContinueWait);
-STATE_DEFINE(dScKoopatlas_c, Normal);
+STATE_DEFINE(dScKoopatlas_c, KeyWait);
 STATE_DEFINE(dScKoopatlas_c, MenuSelect);
 STATE_DEFINE(dScKoopatlas_c, TitleConfirmOpenWait);
 STATE_DEFINE(dScKoopatlas_c, TitleConfirmSelect);
@@ -90,6 +82,27 @@ STATE_DEFINE(dScKoopatlas_c, SaveError);
 STATE_DEFINE(dScKoopatlas_c, CompletionMsgWindow);
 STATE_DEFINE(dScKoopatlas_c, CompletionMsgCloseWait);
 
+void dScKoopatlas_c_painter();
+
+const dScKoopatlas_c::ResItem_s dScKoopatlas_c::sc_arcRes[] = {
+    // StockItem animations
+    {"WorldMap", "SI_kinoko"},
+    {"WorldMap", "SI_fireflower"},
+    {"WorldMap", "SI_iceflower"},
+    {"WorldMap", "SI_penguin"},
+    {"WorldMap", "SI_propeller"},
+    {"WorldMap", "SI_star"},
+
+    // Shop resources
+    {"Object", "lakitu"},
+    //{"Object", "I_kinoko_bundle"}, // TODO: Remove
+
+    // Others
+    {"Koopatlas", "cobCourse"},
+    //{"Object", "StarRing"},
+    //{"Object", "star_coin"}, // TODO: Remove: its unused
+};
+
 dScKoopatlas_c *dScKoopatlas_c::m_instance = nullptr;
 
 dScKoopatlas_c *dScKoopatlas_c_classInit() {
@@ -105,29 +118,30 @@ dScKoopatlas_c *dScKoopatlas_c_classInit() {
 kmWritePointer(0x8098DCF0, &dScKoopatlas_c_classInit);
 
 sPhase_c::METHOD_RESULT_e KPInitPhase_LoadSceneSnd(void*);
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadKPMusic(void*);
-sPhase_c::METHOD_RESULT_e StockWMInit_LoadEffects(void*); // Exists in retail sPhase, may want to look into reimplementing it here
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void*);
-sPhase_c::METHOD_RESULT_e KPInitPhase_EndLoading(void*);
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources1(void*);
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources2(void*);
+sPhase_c::METHOD_RESULT_e KPInitPhase_InitMusic(void*);
+sPhase_c::METHOD_RESULT_e KPInitPhase_LoadEffects(void*); // Loads worldmap BREFF files
+sPhase_c::METHOD_RESULT_e KPInitPhase_SetRes(void*);
+sPhase_c::METHOD_RESULT_e KPInitPhase_SyncRes(void*);
+sPhase_c::METHOD_RESULT_e KPInitPhase_LoadMapList(void*);
+sPhase_c::METHOD_RESULT_e KPInitPhase_InitMapData(void*);
 sPhase_c::METHOD_RESULT_e KPInitPhase_ChkLayoutLoad(void*);
 sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void*);
 sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void*);
 
 sPhase_c::phaseMethod *phaseMethods[] = {
     KPInitPhase_LoadSceneSnd,
-    KPInitPhase_LoadKPMusic,
-    KPInitPhase_LoadResources,
-    KPInitPhase_EndLoading,
-    KPInitPhase_LoadResources1,
-    KPInitPhase_LoadResources2,
+    KPInitPhase_InitMusic,
+    KPInitPhase_LoadEffects,
+    KPInitPhase_SetRes,
+    KPInitPhase_SyncRes,
+    KPInitPhase_LoadMapList,
+    KPInitPhase_InitMapData,
     KPInitPhase_ChkLayoutLoad,
     KPInitPhase_CreateActors,
     KPInitPhase_ChkChildProcess
 };
 
-dScKoopatlas_c::dScKoopatlas_c() : mInitChain(phaseMethods, 9), mStateMgr(*this, StateID_Normal) {
+dScKoopatlas_c::dScKoopatlas_c() : mInitChain(phaseMethods, 9), mStateMgr(*this, StateID_KeyWait) {
     mpPhase = &mInitChain;
 }
 
@@ -144,46 +158,56 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadSceneSnd(void *ptr) {
     return (sPhase_c::METHOD_RESULT_e)true;
 }
 
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadKPMusic(void *ptr) {
-    SpammyReport("KPInitPhase_LoadKPMusic called\n");
-    bool result = dKPMusic_c::init();
+sPhase_c::METHOD_RESULT_e KPInitPhase_InitMusic(void *ptr) {
+    SpammyReport("KPInitPhase_InitMusic called\n");
+    bool result = dKpMusic_c::create();
     return (sPhase_c::METHOD_RESULT_e)result;
 }
 
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources(void *ptr) {
-    SpammyReport("KPInitPhase_LoadResources called\n");
+sPhase_c::METHOD_RESULT_e KPInitPhase_LoadEffects(void *ptr) {
+    SpammyReport("KPInitPhase_LoadEffects called\n");
+    bool result;
+    void *pBreff;
+    void *pBreft;
+    
+    pBreff = EffectManager_c::loadBreff(EffectManager_c::KIND_MAP, 0, mHeap::g_archiveHeap);
+    pBreft = EffectManager_c::loadBreft(EffectManager_c::KIND_MAP, 0, mHeap::g_archiveHeap);
 
-    dResMng_c::m_instance->setRes("WorldMap", "SI_kinoko", nullptr);
-    dResMng_c::m_instance->setRes("WorldMap", "SI_fireflower", nullptr);
-    dResMng_c::m_instance->setRes("WorldMap", "SI_iceflower", nullptr);
-    dResMng_c::m_instance->setRes("WorldMap", "SI_penguin", nullptr);
-    dResMng_c::m_instance->setRes("WorldMap", "SI_propeller", nullptr);
-    dResMng_c::m_instance->setRes("WorldMap", "SI_star", nullptr);
+    if (pBreff == nullptr || pBreft == nullptr) {
+        result = false;
+    } else {
+        EffectManager_c::setResource(EffectManager_c::KIND_MAP, pBreff, pBreft);
+        result = true;
+    }
 
-    dResMng_c::m_instance->setRes("Koopatlas", "cobCourse", nullptr);
-    /*dResMng_c::m_instance->setRes("Object", "I_kinoko_bundle", nullptr);
-    dResMng_c::m_instance->setRes("Object", "lakitu", nullptr);
-    dResMng_c::m_instance->setRes("Object", "star_coin", nullptr);
-    dResMng_c::m_instance->setRes("Object", "StarRing", nullptr);*/
+    return (sPhase_c::METHOD_RESULT_e)result;
+}
 
+sPhase_c::METHOD_RESULT_e KPInitPhase_SetRes(void *ptr) {
+    SpammyReport("KPInitPhase_SetRes called\n");
+    dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
+
+    for (int i = 0; i < ARRAY_SIZE(wm->sc_arcRes); i++) {
+        dResMng_c::m_instance->setRes(wm->sc_arcRes[i].mpPath, wm->sc_arcRes[i].mpArcName, nullptr);
+    }
     return (sPhase_c::METHOD_RESULT_e)true;
 }
 
-sPhase_c::METHOD_RESULT_e KPInitPhase_EndLoading(void *ptr) {
-    SpammyReport("KPInitPhase_EndLoading called\n");
+sPhase_c::METHOD_RESULT_e KPInitPhase_SyncRes(void *ptr) {
+    SpammyReport("KPInitPhase_SyncRes called\n");
 
     if (dResMng_c::m_instance->syncAllRes()) {
-        SpammyReport("KPInitPhase_EndLoading returning false\n");
+        SpammyReport("KPInitPhase_SyncRes returning false\n");
         return (sPhase_c::METHOD_RESULT_e)false;
     }
 
     dAudio::isLoadedSceneSnd();
-    SpammyReport("KPInitPhase_EndLoading returning true\n");
+    SpammyReport("KPInitPhase_SyncRes returning true\n");
     return (sPhase_c::METHOD_RESULT_e)true;
 }
 
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources1(void *ptr) {
-    SpammyReport("KPInitPhase_LoadResources1 called\n");
+sPhase_c::METHOD_RESULT_e KPInitPhase_LoadMapList(void *ptr) {
+    SpammyReport("KPInitPhase_KPInitPhase_LoadMapList called\n");
 
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
@@ -191,23 +215,26 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources1(void *ptr) {
     return (sPhase_c::METHOD_RESULT_e)result;
 }
 
-sPhase_c::METHOD_RESULT_e KPInitPhase_LoadResources2(void *ptr) {
-    SpammyReport("KPInitPhase_LoadResources2 called\n");
+sPhase_c::METHOD_RESULT_e KPInitPhase_InitMapData(void *ptr) {
+    SpammyReport("KPInitPhase_InitMapData called\n");
 
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
     if (wm->mpMapPath == nullptr) {
         //wm->mpMapPath = wm->getMapNameForIndex(wm->mCurrentMapID);
         wm->mpMapPath = wm->getMapNameForIndex(0);
-        if (wm->mpMapPath == nullptr)
+
+        // Failed to find a map, default to first map
+        if (wm->mpMapPath == nullptr) {
             wm->mpMapPath = wm->getMapNameForIndex(0);
-        if (!strcmp(wm->mpMapPath, "/Maps/WSEL.kpbin"))
-            wm->mWarpZoneHacks = true;
-        else
-            wm->mWarpZoneHacks = false;
+        }
+
+        // Check if we're in the Warp Zone
+        wm->mWarpZoneHacks = (!strcmp(wm->mpMapPath, "/Maps/WSEL.kpbin")) ? true : false;
+
         MapReport("Loading map: %s\n", wm->mpMapPath);
     }
-
+ 
     bool result = wm->mMapData.create(wm->mpMapPath);
     return (sPhase_c::METHOD_RESULT_e)result;
 }
@@ -240,11 +267,12 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
         SpammyReport("Showing Continues\n");
         wm->mStateMgr.changeState(wm->StateID_ContinueWait);
     } else {
-        wm->mStateMgr.changeState(wm->StateID_Normal);
+        wm->mStateMgr.changeState(wm->StateID_KeyWait);
     }
 
     // Players for StockItem/CharaChange
     for (int i = 0; i < 4; i++) {
+        SpammyReport("Creating 2D Player %d\n", i);
         da2DPlayer_c *obj = (da2DPlayer_c*)dBaseActor_c::construct(fProfile::WM_2D_PLAYER, wm, i, 0, 0);
         wm->mpStockItem->mpPlayers[i] = obj;
         wm->mpNumPeopleChange->mpPlayers[i] = obj;
@@ -252,36 +280,37 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
 
     // StockItem powerups
     for (int i = 0; i < 7; i++) {
+        SpammyReport("Creating Powerup Item %d\n", i);
         void *obj = dBaseActor_c::construct(fProfile::WM_ITEM, wm, i, 0, 0);
         wm->mpStockItem->mpItems[i] = obj;
     }
 
     // Need Player before we can set up paths
-    SpammyReport("Creating player\n");
-    wm->mpPlayer = (daKPPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
+    SpammyReport("Creating Player\n");
+    wm->mpPlayer = (daKpPlayer_c*)fBase_c::createChild(fProfile::WM_PLAYER, wm, 0, 2);
 
     // Since we've got all the resources, set up the path data too
-    SpammyReport("Preparing path manager\n");
+    SpammyReport("Preparing Path Manager\n");
     wm->mPathManager.create();
 
     // And put the player into position
-    dKPNode_s *cNode = wm->mPathManager.mpCurrentNode;
+    dKpNode_s *cNode = wm->mPathManager.mpCurrentNode;
     wm->mpPlayer->mPos = mVec3_c(cNode->mPosX, -cNode->mPosY, wm->mpPlayer->mPos.z);
 
     SpammyReport("Creating MAP\n");
-    wm->mpMap = (dKPMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
+    wm->mpMap = (dKpMap_c*)fBase_c::createChild(fProfile::WM_MAP, wm, 0, 0);
 
     SpammyReport("Creating HUD\n");
-    wm->mpHud = (dKPHud_c*)fBase_c::createChild(fProfile::KP_HUD, wm, 0, 0);
+    wm->mpHud = (dKpHud_c*)fBase_c::createChild(fProfile::KP_HUD, wm, 0, 0);
 
     /*SpammyReport("creating SHOP\n");
     wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);*/
 
     SpammyReport("Creating Star Coins Menu\n");
-    wm->mpCoins = (dKPStarCoinMenu_c*)fBase_c::createChild(fProfile::KP_STAR_COIN_MENU, wm, 0, 0);
+    wm->mpCoins = (dKpStarCoinMenu_c*)fBase_c::createChild(fProfile::KP_STAR_COIN_MENU, wm, 0, 0);
 
     SpammyReport("Creating Map Director\n");
-    wm->mpDirector = (dKPDirector_c*)fBase_c::createChild(fProfile::WM_DIRECTOR, wm, 0, 0);
+    wm->mpDirector = (dKpDirector_c*)fBase_c::createChild(fProfile::WM_DIRECTOR, wm, 0, 0);
 
     SpammyReport("KPInitPhase_CreateActors returning true\n");
     return (sPhase_c::METHOD_RESULT_e)true;
@@ -308,7 +337,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_ChkChildProcess(void *ptr) {
 }
 
 int dScKoopatlas_c::create() {
-    OSReport("KP scene param: %08x\n", mParam);
+    OSReport("KP scene param: %08X\n", mParam);
     SpammyReport("create() called\n");
 
     // TODO: This should probably be changed to make the scene params control the wipe used
@@ -316,9 +345,9 @@ int dScKoopatlas_c::create() {
 
     // NewerSMBW's opening cutscene loads VS effects for some reason and fragments RAM too much for some maps
     SpammyReport("Freeing effects\n");
-    EffectManager_c::resetResource(EffectManager_c::EFF_VS);
-    EffectManager_c::freeBreff(EffectManager_c::EFF_VS);
-    EffectManager_c::freeBreft(EffectManager_c::EFF_VS);
+    EffectManager_c::resetResource(EffectManager_c::KIND_VS);
+    EffectManager_c::freeBreff(EffectManager_c::KIND_VS);
+    EffectManager_c::freeBreft(EffectManager_c::KIND_VS);
 
     SpammyReport("Setting up lighting scene\n");
     setupScene();
@@ -383,9 +412,10 @@ int dScKoopatlas_c::create() {
     SpammyReport("Checking cutscene/behavior params\n");
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
     mCurrentMapID = save->getCurrentWorld();
-    mIsFirstPlay = (mCurrentMapID == 0) && (mParam & 0x80000000);
 
-    mIsAfterKamekCutscene = (mParam & 0x40000000);
+    mIsFirstPlay = (mCurrentMapID == 0) && (mParam & IS_FIRST_PLAY);
+
+    mIsAfterKamekCutscene = (mParam & AFTER_KAMEK_CS);
     if (mIsAfterKamekCutscene) {
         SpammyReport("After Kamek CS: Sending player to Map 6\n");
         mCurrentMapID = 6; // KoopaPlanet
@@ -395,6 +425,7 @@ int dScKoopatlas_c::create() {
     int world = dKpPathManager_c::s_cmpData.mPrevLevelID[0];
     int level = dKpPathManager_c::s_cmpData.mPrevLevelID[1];
     bool isFirstClear = dKpPathManager_c::s_cmpData.mChkSavePrompt;
+
     if (((world == WORLD_8) && (level == STAGE_CASTLE_2)) && save->isCourseDataFlag(7, 24, dMj2dGame_c::GOAL_NORMAL) && isFirstClear) {
         SpammyReport("After 8-Castle: Sending player to Map 7\n");
         mCurrentMapID = 7; // KoopaPlanetUnd
@@ -402,7 +433,7 @@ int dScKoopatlas_c::create() {
         mIsAfter8Castle = true;
     }
 
-    mIsEndingScene = (mParam & 0x20000000);
+    mIsEndingScene = (mParam & ENDING_SCENE);
     if (mIsEndingScene) {
         SpammyReport("Ending Scene: Sending player to Map 0 Node 0\n");
         mCurrentMapID = 0;
@@ -412,70 +443,61 @@ int dScKoopatlas_c::create() {
 
     SndSceneMgr::sInstance->closeWorldSelect();
     SpammyReport("create() completed\n");
-    return true;
+    return SUCCEEDED;
 }
 
 int dScKoopatlas_c::doDelete() {
     if (!mMusicPersist) {
-        dKPMusic_c::m_instance->stop();
+        dKpMusic_c::m_instance->stopAllSound();
     }
 
     m3d::removeLightMgr(0);
     m3d::removeLightMgr(1);
 
     EffectManager_c::courseOut();
-    EffectManager_c::resetResource(EffectManager_c::EFF_MAP);
-    EffectManager_c::freeBreff(EffectManager_c::EFF_MAP);
-    EffectManager_c::freeBreft(EffectManager_c::EFF_MAP);
+    EffectManager_c::resetResource(EffectManager_c::KIND_MAP);
+    EffectManager_c::freeBreff(EffectManager_c::KIND_MAP);
+    EffectManager_c::freeBreft(EffectManager_c::KIND_MAP);
 
-    dResMng_c::m_instance->getResP()->deleteRes("SI_kinoko");
-    dResMng_c::m_instance->getResP()->deleteRes("SI_fireflower");
-    dResMng_c::m_instance->getResP()->deleteRes("SI_iceflower");
-    dResMng_c::m_instance->getResP()->deleteRes("SI_penguin");
-    dResMng_c::m_instance->getResP()->deleteRes("SI_propeller");
-    dResMng_c::m_instance->getResP()->deleteRes("SI_star");
-
-    dResMng_c::m_instance->getResP()->deleteRes("cobCourse");
-    dResMng_c::m_instance->getResP()->deleteRes("I_kinoko_bundle");
-    dResMng_c::m_instance->getResP()->deleteRes("lakitu");
-    dResMng_c::m_instance->getResP()->deleteRes("star_coin");
-    dResMng_c::m_instance->getResP()->deleteRes("StarRing");
+    for (int i = 0; i < ARRAY_SIZE(sc_arcRes); i++) {
+        dResMng_c::m_instance->getResP()->deleteRes(sc_arcRes[i].mpArcName);
+    }
 
     mMapListLoader.freeResouce();
-
     EffectManager_c::courseOut();
-    return true;
+    return SUCCEEDED;
 }
 
 int dScKoopatlas_c::execute() {
-    dKPMusic_c::m_instance->execute();
+    dKpMusic_c::m_instance->execute();
+
     if (!chkAllowExecute()) {
-        return true;
+        return SUCCEEDED;
     }
 
     //SpammyReport("Executing mStateMgr: %s\n", mStateMgr.getStateID()->name());
     mStateMgr.executeState();
-    return true;
+    return SUCCEEDED;
 }
 
 bool dScKoopatlas_c::chkAllowExecute() {
     if (dGameCom::isGameStop(dGameCom::GAME_STOP_ANY)) return false;
     if (dWarningManager_c::isWarningCheck()) return false;
-    if (mStateMgr.getStateID() == &StateID_Limbo) return false;
+    if (mStateMgr.getStateID() == &StateID_SceneChangeWait) return false;
     return true;
 }
 
 bool dScKoopatlas_c::chkMapIdleState() {
     if (dGameCom::isGameStop(dGameCom::GAME_STOP_ANY)) return false;
     if (dWarningManager_c::isWarningCheck()) return false;
-    if (mStateMgr.getStateID() != &StateID_Normal) return false;
+    if (mStateMgr.getStateID() != &StateID_KeyWait) return false;
     return true;
 }
 
 void dScKoopatlas_c::startMusic() {
     u32 worldIdx = dSaveMng_c::m_instance->getSaveGame(-1)->mWorldInfoIdx;
     int musicID = dWorldInfo_c::m_instance.getWorld(worldIdx)->mMusicID;
-    dKPMusic_c::m_instance->start(musicID);
+    dKpMusic_c::m_instance->startBgmTrack(musicID);
 }
 
 void dScKoopatlas_c::startGame(dLevelInfo_c::entry_s *entry) {
@@ -495,24 +517,25 @@ void dScKoopatlas_c::startGame(dLevelInfo_c::entry_s *entry) {
     dInfo_c::m_instance->startGame(startInfo);
 }
 
-void dScKoopatlas_c::openMenu(int starSndMode, int soundID) {
-    dKPMusic_c::m_instance->updTrackVolume(true);
-    dKPMusic_c::m_instance->updStarVolume(starSndMode);
+
+void dScKoopatlas_c::onMenuDisp(dKpMusic_c::STAR_MODE_e starMode, int soundID) {
+    dKpMusic_c::m_instance->onMenuVolume();
+    dKpMusic_c::m_instance->setStarMode(starMode);
     if (soundID > -1) {
         SndAudioMgr::sInstance->startSystemSe(soundID, 1);
     }
-    mpHud->hideAll();
+    mpHud->offHudDisp();
 }
 
-void dScKoopatlas_c::returnToNormalState() {
-    dKPMusic_c::m_instance->updTrackVolume(false);
-    dKPMusic_c::m_instance->updStarVolume(0);
-    mpHud->unhideAll();
-    mStateMgr.changeState(StateID_Normal);
+void dScKoopatlas_c::offMenuDisp() {
+    dKpMusic_c::m_instance->offMenuVolume();
+    dKpMusic_c::m_instance->setStarMode(dKpMusic_c::MODE_DEFAULT);
+    mpHud->onHudDisp();
+    mStateMgr.changeState(StateID_KeyWait);
 }
 
-void dScKoopatlas_c::showSaveWindow() {
-    mpHud->hideAll();
+void dScKoopatlas_c::dispSavePrompt() {
+    mpHud->offHudDisp();
     mStateMgr.changeState(StateID_SaveOpen);
     mpYesNoWindow->setType(dYesNoWindow_c::SAVE);
     mpYesNoWindow->setIsActive(true);
@@ -537,7 +560,7 @@ void dScKoopatlas_c::loadScene(int sceneID) {
 
     lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, -3);
 
-    if (sceneID == 0) { // Main lighting
+    if (sceneID == 0) { // World lighting
         nw4r::g3d::ResFile resLight = dResMng_c::m_instance->getRes("Env_world", "light/W8.blight");
         lightMgr->LoadBinary(resLight.ptr());
 
@@ -608,20 +631,24 @@ u32 dScKoopatlas_c::iterateMapList(u32(*callback)(u32,const char *,int,int), u32
             }
 
             // Change the linefeed to a NUL so we can use the line as a C string later
-            if (ptr < end)
+            if (ptr < end) {
                 *ptr = 0;
+            }
 
             u32 ret = callback(userData, (const char*)strStart, ptr - strStart, index);
-            if (ptrIndex)
+            if (ptrIndex) {
                 *ptrIndex = index;
-            if (ret > 0)
+            }
+            if (ret > 0) {
                 return ret;
+            }
 
             strStart = ++ptr;
             ++index;
 
-            if (ptr >= end)
+            if (ptr >= end) {
                 break;
+            }
 
         } else {
             ++ptr;
@@ -632,17 +659,19 @@ u32 dScKoopatlas_c::iterateMapList(u32(*callback)(u32,const char *,int,int), u32
 }
 
 static u32 _cb_getIndex(u32 userData, const char *str, int size, int index) {
-    if (index == userData)
+    if (index == userData) {
         return (u32)str;
-    else
+    } else {
         return 0;
+    }
 }
 
 static u32 _cb_searchName(u32 userData, const char *str, int size, int index) {
-    if (strncmp(str, (const char*)userData, size) == 0)
+    if (strncmp(str, (const char*)userData, size) == 0) {
         return (u32)(index+1);
-    else
+    } else {
         return 0;
+    }
 }
 
 const char *dScKoopatlas_c::getMapNameForIndex(int index) {
@@ -658,10 +687,10 @@ int dScKoopatlas_c::getIndexForMapName(const char *name) {
 /**********************************************************************/
 
 /**********************************************************************/
-// StateID_Limbo : Waiting to return to the Title Screen
-void dScKoopatlas_c::initializeState_Limbo() { }
-void dScKoopatlas_c::executeState_Limbo() { }
-void dScKoopatlas_c::finalizeState_Limbo() { }
+// StateID_SceneChangeWait : Waiting to return to the Title Screen
+void dScKoopatlas_c::initializeState_SceneChangeWait() { }
+void dScKoopatlas_c::executeState_SceneChangeWait() { }
+void dScKoopatlas_c::finalizeState_SceneChangeWait() { }
 
 /**********************************************************************/
 // StateID_ContinueWait : Waiting for the Continue screen to end
@@ -683,17 +712,17 @@ void dScKoopatlas_c::executeState_ContinueWait() {
             daPyMng_c::mRest[daPyMng_c::mPlayerType[idx]] = mpContinue->mLives[i];
         }
 
-        mStateMgr.changeState(StateID_Normal);
+        mStateMgr.changeState(StateID_KeyWait);
     }
 }
 void dScKoopatlas_c::finalizeState_ContinueWait() {
     dInfo_c::m_instance->mDrawEffectsForMapLayouts = false;
 }
-static int completionMsgIdx = 0;
+
 /**********************************************************************/
-// StateID_Normal : Main/idle state, waiting for input
-void dScKoopatlas_c::initializeState_Normal() { }
-void dScKoopatlas_c::executeState_Normal() {
+// StateID_Normal : Waiting for input
+void dScKoopatlas_c::initializeState_KeyWait() { }
+void dScKoopatlas_c::executeState_KeyWait() {
     if (mPathManager.mIsCmpMsgActive) {
         MapReport("Going to display a Completion Msg\n");
         mStateMgr.changeState(StateID_CompletionMsgWindow);
@@ -708,16 +737,19 @@ void dScKoopatlas_c::executeState_Normal() {
     int pressed = dGameKey_c::m_instance->mRemocon[0]->mTriggeredButtons;
 
     if (pressed & WPAD_BUTTON_1) {
-        openMenu(2, SE_SYS_DECIDE);
+        onMenuDisp(dKpMusic_c::MODE_STOCK_ITEM, SE_SYS_DECIDE);
         mpStockItem->mIsVisible = true;
         mStateMgr.changeState(StateID_PowerupsWait);
+
     } else if (pressed & WPAD_BUTTON_PLUS) {
-        openMenu(1, SE_SYS_PAUSE);
+        onMenuDisp(dKpMusic_c::MODE_PAUSE, SE_SYS_PAUSE);
         mpCourseSelectMenu->mIsVisible = true;
         mStateMgr.changeState(StateID_MenuSelect);
+
 #ifdef KP_PATH_QUICK_UNLOCK
     } else if (pressed & WPAD_BUTTON_MINUS) {
         mPathManager.unlockAllPaths(2);
+
     } else if (pressed & WPAD_BUTTON_A) {
         mPathManager.unlockAllPaths(0);
         dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
@@ -726,23 +758,15 @@ void dScKoopatlas_c::executeState_Normal() {
                 save->onCourseDataFlag(w, l, save->GOAL_MASK);
 #endif
     } else if (pressed & WPAD_BUTTON_A) {
-        //dKPMusic_c::m_instance->play(2);
+        //dKpMusic_c::m_instance->play(2);
         mpDirector->toggleCaptureDisp(true);
-        completionMsgIdx++;
-        if (completionMsgIdx > 7) completionMsgIdx = 7;
-        OSReport("Inc message to %d\n", completionMsgIdx);
     } else if (pressed & WPAD_BUTTON_B) {
         mpDirector->toggleCaptureDisp(false);
-        completionMsgIdx--;
-        if (completionMsgIdx < 0) completionMsgIdx = 0;
-        OSReport("Dec message to %d\n", completionMsgIdx);
     } else if (pressed & WPAD_BUTTON_MINUS) {
-        //dKPMusic_c::m_instance->play(1);
-        OSReport("Toggling completion message %d\n", completionMsgIdx);
-        mStateMgr.changeState(StateID_CompletionMsgWindow);
+        //dKpMusic_c::m_instance->play(1);
     }
 }
-void dScKoopatlas_c::finalizeState_Normal() { }
+void dScKoopatlas_c::finalizeState_KeyWait() { }
 
 /**********************************************************************/
 // StateID_MenuSelect : Waiting for input on the Course Select Menu
@@ -796,7 +820,7 @@ void dScKoopatlas_c::executeState_MenuSelect() {
             }
 
         } else {
-            returnToNormalState();
+            offMenuDisp();
         }
     }
 }
@@ -807,7 +831,6 @@ void dScKoopatlas_c::finalizeState_MenuSelect() { }
 // finish opening
 void dScKoopatlas_c::initializeState_TitleConfirmOpenWait() { }
 void dScKoopatlas_c::executeState_TitleConfirmOpenWait() {
-    //
     if (!mpYesNoWindow->mIsAnimating) {
         mStateMgr.changeState(StateID_TitleConfirmSelect);
     }
@@ -848,9 +871,9 @@ void dScKoopatlas_c::initializeState_TitleConfirmHitWait() { }
 void dScKoopatlas_c::executeState_TitleConfirmHitWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            returnToNormalState();
+            offMenuDisp();
         } else {
-            mStateMgr.changeState(StateID_Limbo);
+            mStateMgr.changeState(StateID_SceneChangeWait);
             dScRestartCrsin_c::startTitle(false, 0);
         }
     }
@@ -889,7 +912,7 @@ void dScKoopatlas_c::executeState_PlayerChangeWait() {
             }
 
             mpPlayer->chkUpdateMdl();
-            returnToNormalState();
+            offMenuDisp();
         }
     }
 }
@@ -922,7 +945,7 @@ void dScKoopatlas_c::executeState_PowerupsWait() {
         mpPlayer->mpPyMdlMng->mpMdl->setPlayerMode(daPyMng_c::mPlayerMode[daPyMng_c::mPlayerType[0]]);
         //mpPlayer->bindPats();
 
-        returnToNormalState();
+        offMenuDisp();
     }
 }
 void dScKoopatlas_c::finalizeState_PowerupsWait() { }
@@ -944,7 +967,7 @@ void dScKoopatlas_c::finalizeState_ShopWait() { }
 void dScKoopatlas_c::initializeState_CoinsWait() { }
 void dScKoopatlas_c::executeState_CoinsWait() {
     if (!mpCoins->mIsVisible) {
-        returnToNormalState();
+        offMenuDisp();
     }
 }
 void dScKoopatlas_c::finalizeState_CoinsWait() { }
@@ -972,8 +995,9 @@ void dScKoopatlas_c::executeState_SaveSelect() {
         mpYesNoWindow->setCursorPos(0);
     } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
         mpYesNoWindow->mHitButton = true;
-        if (mpYesNoWindow->getCursorPos() != 1)
+        if (mpYesNoWindow->getCursorPos() != 1) {
             mpYesNoWindow->mHideBG = true;
+        }
         mStateMgr.changeState(StateID_SaveWindowClose);
     } else { // Cancel using B or 1
         if (dGameCom::chkCancelButton(0)) {
@@ -992,7 +1016,7 @@ void dScKoopatlas_c::initializeState_SaveWindowClose() { }
 void dScKoopatlas_c::executeState_SaveWindowClose() {
     if (!mpYesNoWindow->getIsActive()) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            returnToNormalState();
+            offMenuDisp();
         } else {
             mStateMgr.changeState(StateID_SaveDo);
             dCourseSelectManager_c::m_instance->saveGame(false);
@@ -1036,7 +1060,7 @@ void dScKoopatlas_c::finalizeState_SaveEndWindow() { }
 void dScKoopatlas_c::initializeState_SaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_SaveEndCloseWait() {
     if (!mpYesNoWindow->mIsAnimating) {
-        returnToNormalState();
+        offMenuDisp();
     }
 }
 void dScKoopatlas_c::finalizeState_SaveEndCloseWait() { }
@@ -1065,8 +1089,9 @@ void dScKoopatlas_c::executeState_QuickSaveSelect() {
         mpYesNoWindow->setCursorPos(0);
     } else if (nowPressed & (WPAD_BUTTON_A | WPAD_BUTTON_2)) { // Pick the current option
         mpYesNoWindow->mHitButton = true;
-        if (mpYesNoWindow->getCursorPos() != 1)
+        if (mpYesNoWindow->getCursorPos() != 1) {
             mpYesNoWindow->mHideBG = true;
+        }
         mStateMgr.changeState(StateID_QuickSaveWindowClose);
     } else { // Cancel using B or 1
         if (dGameCom::chkCancelButton(0)) {
@@ -1085,7 +1110,7 @@ void dScKoopatlas_c::initializeState_QuickSaveWindowClose() { }
 void dScKoopatlas_c::executeState_QuickSaveWindowClose() {
     if (!mpYesNoWindow->getIsActive()) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            returnToNormalState();
+            offMenuDisp();
         } else {
             mStateMgr.changeState(StateID_QuickSaveDo);
             dCourseSelectManager_c::m_instance->saveGame(true);
@@ -1130,9 +1155,9 @@ void dScKoopatlas_c::initializeState_QuickSaveEndCloseWait() { }
 void dScKoopatlas_c::executeState_QuickSaveEndCloseWait() {
     if (!mpYesNoWindow->mIsAnimating) {
         if (mpYesNoWindow->getCursorPos() == 1) {
-            returnToNormalState();
+            offMenuDisp();
         } else {
-            mStateMgr.changeState(StateID_Limbo);
+            mStateMgr.changeState(StateID_SceneChangeWait);
             dScRestartCrsin_c::startTitle(false, 0);
         }
     }
@@ -1149,7 +1174,7 @@ void dScKoopatlas_c::initializeState_SaveError() {
 }
 void dScKoopatlas_c::executeState_SaveError() {
     if (!dWarningManager_c::m_instance->mIsSaveError) {
-        returnToNormalState();
+        offMenuDisp();
     }
 }
 void dScKoopatlas_c::finalizeState_SaveError() { }
@@ -1158,7 +1183,6 @@ void dScKoopatlas_c::finalizeState_SaveError() { }
 // StateID_CompletionMsgWindow : Display a completion message
 void dScKoopatlas_c::initializeState_CompletionMsgWindow() {
     MapReport("Completion message beginning with type %d\n", mPathManager.mCmpMsgType);
-    
     mpYesNoWindow->setType(dYesNoWindow_c::SAVE_DATA_CREATED); // Actual window type doesn't matter
     mpYesNoWindow->setIsActive(true);
     mSetupCompletionMessage = true;
@@ -1179,7 +1203,8 @@ void dScKoopatlas_c::executeState_CompletionMsgWindow() {
         if (type >= dKpPathManager_c::CMP_MSG_COINS && type <= dKpPathManager_c::CMP_MSG_WORLD) {
             wchar_t nameBuffer[36];
 
-            wcscpy(nameBuffer, getKoopatlasWorldName(dGameCom::rndInt(8)));
+            dWorldInfo_c::world_s *world = dWorldInfo_c::m_instance.getWorld(mPathManager.mCmpMsgWorldNo);
+            wcscpy(nameBuffer, getKoopatlasWorldName(world->mWorldNameMsgID));
             int offs = wcslen(nameBuffer);
             nameBuffer[offs] = L'!';
 
@@ -1206,12 +1231,12 @@ void dScKoopatlas_c::finalizeState_CompletionMsgWindow() {
 }
 
 /**********************************************************************/
-// StateID_CompletionMsgCloseWait : Wait for the completion message
-// window to close
+// StateID_CompletionMsgCloseWait : Wait for the completion message window to close
 void dScKoopatlas_c::initializeState_CompletionMsgCloseWait() { }
 void dScKoopatlas_c::executeState_CompletionMsgCloseWait() {
-    if (!mpYesNoWindow->getIsActive())
-        returnToNormalState();
+    if (!mpYesNoWindow->getIsActive()) {
+        offMenuDisp();
+    }
 }
 void dScKoopatlas_c::finalizeState_CompletionMsgCloseWait() { }
 
@@ -1219,7 +1244,7 @@ void dScKoopatlas_c::finalizeState_CompletionMsgCloseWait() { }
 void dScKoopatlas_c_painter() {
     m3d::reset();
     m3d::setCurrentCamera(0);
-    m3d::screenEffectReset(m3d::getCurrentCameraID(), dKPCamera_c::m_instance->mScreen);
+    m3d::screenEffectReset(m3d::getCurrentCameraID(), dKpCamera_c::m_instance->mScreen);
     m3d::drawLightMapTexture(0);
     m3d::calcWorld(0);
     m3d::calcView(0);
@@ -1255,64 +1280,4 @@ void dScKoopatlas_c_painter() {
     m2d::reset();
     m3d::setCurrentCamera(0);
 }
-
-// Behaves more like retail wm drawfunc
-/*void KoopatlasDrawFunc() {
-    int camID = m3d::getCurrentCameraID();
-    m3d::screenEffectReset(camID, dKPCamera_c::m_instance->mScreen);
-    m3d::drawLightMapTexture(0);
-    m3d::calcWorld(0);
-    m3d::calcView(0);
-    EGG::StateGX::GXSetAlphaUpdate_(false);
-    m3d::drawOpa();
-    m3d::drawXlu();
-    m3d::drawDone(0);
-    // Screen clipper here?
-    m2d::defaultSet();
-    d2d::drawBefore();
-    EffectManager_c::draw(0, 3);
-    EffectManager_c::draw(0, 2);
-    if (dInfo_c::m_instance->mIsWorldSelect != 0) {
-        GXDrawDone();
-        m3d::clear();
-        m3d::reset();
-        m3d::setCurrentCamera(1);
-        dBaseActor_c::draw2DActorOnLyt1();
-        m3d::drawLightMapTexture(1);
-        m3d::calcWorld(1);
-        m3d::calcView(1);
-        m3d::calcMaterial();
-        m3d::drawOpa();
-        m3d::drawXlu();
-        m3d::drawDone(1);
-        GXDrawDone();
-        m3d::clear();
-        m3d::reset();
-        GXSetZMode(false, GX_ALWAYS, false);
-        d2d::drawBtween(0x80, 0x92);
-        m3d::setCurrentCamera(1);
-        dBaseActor_c::draw2DActorOnLyt2();
-        m3d::drawLightMapTexture(1);
-        m3d::calcWorld(1);
-        m3d::calcView(1);
-        m3d::calcMaterial();
-        m3d::drawOpa();
-        m3d::drawXlu();
-        m3d::drawDone(1);
-        if (dInfo_c::m_instance->mDrawEffectsForMapLayouts) {
-            for (int i = 0; i < 4; i++) {
-                EffectManager_c::draw(0, 0xB + i);
-                EffectManager_c::draw(0, 7 + i);
-            }
-        }
-        GXDrawDone();
-        m3d::clear();
-        m3d::reset();
-        d2d::drawBtween(0x92, 0xFF);
-        m2d::reset();
-        m3d::setCurrentCamera(0);
-        // Screen clipper here too?
-    }
-}*/
-
 #endif

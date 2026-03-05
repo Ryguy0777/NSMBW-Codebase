@@ -30,13 +30,13 @@
 // #include "koopatlas/shop.h"
 
 // Forward declarations
-class daKPPlayer_c;
-class dKPMap_c;
-class dKPHud_c;
+class daKpPlayer_c;
+class dKpMap_c;
+class dKpHud_c;
 class dWMShop_c;
-class dKPStarCoinMenu_c;
-class dKPCamera_c;
-class dKPDirector_c;
+class dKpStarCoinMenu_c;
+class dKpCamera_c;
+class dKpDirector_c;
 
 class dScKoopatlas_c : public dScene_c {
 public:
@@ -49,6 +49,12 @@ public:
         ENDING_SCENE    = 0x20000000, ///< Is the ending scene where the W9 warp appears.
         AFTER_KAMEK_CS  = 0x40000000, ///< Is after the Kamek cutscene. (Unused)
         IS_FIRST_PLAY   = 0x80000000  ///< Is the first load of the map.
+    };
+
+    // Used for the archive list
+    struct ResItem_s {
+        const char *mpPath;
+        const char *mpArcName;
     };
 
     dScKoopatlas_c();
@@ -64,10 +70,10 @@ public:
     void startMusic();
     void startGame(dLevelInfo_c::entry_s *level);
 
-    void openMenu(int starSndMode, int soundID);
-    void returnToNormalState();
+    void onMenuDisp(dKpMusic_c::STAR_MODE_e starMode, int soundID);
+    void offMenuDisp();
 
-    void showSaveWindow();
+    void dispSavePrompt();
 
     // Lighting
     void setupScene();
@@ -79,9 +85,9 @@ public:
     const char *getMapNameForIndex(int index);
     int getIndexForMapName(const char *name);
 
-    STATE_FUNC_DECLARE(dScKoopatlas_c, Limbo);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, SceneChangeWait);
     STATE_FUNC_DECLARE(dScKoopatlas_c, ContinueWait);
-    STATE_FUNC_DECLARE(dScKoopatlas_c, Normal);
+    STATE_FUNC_DECLARE(dScKoopatlas_c, KeyWait);
     STATE_FUNC_DECLARE(dScKoopatlas_c, MenuSelect);
     STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmOpenWait);
     STATE_FUNC_DECLARE(dScKoopatlas_c, TitleConfirmSelect);
@@ -122,14 +128,14 @@ public:
     dStockItemShadow_c *mpStockItemShadow;
     dEasyPairing_c *mpEasyPairing;
 
-    daKPPlayer_c *mpPlayer;
-    dKPHud_c *mpHud;
-    dKPMap_c *mpMap;
+    daKpPlayer_c *mpPlayer;
+    dKpHud_c *mpHud;
+    dKpMap_c *mpMap;
     dWMShop_c *mpShop;
-    dKPStarCoinMenu_c *mpCoins;
-    dKPDirector_c *mpDirector;
+    dKpStarCoinMenu_c *mpCoins;
+    dKpDirector_c *mpDirector;
 
-    dKPMapData_c mMapData;
+    dKpMapData_c mMapData;
     dKpPathManager_c mPathManager;
     dDvd::loader_c mMapListLoader;
 
@@ -152,5 +158,6 @@ public:
     bool mIsEndingScene;
 
     static dScKoopatlas_c *m_instance;
+    static const ResItem_s sc_arcRes[];
 };
 #endif

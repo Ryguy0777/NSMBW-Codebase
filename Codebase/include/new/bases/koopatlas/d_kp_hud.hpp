@@ -6,6 +6,7 @@
 
 #include <game/bases/d_base.hpp>
 #include <game/bases/d_lytbase.hpp>
+#include <game/mLib/m_effect.hpp>
 
 #include <new/bases/koopatlas/d_kp_common.hpp>
 #include <new/bases/d_world_info.hpp>
@@ -15,7 +16,7 @@
 #include <new/bases/koopatlas/d_kp_map_data.hpp>
 #endif
 
-class dKPHud_c : public dBase_c {
+class dKpHud_c : public dBase_c {
 public:
     enum N_PANE_e {
         N_IconPos1P_00, N_IconPos2P_00,
@@ -45,7 +46,7 @@ public:
         T_COUNT
     };
 
-    enum ANIMS_e {
+    enum ANIM_e {
         ANIM_SHOW_LIVES,
         ANIM_SHOW_HEADER,
         ANIM_SHOW_FOOTER,
@@ -53,47 +54,60 @@ public:
         ANIM_UNHIDE_ALL
     };
 
-    dKPHud_c();
+    enum FLAG_STATE_e {
+        HIDDEN = 0,
+        VISIBLE,
+        FADED,
+    };
+
+    dKpHud_c();
 
     int create();
     int doDelete();
     int execute();
     int draw();
 
-    void loadInitially();
+    void doInitialDisp();
 
 #ifdef KOOPATLAS_DEV_ENABLED
-    void enteredNode(dKPNode_s *node = nullptr);
+    void enterNode(dKpNode_s *node = nullptr);
 #else
-    void enteredNode(int world, int course);
+    void enterNode(int world, int course);
 #endif
-    void leftNode();
+    void exitNode();
 
-    void hideAll();
-    void unhideAll();
+    void offHudDisp();
+    void onHudDisp();
 
-    void hideFooter();
-    void showFooter();
+    void offFooterDisp();
+    void onFooterDisp();
 
-    void setupLives();
+    void restDisp();
     void controllerConnectCheck();
 
-    void loadFooterInfo();
+    void setFooterInfo();
 
 private:
-    void loadHeaderInfo();
+    void setHeaderInfo();
 
 public:
     void playShowAnim(int id);
     void playHideAnim(int id);
 
 private:
+    nw4r::ut::WideTextWriter setupTextWriter(LytTextBox_c *textbox);
+    
+    void clearFlagSet(dLevelInfo_c::entry_s *entry, float *currPos);
+    void collectionCoinSet(dLevelInfo_c::entry_s *entry, float *currPos);
+
     void drawStarEffects();
 
     LytBase_c mLayout;
+    mEf::levelEffect_c mStarEffects[3];
+    mEf::levelEffect_c mStarEffects2[3];
     dTexMapColouriser_c mHeaderCol, mFooterCol;
 #ifdef KOOPATLAS_DEV_ENABLED
-    dKPNode_s *mpHeaderNode;
+    dKpNode_s *mpHeaderNode;
 #else
     int mWorldNo;
     int mCourseNo;
@@ -117,6 +131,6 @@ private:
     bool mDrawStarEffect;
 
 public:
-    static dKPHud_c *m_instance;
+    static dKpHud_c *m_instance;
 };
 #endif

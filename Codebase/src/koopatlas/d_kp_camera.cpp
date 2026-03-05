@@ -25,18 +25,18 @@
 
 #define SMOOTHSTEP(x) ((x) * (x) * (3 - 2 * (x)))
 
-dKPCamera_c *dKPCamera_c::m_instance = nullptr;
+dKpCamera_c *dKpCamera_c::m_instance = nullptr;
 
-dKPCamera_c *dKPCamera_c_classInit() {
-    dKPCamera_c *c = new dKPCamera_c;
-    dKPCamera_c::m_instance = c;
+dKpCamera_c *dKpCamera_c_classInit() {
+    dKpCamera_c *c = new dKpCamera_c;
+    dKpCamera_c::m_instance = c;
     return c;
 }
 
 // Replace WORLD_CAMERA actor
-kmWritePointer(0x8098EEC8, &dKPCamera_c_classInit);
+kmWritePointer(0x8098EEC8, &dKpCamera_c_classInit);
 
-dKPCamera_c::dKPCamera_c() {
+dKpCamera_c::dKpCamera_c() {
     Vec camPos = {0.0, 10.0, 0.0};
     Vec target = {0.0, 0.0, 0.0};
     Vec camUp = {0.0, 1.0, 0.0};
@@ -57,12 +57,12 @@ dKPCamera_c::dKPCamera_c() {
 
     mCurrentX = 416;
     mCurrentY = -224;
-    mZoomLevel = STD_ZOOM;
+    mZoomLevel = CAMERA_ZOOM;
 
-    mFollowPlayer = true;
+    mDoFollowPlayer = true;
 }
 
-int dKPCamera_c::create() {
+int dKpCamera_c::create() {
     CameraDebug("Camera creating\n");
     mScreen.mProjType = EGG::Frustum::PROJ_ORTHO;
     mScreen.mFlags |= 1;
@@ -83,16 +83,16 @@ int dKPCamera_c::create() {
     setPosAndTarget(10000.0);
     calcCameras();
     updateCameras();
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPCamera_c::execute() {
+int dKpCamera_c::execute() {
     CameraDebug("Camera executing\n");
     if (dScKoopatlas_c::m_instance->mWarpZoneHacks) {
         CameraDebug("WarpZone active\n");
         mCurrentX = 2040.0f;
         mCurrentY = -1460.0f;
-        mZoomLevel = 3.4f;
+        mZoomLevel = CAMERA_WARP_ZONE_ZOOM;
     } else if (mIsPanning) {
         // Calculate where we are
         float stepRatio = mPanCurrentStep / mPanTotalSteps;
@@ -108,15 +108,15 @@ int dKPCamera_c::execute() {
         mPanCurrentStep += 1.0f;
 
         if (mPanCurrentStep > mPanTotalSteps) {
-            // YAY, we reached the end
+            // We reached the end
             mIsPanning = false;
             mCurrentX = mPanToX;
             mCurrentY = mPanToY;
             mZoomLevel = mPanToZoom;
         }
-    } else if (mFollowPlayer) {
+    } else if (mDoFollowPlayer) {
         CameraDebug("We should be following the player now\n");
-        daKPPlayer_c *player = daKPPlayer_c::m_instance;
+        daKpPlayer_c *player = daKpPlayer_c::m_instance;
         mCurrentX = player->mPos.x;
         mCurrentY = player->mPos.y;
         CameraDebug("Player is at (%f, %f)\n", player->mPos.x, player->mPos.y);
@@ -126,10 +126,10 @@ int dKPCamera_c::execute() {
     setPosAndTarget(10000.0);
     calcCameras();
     updateCameras();
-    return true;
+    return SUCCEEDED;
 }
 
-int dKPCamera_c::draw() {
+int dKpCamera_c::draw() {
     CameraDebug("Camera drawing\n");
     const GXRenderModeObj *rmode = nw4r::g3d::G3DState::GetRenderModeObj();
 
@@ -141,11 +141,13 @@ int dKPCamera_c::draw() {
         cam.SetViewportJitter(VIGetNextField());
         cam2d.SetViewportJitter(VIGetNextField());
     }
-    //cam2d.SetOrtho(rmode->efbHeight, 0.0f, 0.0f, rmode->fbWidth * (IsWideScreen() ? 1.3333334f : 1.0f), -100000.0f, 100000.0f);
-    return true;
+
+    float ratio = (dGameCom::GetAspectRatio()) ? 1.3333334f : 1.0f;
+    cam2d.SetOrtho(rmode->efbHeight, 0.0f, 0.0f, rmode->fbWidth * ratio, -100000.0f, 100000.0f);
+    return SUCCEEDED;
 }
 
-void dKPCamera_c::calcScreenGeometry() {
+void dKpCamera_c::calcScreenGeometry() {
     CameraDebug("Calculating Screen\n");
     mZoomDivisor = 1.0 / mZoomLevel;
     CameraDebug("ZoomDivisor:%f, Zoom:%f\n", mZoomDivisor, mZoomLevel);
@@ -161,7 +163,7 @@ void dKPCamera_c::calcScreenGeometry() {
     CameraDebug("Screen Top:  %f\n", mScreenTop);
 }
 
-void dKPCamera_c::calcCameras() {
+void dKpCamera_c::calcCameras() {
     CameraDebug("Generating Matrices\n");
     float orthoTop = mScreenHeight * 0.5;
     float orthoLeft = -mScreenWidth * 0.5;
@@ -200,8 +202,8 @@ void dKPCamera_c::calcCameras() {
     mOrthoData2D.setTBLR(rmode->efbHeight, 0.0, 0.0, rmode->fbWidth * (dGameCom::GetAspectRatio() ? 1.3333334f : 1.0f));
 }
 
-void dKPCamera_c::updateCameras() {
-    nw4r::g3d::Camera cam0 = m3d::getCamera(0);
+void dKpCamera_c::updateCameras() {
+    nw4r::g3d::Camera cam0(m3d::getCamera(0));
     mCamera3D.setG3DCamera(cam0);
     mScreen.CopyToG3D(cam0);
 
@@ -210,7 +212,7 @@ void dKPCamera_c::updateCameras() {
     mCamera2D.setG3DCamera(cam1);
 }
 
-void dKPCamera_c::setPosAndTarget(float camPosZ) {
+void dKpCamera_c::setPosAndTarget(float camPosZ) {
     CameraDebug("Setting camera pos/target\n");
     mCamTarget = nw4r::math::VEC3(mScreenLeft + (mScreenWidth * 0.5), (mScreenTop - mScreenHeight) + (mScreenHeight * 0.5), 0.0);
     mCamPos = nw4r::math::VEC3(mCamTarget.x, mCamTarget.y, camPosZ);
@@ -218,7 +220,7 @@ void dKPCamera_c::setPosAndTarget(float camPosZ) {
     CameraDebug("Pos (%f, %f, %f)\n", mCamPos.x, mCamPos.y, mCamPos.z);
 }
 
-void dKPCamera_c::panToBounds(float left, float top, float right, float bottom) {
+void dKpCamera_c::panToBounds(float left, float top, float right, float bottom) {
     // Pad it a bit
     left -= 64.0f;
     right += 64.0f;
@@ -227,7 +229,7 @@ void dKPCamera_c::panToBounds(float left, float top, float right, float bottom) 
 
     CameraReport("Panning camera to bounds %f,%f to %f,%f\n", left, top, right, bottom);
 
-    // Figure out the centre x/y we want
+    // Figure out the center x/y we want
     float width = right - left;
     float height = bottom - top;
 
@@ -236,7 +238,6 @@ void dKPCamera_c::panToBounds(float left, float top, float right, float bottom) 
 
     CameraReport("Size: %f x %f ; Desired Centre: %f, %f\n", width, height, desiredCentreX, desiredCentreY);
 
-    // Our default zoom is 2.8
     float minScreenWidth = mVideo::l_rayoutWidthF * 1.2f;
     float minScreenHeight = mVideo::l_rayoutHeightF * 1.2f;
     float maxScreenWidth = mVideo::l_rayoutWidthF * 4.0f;
@@ -265,17 +266,19 @@ void dKPCamera_c::panToBounds(float left, float top, float right, float bottom) 
     CameraReport("Desired zoom level is %f\n", desiredZoomLevel);
 
     // Cap the zoom
-    if (desiredZoomLevel < 2.0f)
-        desiredZoomLevel = 2.0f;
-    if (desiredZoomLevel > 4.5f)
-        desiredZoomLevel = 4.5f;
+    if (desiredZoomLevel < CAMERA_MIN_PAN_ZOOM) {
+        desiredZoomLevel = CAMERA_MIN_PAN_ZOOM;
+    }
+    if (desiredZoomLevel > CAMERA_MAX_PAN_ZOOM) {
+        desiredZoomLevel = CAMERA_MAX_PAN_ZOOM;
+    }
     CameraReport("After capping: %f\n", desiredZoomLevel);
 
     // And we're almost there YAY
     panToPosition(desiredCentreX, desiredCentreY, desiredZoomLevel);
 }
 
-void dKPCamera_c::panToPosition(float x, float y, float zoom) {
+void dKpCamera_c::panToPosition(float x, float y, float zoom) {
     mPanFromX = mCurrentX;
     mPanFromY = mCurrentY;
     mPanFromZoom = mZoomLevel;
@@ -300,6 +303,6 @@ void dKPCamera_c::panToPosition(float x, float y, float zoom) {
     mPanTotalSteps = stepCount;
 
     mIsPanning = true;
-    mFollowPlayer = false;
+    mDoFollowPlayer = false;
 }
 #endif

@@ -3,7 +3,6 @@
 #ifdef KOOPATLAS_DEV_ENABLED
 
 #include <constants/sound_list.h>
-#include <game/bases/d_dvd.hpp>
 #include <game/snd/snd_audio_mgr.hpp>
 #include <new/bases/koopatlas/d_kp_music.hpp>
 #include <nw4r/db/exception.h>
@@ -21,11 +20,6 @@
 #define MusicException(...)
 #endif
 
-static nw4r::snd::SoundHandle sStreamHandle;
-static nw4r::snd::SoundHandle sStarHandle;
-
-static dDvd::loader_c s_adpcmInfoLoader;
-
 #define FADE_OUT_LEN 30
 #define FADE_IN_LEN 30
 #define BUFFER_CLEAR_DELAY 60
@@ -35,78 +29,83 @@ extern "C" void Voice_SetADPCMLoop(void *voice, int channel, void *adpcmLoop);
 
 u8 hijackMusicWithSongName(const char *songName, int themeID, bool hasFast, int channelCount, int trackCount, int *wantRealStreamID);
 
-dKPMusic_c *dKPMusic_c::m_instance = nullptr;
+dKpMusic_c *dKpMusic_c::m_instance = nullptr;
 
-bool dKPMusic_c::init() {
-    if (dKPMusic_c::m_instance == nullptr) {
-        dKPMusic_c::m_instance = new dKPMusic_c;
+nw4r::snd::SoundHandle dKpMusic_c::s_streamHandle;
+nw4r::snd::SoundHandle dKpMusic_c::s_starHandle;
+dDvd::loader_c dKpMusic_c::s_adpcmInfoLoader;
+
+bool dKpMusic_c::create() {
+    if (dKpMusic_c::m_instance == nullptr) {
+        dKpMusic_c::m_instance = new dKpMusic_c;
     }
     return s_adpcmInfoLoader.request("/MapADPCMInfo.bin", 0, nullptr);
 }
 
-dKPMusic_c::dKPMusic_c() {
+dKpMusic_c::dKpMusic_c() {
     mIsPlaying = false;
     mIsStarPlaying = false;
-    mCurrentSongID = -1;
-    mNextSongID = -1;
+    mCurrTrack = -1;
+    mNextTrack = -1;
     mSwitchDelay = -1;
     mFadeInDelay = -1;
 }
 
-void dKPMusic_c::start(int id) {
+void dKpMusic_c::startBgmTrack(int trackID) {
+    // Switch track
     if (mIsPlaying) {
-        // Switch track
-        MusicReport("Trying to switch to song %d (Current one is %d)...\n", id, mCurrentSongID);
-        if ((mCurrentSongID == id && mNextSongID == -1) || mNextSongID == id) {
+        MusicReport("Trying to switch to song %d (Current one is %d)...\n", trackID, mCurrTrack);
+        if ((mCurrTrack == trackID && mNextTrack == -1) || mNextTrack == trackID) {
             MusicReport("This song is already playing or is scheduled. Not gonna do that.\n");
-        //} else if (mFadeInDelay >= 0) {
-        //	MusicReport("There's already a track being faded in (CountdownToFadeIn=%d)\n", mFadeInDelay);
         } else if (mSwitchDelay >= 0) {
             MusicReport("We were already going to switch tracks, but the rstm hasn't been changed yet, so the next song is being changed to this one\n");
-            mNextSongID = id;
+            mNextTrack = trackID;
         } else {
             MusicReport("Will switch; Fading out current track 2 over %d frames\n", FADE_OUT_LEN);
 
-            if (sStreamHandle.IsAttachedSound())
-                sStreamHandle.SetVolume(0.0f, FADE_OUT_LEN);
-            mNextSongID = id;
+            if (s_streamHandle.IsAttachedSound()) {
+                s_streamHandle.SetVolume(0.0f, FADE_OUT_LEN);
+            }
+            mNextTrack = trackID;
             mSwitchDelay = FADE_OUT_LEN;
         }
 
+    // New track
     } else {
-        // New track
-        MusicReport("Playing song %d from the start.\n", id);
+        MusicReport("Playing song %d from the start.\n", trackID);
 
         int realStreamID;
         char brstmName[8];
-        sprintf(brstmName, "map%d", id);
+        sprintf(brstmName, "map%d", trackID);
         hijackMusicWithSongName(brstmName, -1, false, 4, 2, &realStreamID);
 
-        SndAudioMgr::sInstance->startSound(&sStreamHandle, realStreamID, 1);
+        SndAudioMgr::sInstance->startSound(&s_streamHandle, realStreamID, 1);
 
         mIsPlaying = true;
-        mCurrentSongID = id;
+        mCurrTrack = trackID;
     }
 }
 
-void dKPMusic_c::execute() {
-    if (!mIsPlaying)
+void dKpMusic_c::execute() {
+    if (!mIsPlaying) {
         return;
+    }
 
-    /*if (sStreamHandle.detail_GetAttachedSound() == nullptr) {
+    /*if (s_streamHandle.detail_GetAttachedSound() == nullptr) {
        MusicException("SOUND IS NOT PLAYING!\n");
        return;
     }*/
 
     if (mSwitchDelay >= 0) {
         mSwitchDelay--;
+
         if (mSwitchDelay == 0) {
-            MusicException("Switching brstm files to song %d.\n", mNextSongID);
+            MusicException("Switching brstm files to song %d.\n", mNextTrack);
 
             char brstmPath[48];
-            sprintf(brstmPath, "/Sound/new/map%d.er", mNextSongID);
+            sprintf(brstmPath, "/Sound/new/map%d.er", mNextTrack);
 
-            u8 *sound = (u8*)(sStreamHandle.detail_GetAttachedSound());
+            u8 *sound = (u8*)(s_streamHandle.detail_GetAttachedSound());
             u8 *player = sound+0x110;
             u8 **fileStreamPointer = (u8**)(player+0x808);
             u8 *fileStream = *fileStreamPointer;
@@ -118,8 +117,9 @@ void dKPMusic_c::execute() {
                 return;
             }
 
-            if (mNextSongID > 0)
+            if (mNextTrack > 0) {
                 mFadeInDelay = BUFFER_CLEAR_DELAY;
+            }
 
             DVDCancel(&fileInfo->block);
             //MusicReport("CANCEL successfully called!\n");
@@ -135,12 +135,13 @@ void dKPMusic_c::execute() {
             MusicException("Track Array: %p; Track: %p; Voice Pointer: %p; Voice: %p\n", trackArray, track, voicePointer, voice);
 
             for (int i = 0; i < 2; i++) {
-                int sourceBlockID = (mNextSongID*2)+i;
+                int sourceBlockID = (mNextTrack*2)+i;
                 u8 *sourceData = ((u8*)(s_adpcmInfoLoader.GetBuffer())) + (0x30*sourceBlockID);
                 MusicException("Using ADPCM data for channel %d from block %d, data at %p\n", i, sourceBlockID, sourceData);
 
-                if (!voice)
+                if (voice == nullptr) {
                     continue;
+                }
 
                 Voice_SetADPCMLoop(voice, i, sourceData+0x28);
 
@@ -151,96 +152,100 @@ void dKPMusic_c::execute() {
                     u8 *axVoice = *axVoicePointer;
                     MusicException("Setting AxVoice ID %d, with pointer at %p, located at %p\n", axVoiceID, axVoicePointer, axVoice);
 
-                    if (axVoice)
+                    if (axVoice) {
                         AxVoice_SetADPCM(axVoice, sourceData);
+                    }
                 }
             }
 
             MusicReport("All done\n");
 
-            mCurrentSongID = mNextSongID;
-            mNextSongID = -1;
+            mCurrTrack = mNextTrack;
+            mNextTrack = -1;
         }
 
     } else if (mFadeInDelay >= 0) {
         mFadeInDelay--;
+
         if (mFadeInDelay == 0) {
             MusicReport("Going to fade in the second track now!\n");
-            if (sStreamHandle.IsAttachedSound())
-                sStreamHandle.SetVolume(1.0f, FADE_IN_LEN);
+            if (s_streamHandle.IsAttachedSound()) {
+                s_streamHandle.SetVolume(1.0f, FADE_IN_LEN);
+            }
         }
     }
 }
 
-void dKPMusic_c::pause() {
-    if (sStreamHandle.IsAttachedSound())
-        sStreamHandle.Pause(true, 15);
+void dKpMusic_c::pauseAllSound(bool flag) {
+    if (s_streamHandle.IsAttachedSound()) {
+        s_streamHandle.Pause(flag, 15);
+    }
 
-    if (sStarHandle.IsAttachedSound())
-        sStarHandle.Pause(true, 15);
+    if (s_starHandle.IsAttachedSound()) {
+        s_starHandle.Pause(flag, 15);
+    }
 }
 
-void dKPMusic_c::stop() {
-    if (!mIsPlaying)
+void dKpMusic_c::stopAllSound() {
+    if (!mIsPlaying) {
         return;
+    }
 
     MusicReport("Stopping song\n");
     mIsPlaying = false;
-    mCurrentSongID = -1;
-    mNextSongID = -1;
+    mCurrTrack = -1;
+    mNextTrack = -1;
     mSwitchDelay = -1;
     mFadeInDelay = -1;
 
-    if (sStreamHandle.IsAttachedSound())
-        sStreamHandle.Stop(30);
+    if (s_streamHandle.IsAttachedSound()) {
+        s_streamHandle.Stop(30);
+    }
 
-    if (sStarHandle.IsAttachedSound())
-        sStarHandle.Stop(15);
+    if (s_starHandle.IsAttachedSound()) {
+        s_starHandle.Stop(15);
+    }
 }
 
-void dKPMusic_c::onStarSe() {
+void dKpMusic_c::onStarSe() {
     if (mIsStarPlaying) {
         return;
     }
 
-    SndAudioMgr::sInstance->startSound(&sStarHandle, SE_BGM_CS_STAR, 1);
+    SndAudioMgr::sInstance->startSound(&s_starHandle, SE_BGM_CS_STAR, 1);
     mIsStarPlaying = true;
 }
 
-void dKPMusic_c::offStarSe() {
+void dKpMusic_c::offStarSe() {
     if (!mIsStarPlaying) {
         return;
     }
 
-    sStarHandle.Stop(15);
+    s_starHandle.Stop(15);
     mIsStarPlaying = false;
 }
 
-void dKPMusic_c::updTrackVolume(bool isOpenMenu) {
-    if (!sStreamHandle.IsAttachedSound())
-        return;
-
-    f32 newVol = (isOpenMenu) ? 0.3 : 1.0;
-    sStreamHandle.SetVolume(newVol, 15);
-}
-
-/* Types are:
- * 0: on map, default volume
- * 1: in menu, pause it
- * 2: in stockItem, make it loud
-*/
-void dKPMusic_c::updStarVolume(int type) {
-    if (!sStarHandle.IsAttachedSound())
-        return;
-    
-    if (type == 1) {
-        sStarHandle.detail_GetAttachedSound()->Pause(true, 15);
+void dKpMusic_c::setBgmVolume(float volume) {
+    if (!s_streamHandle.IsAttachedSound()) {
         return;
     }
 
-    float volume = (type == 2) ? 4.0f : 1.5f;
+    s_streamHandle.SetVolume(volume, 15);
+}
 
-    sStarHandle.SetVolume(volume, 15);
-    sStarHandle.detail_GetAttachedSound()->Pause(false, 15);
+void dKpMusic_c::setStarMode(STAR_MODE_e mode) {
+    if (!s_starHandle.IsAttachedSound()) {
+        return;
+    }
+
+    if (mode == MODE_PAUSE) {
+        s_starHandle.detail_GetAttachedSound()->Pause(true, 15);
+        return;
+    }
+
+    float volume = (mode == MODE_STOCK_ITEM) ? 4.0f : 1.5f;
+
+    s_starHandle.SetVolume(volume, 15);
+    s_starHandle.detail_GetAttachedSound()->Pause(false, 15);
 }
 #endif

@@ -234,11 +234,11 @@ void dKpPathManager_c::create() {
     mInitialPlyAnmDelay = -1;
     if (dScStage_c::m_exitMode == dScStage_c::EXIT_LOSE) {
         mDoCourseFailAnm = true;
-        daKPPlayer_c::m_instance->mVisible = false;
+        daKpPlayer_c::m_instance->mVisible = false;
         dScStage_c::m_exitMode = dScStage_c::EXIT_CLEAR;
     } else if ((dScStage_c::m_exitMode == dScStage_c::EXIT_CLEAR) && s_cmpData.mPrevLevelID[0] < 0x80 && !wm->mIsAfter8Castle) {
         mDoCourseClearAnm = true;
-        daKPPlayer_c::m_instance->mVisible = false;
+        daKpPlayer_c::m_instance->mVisible = false;
     }
 
     SpammyReport("done\n");
@@ -254,34 +254,34 @@ void dKpPathManager_c::create() {
         bool found = false;
 
         for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-            dKPNode_s *node = mpPathLayer->mpNodes[i];
+            dKpNode_s *node = mpPathLayer->mpNodes[i];
             SpammyReport("Checking node: %p\n", node);
 
-            if (node->mNodeType == dKPNode_s::CHANGE && node->mCurrID == changeID) {
+            if (node->mNodeType == dKpNode_s::CHANGE && node->mCurrID == changeID) {
                 found = true;
                 mpCurrentNode = node;
 
                 SpammyReport("Found CHANGE node: %d %p\n", changeID, node);
 
                 // Figure out where we should move to
-                dKPPath_s *exitTo = nullptr;
+                dKpPath_s *exitTo = nullptr;
 
                 for (int i = 0; i < 4; i++) {
-                    dKPPath_s *candidateExit = node->mpExits[i];
+                    dKpPath_s *candidateExit = node->mpExits[i];
                     //SpammyReport("Candidate exit: %p\n", candidateExit);
                     if (!candidateExit)
                         continue;
 
                     // Find out if this path is a candidate
-                    dKPNode_s *srcNode = node;
-                    dKPPath_s *path = candidateExit;
+                    dKpNode_s *srcNode = node;
+                    dKpPath_s *path = candidateExit;
 
                     while (true) {
-                        dKPNode_s *destNode = (path->mpStartPoint == srcNode) ? path->mpEndPoint : path->mpStartPoint;
+                        dKpNode_s *destNode = (path->mpStartPoint == srcNode) ? path->mpEndPoint : path->mpStartPoint;
                         //SpammyReport("Path: %p nodes %p to %p\n", path, srcNode, destNode);
                         int ct = destNode->getOpenExitNum();
                         //SpammyReport("Dest Node available exits: %d; type: %d\n", ct, destNode->type);
-                        if (destNode == node || ct > 2 || destNode->mNodeType == dKPNode_s::LEVEL || destNode->mNodeType == dKPNode_s::CHANGE) {
+                        if (destNode == node || ct > 2 || destNode->mNodeType == dKpNode_s::LEVEL || destNode->mNodeType == dKpNode_s::CHANGE) {
                             exitTo = candidateExit;
                             //SpammyReport("Accepting this node\n");
                             break;
@@ -364,8 +364,8 @@ void dKpPathManager_c::create() {
 
         if (destWorld > -1) {
             for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-                dKPNode_s *node = mpPathLayer->mpNodes[i];
-                if (node->mNodeType == dKPNode_s::LEVEL && node->mLevelNum[0] == destWorld && node->mLevelNum[1] == destLevel) {
+                dKpNode_s *node = mpPathLayer->mpNodes[i];
+                if (node->mNodeType == dKpNode_s::LEVEL && node->mLevelNum[0] == destWorld && node->mLevelNum[1] == destLevel) {
                     mpCurrentNode = node;
                     if (saveNode) {
                         save->setCurrentPathNode(i);
@@ -377,8 +377,8 @@ void dKpPathManager_c::create() {
     }
 
     for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-        if (mpPathLayer->mpNodes[i]->mNodeType == dKPNode_s::LEVEL) {
-            mpPathLayer->mpNodes[i]->createCourseNode();
+        if (mpPathLayer->mpNodes[i]->mNodeType == dKpNode_s::LEVEL) {
+            mpPathLayer->mpNodes[i]->mpNodeMdl->createMdl();
         }
     }
 
@@ -410,6 +410,8 @@ void dKpPathManager_c::create() {
                 exits++;
             }
         }
+
+        mCmpMsgWorldNo = entry->mDisplayWorld;
 
         // Do message checks
         int flag = 0;
@@ -495,17 +497,17 @@ void dKpPathManager_c::execute() {
 
         if (mInitialDelay == 0) {
             if (mDoCourseFailAnm) {
-                daKPPlayer_c::m_instance->mVisible = true;
-                daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::ENDING_WAIT, 1.0f, 0.0f, 0.0f);
+                daKpPlayer_c::m_instance->mVisible = true;
+                daKpPlayer_c::m_instance->startAnimation(dPyMdlBase_c::ENDING_WAIT, 1.0f, 0.0f, 0.0f);
                 mInitialPlyAnmDelay = 60;
 
                 SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CS_COURSE_MISS, 1);
             } else if (mDoCourseClearAnm) {
-                daKPPlayer_c::m_instance->mVisible = true;
+                daKpPlayer_c::m_instance->mVisible = true;
                 if (dScKoopatlas_c::m_instance->mIsAfter8Castle) {
                     mInitialPlyAnmDelay = 1;
                 } else {
-                    daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::DM_SURP_WAIT, 1.0f, 0.0f, 0.0f);
+                    daKpPlayer_c::m_instance->startAnimation(dPyMdlBase_c::DM_SURP_WAIT, 1.0f, 0.0f, 0.0f);
                     mInitialPlyAnmDelay = 38;
 
                     nw4r::snd::SoundHandle something;
@@ -522,7 +524,7 @@ void dKpPathManager_c::execute() {
         mInitialPlyAnmDelay--;
 
         if (mInitialPlyAnmDelay == 0) {
-            daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.0f, 0.0f, 0.0f);
+            daKpPlayer_c::m_instance->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.0f, 0.0f, 0.0f);
         }
 
         if (mDoCourseClearAnm && (mInitialPlyAnmDelay == 9) && !wm->mIsEndingScene) {
@@ -537,9 +539,9 @@ void dKpPathManager_c::execute() {
 
         if (mPathFadeInDelay <= 0) {
             if (mIsCamBoundsValid) {
-                dKPCamera_c::m_instance->mCurrentX = mpCurrentNode->mPosX;
-                dKPCamera_c::m_instance->mCurrentY = -mpCurrentNode->mPosY;
-                dKPCamera_c::m_instance->panToBounds(mCamMinX, mCamMinY, mCamMaxX, mCamMaxY);
+                dKpCamera_c::m_instance->mCurrentX = mpCurrentNode->mPosX;
+                dKpCamera_c::m_instance->mCurrentY = -mpCurrentNode->mPosY;
+                dKpCamera_c::m_instance->panToBounds(mCamMinX, mCamMinY, mCamMaxX, mCamMaxY);
 
                 mIsCamPanToPaths = true;
             } else {
@@ -551,7 +553,7 @@ void dKpPathManager_c::execute() {
     }
 
     if (mIsCamPanToPaths) {
-        if (dKPCamera_c::m_instance->mIsPanning) {
+        if (dKpCamera_c::m_instance->mIsPanning) {
             return;
         }
 
@@ -563,15 +565,15 @@ void dKpPathManager_c::execute() {
         mPathUnlockAlpha += PATH_ALPHA_INC;
 
         for (int i = 0; i < mpPathLayer->mPathNum; i++) {
-            dKPPath_s *path = mpPathLayer->mpPaths[i];
+            dKpPath_s *path = mpPathLayer->mpPaths[i];
 
-            if (path->mIsOpen == dKPPath_s::NEWLY_OPEN) {
+            if (path->mIsOpen == dKpPath_s::NEWLY_OPEN) {
                 path->setLayerAlpha(mPathUnlockAlpha);
             }
         }
 
         for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-            dKPNode_s *node = mpPathLayer->mpNodes[i];
+            dKpNode_s *node = mpPathLayer->mpNodes[i];
 
             if (node->mIsNewlyOpen) {
                 node->setLayerAlpha(mPathUnlockAlpha);
@@ -585,9 +587,9 @@ void dKpPathManager_c::execute() {
             mNodeUnlockDuration = 15;
 
             for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-                dKPNode_s *node = mpPathLayer->mpNodes[i];
+                dKpNode_s *node = mpPathLayer->mpNodes[i];
 
-                if (node->mIsNewlyOpen && node->mNodeType == dKPNode_s::LEVEL) {
+                if (node->mIsNewlyOpen && node->mNodeType == dKpNode_s::LEVEL) {
                     mVec3_c effPos(node->mPosX, -node->mPosY + 4.0, 3300.0f);
                     mAng3_c effAng(0x2000, 0, 0);
                     mVec3_c effScale(0.8f, 0.8f, 0.8f);
@@ -614,18 +616,18 @@ void dKpPathManager_c::execute() {
         mPanBackDelay--;
 
         if (mPanBackDelay == 0 && mIsCamBoundsValid) {
-            dKPCamera_c::m_instance->panToPosition(mpCurrentNode->mPosX, -mpCurrentNode->mPosY, STD_ZOOM);
+            dKpCamera_c::m_instance->panToPosition(mpCurrentNode->mPosX, -mpCurrentNode->mPosY, CAMERA_ZOOM);
             mIsCamPanFromPaths = true;
         }
         return;
     }
 
     if (mIsCamPanFromPaths) {
-        if (dKPCamera_c::m_instance->mIsPanning) {
+        if (dKpCamera_c::m_instance->mIsPanning) {
             return;
         }
         mIsCamPanFromPaths = false;
-        dKPCamera_c::m_instance->mFollowPlayer = true;
+        dKpCamera_c::m_instance->mDoFollowPlayer = true;
     }
 
     if (mCmpAnimDuration > 0) {
@@ -633,7 +635,7 @@ void dKpPathManager_c::execute() {
         if (mCmpAnimDuration == 60) {
             SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_CLEAR_MULTI, 1);
         } else if (mCmpAnimDuration == 0) {
-            daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.0f, 0.0f, 0.0f);
+            daKpPlayer_c::m_instance->startAnimation(dPyMdlBase_c::WAIT_SELECT, 1.0f, 0.0f, 0.0f);
         }
         return;
     }
@@ -669,7 +671,7 @@ void dKpPathManager_c::execute() {
         }
 
         SndAudioMgr::sInstance->startSystemSe(soundID, 1);
-        daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::COIN_COMP, 1.0f, 0.0f, 0.0f);
+        daKpPlayer_c::m_instance->startAnimation(dPyMdlBase_c::COIN_COMP, 1.0f, 0.0f, 0.0f);
         return;
     }
 
@@ -735,14 +737,14 @@ void dKpPathManager_c::execute() {
     }
 
     if (mDispSavePrompt) {
-        dScKoopatlas_c::m_instance->showSaveWindow();
+        dScKoopatlas_c::m_instance->dispSavePrompt();
         mDispSavePrompt = false;
         return;
     }
 
     if (!mInitialLoadComplete) {
         dScKoopatlas_c::m_instance->startMusic();
-        dKPHud_c::m_instance->loadInitially();
+        dKpHud_c::m_instance->doInitialDisp();
         mInitialLoadComplete = true;
         return;
     }
@@ -768,7 +770,7 @@ void dKpPathManager_c::execute() {
             } else {
                 // TODO: maybe remove this? got to see how it looks
                 static u16 directions[] = {-0x4000,0x4000,-0x7FFF,0};
-                daKPPlayer_c::m_instance->setTargetRotY(directions[pressedDir]);
+                daKpPlayer_c::m_instance->setTargetRotY(directions[pressedDir]);
             }
         } else if (pressed & WPAD_BUTTON_2) {
             activatePoint();
@@ -803,13 +805,13 @@ void dKpPathManager_c::unlockPaths() {
 
     // Unlock all needed paths
     for (int i = 0; i < mpPathLayer->mPathNum; i++) {
-        dKPPath_s *path = mpPathLayer->mpPaths[i];
+        dKpPath_s *path = mpPathLayer->mpPaths[i];
 
         sp_openPathData[i] = path->mIsOpen;
 
         //SpammyReport("Path %d: %d\n", i, path->isAvailable);
         // If this path is not "always open", then reset its alpha
-        path->setLayerAlpha((path->mIsOpen == dKPPath_s::ALWAYS_OPEN) ? PATH_OPEN_ALPHA : PATH_LOCK_ALPHA);
+        path->setLayerAlpha((path->mIsOpen == dKpPath_s::ALWAYS_OPEN) ? PATH_OPEN_ALPHA : PATH_LOCK_ALPHA);
     }
 
     dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
@@ -840,11 +842,11 @@ void dKpPathManager_c::unlockPaths() {
             u16 pathID = (one << 8) | two;
             UnlockCmdReport("[%p] Cmd %d: Affected %d: PathID: %d\n", in, cmdID, i, pathID);
 
-            dKPPath_s *path = mpPathLayer->mpPaths[pathID];
+            dKpPath_s *path = mpPathLayer->mpPaths[pathID];
             UnlockCmdReport("[%p] Cmd %d: Affected %d: Path: %p\n", in, cmdID, i, path);
-            path->mIsOpen = value ? dKPPath_s::OPEN : dKPPath_s::NOT_OPEN;
+            path->mIsOpen = value ? dKpPath_s::OPEN : dKpPath_s::NOT_OPEN;
             UnlockCmdReport("[%p] Cmd %d: Affected %d: IsAvailable written\n", in, cmdID, i);
-            sp_openPathData[pathID] = value ? dKPPath_s::OPEN : dKPPath_s::NOT_OPEN;
+            sp_openPathData[pathID] = value ? dKpPath_s::OPEN : dKpPath_s::NOT_OPEN;
             UnlockCmdReport("[%p] Cmd %d: Affected %d: AvailabilityData written\n", in, cmdID, i);
             // NEWLY_AVAILABLE is set later, when that stuff is figured out
 
@@ -860,7 +862,7 @@ void dKpPathManager_c::unlockPaths() {
     SpammyReport("UNLOCKING PATHS: All complete @ %p\n", in);
 
     for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-        dKPNode_s *node = mpPathLayer->mpNodes[i];
+        dKpNode_s *node = mpPathLayer->mpNodes[i];
         sp_openNodeData[i] = node->chkOpenStatus();
 
         // Set special UNLOCKED data flag
@@ -879,12 +881,12 @@ void dKpPathManager_c::unlockPaths() {
     if (!wm->mIsEndingScene && (oldPathAvData || forceFlag)) {
         for (int i = 0; i < mpPathLayer->mPathNum; i++) {
             if ((sp_openPathData[i] > 0) && (forceFlag || oldPathAvData[i] == 0)) {
-                if (forceFlag && sp_openPathData[i] == dKPPath_s::ALWAYS_OPEN) {
+                if (forceFlag && sp_openPathData[i] == dKpPath_s::ALWAYS_OPEN) {
                     continue;
                 }
 
-                dKPPath_s *path = mpPathLayer->mpPaths[i];
-                path->mIsOpen = dKPPath_s::NEWLY_OPEN;
+                dKpPath_s *path = mpPathLayer->mpPaths[i];
+                path->mIsOpen = dKpPath_s::NEWLY_OPEN;
                 mNewOpenPathNum++;
 
                 // Set this path's alpha to 0, we'll fade it in later
@@ -895,7 +897,7 @@ void dKpPathManager_c::unlockPaths() {
         // Check nodes too
         for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
             if ((sp_openNodeData[i] > 0) && (forceFlag || oldNodeAvData[i] == 0)) {
-                dKPNode_s *node = mpPathLayer->mpNodes[i];
+                dKpNode_s *node = mpPathLayer->mpNodes[i];
                 node->mIsNewlyOpen = true;
                 mNewOpenNodeNum++;
             }
@@ -908,11 +910,11 @@ void dKpPathManager_c::unlockPaths() {
     }
 
     if (wm->mIsEndingScene) {
-        dKPNode_s *yoshiHouse = nullptr;
+        dKpNode_s *yoshiHouse = nullptr;
         for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-            dKPNode_s *node = mpPathLayer->mpNodes[i];
+            dKpNode_s *node = mpPathLayer->mpNodes[i];
 
-            if (node->mNodeType != dKPNode_s::LEVEL) {
+            if (node->mNodeType != dKpNode_s::LEVEL) {
                 continue;
             }
             if (node->mLevelNum[0] != YOSHI_HOUSE_WORLD) {
@@ -927,17 +929,17 @@ void dKpPathManager_c::unlockPaths() {
         }
 
         if (yoshiHouse != nullptr) {
-            dKPNode_s *mpCurrentNode = yoshiHouse;
-            dKPPath_s *nextPath = yoshiHouse->mpExitR;
+            dKpNode_s *mpCurrentNode = yoshiHouse;
+            dKpPath_s *nextPath = yoshiHouse->mpExitR;
 
             while (true) {
-                if (nextPath->mIsOpen == dKPPath_s::OPEN) {
-                    nextPath->mIsOpen = dKPPath_s::NEWLY_OPEN;
+                if (nextPath->mIsOpen == dKpPath_s::OPEN) {
+                    nextPath->mIsOpen = dKpPath_s::NEWLY_OPEN;
                     mNewOpenPathNum++;
                     nextPath->setLayerAlpha(PATH_LOCK_ALPHA);
                 }
 
-                dKPNode_s *nextNode = nextPath->getOtherNodeTo(mpCurrentNode);
+                dKpNode_s *nextNode = nextPath->getOtherNodeTo(mpCurrentNode);
                 if (nextNode == nullptr) {
                     break;
                 }
@@ -959,7 +961,7 @@ void dKpPathManager_c::unlockPaths() {
 
     // Now set all node alphas
     for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-        dKPNode_s *node = mpPathLayer->mpNodes[i];
+        dKpNode_s *node = mpPathLayer->mpNodes[i];
 
         node->setLayerAlpha((node->chkOpenStatus() & !node->mIsNewlyOpen) ? PATH_OPEN_ALPHA : PATH_LOCK_ALPHA);
     }
@@ -1068,15 +1070,15 @@ int dKpPathManager_c::getPressedDir(int buttons) {
     return -1;
 }
 
-void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
+void dKpPathManager_c::startMovementTo(dKpPath_s *path) {
     if (!path->mIsOpen) {
         return;
     }
 
     SpammyReport("Moving to path %p [%d,%d to %d,%d]\n", path, path->mpStartPoint->mPosX, path->mpStartPoint->mPosY, path->mpEndPoint->mPosX, path->mpEndPoint->mPosY);
 
-    if ((mpCurrentNode != nullptr) && (dKPHud_c::m_instance)) {
-        dKPHud_c::m_instance->leftNode();
+    if ((mpCurrentNode != nullptr) && (dKpHud_c::m_instance)) {
+        dKpHud_c::m_instance->exitNode();
     }
 
     mIsEnterNode = false;
@@ -1095,7 +1097,7 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
         direction += 0x8000;
     }
 
-    daKPPlayer_c *player = daKPPlayer_c::m_instance;
+    daKpPlayer_c *player = daKpPlayer_c::m_instance;
 
     // Consider adding these as options
     // wall_walk_l = 60,
@@ -1164,11 +1166,11 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
         {dPyMdlBase_c::WAIT, 2.0f, 10.0f, -1, 1.0f, SE_NULL, SE_NULL, nullptr, nullptr},
     };
 
-    mIsJumpAnm = (path->mAction >= dKPPath_s::JUMP && path->mAction <= dKPPath_s::JUMP_SAND);
+    mIsJumpAnm = (path->mAction >= dKpPath_s::JUMP && path->mAction <= dKpPath_s::JUMP_SAND);
 
     float playerScale = 1.6f;
 
-    if (path->mAction == dKPPath_s::ENTER_CAVE_UP) {
+    if (path->mAction == dKpPath_s::ENTER_CAVE_UP) {
         mScaleDuration = 60;
         // What direction does this path go in?
         static u16 directions[] = {-0x4000,0x4000,-0x7FFF,0};
@@ -1182,10 +1184,10 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
         playerScale = player->mScale.x;
     }
 
-    player->mVisible = (path->mAction != dKPPath_s::INVISIBLE);
+    player->mVisible = (path->mAction != dKpPath_s::INVISIBLE);
     player->mScale.x = player->mScale.y = player->mScale.z = playerScale;
 
-    int id = (path->mAction >= dKPPath_s::ACTION_NUM) ? 0 : (int)path->mAction;
+    int id = (path->mAction >= dKpPath_s::ACTION_NUM) ? 0 : (int)path->mAction;
     int whichAnim = sc_pathActions[id].mAnmType;
     float updateRate = sc_pathActions[id].mAnmUpdRate;
 
@@ -1203,13 +1205,13 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
     if (sc_pathActions[id].mForceAngle != -1) {
         mIsForceAngle = true;
         player->setTargetRotY(sc_pathActions[id].mForceAngle);
-    } else if (id == dKPPath_s::JUMP_WATER || id == dKPPath_s::RESERVED_18) {
+    } else if (id == dKpPath_s::JUMP_WATER || id == dKpPath_s::RESERVED_18) {
         // Keep the current rotation
         mIsForceAngle = true;
         dPyMdlBase_c::scPyAnmData[dPyMdlBase_c::DM_NOTICE].mPlayMode = m3d::FORWARD_LOOP;
 
         SndAudioMgr::sInstance->startSystemSe(SE_OBJ_WARP_CANNON_SHOT, 1);
-        dKPMap_c::m_instance->spinLaunchStar();
+        dScKoopatlas_c::m_instance->mpMap->spinLaunchStar();
     } else {
         mIsForceAngle = false;
         player->setTargetRotY(direction);
@@ -1220,7 +1222,7 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
     mMoveSpeed = (sc_pathActions[id].mForceSpeed >= 0.0f) ? sc_pathActions[id].mForceSpeed : 3.0f;
     mMoveSpeed = path->mPathSpeed * mMoveSpeed * 1.3f;
 
-    if (path->mAction == dKPPath_s::SWIM) {
+    if (path->mAction == dKpPath_s::SWIM) {
         // Penguin
         if (player->mpPyMdlMng->mpMdl->mPlayerMode == 3) {
             mMoveSpeed *= 1.1f;
@@ -1240,7 +1242,7 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
 
     if (sc_pathActions[id].mLoopSoundID != SE_NULL) {
         player->mHasSound = true;
-        player->mSoundName = sc_pathActions[id].mLoopSoundID;
+        player->mSoundID = sc_pathActions[id].mLoopSoundID;
     } else {
         player->mHasSound = false;
     }
@@ -1250,7 +1252,7 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
         mEf::createEffect(sc_pathActions[id].mpStartEffectName, 0, &player->mPos, nullptr, &player->mScale);
     }
 
-    if (path->mAction == dKPPath_s::SWIM) {
+    if (path->mAction == dKpPath_s::SWIM) {
         if (player->mpPyMdlMng->mpMdl->mPlayerMode == 5) {
             if (!mIsSwimAnm) {
                 if (mDoPlayPenguinSlide) {
@@ -1261,7 +1263,7 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
             player->mHasSound = false;
         } else if (player->mpPyMdlMng->mpMdl->mPlayerMode == 3) {
             player->mHasSound = true;
-            player->mSoundName = SE_PLY_FOOTNOTE_WATER;
+            player->mSoundID = SE_PLY_FOOTNOTE_WATER;
         }
 
         mIsSwimAnm = true;
@@ -1292,10 +1294,10 @@ void dKpPathManager_c::startMovementTo(dKPPath_s *path) {
 }
 
 void dKpPathManager_c::moveThroughPath(int pressedDir) {
-    dKPNode_s *from = mReverseOnPath ? mpCurrentPath->mpEndPoint : mpCurrentPath->mpStartPoint;
-    dKPNode_s* to = mReverseOnPath ? mpCurrentPath->mpStartPoint : mpCurrentPath->mpEndPoint;
+    dKpNode_s *from = mReverseOnPath ? mpCurrentPath->mpEndPoint : mpCurrentPath->mpStartPoint;
+    dKpNode_s* to = mReverseOnPath ? mpCurrentPath->mpStartPoint : mpCurrentPath->mpEndPoint;
 
-    daKPPlayer_c *player = daKPPlayer_c::m_instance;
+    daKpPlayer_c *player = daKpPlayer_c::m_instance;
 
     if (pressedDir >= 0 && !mIsEnterNode) {
         int deltaX = to->mPosX - from->mPosX;
@@ -1318,22 +1320,22 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
 
         if (reverseDir == pressedDir) {
             // Check if we're playing an anim we won't reverse on
-            static const dKPPath_s::ActionType_e sc_noReverseList[] = {
-                dKPPath_s::JUMP,
-                dKPPath_s::JUMP_SAND,
-                dKPPath_s::JUMP_SNOW,
-                dKPPath_s::JUMP_WATER,
-                dKPPath_s::PIPE,
-                dKPPath_s::DOOR,
-                dKPPath_s::ENTER_CAVE_UP,
-                dKPPath_s::INVISIBLE,
-                dKPPath_s::RESERVED_18,
-                dKPPath_s::ACTION_NUM,
+            static const dKpPath_s::ActionType_e sc_noReverseList[] = {
+                dKpPath_s::JUMP,
+                dKpPath_s::JUMP_SAND,
+                dKpPath_s::JUMP_SNOW,
+                dKpPath_s::JUMP_WATER,
+                dKpPath_s::PIPE,
+                dKpPath_s::DOOR,
+                dKpPath_s::ENTER_CAVE_UP,
+                dKpPath_s::INVISIBLE,
+                dKpPath_s::RESERVED_18,
+                dKpPath_s::ACTION_NUM,
             };
 
             bool allowReverse = true;
             for (int i = 0;; i++) {
-                if (sc_noReverseList[i] == dKPPath_s::ACTION_NUM) {
+                if (sc_noReverseList[i] == dKpPath_s::ACTION_NUM) {
                     break;
                 }
                 if (sc_noReverseList[i] == mpCurrentPath->mAction) {
@@ -1441,14 +1443,14 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
     player->mPos.y -= movePos.y;
 
     // Show HUD course info if we're about to reach a level
-    if (to->mNodeType == dKPNode_s::LEVEL && !mIsEnterNode) {
+    if (to->mNodeType == dKpNode_s::LEVEL && !mIsEnterNode) {
         Vec remainDist = {to->mPosX - player->mPos.x, to->mPosY + player->mPos.y, 0.0f};
         float distToEnd = PSVECMag(&remainDist);
         //PathMngReport("Distance: %f; To:%d,%d; Player:%f,%f; Diff:%f,%f\n", distToEnd, to->mPosX, to->mPosY, player->mPos.x, player->mPos.y, remainDist.x, remainDist.y);
 
-        if (distToEnd < 64.0f && (dKPHud_c::m_instance != nullptr)) {
+        if (distToEnd < 64.0f && (dKpHud_c::m_instance != nullptr)) {
             mIsEnterNode = true;
-            dKPHud_c::m_instance->enteredNode(to);
+            dKpHud_c::m_instance->enterNode(to);
         }
     }
 
@@ -1472,10 +1474,10 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
         // Should we stop here?
         bool doStop = false;
 
-        if (to->mNodeType == dKPNode_s::LEVEL) {
+        if (to->mNodeType == dKpNode_s::LEVEL) {
             // Always stop on levels
             doStop = true;
-        } else if (to->mNodeType == dKPNode_s::CHANGE || to->mNodeType == dKPNode_s::WORLD_CHANGE || to->mNodeType == dKPNode_s::PASS_THROUGH) {
+        } else if (to->mNodeType == dKpNode_s::CHANGE || to->mNodeType == dKpNode_s::WORLD_CHANGE || to->mNodeType == dKpNode_s::PASS_THROUGH) {
             // If there's only one exit here, then stop even though
             // it's a passthrough node
             doStop = (to->getOpenExitNum() == 1);
@@ -1491,11 +1493,11 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
         }
 
         // Set the world info
-        if (to->mNodeType == dKPNode_s::WORLD_CHANGE) {
+        if (to->mNodeType == dKpNode_s::WORLD_CHANGE) {
             dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
 
             PathMngReport("Activating world change %d\n", to->mWorldID);
-            const dKPWorldDef_s *world = dScKoopatlas_c::m_instance->mMapData.findWorldDef(to->mWorldID);
+            const dKpWorldDef_s *world = dScKoopatlas_c::m_instance->mMapData.findWorldDef(to->mWorldID);
             if (world) {
                 bool visiblyChange = true;
                 /*if (strncmp(save->newerWorldName, world->name, 32) == 0) {
@@ -1538,27 +1540,27 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
 
                 if (wzHack) {
                     //save->hudHintH = 2000;
-                    dKPHud_c::m_instance->hideFooter();
+                    dKpHud_c::m_instance->offFooterDisp();
                 } else {
                     if (visiblyChange) {
-                        dKPHud_c::m_instance->showFooter();
+                        dKpHud_c::m_instance->onFooterDisp();
                     }
                 }
 
-                dKPMusic_c::m_instance->start(world->mTrackID);
+                dKpMusic_c::m_instance->startBgmTrack(world->mTrackID);
             } else if (to->mWorldID == 0) {
                 PathMngReport("No world\n");
                 //save->currentMapMusic = 0;
-                dKPMusic_c::m_instance->start(0);
+                dKpMusic_c::m_instance->startBgmTrack(0);
                 //save->newerWorldName[0] = 0;
-                dKPHud_c::m_instance->hideFooter();
+                dKpHud_c::m_instance->offFooterDisp();
             } else {
                 PathMngReport("Not found!\n");
             }
         }
 
         // Go to another map
-        if (to->mNodeType == dKPNode_s::CHANGE) {
+        if (to->mNodeType == dKpNode_s::CHANGE) {
             mIsPassThrough = true;
             mDisableInput = true;
 
@@ -1602,8 +1604,8 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
 
             dMj2dGame_c *save = dSaveMng_c::m_instance->getSaveGame(-1);
             save->setCurrentPathNode(mpPathLayer->findNodeID(to));
-            if (!mIsEnterNode && (dKPHud_c::m_instance != nullptr)) {
-                dKPHud_c::m_instance->enteredNode();
+            if (!mIsEnterNode && (dKpHud_c::m_instance != nullptr)) {
+                dKpHud_c::m_instance->enterNode();
             }
 
             // Should we continue here? (Requested by Jason)
@@ -1619,7 +1621,7 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
                     // TODO: maybe remove this? got to see how it looks
                     // (the above is an og koopatlas comment, but do make the smoothrotation and static rotation a togglable behavior)
                     static u16 directions[] = {-0x4000,0x4000,-0x7FFF,0};
-                    daKPPlayer_c::m_instance->setTargetRotY(directions[pressedDir]);
+                    daKpPlayer_c::m_instance->setTargetRotY(directions[pressedDir]);
                 }
             }
 
@@ -1638,7 +1640,7 @@ void dKpPathManager_c::moveThroughPath(int pressedDir) {
     mDoPlayPenguinSlide = true;
 }
 
-void dKpPathManager_c::copyWorldDefToSave(const dKPWorldDef_s *world) {
+void dKpPathManager_c::copyWorldDefToSave(const dKpWorldDef_s *world) {
     OSReport("copyWorldDefToSave(): TODO!!!\n");
     /*SaveBlock *save = GetSaveFile()->GetBlock(-1);
 
@@ -1668,14 +1670,14 @@ void dKpPathManager_c::activatePoint() {
         return;
     }
 
-    if (mpCurrentNode->mNodeType == dKPNode_s::LEVEL) {
+    if (mpCurrentNode->mNodeType == dKpNode_s::LEVEL) {
         int world = mpCurrentNode->mLevelNum[0] - 1;
         int level = mpCurrentNode->mLevelNum[1] - 1;
 
         // Shop override
         if (level == 98) {
             //dWMShop_c::instance->show(w);
-            dScKoopatlas_c::m_instance->openMenu(1, -1);
+            dScKoopatlas_c::m_instance->onMenuDisp(dKpMusic_c::MODE_PAUSE, SE_NULL);
             dScKoopatlas_c::m_instance->mStateMgr.changeState(dScKoopatlas_c::m_instance->StateID_ShopWait);
             return;
         }
@@ -1712,14 +1714,14 @@ void dKpPathManager_c::activatePoint() {
             voiceHandle.SetPitch(1.5f);
         }
 
-        daKPPlayer_c::m_instance->startAnimation(dPyMdlBase_c::COURSE_IN, 1.2, 10.0, 0.0);
-        daKPPlayer_c::m_instance->setTargetRotY(0);
+        daKpPlayer_c::m_instance->startAnimation(dPyMdlBase_c::COURSE_IN, 1.2, 10.0, 0.0);
+        daKpPlayer_c::m_instance->setTargetRotY(0);
 
         mIsCourseIn = true;
         mCourseInDelay = 40;
         mEnteredLevel = dLevelInfo_c::m_instance.getEntryFromSlotID(world, level);
 
-        dKPMusic_c::m_instance->stop();
+        dKpMusic_c::m_instance->stopAllSound();
     }
 }
 
@@ -1745,7 +1747,7 @@ void dKpPathManager_c::unlockAllPaths(char type) {
 
     // Unlocks current path, regular and secret
     if (type == 2) {
-        if (mpCurrentNode->mNodeType == dKPNode_s::LEVEL) {
+        if (mpCurrentNode->mNodeType == dKpNode_s::LEVEL) {
             int w = mpCurrentNode->mLevelNum[0] - 1;
             int l = mpCurrentNode->mLevelNum[1] - 1;
 
@@ -1756,7 +1758,7 @@ void dKpPathManager_c::unlockAllPaths(char type) {
 
     // Can't change node models - the price we pay for not using anims
     // for (int i = 0; i < mpPathLayer->nodeCount; i++) {
-    // 	dKPNode_s *node = mpPathLayer->nodes[i];
+    // 	dKpNode_s *node = mpPathLayer->nodes[i];
     // 	node->setupNodeExtra();
     // }
 
@@ -1764,7 +1766,7 @@ void dKpPathManager_c::unlockAllPaths(char type) {
 }
 
 void dKpPathManager_c::findCameraBoundsForUnlockedPaths() {
-    dKPMapData_c *data = &dScKoopatlas_c::m_instance->mMapData;
+    dKpMapData_c *data = &dScKoopatlas_c::m_instance->mMapData;
 
     mCamMinX = 10000;
     mCamMaxX = 0;
@@ -1780,24 +1782,24 @@ void dKpPathManager_c::findCameraBoundsForUnlockedPaths() {
     PathMngReport("Worked out camera bounds: %d,%d to %d,%d with validity %d\n", mCamMinX, mCamMinY, mCamMaxX, mCamMaxY, mIsCamBoundsValid);
 }
 
-void dKpPathManager_c::visitNodeForCamCheck(dKPNode_s *node) {
+void dKpPathManager_c::visitNodeForCamCheck(dKpNode_s *node) {
     mNodeStackLen++;
     node->mIsSetInPanBounds = true;
 
     for (int i = 0; i < 4; i++) {
-        dKPPath_s *path = node->mpExits[i];
+        dKpPath_s *path = node->mpExits[i];
         if (path == nullptr) {
             continue;
         }
 
         PathMngReport("Checking path %p, whose status is %d\n", path, path->mIsOpen);
-        if (path->mIsOpen == dKPPath_s::NEWLY_OPEN) {
+        if (path->mIsOpen == dKpPath_s::NEWLY_OPEN) {
             addNodeToCameraBounds(path->mpStartPoint);
             addNodeToCameraBounds(path->mpEndPoint);
         }
 
         // Should we follow the other node?
-        dKPNode_s *otherNode = path->getOtherNodeTo(node);
+        dKpNode_s *otherNode = path->getOtherNodeTo(node);
 
         // If this node is already in the camera bounds, skip it
         if (otherNode->mIsSetInPanBounds) {
@@ -1823,7 +1825,7 @@ void dKpPathManager_c::visitNodeForCamCheck(dKPNode_s *node) {
     mNodeStackLen--;
 }
 
-void dKpPathManager_c::addNodeToCameraBounds(dKPNode_s *node) {
+void dKpPathManager_c::addNodeToCameraBounds(dKpNode_s *node) {
     mIsCamBoundsValid = true;
     PathMngReport("Adding node to camera bounds: %p at %d,%d\n", node, node->mPosX, node->mPosY);
 

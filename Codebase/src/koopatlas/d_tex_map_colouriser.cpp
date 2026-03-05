@@ -6,73 +6,79 @@
 #include <game/mLib/m_heap.hpp>
 #include <lib/egg/core/eggHeap.h>
 
-dTexMapColouriser_c::dTexMapColouriser_c() {
-    mTexMap = nullptr;
-    mSourceImage = nullptr;
-    mNewImage = nullptr;
-}
+inline static float hslValue(float n1, float n2, float hue) {
+    if (hue > 6.0f) {
+        hue -= 6.0f;
+    } else if (hue < 0.0f) {
+        hue += 6.0f;
+    }
 
-dTexMapColouriser_c::~dTexMapColouriser_c() {
-    resetAndClear();
-}
-
-void dTexMapColouriser_c::resetAndClear() {
-    mTexMap = nullptr;
-    if (mNewImage) {
-        EGG::Heap::free(mNewImage, nullptr);
-        mNewImage = nullptr;
+    if (hue < 1.0f) {
+        return n1 + (n2 - n1) * hue;
+    } else if (hue < 3.0f) {
+        return n2;
+    } else if (hue < 4.0f) {
+        return n1 + (n2 - n1) * (4.0f - hue);
+    } else {
+        return n1;
     }
 }
 
-void dTexMapColouriser_c::setTexMap(nw4r::lyt::TexMap *tm) {
+dTexMapColouriser_c::dTexMapColouriser_c() {
+    mpTexMap = nullptr;
+    mpSourceImg = nullptr;
+    mpNewImg = nullptr;
+}
+
+dTexMapColouriser_c::~dTexMapColouriser_c() {
+    destroy();
+}
+
+void dTexMapColouriser_c::destroy() {
+    mpTexMap = nullptr;
+    if (mpNewImg) {
+        EGG::Heap::free(mpNewImg, nullptr);
+        mpNewImg = nullptr;
+    }
+}
+
+void dTexMapColouriser_c::initTexMap(nw4r::lyt::TexMap *tm) {
     MapReport("Colourising TexMap: %p (w:%d h:%d)\n", tm, tm->GetWidth(), tm->GetHeight());
-    if (mTexMap)
-        resetAndClear();
+    if (mpTexMap != nullptr) {
+        destroy();
+    }
 
     if (tm->GetTexelFormat() != GX_TF_IA8) {
         MapReport("Warning: Trying to colourise image whose format is %d not GX_TF_IA8\n", tm->GetTexelFormat());
     }
 
-    mTexMap = tm;
-    mSourceImage = (u16*)tm->GetImage();
-    mNewImage = (u16*)EGG::Heap::alloc(tm->GetWidth() * tm->GetHeight() * 4, 0x20, mHeap::g_gameHeaps[2]);
-    tm->SetImage(mNewImage);
+    mpTexMap = tm;
+    mpSourceImg = (u16*)tm->GetImage();
+    mpNewImg = (u16*)EGG::Heap::alloc(tm->GetWidth() * tm->GetHeight() * 4, 0x20, mHeap::g_gameHeaps[2]);
+    tm->SetImage(mpNewImg);
     tm->SetTexelFormat(GX_TF_RGBA8);
 }
 
-void dTexMapColouriser_c::applyAlso(nw4r::lyt::TexMap *tm) {
-    if (!mTexMap) {
-        setTexMap(tm);
+void dTexMapColouriser_c::copyTexMap(nw4r::lyt::TexMap *tm) {
+    if (!mpTexMap) {
+        initTexMap(tm);
     } else {
-        tm->SetImage(mNewImage);
+        tm->SetImage(mpNewImg);
         tm->SetTexelFormat(GX_TF_RGBA8);
     }
 }
 
-inline static float hslValue(float n1, float n2, float hue) {
-    if (hue > 6.0f)
-        hue -= 6.0f;
-    else if (hue < 0.0f)
-        hue += 6.0f;
-
-    if (hue < 1.0f)
-        return n1 + (n2 - n1) * hue;
-    else if (hue < 3.0f)
-        return n2;
-    else if (hue < 4.0f)
-        return n1 + (n2 - n1) * (4.0f - hue);
-    else
-        return n1;
-}
-
-void dTexMapColouriser_c::colourise(int h, int s, int l) {
-    if (!mNewImage)
+void dTexMapColouriser_c::setColor(int h, int s, int l) {
+    if (!mpNewImg) {
         return;
+    }
 
-    int width = mTexMap->GetWidth(), height = mTexMap->GetHeight();
-    int texelW = width / 4, texelH = height / 4;
+    int width = mpTexMap->GetWidth(), height = mpTexMap->GetHeight();
+    int texelW = width / 4;
+    int texelH = height / 4;
 
-    u16 *source = mSourceImage, *dest = mNewImage;
+    u16 *source = mpSourceImg;
+    u16 *dest = mpNewImg;
 
     float hueParam = h / 360.0f;
     float satParam = s / 100.0f;
@@ -91,17 +97,17 @@ void dTexMapColouriser_c::colourise(int h, int s, int l) {
                     if (alpha < 250) {
                         r = g = b = intensity;
                     } else {
-                        // converting from GIMP's colourise code...
-                        // h and s are always the same
-                        // l is the only thing we need to touch:
-                        // we get the luminance from the source pixel
+                        // Converting from GIMP's colourise code...
+                        // H and S are always the same
+                        // L is the only thing we need to touch:
+                        // We get the luminance from the source pixel
                         // (which, conveniently, is the intensity)
                         // manipulate it using the passed l and then
                         // convert the whole thing to RGB
 
                         float lum = intensity / 255.0f;
 
-                        // manipulate it
+                        // Manipulate it
                         if (l > 0) {
                             lum = lum * (1.0f - lumParam);
                             lum += (1.0f - (1.0f - lumParam));
@@ -109,8 +115,7 @@ void dTexMapColouriser_c::colourise(int h, int s, int l) {
                             lum = lum * (lumParam + 1.0f);
                         }
 
-                        // make it RGB
-
+                        // Make it RGB
                         if (s == 0) {
                             r = g = b = lum*255.0f;
                         } else {
@@ -128,7 +133,7 @@ void dTexMapColouriser_c::colourise(int h, int s, int l) {
                         }
                     }
 
-                    // now write it
+                    // Now write it
                     dest[0] = (alpha<<8)|r;
                     dest[16] = (g<<8)|b;
 

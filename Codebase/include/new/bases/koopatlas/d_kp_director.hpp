@@ -10,9 +10,9 @@
 #include <game/bases/d_wm_effect_proc.hpp>
 #include <game/mLib/m_allocator.hpp>
 
-class dKPDirector_c : public dBase_c {
+class dKpDirector_c : public dBase_c {
 public:
-    dKPDirector_c() { }
+    dKpDirector_c() { }
 
     int create();
     int doDelete();

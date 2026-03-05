@@ -1,6 +1,8 @@
 #pragma once
 #include <new/game_config.h>
 
+// See '/constants/koopatlas_constants.h' for additional customization
+
 #ifdef KOOPATLAS_DEV_ENABLED
 
 // DEBUGGING MODULES
@@ -10,7 +12,7 @@
     //#define KP_PATH_MNG_REPORT      // Prints occasional info from the Path Manager
     //#define KP_UNLOCK_DEBUG         // Prints debugging info about path unlock conditions
 
-    #define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths -- TODO: Remove me(?)
+    //#define KP_PATH_QUICK_UNLOCK    // Debug tool to quickly unlock paths -- TODO: Remove me(?)
     //#define KP_CHK_SET_DEFAULT_NODE // When loading into a map, hold -, +, and 1 to be set on path node 0
 
     #define KP_MUSIC_REPORT         // Prints music related info to the log
