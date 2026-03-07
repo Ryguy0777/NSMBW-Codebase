@@ -1,0 +1,215 @@
+#include <kamek.h>
+#include <new/game_config.h>
+
+#ifdef LEVEL_INFO_UTILS_ENABLED
+
+#include <constants/game_constants.h>
+#include <game/bases/d_message.hpp>
+#include <game/bases/d_game_com.hpp>
+#include <game/bases/d_info.hpp>
+#include <game/bases/d_s_world_map_static.hpp>
+#include <game/bases/d_wm_lib.hpp>
+#include <new/constants/message_list.h>
+#include <new/level_info_utils.hpp>
+
+#define WORLD_INVALID 10
+#define STAGE_INVALID 42
+
+// Returns the name of a world (from BMG_CATEGORY_KP_WORLD_NAMES)
+// This uses the messageID from WorldInfo, not the world number
+const wchar_t *getKoopatlasWorldName(int idx) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_KP_WORLD_NAMES, idx) != nullptr) {
+        return dMessage_c::getMsg(BMG_CATEGORY_KP_WORLD_NAMES, idx);
+    } else {
+        return L"NO WORLD NAME";
+    }
+}
+
+// Returns the name of a world
+// Use the internal world number instead of the in-game one
+const wchar_t *getWorldName(int world) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NAMES, world+1) != nullptr) {
+        return dMessage_c::getMsg(BMG_CATEGORY_WORLD_NAMES, world+1);
+    } else {
+        return L"NO WORLD NAME";
+    }
+}
+
+// Returns the name of a level, uses the display IDs
+const wchar_t *getLevelName(int dispWorld, int dispLevel) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES+dispWorld, dispLevel) != nullptr) {
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES+dispWorld, dispLevel);
+    } else {
+        return L"NO LEVEL NAME";
+    }
+}
+
+const wchar_t *getWorldNumber(int world) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_WORLD_NUMBERS, world) != nullptr) {
+        return dMessage_c::getMsg(BMG_CATEGORY_WORLD_NUMBERS, world);
+    } else {
+        return L"?";
+    }
+}
+
+// Returns a level number or icon
+const wchar_t *getLevelNumber(int levelNumIdx) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_ICONS, levelNumIdx) != nullptr) {
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_ICONS, levelNumIdx);
+    } else {
+        return L"?";
+    }
+}
+
+ulong getLevelNumberIdx(u8 dispWorld, u8 dispLevel, u8 worldSlot, u8 levelSlot, bool doNotUseAnchor) {
+    dInfo_c::m_instance->mDisplayCourseWorld = dispWorld;
+    dInfo_c::m_instance->mDisplayCourseNum = dispLevel;
+
+    switch (dispLevel) {
+        case 21: // Ghost House
+            return 2;
+        case 22: // Tower
+        case 23:
+            return 3;
+        case 24: // Castle
+        case 25:
+            if (dispWorld == WORLD_8) {
+                return 5;
+            }
+            return 4;
+        case 26: // Toad Houses
+        case 27:
+        case 28:
+        case 29:
+        case 30:
+        case 31:
+        case 32:
+            if (dScWMap_c::IsCourseType(worldSlot, levelSlot, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_1UP)) {
+                return 6; // 1-up house
+            } else if (dScWMap_c::IsCourseType(worldSlot, levelSlot, dScWMap_c::COURSE_TYPE_KINOKO_HOUSE_STAR)) {
+                return 7; // Star house
+            } else {
+                return 8; // Red house
+            }
+        case 33: // Ambush
+        case 34:
+        case 35:
+            return 9;
+        case 36: // Cannon
+            return 0xA;
+        case 37: // Treasure Ship (unused)
+            return 0xB;
+        case 38: // Airship
+            if (dWmLib::isKoopaShipAnchor() && !doNotUseAnchor) {
+                return 0xC; // Anchor
+            }
+            return 0xB;
+        case 39: // Start point
+            if (dWmLib::isStartPointKinokoHouseStar()) {
+                return 7; // Star house
+            } else if (dWmLib::isStartPointKinokoHouseRed()) {
+                return 8; // Red house
+            } else if (dWmLib::isStartPointKinokoHouse1up()){
+                return 6; // 1-up house
+            } else {
+                return (dWmLib::getStartPointType()) ? 0xE : 0xF;
+            }
+        case 41: // Peach's Castle
+            return 0xD;
+        default: // Normal levels
+            return 1;
+    }
+}
+
+// Returns a combined "World X-X" identifier, used by Newer layouts
+const wchar_t *getCombinedLevelNumber(int levelNumIdx) {
+    EGG::MsgRes *msgRes = dMessage_c::getMesRes();
+    if (msgRes->getMsgEntry(BMG_CATEGORY_LEVEL_NAMES, levelNumIdx) != nullptr) {
+        return dMessage_c::getMsg(BMG_CATEGORY_LEVEL_NAMES, levelNumIdx);
+    } else {
+        return L"?-?";
+    }
+}
+
+// Replace the hardcoded level list
+kmBranchDefCpp(0x800B4F90, NULL, int, int worldNum, int levelNum) {
+    if (worldNum > WORLD_9) {
+        return STAGE_INVALID;
+    }
+
+    if (levelNum < 12) {
+        // Does our world exist?
+        dLevelInfo_c::entry_s *liWorld = dLevelInfo_c::m_instance.getEntryFromSlotID(worldNum, 38);
+        if (liWorld) {
+            // If so, grab the corresponding section
+            dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(worldNum);
+
+            // Create list of empty slots
+            int levelNumList[12];
+            for (int i = 0; i < 12; i++) {
+                levelNumList[i] = STAGE_INVALID;
+            }
+
+            // Fill the list with our level slots
+            int index = 0;
+            for (int i = 0; i < section->mLevelCount; i++) {
+                dLevelInfo_c::entry_s *level = &section->mLevels[i];
+                if (level->mFlag & dLevelInfo_c::FLAG_VALID_LEVEL) {
+                    levelNumList[index] = level->mLevelSlot;
+                    index++;
+                }
+            }
+            // Return the level number
+            return levelNumList[levelNum];
+        } else {
+            return STAGE_INVALID;
+        }
+    }
+    return STAGE_INVALID;
+}
+
+// MultiCourseSelect helpers
+int getWorldForButton(int page, int button) {
+    dLevelInfo_c::entry_s *liWorld = dLevelInfo_c::m_instance.getEntryFromSlotID(page, 38);
+    if (liWorld) {
+        dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(page);
+
+        for (int i = 0; i < section->mLevelCount; i++) {
+            dLevelInfo_c::entry_s *level = &section->mLevels[i];
+            if (level->mLevelSlot == dGameCom::getCourseNum(page, button)) {
+                return level->mWorldSlot;
+            }
+        }
+    }
+    return WORLD_INVALID;
+}
+
+int getRecommendedWorld(bool getFreeMode, int button) {
+    int secIndex = dLevelInfo_c::m_instance.sectionCount() - (getFreeMode + 1);
+    dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(secIndex);
+
+    if (section) {
+        dLevelInfo_c::entry_s *level = &section->mLevels[button+2];
+        return (section->mLevelCount <= button+2) ? WORLD_INVALID : level->mWorldSlot;
+    } else {
+        return WORLD_INVALID; // Invalid world ID
+    }
+}
+
+int getRecommendedLevel(bool getFreeMode, int button) {
+    int secIndex = dLevelInfo_c::m_instance.sectionCount() - (getFreeMode + 1);
+    dLevelInfo_c::section_s *section = dLevelInfo_c::m_instance.getSection(secIndex);
+
+    if (section) {
+        dLevelInfo_c::entry_s *level = &section->mLevels[button+2];
+        return (section->mLevelCount <= button+2) ? STAGE_INVALID : level->mLevelSlot;
+    } else {
+        return STAGE_INVALID; // Invalid course ID
+    }
+}
+#endif

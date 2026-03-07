@@ -1,21 +1,20 @@
 # CW/Ninja
-/Codebase/cw/
-Codebase/build.ninja
-Codebase/ninja.exe
+/PropelParts/cw/
+PropelParts/build.ninja
+PropelParts/ninja.exe
 
 # Build directories
-/Codebase/_build
-/Codebase/_map
-/Codebase/bin
+/PropelParts/_build
+/PropelParts/_map
+/PropelParts/bin
 
 # Loader objects
-Codebase/loader/kamekLoader.o
-Codebase/loader/nsmbw.o
-Codebase/loader/loader.xml
-Codebase/loader/loader.bin
-/Codebase/_map
-/Codebase/cw/
+PropelParts/loader/kamekLoader.o
+PropelParts/loader/nsmbw.o
+PropelParts/loader/loader.xml
+PropelParts/loader/loader.bin
 
+# Tool build directories
 /Tools/**/.vs
 /Tools/**/bin
 /Tools/**/obj
@@ -25,3 +24,4 @@ Codebase/loader/loader.bin
 __pycache__/
 
 /.vscode
+.DS_Store

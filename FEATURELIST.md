@@ -1,8 +1,8 @@
 # Feature List
-The codebase is still currently in development, so don't expect everything to be present or finished.
+PropelParts is still currently in development, so don't expect everything to be present or finished.
 
 ## Toggling Features
-Inside of the `/Codebase/include/new/game_config.h` file, you will find several `#define`s that control whether certain features are active or not. Remove/un-comment them to disable/enable them, respectively.
+Inside of the `/PropelParts/include/propelparts/game_config.h` file, you will find several `#define`s that control whether certain features are active or not. Remove/un-comment them to disable/enable them, respectively.
 
 ### Completed Features
 These features are complete and should be fully functional.
@@ -12,10 +12,10 @@ These features are complete and should be fully functional.
 * EN_GAKE_NOKO restoration
 * EN_LAND_BARREL fixes
 * Scalable + rotatable arrow signboards
-* Message Block sprite
-* Shyguy sprite
-* Nipper Plant sprite
-* Actor Spawner sprites
+* Message Block actor
+* Shyguy actor
+* Nipper Plant actor
+* Actor Spawner actors
 * All bugfixes from NSMBW-Updated
 * Fixes to allow the NVIDIA Shield release to run on Dolphin Emulator
 * Actor creation logging
@@ -26,13 +26,13 @@ These features are complete and should be fully functional.
 * 2-Castle Maze removal (togglable)
 * Always skip cutscenes with plus
 * NewerSMBW styled pregame (togglable)
-* WATER_LIFT sprite restoration
-* EN_MAME_KURIBO sprite restoration + fixes
-* MANTA_MGR2 sprite restoration + fixes
+* WATER_LIFT actor restoration
+* EN_MAME_KURIBO actor restoration + fixes
+* MANTA_MGR2 actor restoration + fixes
 * Fixed fence climbing koopas giving unlimited coins when frozen
 * Player 1 Can Change Character (togglable)
-* SMW Flip Block sprite
-* Bomb Bro sprite
+* SMW Flip Block actor
+* Bomb Bro actor
 * Removal of stage timer + live counter (togglable)
 * Rotation controlled coin hacks
 * NewerSMBW styled file select (togglable)
@@ -48,21 +48,22 @@ These features are complete and should be fully functional.
 * Custom Tileset Animation
 * Custom Tileset Grass/Flowers
 * Custom Tileset Profile overrides
-* ON/OFF Block sprite
+* ON/OFF Block actor
+* Luigi Physics (toggleable)
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
 * Classic + GameCube controller support (togglable)
-* Splunkin sprite
-* Jack O' Goomba sprite
-* Goombrat sprite
-* Magic Platform sprite
+* Splunkin actor
+* Jack O' Goomba actor
+* Goombrat actor
+* Magic Platform actor
 * Debug menu scene (togglable)
+* Switch Blocks (togglable)
+* Shyguy variant actors
 
 ### Planned Features
 These features are planned to be implemented in the future.
-* Switch Blocks (togglable)
-* Shyguy variant sprites
 * 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss sprite
 * Triple ? Block sprite
@@ -70,7 +71,7 @@ These features are planned to be implemented in the future.
 * More Characters (togglable)
 * Region Free utilites (togglable)
 * Dynamic Discord RPC (togglable)
-* Player Script Event sprite
-* Angry Sun/Moon sprite
+* Player Script Event actor
+* Angry Sun/Moon actor
 * Replay recorder
 * Load worldmap scripts from external file 

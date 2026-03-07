@@ -9,7 +9,7 @@ This version is designed to load and save various formats from within the tilese
 - Profile overrides
 
 These formats are stored within the tileset to allow for maximum portability, they can be dropped into
-any Codebase project and will work without needing to edit global AnimTiles/RandTiles binaries like
+any PropelParts project and will work without needing to edit global AnimTiles/RandTiles binaries like
 in Newer and NSMBWer+ based projects.
 
 For more information on using these new formats, see the help articles in `/Other/Tutorials/`, or the `Tutorials`
@@ -44,4 +44,4 @@ Once done, everything is setup to run Puzzle Next.
 ### Build
 Simply execute the binary included in your download.
 
-[tilesettools]: https://github.com/Ryguy0777/NSMBW-Codebase/tree/main/Tools/tilesettools
+[tilesettools]: https://github.com/Ryguy0777/PropelParts/tree/main/Tools/tilesettools

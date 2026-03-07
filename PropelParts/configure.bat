@@ -1,0 +1,1 @@
+py -3 configure.py --kamek %KAMEK_PATH% --cw ../PropelParts/cw/

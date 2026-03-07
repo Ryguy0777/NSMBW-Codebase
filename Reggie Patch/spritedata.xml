@@ -30,14 +30,13 @@
 
   <sprite id="42" name="!-Switch" notes="This switch is similar to the ? Switch, but it has the additional effect of changing all outlined Red Blocks (Pa0 Object 57) into solid Red Blocks. This also applies to any outlined Red Blocks spawned by a Tile God. This additional functionality only occurs when using the Timed Event mode, but a Target Event is not required to make use of this functionality.">
     <dependency notes="Activates 'Red Block Outline A/B' tiles."/>
-	<list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
-	  <entry value="0">Red Switch (White outlines)</entry>
-	  <entry value="1">Red Switch (No outlines)</entry>
-	  <entry value="2">Yellow Switch</entry>
-	  <entry value="3">Red Switch</entry>
-	  <entry value="4">Green Switch</entry>
-	  <entry value="5">Blue Switch</entry>
-	</list>
+    <list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
+      <entry value="0">Red Switch (White outlines)</entry>
+      <entry value="1">Yellow Switch</entry>
+      <entry value="2">Red Switch</entry>
+      <entry value="3">Green Switch</entry>
+      <entry value="4">Blue Switch</entry>
+    </list>
     <checkbox nybble="12.4" title="Upside-Down" comment="When enabled, the switch will be facing downwards." comment2="Upside-Down switches cannot be set to fall."/>
     <checkbox nybble="5.4" title="Falls" comment="When enabled, the switch will be movable by environmental factors, such as dropping down when bricks below it are destroyed, or moving along platforms." comment2="Conveyor belts cannot move Switches, even when [Falls] is set."/>
     <value nybble="3-4" title="Target Event ID" comment="This event will be modified when the switch is pressed. An event is not required if simply using the switch to activate Red Blocks." idtype="Target Event"/>
@@ -60,14 +59,13 @@
 
   <sprite id="45" name="Brick Block !-Switch" notes="This switch, stored inside a Brick Block, is similar to the ? Switch, but it has the additional effect of causing all outlined Red Blocks (Pa0 Object 57) into solid Red Blocks. This also applies to any outlined Red Blocks spawned by a Tile God. This additional functionality only occurs when using the Timed Event mode, but a Target Event is not required to make use of this functionality." advancednotes="A brick block containing or supporting a switch cannot be destroyed by sprites that destroy normal brick and solid blocks as long as the switch exists.">
     <dependency notes="Add Tileset / Puzzle dependency information relating to custom tileset settings."/>
-	<list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
-	  <entry value="0">Red Switch (White outlines)</entry>
-	  <entry value="1">Red Switch (No outlines)</entry>
-	  <entry value="2">Yellow Switch</entry>
-	  <entry value="3">Red Switch</entry>
-	  <entry value="4">Green Switch</entry>
-	  <entry value="5">Blue Switch</entry>
-	</list>
+    <list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
+      <entry value="0">Red Switch (White outlines)</entry>
+      <entry value="1">Yellow Switch</entry>
+      <entry value="2">Red Switch</entry>
+      <entry value="3">Green Switch</entry>
+      <entry value="4">Blue Switch</entry>
+    </list>
     <checkbox nybble="12.4" title="Upside-Down" comment="When enabled, the switch will forcibly spawn on the underside of the block facing down, even if struck from below." comment2="Brick-Block switches cannot be set to fall, even if Upside-Down is unchecked."/>
     <value nybble="3-4" title="Target Event ID" comment="This event will be modified when the switch is pressed. An event is not required if simply using the switch to activate Red Blocks." idtype="Target Event"/>
     <dualbox nybble="9.4" title1="Activates Target Event" title2="Deactivates Target Event" comment="This determines how the Target Event is modified." comment2="The Target Event will be modified to the opposite state when the Timed effect expires." requirednybble="7.4" requiredval="0"/> <!-- Appears if Timed Event is set -->
@@ -462,16 +460,55 @@
     <checkbox nybble="8.4" title="Starts Behind Fence" comment="When enabled, the Shy Guy will be placed on the reverse side of the Chainlink Fence."/>
   </sprite> <!-- #503: Climbing Shy Guy -->
   
-  <sprite id="504" name="Large Shy Guy" notes="">
+  <sprite id="504" name="Large Shy Guy" notes="A large Shy guy that walks around. Will be stunned when jumped on, though it cannot be killed by normal jumps.">
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
   </sprite> <!-- #504: Large Shy Guy -->
   
-  <sprite id="505" name="Giant Shy Guy" notes="">
+  <sprite id="505" name="Giant Shy Guy" notes="A giant Shy guy that walks around. Can not be damaged by jumps, but other methods like fireballs will kill it.">
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
   </sprite> <!-- #505: Giant Shy Guy -->
   
-  <sprite id="506" name="Mega Shy Guy" notes="">
+  <sprite id="506" name="Mega Shy Guy" notes="A mega Shy gy that walks around. Will kill otther actors it comes into contact with, and can only die from contact with a star.">
+    <list nybble="6" title="Color">
+      <entry value="0">Red</entry>
+      <entry value="1">Pink</entry>
+      <entry value="2">Yellow</entry>
+      <entry value="3">Blue</entry>
+      <entry value="4">Green</entry>
+      <entry value="5">Black</entry>
+      <entry value="6">White</entry>
+      <entry value="7">Light Blue</entry>
+      <entry value="8">Orange</entry>
+      <entry value="9">Purple</entry>
+    </list>
+    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
   </sprite> <!-- #506: Mega Shy Guy -->
   
-  <sprite id="507" name="Path Controlled Magic Platform" notes="A path controlled platform made out of tile objects.">
+  <sprite id="507" name="Magic Platform - Path Controlled" notes="A path controlled platform made out of tile objects.">
     <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks."/>
     <value nybble="3-4" title="Triggering Event ID" comment="When this Event is activated, the Magic Platform will move as specified. Deactivating the event will not deactivate the Magic Platform; it will continue until it has reached the final Path Node." idtype="Triggering Event"/>
     <value nybble="1-2" title="Target Event ID" comment="When the Magic Platform reaches its final path Node, this Event ID is activated." idtype="Target Event"/>
@@ -490,12 +527,12 @@
       <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #507: Path Controlled Magic Platform -->
+  </sprite> <!-- #507: Magic Platform - Path Controlled -->
 
-  <sprite id="508" name="Rotation Controlled Magic Platform" notes="A rotation controlled platform made out of tile objects.">
+  <sprite id="508" name="Magic Platform - Rotation Controlled" notes="A rotation controlled platform made out of tile objects.">
     <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A rotation controller is required for the Magic Platform.">
-      <required sprite="96"/>
-      <required sprite="149" />
+      <suggested sprite="96"/>
+      <suggested sprite="149" />
     </dependency>
     <value nybble="5-6" title="Rotation ID" comment="This pairs the Magic Platform to a matching rotation controller." comment2="If the Magic Platform cannot find the rotation controller, it will not spawn." idtype="Rotation"/>
     <checkbox nybble="9.1" title="Ignores Rotation Controller Angle" comment="This determines if the Magic Platform should always face upwards rather than tilting with the rotation controller."/>
@@ -511,7 +548,7 @@
       <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #508: Rotation Controlled Magic Platform -->
+  </sprite> <!-- #508: Magic Platform - Rotation Controlled -->
   
   <sprite id="509" name="Effect Spawner" phonebook="Effects" notes="Enables event-driven spawning of Sound Effects and Graphic Effects.&lt;br&gt;&lt;u&gt;Limitations&lt;/u&gt;&lt;br&gt; 1) Do not use 1000 or more sounds/effects per area.&lt;br&gt; 2) A single Event ID can only trigger one sound/effect per area&lt;br&gt; 3) Only a specific number of sounds/effects can be active at the same time&lt;br&gt; 4) Only two BRSTMs can be active at the same time." advancednotes="If spawning a Sound Effect, the placement of the sprite is crucial, as the sound is emitted from that position. If the player is ~3 screens away from the sprite, then they won't hear it anymore. Placing multiple sprites with the same settings at different locations is possible.">
     <value nybble="3-4" title="Triggering Event ID" comment="When this Event ID is activated, the associated sound or affect will be played." idtype="Triggering Event"/>
@@ -669,4 +706,37 @@
       <entry value="3">Blue</entry>
     </list>
   </sprite>
+
+  <sprite id="529" name="Switch Palace Switch" notes="A large !-Switch that will activate a Switch Palace and display a message upon being pressed.">
+    <list nybble="12.0-12.3" title="Switch Type" comment="This determines the color of switch and what block outlines will be actived.">
+      <entry value="0">World 3 Switch</entry>
+      <entry value="1">Yellow Switch</entry>
+      <entry value="2">Red Switch</entry>
+      <entry value="3">Green Switch</entry>
+      <entry value="4">Blue Switch</entry>
+    </list>
+    <checkbox nybble="12.4" title="Upside-Down" comment="When enabled, the switch will be facing downwards." comment2="Upside-Down switches cannot be set to fall."/>
+    <checkbox nybble="5.4" title="Falls" comment="When enabled, the switch will be movable by environmental factors, such as dropping down when bricks below it are destroyed, or moving along platforms." comment2="Conveyor belts cannot move Switches, even when [Falls] is set."/>
+    <checkbox nybble="5.2" title="Loads at Midway" comment="When enabled, the switch will only appear if the level has been loaded from a Midway point."/>
+    <value nybble="1-2" title="Triggering Event ID" comment="This switch will not be visible if a Triggering Event is defined unless that event is activated." idtype="Triggering Event"/>
+  </sprite> <!-- #529: Switch Palace Switch -->
+  
+  <sprite id="530" name="Magic Platform - Two Way Line" notes="A Two Way Line controlled platform made out of tile objects.">
+    <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A Two Way Line controller is required for the Magic Platform.">
+      <required sprite="260"/>
+    </dependency>
+    <value nybble="5-6" title="Two Way Line ID" comment="This pairs the platform to a matching Two Way Line movement controller." comment2="If set to 0, the Magic Platform will be stationary." idtype="Two Way Line"/>
+    <value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
+    <list nybble="10" title="Collision" comment="This determines the type of collision.">
+      <entry value="0">Solid Block</entry>
+      <entry value="1">Permeable (Solid on Top)</entry>
+      <entry value="2">Fully Permeable</entry>
+      <entry value="3">Collision Line on Right Side</entry>
+      <entry value="4">Collision Line on Left Side</entry>
+      <entry value="5">Collision Line on Top Edge</entry>
+      <entry value="6">Collision Line on Bottom Edge</entry>
+      <entry value="7">Circular</entry>
+    </list>
+    <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
+  </sprite> <!-- #530: Magic Platform - Two Way Line -->
 </sprites>
