@@ -468,8 +468,6 @@ void dKpMap_c::MapRender_c::renderDoodadLayer(dKpLayer_s *layer) {
         float effectiveAngle = doodad->mAngle;
         int effectiveAlpha = layer->mAlpha;
 
-        //OSReport("[%d] mAnimNum:%02d\n", i, doodad->mAnimNum);
-
         // Animate it
         if (doodad->mAnimNum > 0) {
             for (int j = 0; j < doodad->mAnimNum; j++) {
@@ -510,6 +508,7 @@ void dKpMap_c::MapRender_c::renderDoodadLayer(dKpLayer_s *layer) {
                                     anim->mBaseTick = cCounter_c::m_gameFrame;
                                     break;
                             }
+
                             elapsedAdjusted = elapsed;
                         } else {
                             elapsedAdjusted = anim->mFrameCount;
@@ -570,7 +569,7 @@ void dKpMap_c::MapRender_c::renderDoodadLayer(dKpLayer_s *layer) {
                     }
                 } else {
                     // Doodad has an initial delay
-                    anim->mInitialDelay -= 1;
+                    anim->mInitialDelay--;
                 }
             }
         }

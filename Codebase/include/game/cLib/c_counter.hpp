@@ -3,8 +3,10 @@
 /// @file
 
 /// @ingroup clib
-namespace cCounter_c {
+class cCounter_c {
+public:
+    static void clear();
+
     static u32 m_gameFrame;
     static u32 m_exeFrame;
-
-} // namespace cCounter_c
+};
