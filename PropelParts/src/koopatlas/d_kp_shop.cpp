@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <constants/sound_list.h>
@@ -10,10 +10,10 @@
 #include <game/bases/d_res_mng.hpp>
 #include <game/mLib/m_pad.h>
 #include <lib/MSL/math.h>
-#include <new/bases/koopatlas/d_kp_shop.hpp>
-#include <new/constants/koopatlas_constants.h>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/koopatlas/d_kp_shop.hpp>
+#include <propelparts/constants/koopatlas_constants.h>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 STATE_DEFINE(daKpShop_c, Hidden);
 STATE_DEFINE(daKpShop_c, ShowWait);

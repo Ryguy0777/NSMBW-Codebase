@@ -1,8 +1,8 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_kp_path_manager.hpp>
+#include <propelparts/bases/koopatlas/d_kp_path_manager.hpp>
 
 #include <constants/sound_list.h>
 #include <game/bases/d_a_player_manager.hpp>
@@ -13,11 +13,11 @@
 #include <game/bases/d_s_restart_crsin.hpp>
 #include <game/bases/d_s_stage.hpp>
 #include <lib/MSL/math.h>
-#include <new/bases/koopatlas/d_a_kp_player.hpp>
-#include <new/bases/koopatlas/d_kp_camera.hpp>
-#include <new/bases/koopatlas/d_kp_map.hpp>
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
-#include <new/constants/koopatlas_constants.h>
+#include <propelparts/bases/koopatlas/d_a_kp_player.hpp>
+#include <propelparts/bases/koopatlas/d_kp_camera.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map.hpp>
+#include <propelparts/bases/koopatlas/d_s_koopatlas.hpp>
+#include <propelparts/constants/koopatlas_constants.h>
 
 dKpPathManager_c::CompletionData_s dKpPathManager_c::s_cmpData;
 u8 *dKpPathManager_c::sp_openPathData;
@@ -1192,7 +1192,7 @@ void dKpPathManager_c::startMovementTo(dKpPath_s *path) {
     float updateRate = sc_pathActions[id].mAnmUpdRate;
 
     if (whichAnim == dPyMdlBase_c::SWIM_WAIT) {
-        int playerMode = player->mpPyMdlMng->mpMdl->mPlayerMode;
+        int playerMode = player->mpPyMdlMng->mpMdl->mPowerupID;
 
         if (playerMode == POWERUP_MINI_MUSHROOM) {
             whichAnim = dPyMdlBase_c::B_DASH;
@@ -1224,10 +1224,10 @@ void dKpPathManager_c::startMovementTo(dKpPath_s *path) {
 
     if (path->mAction == dKpPath_s::SWIM) {
         // Penguin
-        if (player->mpPyMdlMng->mpMdl->mPlayerMode == 3) {
+        if (player->mpPyMdlMng->mpMdl->mPowerupID == 3) {
             mMoveSpeed *= 1.1f;
         // Mini
-        } else if (player->mpPyMdlMng->mpMdl->mPlayerMode == 5) {
+        } else if (player->mpPyMdlMng->mpMdl->mPowerupID == 5) {
             mMoveSpeed *= 2.0f;
         }
     }
@@ -1253,7 +1253,7 @@ void dKpPathManager_c::startMovementTo(dKpPath_s *path) {
     }
 
     if (path->mAction == dKpPath_s::SWIM) {
-        if (player->mpPyMdlMng->mpMdl->mPlayerMode == 5) {
+        if (player->mpPyMdlMng->mpMdl->mPowerupID == 5) {
             if (!mIsSwimAnm) {
                 if (mDoPlayPenguinSlide) {
                     SndAudioMgr::sInstance->startSystemSe(SE_VOC_MA_PNGN_SLIDE, 1);
@@ -1261,7 +1261,7 @@ void dKpPathManager_c::startMovementTo(dKpPath_s *path) {
                 SndAudioMgr::sInstance->startSound(&mPenguinSlideHandle, SE_EMY_PENGUIN_SLIDE, 1);
             }
             player->mHasSound = false;
-        } else if (player->mpPyMdlMng->mpMdl->mPlayerMode == 3) {
+        } else if (player->mpPyMdlMng->mpMdl->mPowerupID == 3) {
             player->mHasSound = true;
             player->mSoundID = SE_PLY_FOOTNOTE_WATER;
         }
@@ -1281,7 +1281,7 @@ void dKpPathManager_c::startMovementTo(dKpPath_s *path) {
             if (sc_pathActions[id].mStartSoundID == SE_PLY_JUMP) {
                 nw4r::snd::SoundHandle jumpHandle;
                 SndAudioMgr::sInstance->startSound(&jumpHandle, SE_VOC_MA_CS_JUMP, 1);
-                jumpHandle.SetPitch((player->mpPyMdlMng->mpMdl->mPlayerMode == 3) ? 1.5f : 1.0f);
+                jumpHandle.SetPitch((player->mpPyMdlMng->mpMdl->mPowerupID == 3) ? 1.5f : 1.0f);
             }
         }
     }

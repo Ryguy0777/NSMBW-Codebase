@@ -1,14 +1,14 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_STAR_COINS_MENU)
 #include <constants/sound_list.h>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_game_key.hpp>
 #include <game/bases/d_save_mng.hpp>
-#include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/koopatlas/d_kp_star_coin_menu.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 const int dKpStarCoinMenu_c::sc_secretCode[] = {
     WPAD_BUTTON_RIGHT,

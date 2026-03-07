@@ -1,15 +1,15 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #include <game/bases/d_dvd.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/mLib/m_3d/mdl.hpp>
 #include <game/mLib/m_mtx.hpp>
 
-#include <new/bases/koopatlas/d_kp_node_mdl.hpp>
+#include <propelparts/bases/koopatlas/d_kp_node_mdl.hpp>
 
 // Forward declarations
 struct dKpLayer_s;

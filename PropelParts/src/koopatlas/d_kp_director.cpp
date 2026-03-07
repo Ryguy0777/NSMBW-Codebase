@@ -1,8 +1,8 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_kp_director.hpp>
+#include <propelparts/bases/koopatlas/d_kp_director.hpp>
 #include <game/bases/d_info.hpp>
 
 dKpDirector_c *dKpDirector_c_classInit() {

@@ -6,14 +6,14 @@
 #include <constants/message_list.h>
 #include <game/bases/d_pregame_lyt.hpp>
 #include <game/bases/d_info.hpp>
-#include <new/constants/message_list.h>
+#include <propelparts/constants/message_list.h>
 #include <game/mLib/m_heap.hpp>
 #include <lib/revolution/TPL.h>
 #include <propelparts/constants/message_list.h>
 #include <lib/egg/core/eggMsgRes.h>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>
-#include <new/level_info_utils.hpp>
+#include <propelparts/level_info_utils.hpp>
 
 #ifdef NEWER_PREGAME
 #include <game/mLib/m_heap.hpp>

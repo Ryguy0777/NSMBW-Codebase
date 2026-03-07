@@ -1,5 +1,5 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <game/bases/d_base_actor.hpp>
@@ -9,8 +9,8 @@
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
 
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
-#include <new/bases/koopatlas/d_tex_map_colouriser.hpp>
+#include <propelparts/bases/koopatlas/d_s_koopatlas.hpp>
+#include <propelparts/bases/koopatlas/d_tex_map_colouriser.hpp>
 
 class daKpShop_c : public dBaseActor_c {
 public:

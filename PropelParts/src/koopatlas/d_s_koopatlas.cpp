@@ -1,14 +1,14 @@
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <kamek.h>
 
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
-#include <new/bases/koopatlas/d_kp_music.hpp>
-#include <new/bases/koopatlas/d_kp_camera.hpp>
-#include <new/bases/koopatlas/d_a_kp_player.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/koopatlas/d_s_koopatlas.hpp>
+#include <propelparts/bases/koopatlas/d_kp_music.hpp>
+#include <propelparts/bases/koopatlas/d_kp_camera.hpp>
+#include <propelparts/bases/koopatlas/d_a_kp_player.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 #include <constants/sound_list.h>
 #include <game/bases/d_3d.hpp>

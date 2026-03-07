@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // Hide star coin outline if the coin is visible
 kmBranchDefAsm(0x80010E9C, 0x80010EA0) {
@@ -13,10 +13,10 @@ kmBranchDefAsm(0x80010E9C, 0x80010EA0) {
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 #include <game/bases/d_CourseSelectGuide.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
-#include <new/bases/koopatlas/d_kp_hud.hpp>
+#include <propelparts/bases/koopatlas/d_kp_hud.hpp>
 
 kmBranchDefCpp(0x80010B50, NULL, void, dCourseSelectGuide_c *this_, dWmLib::PointType_e type) {
     dLevelInfoUtils_c::CourseSelectLevelInfo(this_, type);

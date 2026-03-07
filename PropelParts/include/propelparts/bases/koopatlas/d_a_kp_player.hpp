@@ -1,10 +1,11 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
+#include <propelparts/bases/koopatlas/d_s_koopatlas.hpp>
+#include <game/bases/d_player_model_manager.hpp>
 #include <game/bases/d_player_model.hpp>
 
 class daKpPlayer_c : public dBaseActor_c {

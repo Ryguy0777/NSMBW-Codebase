@@ -1,14 +1,14 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_multi_course_select.hpp>
 #include <constants/message_list.h>
-#include <new/bases/d_level_info.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/d_level_info.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 // Allow Recommended Courses page to hide buttons
 kmWriteNop(0x8079DEEC);

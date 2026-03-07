@@ -1,8 +1,8 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map_data.hpp>
 
 #include <game/mLib/m_heap.hpp>
 #include <nw4r/g3d/res/g3d_resfile.h>

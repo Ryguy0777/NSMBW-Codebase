@@ -1,10 +1,10 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 #include <game/bases/d_world_select_guide.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 kmBranchDefCpp(0x8092B7B0, NULL, void, dWorldSelectGuide_c *this_) {
     if (this_->mCurrentWorld == this_->mNewWorld)

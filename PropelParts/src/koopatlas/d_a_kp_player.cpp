@@ -1,8 +1,8 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_a_kp_player.hpp>
+#include <propelparts/bases/koopatlas/d_a_kp_player.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <game/mLib/m_heap.hpp>
 #include <game/sLib/s_math.hpp>
@@ -111,7 +111,7 @@ void daKpPlayer_c::createMdl() {
 
     dPlayerMdl_c *pyMdl = (dPlayerMdl_c*)mpPyMdlMng->mpMdl;
     pyMdl->mSceneType = 1;
-    pyMdl->mPlayerType = mPlyType;
+    pyMdl->mCharaID = mPlyType;
 
     pyMdl->mAllocator.createFrmHeap(0xC000, mHeap::g_gameHeaps[0], 0, 0x20, mHeap::OPT_0);
     pyMdl->createModel();

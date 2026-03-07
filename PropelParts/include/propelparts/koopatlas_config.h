@@ -1,5 +1,5 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 // See '/constants/koopatlas_constants.h' for additional customization
 

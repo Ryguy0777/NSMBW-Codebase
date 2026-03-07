@@ -1,8 +1,8 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_ENABLED
-#include <new/bases/d_level_info.hpp>
+#include <propelparts/bases/d_level_info.hpp>
 #include <game/bases/d_dvd.hpp>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_save_mng.hpp>

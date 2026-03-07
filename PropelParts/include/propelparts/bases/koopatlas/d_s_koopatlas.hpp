@@ -1,8 +1,8 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #include <game/bases/d_continue.hpp>
 #include <game/bases/d_course_select_menu.hpp>
@@ -18,16 +18,16 @@
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
 #include <game/snd/snd_audio_mgr.hpp>
 
-#include <new/bases/d_level_info.hpp>
-#include <new/bases/d_world_info.hpp>
-#include <new/bases/koopatlas/d_kp_common.hpp>
-#include <new/bases/koopatlas/d_kp_director.hpp>
-#include <new/bases/koopatlas/d_kp_hud.hpp>
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
-#include <new/bases/koopatlas/d_kp_music.hpp>
-#include <new/bases/koopatlas/d_kp_path_manager.hpp>
-#include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
-#include <new/bases/koopatlas/d_kp_shop.hpp>
+#include <propelparts/bases/d_level_info.hpp>
+#include <propelparts/bases/d_world_info.hpp>
+#include <propelparts/bases/koopatlas/d_kp_common.hpp>
+#include <propelparts/bases/koopatlas/d_kp_director.hpp>
+#include <propelparts/bases/koopatlas/d_kp_hud.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map_data.hpp>
+#include <propelparts/bases/koopatlas/d_kp_music.hpp>
+#include <propelparts/bases/koopatlas/d_kp_path_manager.hpp>
+#include <propelparts/bases/koopatlas/d_kp_star_coin_menu.hpp>
+#include <propelparts/bases/koopatlas/d_kp_shop.hpp>
 
 // Forward declarations
 class daKpPlayer_c;

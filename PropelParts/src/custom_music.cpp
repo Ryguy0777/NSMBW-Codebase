@@ -1,6 +1,6 @@
 #include <types.h>
 #include <constants/sound_list.h>
-#include <new/constants/newer_track_list.h>
+#include <propelparts/constants/newer_track_list.h>
 #include <game/bases/d_dvd.hpp>
 #include <game/snd/snd_audio_mgr.hpp>
 

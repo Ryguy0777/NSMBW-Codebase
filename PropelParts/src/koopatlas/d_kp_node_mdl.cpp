@@ -1,13 +1,13 @@
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_save_mng.hpp>
-#include <new/bases/koopatlas/d_kp_node_mdl.hpp>
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
+#include <propelparts/bases/koopatlas/d_kp_node_mdl.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map_data.hpp>
 
 // Base class
 void dKpNodeMdl_c::createMdl() { }

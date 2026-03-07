@@ -1,8 +1,8 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #ifdef KP_PATH_MNG_REPORT
 #define PathMngReport OSReport
@@ -17,8 +17,8 @@
 #endif
 
 #include <game/bases/d_mj2d_data.hpp>
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
-#include <new/bases/d_level_info.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map_data.hpp>
+#include <propelparts/bases/d_level_info.hpp>
 #include <nw4r/snd/snd_SoundHandle.h>
 
 class dKpPathManager_c {

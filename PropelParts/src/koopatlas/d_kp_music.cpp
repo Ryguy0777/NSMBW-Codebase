@@ -1,10 +1,10 @@
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
 
 #include <constants/sound_list.h>
 #include <game/snd/snd_audio_mgr.hpp>
-#include <new/bases/koopatlas/d_kp_music.hpp>
+#include <propelparts/bases/koopatlas/d_kp_music.hpp>
 #include <nw4r/db/exception.h>
 #include <revolution/DVD.h>
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_ENABLED
 #include <types.h>

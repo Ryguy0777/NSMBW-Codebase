@@ -1,12 +1,12 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_pausewindow.hpp>
-#include <new/bases/d_level_info.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/d_level_info.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 #ifdef NEWER_PAUSE_MENU
 const char *newerPauseMenuName = "pauseMenu_newer/pauseMenu.arc";

@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <game/bases/d_screen.hpp>
@@ -8,8 +8,8 @@
 #include <game/mLib/m_video.hpp>
 #include <lib/revolution/VI.h>
 
-#include <new/bases/koopatlas/d_kp_camera.hpp>
-#include <new/bases/koopatlas/d_a_kp_player.hpp>
+#include <propelparts/bases/koopatlas/d_kp_camera.hpp>
+#include <propelparts/bases/koopatlas/d_a_kp_player.hpp>
 
 #ifdef KP_CAMERA_REPORT
 #define CameraReport OSReport

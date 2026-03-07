@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 
@@ -9,8 +9,8 @@
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_s_world_map_static.hpp>
 #include <game/bases/d_wm_lib.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 #define WORLD_INVALID 10
 #define STAGE_INVALID 42

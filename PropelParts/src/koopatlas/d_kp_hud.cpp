@@ -1,5 +1,5 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
 #include <constants/message_list.h>
@@ -8,10 +8,10 @@
 #include <game/bases/d_game_key.hpp>
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_save_mng.hpp>
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
-#include <new/bases/koopatlas/d_kp_hud.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/koopatlas/d_s_koopatlas.hpp>
+#include <propelparts/bases/koopatlas/d_kp_hud.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 dKpHud_c *dKpHud_c::m_instance = nullptr;
 

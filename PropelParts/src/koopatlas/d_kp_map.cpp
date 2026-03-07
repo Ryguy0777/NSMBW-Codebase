@@ -1,13 +1,13 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
 #include <game/bases/d_res_mng.hpp>
 #include <game/cLib/c_counter.hpp>
 #include <lib/MSL/math.h>
 
-#include <new/bases/koopatlas/d_kp_map.hpp>
-#include <new/bases/koopatlas/d_kp_camera.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map.hpp>
+#include <propelparts/bases/koopatlas/d_kp_camera.hpp>
 
 const int dKpMap_c::sc_effectGroups[] = {1,0,4,5,7,8,9,10,11,12,13,14};
 const int dKpMap_c::sc_effectPrios[] = {141,142,143,129,144,145,146,147,148,149,150,151};

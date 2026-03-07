@@ -1,8 +1,8 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/mLib/m_3d/mdl.hpp>

@@ -4,7 +4,7 @@
 #include <game/bases/d_lytbase.hpp>
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
-#include <lib/egg/eggEffect.hpp>
+#include <lib/egg/core/eggEffect.h>
 
 /// @unofficial
 class dStockItemShadow_c : public dBase_c {

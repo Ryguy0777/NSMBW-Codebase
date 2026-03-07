@@ -1,11 +1,11 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
-#include <new/bases/koopatlas/d_s_koopatlas.hpp>
-#include <new/constants/koopatlas_constants.h>
+#include <propelparts/bases/koopatlas/d_s_koopatlas.hpp>
+#include <propelparts/constants/koopatlas_constants.h>
 #include <lib/egg/gfxe/eggLookAtCamera.h>
 #include <lib/egg/gfxe/eggOrthoData.h>
 #include <lib/egg/gfxe/eggScreen.h>

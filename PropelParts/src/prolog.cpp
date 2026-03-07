@@ -1,11 +1,11 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 #include <revolution/OS/OSError.h>
-#include <new/lib/revolution/PAD.h>
-#include <new/bases/d_custom_controller.hpp>
-#include <new/bases/d_debug_config.hpp>
-#include <new/bases/d_level_info.hpp>
-#include <new/bases/d_world_info.hpp>
+#include <propelparts/lib/revolution/PAD.h>
+#include <propelparts/bases/d_custom_controller.hpp>
+#include <propelparts/bases/d_debug_config.hpp>
+#include <propelparts/bases/d_level_info.hpp>
+#include <propelparts/bases/d_world_info.hpp>
 
 // Prolog hook
 // This is the equivalent of the prolog.S file from NewerSMBW

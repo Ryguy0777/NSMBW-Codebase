@@ -1,11 +1,11 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_multi_course_select_contents.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 // Update button info
 kmBranchDefCpp(0x8079E0C8, 0x8079E178, void, dMultiCourseSelectContents_c *this_) {

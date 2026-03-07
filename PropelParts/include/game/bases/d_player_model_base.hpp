@@ -3,11 +3,76 @@
 #include <game/mLib/m_3d.hpp>
 #include <game/mLib/m_vec.hpp>
 #include <game/mLib/m_mtx.hpp>
+#include <game/mLib/m_allocator.hpp>
 
 class dAcPy_c;
 
 class dPyMdlBase_c {
 public:
+    enum TexAnmType_e { };
+
+    ///< @unofficial
+    enum ChrAnmType_e {
+        WAIT = 0,
+        WALK = 1,
+        RUN = 2,
+        B_DASH = 3,
+        B_DASH2 = 4,
+        JUMP = 5,
+        JUMP2 = 6,
+        JUMPED = 7,
+        _2JMP_C_1 = 8,
+        _2JMP_C_2 = 9,
+        _2JUMPED = 10,
+        ROLL_JUMP = 11,
+        _2JUMP2 = 12,
+        MAME_JUMP2 = 13,
+        TURN = 14,
+        TURNED = 15,
+        HIPSR = 16,
+        HIPAT = 17,
+        HIPED = 18,
+        HIP_TO_STOOP = 19,
+        STOOP = 20,
+        STOOP_START = 21,
+        SLIP = 22,
+        SWIM_WAIT = 0x24,
+        TREE_CLIMB = 0x2D,
+        MONKEY_START = 0x2F,
+        MONKEY_WAIT_R = 0x30,
+        MONKEY_WAIT_L = 0x31,
+        MONKEY_R_TO_L = 0x32,
+        MONKEY_L_TO_R = 0x33,
+        PEA_PLANT = 0x38,
+        GOAL_PUTON_CAP = 0x5A,
+        GOAL_PUTON_CAP2 = 0x5C,
+        STAR_ROLL = 0x75,
+        SJUMPED = 0x78,
+        P_SLIP = 0x8B,
+        DM_NOTICE = 0xA5,
+        DM_NOTI_WAIT = 0xA6,
+        DM_SURP_WAIT = 0xA8,
+        WAIT_SELECT = 0xA9,
+        COURSE_IN = 0xAA,
+        DEMO_TALK = 0xAB,
+        BUSY_WAIT = 0xAC,
+        ENDING_WAIT = 0xAF,
+        COIN_COMP = 0xB0,
+    };
+
+    // @unofficial
+    struct PyAnmData_s {
+        const char *mAnmName;
+        const char *mRideAnmName;
+        const char *mYoshiAnmName;
+        const char *mPenguinAnmName;
+        m3d::playMode_e mPlayMode;
+        float m_14;
+        float m_18;
+        TexAnmType_e mTexAnmType;
+        u32 mAnmFlags;
+    };
+
     dPyMdlBase_c(u8 index);
     virtual ~dPyMdlBase_c();
 
@@ -69,7 +134,7 @@ public:
 
     u32 get151CheckVal() { return 2; }
 
-    mAllocator_c mAllocator;
+    mHeapAllocator_c mAllocator;
     dAcPy_c *mpOwner;
     dPyMdlBase_c *mpSpinLiftParentMdl;
     m3d::anmChr_c mAnm;
@@ -89,7 +154,8 @@ public:
     u32 mFlags2;
     u8 mPad8[0x14];
     u32 mVisibilityFlags;
-    u8 mPad9[0x7c];
+    u32 mSceneType;
+    u8 mPad9[0x78];
     s16 m_1fc;
     s16 m_1fe;
     s16 m_200;
@@ -98,4 +164,5 @@ public:
 
     static const float scWaterCrouchAnmSpeed;
     static const float scFireShootFrame;
+    static PyAnmData_s scPyAnmData[177];
 };

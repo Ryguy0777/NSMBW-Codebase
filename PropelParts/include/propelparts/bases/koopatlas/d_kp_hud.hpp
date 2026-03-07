@@ -1,19 +1,19 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #include <game/bases/d_base.hpp>
 #include <game/bases/d_lytbase.hpp>
 #include <game/mLib/m_effect.hpp>
 
-#include <new/bases/koopatlas/d_kp_common.hpp>
-#include <new/bases/d_world_info.hpp>
-#include <new/bases/koopatlas/d_tex_map_colouriser.hpp>
+#include <propelparts/bases/koopatlas/d_kp_common.hpp>
+#include <propelparts/bases/d_world_info.hpp>
+#include <propelparts/bases/koopatlas/d_tex_map_colouriser.hpp>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/bases/koopatlas/d_kp_map_data.hpp>
+#include <propelparts/bases/koopatlas/d_kp_map_data.hpp>
 #endif
 
 class dKpHud_c : public dBase_c {

@@ -1,5 +1,5 @@
-#include <new/game_config.h>
-#include <new/bases/d_world_info.hpp>
+#include <propelparts/game_config.h>
+#include <propelparts/bases/d_world_info.hpp>
 #include <game/bases/d_dvd.hpp>
 
 dDvd::loader_c s_worldInfoLoader;

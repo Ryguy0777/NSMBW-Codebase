@@ -1,5 +1,5 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_MAP_HUD)
 #include <lib/nw4r/lyt/lyt_texMap.h>

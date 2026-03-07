@@ -1,6 +1,6 @@
 #include <kamek.h>
 
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 #include <game/bases/d_course_select_manager.hpp>
 
 // Use regular save behavior
@@ -10,8 +10,8 @@ kmWriteNop(0x8092FD08);
 
 // Override retail layouts with Newer equivalents
 #if defined(NEWER_STAR_COINS_MENU) || defined(NEWER_MAP_HUD)
-#include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
-#include <new/bases/koopatlas/d_kp_hud.hpp>
+#include <propelparts/bases/koopatlas/d_kp_star_coin_menu.hpp>
+#include <propelparts/bases/koopatlas/d_kp_hud.hpp>
 
 // Create new layouts (SCM replaces COLLECTION_COIN, so it doesn't need to be created manually)
 kmBranchDefCpp(0x80926E50, 0x80926E54, dCourseSelectManager_c *, u16 profID, fBase_c *wm, ulong param, u8 group) {

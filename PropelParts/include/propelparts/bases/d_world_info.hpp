@@ -1,5 +1,5 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #include <revolution/GX/GXTypes.h>
 

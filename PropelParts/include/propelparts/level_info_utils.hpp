@@ -1,5 +1,5 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 #include <game/bases/d_wm_lib.hpp>
 
 class Pausewindow_c;
@@ -12,7 +12,7 @@ public:
 };
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
-#include <new/bases/d_level_info.hpp>
+#include <propelparts/bases/d_level_info.hpp>
 
 extern bool disableMessageScaling;
 

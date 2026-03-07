@@ -1,16 +1,16 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #if defined(KOOPATLAS_DEV_ENABLED) || defined(NEWER_STAR_COINS_MENU)
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
 #include <game/bases/d_base.hpp>
 #include <game/bases/d_lytbase.hpp>
 #include <game/sLib/s_State.hpp>
 #include <game/sLib/s_StateMethodUsr_FI.hpp>
 #include <game/snd/snd_audio_mgr.hpp>
-#include <new/bases/d_world_info.hpp>
-#include <new/bases/koopatlas/d_kp_common.hpp>
+#include <propelparts/bases/d_world_info.hpp>
+#include <propelparts/bases/koopatlas/d_kp_common.hpp>
 
 class dKpStarCoinMenu_c : public dBase_c {
 public:

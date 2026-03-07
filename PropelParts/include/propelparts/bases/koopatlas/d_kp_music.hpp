@@ -1,10 +1,10 @@
 #pragma once
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef KOOPATLAS_DEV_ENABLED
-#include <new/koopatlas_config.h>
+#include <propelparts/koopatlas_config.h>
 
-#include <new/custom_music.hpp>
+#include <propelparts/custom_music.hpp>
 #include <game/bases/d_dvd.hpp>
 #include <nw4r/snd.h>
 

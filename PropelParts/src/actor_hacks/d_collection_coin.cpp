@@ -1,11 +1,11 @@
 #include <kamek.h>
-#include <new/game_config.h>
+#include <propelparts/game_config.h>
 
 #ifdef LEVEL_INFO_UTILS_ENABLED
 #include <game/bases/d_collection_coin.hpp>
-#include <new/bases/d_level_info.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/d_level_info.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 // World name (while menu is stationary)
 kmBranchDefCpp(0x80774B60, NULL, void, dCollectionCoin_c *this_) {

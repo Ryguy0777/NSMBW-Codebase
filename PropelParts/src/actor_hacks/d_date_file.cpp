@@ -16,10 +16,10 @@ kmWriteNop(0x8077dd2c);
 #include <game/bases/d_date_file.hpp>
 #include <game/bases/d_save_mng.hpp>
 #include <game/bases/d_game_com.hpp>
-#include <new/bases/d_level_info.hpp>
-#include <new/bases/d_world_info.hpp>
-#include <new/constants/message_list.h>
-#include <new/level_info_utils.hpp>
+#include <propelparts/bases/d_level_info.hpp>
+#include <propelparts/bases/d_world_info.hpp>
+#include <propelparts/constants/message_list.h>
+#include <propelparts/level_info_utils.hpp>
 
 // Change layout name
 const char *newerDateFileName = "dateFile_newer/dateFile.arc";
