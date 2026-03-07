@@ -1676,7 +1676,7 @@ void dKpPathManager_c::activatePoint() {
 
         // Shop override
         if (level == 98) {
-            //dWMShop_c::instance->show(w);
+            dScKoopatlas_c::m_instance->mpShop->dispMenu(world);
             dScKoopatlas_c::m_instance->onMenuDisp(dKpMusic_c::MODE_PAUSE, SE_NULL);
             dScKoopatlas_c::m_instance->mStateMgr.changeState(dScKoopatlas_c::m_instance->StateID_ShopWait);
             return;

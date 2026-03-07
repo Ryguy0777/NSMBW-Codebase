@@ -35,9 +35,13 @@ public:
         u8 mPad[0x92];
     };
 
+    void Cancel(int);
+
     d2d::ResAccMultLoader_c mLytLoader;
     Layout_c mCursors[5];
 
     bool mHasLayoutLoaded;
     u8 mPad[3];
+
+    static dSelectCursor_c *m_instance;
 };

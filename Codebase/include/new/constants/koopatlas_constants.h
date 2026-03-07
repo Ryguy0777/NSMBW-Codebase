@@ -15,6 +15,8 @@
 
 #define PATH_OPEN_ALPHA 255 ///< Alpha of a path when unlocked
 
+#define SHOP_ITEM_COUNT 12
+
 // World/Course IDs are NOT zero-indexed here
 
 #define YOSHI_HOUSE_WORLD 1

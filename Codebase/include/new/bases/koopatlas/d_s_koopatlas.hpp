@@ -27,13 +27,13 @@
 #include <new/bases/koopatlas/d_kp_music.hpp>
 #include <new/bases/koopatlas/d_kp_path_manager.hpp>
 #include <new/bases/koopatlas/d_kp_star_coin_menu.hpp>
-// #include "koopatlas/shop.h"
+#include <new/bases/koopatlas/d_kp_shop.hpp>
 
 // Forward declarations
 class daKpPlayer_c;
 class dKpMap_c;
 class dKpHud_c;
-class dWMShop_c;
+class daKpShop_c;
 class dKpStarCoinMenu_c;
 class dKpCamera_c;
 class dKpDirector_c;
@@ -131,7 +131,7 @@ public:
     daKpPlayer_c *mpPlayer;
     dKpHud_c *mpHud;
     dKpMap_c *mpMap;
-    dWMShop_c *mpShop;
+    daKpShop_c *mpShop;
     dKpStarCoinMenu_c *mpCoins;
     dKpDirector_c *mpDirector;
 

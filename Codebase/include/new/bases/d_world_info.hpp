@@ -46,6 +46,14 @@ public:
         return (const char*)((u32)mpData + mpData->mWorlds[worldNumber].mLightNameOffset);
     }
 
+    u8 getShopItem(int set, int index) {
+        return mpData->mShopDatas[set][index];
+    }
+
+    u8 *getShopSet(int index) {
+        return mpData->mShopDatas[index];
+    }
+
     static bool loadWorldInfo();
 
     static dWorldInfo_c m_instance;

@@ -40,4 +40,7 @@
     // Plays the "invalid choice" sound when trying to enter completed one-time courses
     #define KP_PLAY_INVALID_SND
 
+    // Displays the button cursors in the Shop
+    //#define KP_USE_SHOP_CURSORS
+
 #endif

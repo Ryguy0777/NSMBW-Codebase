@@ -94,8 +94,7 @@ const dScKoopatlas_c::ResItem_s dScKoopatlas_c::sc_arcRes[] = {
     {"WorldMap", "SI_star"},
 
     // Shop resources
-    {"Object", "lakitu"},
-    //{"Object", "I_kinoko_bundle"}, // TODO: Remove
+    {"Koopatlas", "lakitu"},
 
     // Others
     {"Koopatlas", "cobCourse"},
@@ -303,8 +302,8 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_CreateActors(void *ptr) {
     SpammyReport("Creating HUD\n");
     wm->mpHud = (dKpHud_c*)fBase_c::createChild(fProfile::KP_HUD, wm, 0, 0);
 
-    /*SpammyReport("creating SHOP\n");
-    wm->mpShop = (dWMShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);*/
+    SpammyReport("creating SHOP\n");
+    wm->mpShop = (daKpShop_c*)fBase_c::createChild(fProfile::WM_SHOP, wm, 0, 2);
 
     SpammyReport("Creating Star Coins Menu\n");
     wm->mpCoins = (dKpStarCoinMenu_c*)fBase_c::createChild(fProfile::KP_STAR_COIN_MENU, wm, 0, 0);
@@ -955,9 +954,9 @@ void dScKoopatlas_c::finalizeState_PowerupsWait() { }
 // StateID_ShopWait : Wait for the user to exit the Shop window
 void dScKoopatlas_c::initializeState_ShopWait() { }
 void dScKoopatlas_c::executeState_ShopWait() {
-    //if (!mpShop->visible) {
-    //    returnToNormalState();
-    //}
+    if (!mpShop->mIsVisible) {
+        offMenuDisp();
+    }
 }
 void dScKoopatlas_c::finalizeState_ShopWait() { }
 
