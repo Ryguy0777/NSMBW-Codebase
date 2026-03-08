@@ -328,7 +328,7 @@ private:
     bool mIsTilesetLoaded;
 
 public:
-    void **mpTilesetBuffers;
+    dDvd::loader_c *mpTilesetLoaders;
     dKpMapFile_s *mpData;
     dKpLayer_s *mpPathLayer;
 

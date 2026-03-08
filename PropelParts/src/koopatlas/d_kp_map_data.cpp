@@ -10,7 +10,7 @@
 
 dKpMapData_c::dKpMapData_c() {
     mpData = nullptr;
-    mpTilesetBuffers = nullptr;
+    mpTilesetLoaders = nullptr;
 
     mIsDataInited = false;
     mIsTilesetLoaded = false;
@@ -113,7 +113,7 @@ void dKpMapData_c::initMapData() {
 
                     if (node->mNodeType == dKpNode_s::CHANGE) {
                         fixRef(node->mpDestMap);
-                        OSReport("Initing Map Change: %x, %s\n", node->mpDestMap, node->mpDestMap);
+                        OSReport("Map Change Node @ 0x%X, %s\n", node->mpDestMap, node->mpDestMap);
                     }
                 }
                 break;
@@ -126,16 +126,7 @@ void dKpMapData_c::initMapData() {
 
     mIsDataInited = true;
 
-    // Next up, make all of the course node models
-
-    // Count how many we need...
-    int levelNum = 0;
-    for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
-        if (mpPathLayer->mpNodes[i]->mNodeType == dKpNode_s::LEVEL) {
-            levelNum++;
-        }
-    }
-
+    // Create node models
     for (int i = 0; i < mpPathLayer->mNodeNum; i++) {
         dKpNode_s *node = mpPathLayer->mpNodes[i];
 
@@ -151,77 +142,41 @@ bool dKpMapData_c::loadTilesets() {
         return true;
     }
 
-    if (mpTilesetBuffers == nullptr) {
-        mpTilesetBuffers = new void*[mpData->mTilesetNum];
+    if (mpTilesetLoaders == nullptr) {
+        mpTilesetLoaders = new dDvd::loader_c[mpData->mTilesetNum];
     }
 
-    bool result = false;
+    bool result = true;
 
     for (int i = 0; i < mpData->mTilesetNum; i++) {
         char *filename = ((char*)mpData) + (mpData->mpTilesets[i].dummy[3] - 0x10000000);
         EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
 
-        bool isCompressed = false;
-
-        int entrynum = DVDConvertPathToEntrynum(filename);
-        if (entrynum == -1) {
-            // Check for an LZ-compressed file
-            strcat(filename, ".LZ");
-            entrynum = DVDConvertPathToEntrynum(filename);
-            if (entrynum == -1) continue;
-
-            isCompressed = true;
-        }
-
-        // Load the file
-        DVDFileInfo dvdHandle;
-        bool fileLoaded = DVDFastOpen(entrynum, &dvdHandle);
-        if (!fileLoaded) continue;
-
-        // Allocate memory
-        mpTilesetBuffers[i] = EGG::Heap::alloc(dvdHandle.size, 0x20, heap);
-        if (mpTilesetBuffers[i] == nullptr) continue;
-
-        // Read file
-        s32 length = DVDReadPrio(&dvdHandle, mpTilesetBuffers[i], dvdHandle.size, 0, 2);
-        if (length > 0) {
-
-            // Gotta decompress this first
-            if (isCompressed) {
-                int size = CXGetUncompressedSize(mpTilesetBuffers[i]);
-                void *bufLZ = mpTilesetBuffers[i];
-
-                mpTilesetBuffers[i] = EGG::Heap::alloc(size, 0x20, heap);
-                CXUncompressLZ(bufLZ, mpTilesetBuffers[i]);
-
-                if (bufLZ != nullptr) {
-                    EGG::Heap::free(bufLZ, heap);
-                    bufLZ = nullptr;
-                }
-            }
-
-            mpData->mpTilesets[i].dummy[3] = (((u32)mpTilesetBuffers[i] & ~0xC0000000) >> 5);
-            result = true;
-        }
-
-        // Unload file
-        DVDClose(&dvdHandle);
+        result &= (mpTilesetLoaders[i].request(filename, 0, heap) != nullptr);
     }
 
     if (result) {
         mIsTilesetLoaded = true;
+
+        for (int i = 0; i < mpData->mTilesetNum; i++) {
+            mpData->mpTilesets[i].dummy[3] = (((u32)mpTilesetLoaders[i].GetBuffer() & ~0xC0000000) >> 5);
+        }
     }
+
     return mIsTilesetLoaded;
 }
 
 void dKpMapData_c::freeTilesets() {
-    for (int i = 0; i < mpData->mTilesetNum; i++) {
-        EGG::Heap *heap = (i < 9) ? mHeap::g_gameHeaps[2] : mHeap::g_archiveHeap;
-
-        if (mpTilesetBuffers[i] != nullptr) {
-            EGG::Heap::free(mpTilesetBuffers[i], heap);
-            mpTilesetBuffers[i] = nullptr;
+    if (mpTilesetLoaders != nullptr) {
+        for (int i = 0; i < mpData->mTilesetNum; i++) {
+            // Only free those which currently hold a resource
+            if (mpTilesetLoaders[i].GetBuffer() != nullptr) {
+                mpTilesetLoaders[i].freeResouce();
+            }
         }
+
+        delete[] mpTilesetLoaders;
+        mpTilesetLoaders = nullptr;
     }
 }
 
