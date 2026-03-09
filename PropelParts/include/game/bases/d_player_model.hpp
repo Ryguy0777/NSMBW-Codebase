@@ -62,18 +62,18 @@ public:
     virtual void setAnmBind();
     virtual void setPersonalRideAnm(int, nw4r::g3d::ResAnmChr *);
 
-    virtual void setTexAnmType();
+    virtual void setTexAnmType(TexAnmType_e);
     virtual void setPropelRollSpeed(s16);
     virtual s16 getPropelRollSpeed() const;
     virtual void setPropelRollAngle(s16);
-    virtual s16 getPropelRollAngle();
+    virtual s16 getPropelRollAngle() const;
     virtual void setPropelScale(float);
     virtual float *getLegLengthP(u8);
 
     ///< @unofficial
     virtual void setCurrentModel(MODEL_e model);
     virtual void callbackTimingA(nw4r::g3d::ChrAnmResult *, nw4r::g3d::ResNode);
-    virtual void getAimMotionShareScale();
+    virtual float getAimMotionShareScale();
     virtual void createPlayerModel();
 
     m3d::anmTexPat_c *getHeadTexAnm();
