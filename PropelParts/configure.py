@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# Copyright (c) 2022 RoadrunnerWMC
+# Copyright (c) 2022-2026 RoadrunnerWMC
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,16 +26,20 @@ import argparse
 import json
 from pathlib import Path
 import re
+import shutil
 import sys
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Iterator
 
 
-MWCCEPPC_NAME = 'mwcceppc.exe'
-MWASMEPPC_NAME = 'mwasmeppc.exe'
+KAMEK_EXE_NAME = 'Kamek.exe' if sys.platform == 'win32' else 'Kamek'
+KAMEK_H_NAME = 'kamek.h'
+MWCCEPPC_EXE_NAME = 'mwcceppc.exe'
+MWASMEPPC_EXE_NAME = 'mwasmeppc.exe'
 CW_WRAPPER_SCRIPT_NAME = 'cw_wrapper.py'
 
 DEFAULT_BUILD_DIR_NAME = '_build'
 DEFAULT_OUTPUT_DIR_NAME = 'bin'
+DEFAULT_OUTPUT_MAPS_DIR_NAME = '_maps'
 
 DYNAMIC_GAME_VERSION_NAME = 'DYNAMIC'
 GAME_VERSION_PREPROC_FLAG_DYNAMIC = 'IS_GAME_VERSION_DYNAMIC'
@@ -60,8 +64,9 @@ class Config:
     project_dir: Path
     build_dir: Path
     output_dir: Path
-    select_versions: Optional[List[str]]
-    extra_cflags: List[str]
+    output_maps_dir: Path | None
+    select_versions: list[str] | None
+    extra_cflags: list[str]
 
     @staticmethod
     def create_arg_parser(*args, **kwargs) -> None:
@@ -73,13 +78,18 @@ class Config:
             allow_abbrev=False,
             **kwargs)
 
+        if sys.platform == 'win32':
+            kamek_binary_desc = KAMEK_EXE_NAME
+        else:
+            kamek_binary_desc = 'the Kamek binary ("Kamek")'
+
         deps_group = parser.add_argument_group('Dependency locations')
-        deps_group.add_argument('--kamek', type=Path, required=True,
-            help='Kamek folder, containing the Kamek binary ("Kamek.exe" or "Kamek") and the k_stdlib directory')
+        deps_group.add_argument('--kamek', type=Path,
+            help=f'Kamek folder, containing {kamek_binary_desc} and the k_stdlib directory (default: {KAMEK_EXE_NAME} is searched for on PATH)')
         deps_group.add_argument('--kstdlib', type=Path,
-            help='Kamek\'s k_stdlib directory (default: <kamek dir>/k_stdlib)')
-        deps_group.add_argument('--cw', type=Path, metavar='CODEWARRIOR', required=True,
-            help=f'CodeWarrior folder, containing {MWCCEPPC_NAME}, {MWASMEPPC_NAME}, and license.dat, at minimum')
+            help="Kamek's k_stdlib directory (default: <kamek dir>/k_stdlib)")
+        deps_group.add_argument('--cw', type=Path, metavar='CODEWARRIOR',
+            help=f'CodeWarrior folder, containing {MWCCEPPC_EXE_NAME}, {MWASMEPPC_EXE_NAME}, and license.dat, at minimum (default: {MWCCEPPC_EXE_NAME} is searched for on PATH)')
 
         proj_group = parser.add_argument_group('Project location')
         proj_group.add_argument('--project-dir', type=Path, metavar='PROJECT',
@@ -94,28 +104,70 @@ class Config:
         out_group.add_argument('--output-dir', type=Path, metavar='OUT',
             help=f'output directory to put Kamekfiles in'
                  f' (default: <project dir>/{DEFAULT_OUTPUT_DIR_NAME})')
+        out_group.add_argument('--output-maps-dir', type=Path, metavar='MAPS',
+            help=f'directory to put text files with symbol names and offsets (Kamek\'s "-output-map" argument)'
+                 f' (to disable generating maps, set this to the empty string)'
+                 f' (default: <project dir>/{DEFAULT_OUTPUT_MAPS_DIR_NAME})')
 
         return parser
 
+    @staticmethod
+    def find_on_path(exe_name: str, arg_name: str) -> Path:
+        """
+        Search PATH for an executable. If not found, raise ValueError,
+        with an error message suggesting that the user can also use the
+        arg_name argument to specify a relevant path manually
+        """
+        result = shutil.which(exe_name)
+
+        if result is None:
+            raise ValueError(f'Unable to find {exe_name} (no {arg_name} argument provided, and not found on PATH)')
+        else:
+            return Path(result)
+
     @classmethod
-    def from_args(cls, args: argparse.Namespace, extra_args: List[str]) -> None:
+    def from_args(cls, args: argparse.Namespace, extra_args: list[str]) -> None:
         """
         Construct a Config instance from the CLI arguments
         """
         project_dir = args.project_dir or Path.cwd()
 
         self = cls()
-        self.kamek_dir = args.kamek.resolve()
-        if args.kstdlib is None:
-            self.k_stdlib_dir = self.kamek_dir / 'k_stdlib'
+
+        if args.kamek is not None:
+            self.kamek_dir = args.kamek.resolve()
         else:
+            self.kamek_dir = cls.find_on_path(KAMEK_EXE_NAME, '--kamek').parent
+
+        if args.kstdlib is not None:
             self.k_stdlib_dir = args.kstdlib.resolve()
-        self.cw_dir = args.cw.resolve()
+        else:
+            self.k_stdlib_dir = self.kamek_dir / 'k_stdlib'
+
+        if args.cw is not None:
+            self.cw_dir = args.cw.resolve()
+        else:
+            self.cw_dir = cls.find_on_path(MWCCEPPC_EXE_NAME, '--cw').parent
+
+        if not (self.kamek_dir / KAMEK_EXE_NAME).is_file():
+            raise ValueError(f'Kamek directory seems incorrect (no {KAMEK_EXE_NAME} found)')
+        if not (self.k_stdlib_dir / KAMEK_H_NAME).is_file():
+            raise ValueError(f'Kamek k_stdlib directory seems incorrect (no {KAMEK_H_NAME} found)')
+        if not (self.cw_dir / MWCCEPPC_EXE_NAME).is_file():
+            raise ValueError(f'CodeWarrior directory seems incorrect (no {MWCCEPPC_EXE_NAME} found)')
+
         self.project_dir = project_dir.resolve()
         self.select_versions = args.select_version or None
         self.build_dir = (args.build_dir or project_dir / DEFAULT_BUILD_DIR_NAME).resolve()
         self.output_dir = (args.output_dir or project_dir / DEFAULT_OUTPUT_DIR_NAME).resolve()
         self.extra_cflags = extra_args
+
+        if args.output_maps_dir is None:
+            self.output_maps_dir = (project_dir / DEFAULT_OUTPUT_MAPS_DIR_NAME).resolve()
+        elif args.output_maps_dir:
+            self.output_maps_dir = args.output_maps_dir.resolve()
+        else:
+            self.output_maps_dir = None
 
         if self.select_versions is not None:
             # Quick sanity check
@@ -127,18 +179,15 @@ class Config:
 
     @property
     def kamek_exe(self) -> Path:
-        if sys.platform == 'win32':
-            return self.kamek_dir / 'Kamek.exe'
-        else:
-            return self.kamek_dir / 'Kamek'
+        return self.kamek_dir / KAMEK_EXE_NAME
 
     @property
     def mwcceppc_exe(self) -> Path:
-        return self.cw_dir / MWCCEPPC_NAME
+        return self.cw_dir / MWCCEPPC_EXE_NAME
 
     @property
     def mwasmeppc_exe(self) -> Path:
-        return self.cw_dir / MWASMEPPC_NAME
+        return self.cw_dir / MWASMEPPC_EXE_NAME
 
     @property
     def src_dir(self) -> Path:
@@ -172,7 +221,7 @@ class Config:
         return self.project_dir / 'build.ninja'
 
     _version_names_list = None
-    def get_version_names_list(self) -> List[str]:
+    def get_version_names_list(self) -> list[str]:
         if self._version_names_list is None:
             if self.have_address_map_txt():
                 self._version_names_list = \
@@ -182,8 +231,11 @@ class Config:
                 self._version_names_list = []
         return list(self._version_names_list)
 
+    def have_output_maps_dir(self) -> bool:
+        return self.output_maps_dir is not None
 
-def get_version_names_list_from_address_map(path: Path) -> List[str]:
+
+def get_version_names_list_from_address_map(path: Path) -> list[str]:
     """
     Read an address map file and extract the names of all game versions
     it defines, in order.
@@ -214,9 +266,9 @@ class TranslationUnit:
 
     use_static_version_builds: bool
     # {"compile_for_this_version": {"for", "these", "build", "versions"}, ...}
-    static_version_builds: Dict[str, Set[str]]
+    static_version_builds: dict[str, set[str]]
 
-    def __init__(self, src_root_dir: Path, source_file: Path, game_versions: List[str]) -> 'TranslationUnit':
+    def __init__(self, src_root_dir: Path, source_file: Path, game_versions: list[str]) -> 'TranslationUnit':
         """
         Create a TranslationUnit from a .cpp file path, including
         checking for the existence of a corresponding .json file
@@ -241,7 +293,7 @@ class TranslationUnit:
     def is_cpp(self) -> bool:
         return self.source_file.suffix.lower() == '.cpp'
 
-    def read_config(self, path: Path, game_versions: List[str]) -> None:
+    def read_config(self, path: Path, game_versions: list[str]) -> None:
         """
         Read additional config data from an optional .json file
         """
@@ -274,7 +326,7 @@ class TranslationUnit:
                         raise ValueError(f'{path.name}: "{member}" is present in multiple build groups')
                 already_seen |= group
 
-    def iter_builds(self, config: Config):
+    def iter_builds(self, config: Config) -> Iterator[tuple[str, Path]]:
         """
         Iterator over the .o files that need to be built for this TU.
         Yields (preprocessor flag, .o filepath) pairs.
@@ -300,7 +352,7 @@ class TranslationUnit:
         else:
             yield GAME_VERSION_PREPROC_FLAG_DYNAMIC, self.o_file_for_version(DYNAMIC_GAME_VERSION_NAME, config)
 
-    def o_file_for_version(self, version: str, config: Config) -> Optional[str]:
+    def o_file_for_version(self, version: str, config: Config) -> str | None:
         """
         Return the .o file path that should be used for the specified
         game version, or None if it shouldn't be built at all for this
@@ -333,8 +385,14 @@ def make_ninja_file(config: Config) -> str:
 
     use_addrmap = config.have_address_map_txt()
     use_externals = config.have_externals_txt()
+    use_output_maps = config.have_output_maps_dir()
 
     quote = '"' if sys.platform == 'win32' else "'"
+
+    if sys.platform == 'win32':
+        mkdir_command = 'cmd /c mkdir $out'
+    else:
+        mkdir_command = 'mkdir -p $out'
 
     lines = []
     lines.append(f'# NOTE: "builddir" has special significance to Ninja (see the manual)')
@@ -344,14 +402,16 @@ def make_ninja_file(config: Config) -> str:
     lines.append(f'mwcceppc = {ninja_escape(config.mwcceppc_exe)}')
     lines.append(f'mwasmeppc = {ninja_escape(config.mwasmeppc_exe)}')
     cw_wrapper = Path(__file__).parent / CW_WRAPPER_SCRIPT_NAME
-    lines.append(f"cc = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {quote}$mwcceppc{quote}")
-    lines.append(f"as = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {quote}$mwasmeppc{quote}")
+    lines.append(f'cc = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {quote}$mwcceppc{quote}')
+    lines.append(f'as = {ninja_escape(sys.executable)} {quote}{ninja_escape(cw_wrapper)}{quote} {quote}$mwasmeppc{quote}')
     lines.append(f'kamek = {ninja_escape(config.kamek_exe)}')
     lines.append(f'kstdlib = {ninja_escape(config.k_stdlib_dir)}')
     if use_addrmap:
         lines.append(f'addrmap = {ninja_escape(config.address_map_txt)}')
     if use_externals:
         lines.append(f'externals = {ninja_escape(config.externals_txt)}')
+    if use_output_maps:
+        lines.append(f'outmapsdir = {ninja_escape(config.output_maps_dir)}')
     lines.append(f'includedir = {ninja_escape(config.include_dir)}')
     lines.append(f'')
 
@@ -391,6 +451,10 @@ cflags = $
 
 asflags = $shared_flags
 
+rule mkdir
+  command = {mkdir_command}
+  description = mkdir -p $out
+
 rule mwcc
   command = $cc $cflags -c -o $out -MDfile $out.d $in
   depfile = $out.d
@@ -416,14 +480,18 @@ rule mwasm
             lines.append(f'  in_filename = {ninja_escape(tu.source_file.relative_to(config.src_dir))}')
             lines.append('')
 
-    rule_command = f"{quote}$kamek{quote} $in -quiet -dynamic -output-map=_map/$selectversion.txt"
+    rule_command = f'{quote}$kamek{quote} $in -quiet -dynamic'
     if use_addrmap:
-        rule_command += f" {quote}-versions=$addrmap{quote}"
+        rule_command += f' {quote}-versions=$addrmap{quote}'
     if use_externals:
-        rule_command += f" {quote}-externals=$externals{quote}"
-    rule_command += " -output-kamek=$out -select-version=$selectversion"
+        rule_command += f' {quote}-externals=$externals{quote}'
+    if use_output_maps:
+        rule_command += f' {quote}-output-map=$outmapsdir/$$KV$$.txt{quote}'
+    rule_command += ' -output-kamek=$out -select-version=$selectversion'
 
     lines.append(f"""
+build $outmapsdir: mkdir
+
 rule kmdynamic
   command = {rule_command}
   description = {ninja_escape(config.kamek_exe.name)} -> $out_filename
@@ -446,6 +514,8 @@ rule kmdynamic
             implicit_deps.append('$addrmap')
         if use_externals:
             implicit_deps.append('$externals')
+        if use_output_maps:
+            implicit_deps.append('$outmapsdir')
         if implicit_deps:
             lines[-1] += f' | {" ".join(implicit_deps)}'
 
@@ -456,12 +526,10 @@ rule kmdynamic
     return '\n'.join(lines)
 
 
-def main(argv=None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """
     Main function
     """
-    Path('_map').mkdir(exist_ok=True)
-    
     parser = Config.create_arg_parser(
         description='Creates a Ninja file matching the configuration options you specify.')
 
