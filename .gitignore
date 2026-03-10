@@ -5,7 +5,7 @@ PropelParts/ninja.exe
 
 # Build directories
 /PropelParts/_build
-/PropelParts/_map
+/PropelParts/_maps
 /PropelParts/bin
 
 # Loader objects

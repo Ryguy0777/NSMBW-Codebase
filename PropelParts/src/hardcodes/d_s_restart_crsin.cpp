@@ -8,16 +8,10 @@ const char *crsinLoadNames[] = {
     "Mario",
     "Luigi",
     "Kinopio",
-#ifdef PLAYER_MODEL_HACKS
-    "Kinopico",
-#endif
     "Yoshi",
     "P_rcha",
     "L_rcha",
     "K_rcha",
-#ifdef PLAYER_MODEL_HACKS
-    "C_rcha",
-#endif
     "Y_rcha",
     "Y_TexGreen",
     "Y_TexRed",

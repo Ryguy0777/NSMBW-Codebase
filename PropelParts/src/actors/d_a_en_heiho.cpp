@@ -176,7 +176,7 @@ void daEnHeiho_c::initializeState_DieOther() {
     removeCc();
 
     // Play animation
-    playChrAnim("die", m3d::FORWARD_LOOP, 0.0f, 1.15f);
+    playChrAnim("die", m3d::FORWARD_LOOP, 5.0f, 1.15f);
 
     mAngle.y = 0;
 
@@ -366,7 +366,7 @@ void daEnHeiho_c::reactYoshiFumiProc(dActor_c* player) {
 void daEnHeiho_c::initializeState_Walk() {
     // Play walk animation if coming from turn state
     if (mStateMgr.getOldStateID() != &StateID_Turn) {
-        playChrAnim("walk", m3d::FORWARD_LOOP, 0.0f, 0.85f);
+        playChrAnim("walk", m3d::FORWARD_LOOP, 3.0f, 1.0f);
     }
     setWalkSpeed();
 }
@@ -379,7 +379,7 @@ void daEnHeiho_c::executeState_Walk() {
     calcSpeedY();
     posMove();
     // Finish turning if not facing a direction
-    sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x800);
+    sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x600);
 
     if ((EnBgCheck() & 1) == 0) { // Not touching a tile
         // Related to walking speed in water? not sure
@@ -411,7 +411,7 @@ void daEnHeiho_c::executeState_Walk() {
 void daEnHeiho_c::initializeState_Turn() {
     // Quick fix for being stunned while turning
     if (mStateMgr.getOldStateID() == &StateID_Dizzy) {
-        playChrAnim("walk", m3d::FORWARD_LOOP, 0.0f, 0.85f);
+        playChrAnim("walk", m3d::FORWARD_LOOP, 3.0f, 1.0f);
     }
     mSpeed.x = 0.0f;
     mDirection^=1;
@@ -436,7 +436,7 @@ void daEnHeiho_c::executeState_Turn() {
     WaterCheck(mPos, 1.0f);
 
     // Face our new direction, and exit state when finished
-    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x800);
+    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x600);
 
     if (doneTurning) {
         changeState(StateID_Walk);
@@ -445,7 +445,7 @@ void daEnHeiho_c::executeState_Turn() {
 }
 
 void daEnHeiho_c::initializeState_Sleep() {
-    playChrAnim("sleep", m3d::FORWARD_LOOP, 0.0f, 1.0f);
+    playChrAnim("sleep", m3d::FORWARD_LOOP, 7.5f, 1.0f);
     mAngle.y = 0;
 }
 
@@ -496,7 +496,7 @@ void daEnHeiho_c::executeState_Jump() {
             mSpeed.y = 6.0f;
             dAudio::g_pSndObjEmy->startSound(SE_PLY_JUMPDAI_HIGH, soundPos, 0);
         } else {
-            playChrAnim("jump", m3d::FORWARD_ONCE, 0.0f, 0.45f);
+            playChrAnim("jump", m3d::FORWARD_ONCE, 3.0f, 0.6f);
             mSpeed.y = 4.5f;
             dAudio::g_pSndObjEmy->startSound(SE_PLY_JUMPDAI, soundPos, 0);
         }
@@ -509,7 +509,7 @@ void daEnHeiho_c::initializeState_Dizzy() {
     if (mStateMgr.getOldStateID()->isEqual(StateID_Sleep)) {
         playChrAnim("dizzy_sleep", m3d::FORWARD_LOOP, 0.0f, 1.0f);
     } else {
-        playChrAnim("dizzy", m3d::FORWARD_LOOP, 0.0f, 1.0f);
+        playChrAnim("dizzy", m3d::FORWARD_LOOP, 10.0f, 1.0f);
     }
 
     mSpeed.x = 0.0f;

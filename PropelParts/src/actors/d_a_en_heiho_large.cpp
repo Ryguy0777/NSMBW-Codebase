@@ -44,7 +44,7 @@ int daEnHeihoLarge_c::create() {
     mAnmChr.create(mdl, resAnmChr, &mAllocator, 0);
     mAnmChr.setAnm(mModel, resAnmChr, m3d::FORWARD_LOOP);
     mModel.setAnm(mAnmChr, 0.0f);
-    mAnmChr.setRate(0.85f * mWalkSpeed * 2);
+    mAnmChr.setRate(1.0f);
 
     nw4r::g3d::ResAnmTexPat resPat = mRes.GetResAnmTexPat("color");
     mAnmTexPat.create(mdl, resPat, &mAllocator, 0, 1);
@@ -63,7 +63,7 @@ int daEnHeihoLarge_c::create() {
 
         mScale.set(3.0f, 3.0f, 3.0f);
         mFireHitCount = 3;
-        mWalkSpeed = 0.25f;
+        mScaleCbrt = 1.44224957f;
 
         mCenterOffs.set(0.0f, 36.0f, 0.0f);
         mVisibleAreaSize.set(54.0f, 78.0f);
@@ -73,7 +73,7 @@ int daEnHeihoLarge_c::create() {
 
         const sCcDatNewF l_heiho_giant_cc = {
             {0.0f, 30.0f},
-            {24.0f, 30.0f},
+            {22.0f, 30.0f},
             CC_KIND_ENEMY,
             CC_ATTACK_NONE,
             (BIT_FLAG(CC_KIND_PLAYER) | BIT_FLAG(CC_KIND_PLAYER_ATTACK) | BIT_FLAG(CC_KIND_YOSHI) |
@@ -93,7 +93,7 @@ int daEnHeihoLarge_c::create() {
 
         mScale.set(4.0f, 4.0f, 4.0f);
         mFireHitCount = 1;
-        mWalkSpeed = 0.125f;
+        mScaleCbrt = 1.58740105f;
 
         mCenterOffs.set(0.0f, 48.0f, 0.0f);
         mVisibleAreaSize.set(70.0f, 102.0f);
@@ -103,7 +103,7 @@ int daEnHeihoLarge_c::create() {
 
         const sCcDatNewF l_heiho_mega_cc = {
             {0.0f, 40.0f},
-            {32.0f, 40.0f},
+            {28.0f, 40.0f},
             CC_KIND_ENEMY,
             CC_ATTACK_SHELL,
             BIT_FLAG(CC_KIND_PLAYER) | BIT_FLAG(CC_KIND_PLAYER_ATTACK) | BIT_FLAG(CC_KIND_YOSHI) |
@@ -123,7 +123,7 @@ int daEnHeihoLarge_c::create() {
 
         mScale.set(2.0f, 2.0f, 2.0f);
         mFireHitCount = 1;
-        mWalkSpeed = 0.5f;
+        mScaleCbrt = 1.25992105f;
 
         mCenterOffs.set(0.0f, 24.0f, 0.0f);
         mVisibleAreaSize.set(32.0f, 48.0f);
@@ -313,14 +313,33 @@ void daEnHeihoLarge_c::initializeState_DieFall() {
     nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("diefall");
     mAnmChr.setAnm(mModel, resAnmChr, m3d::FORWARD_LOOP);
     mModel.setAnm(mAnmChr, 0.0f);
-    mAnmChr.setRate(mWalkSpeed * 2);
+    mAnmChr.setRate(1.0f / mScaleCbrt);
 
     return dEn_c::initializeState_DieFall();
 }
 
 void daEnHeihoLarge_c::executeState_DieFall() {
+    const s16 cs_spin_speed[] = { 0x100, -0x100};
+
+    s16 angDeltaX;
+    s16 angDeltaY;
+    if (mDirection == mIceDeathDirection) {
+        angDeltaX = smc_DEADFALL_SPINSPEED / mScaleCbrt;
+        angDeltaY = -cs_spin_speed[mIceDeathDirection] / mScaleCbrt;
+    } else {
+        angDeltaX = -smc_DEADFALL_SPINSPEED / mScaleCbrt;
+        angDeltaY = cs_spin_speed[mIceDeathDirection] / mScaleCbrt;
+    }
+    if (mInLiquid) {
+        angDeltaX *= smc_WATER_ROLL_DEC_RATE;
+    }
+    mAngle.x += angDeltaX;
+    mAngle.y += angDeltaY;
+
+    calcSpeedY();
+    posMove();
+    WaterCheck(mPos, 1.0f);
     updateModel();
-    return dEn_c::executeState_DieFall();
 }
 
 void daEnHeihoLarge_c::setDamage(dActor_c *actor) {
@@ -338,6 +357,10 @@ void daEnHeihoLarge_c::setDamage(dActor_c *actor) {
             setWalkSpeed();
         }
     }
+}
+
+void daEnHeihoLarge_c::boyonBegin() {
+    mBoyoMng.begin(dEnBoyoMng_c::smc_BOYON_TIME, dEnBoyoMng_c::smc_DELTA_SCALE / mScale.x);
 }
 
 bool daEnHeihoLarge_c::createIceActor() {
@@ -374,8 +397,8 @@ void daEnHeihoLarge_c::FumiScoreSet(dActor_c *actor) {
 }
 
 void daEnHeihoLarge_c::setWalkSpeed() {
-    static const float dirSpeed[] = { mWalkSpeed, -mWalkSpeed };
-    mSpeed.x = dirSpeed[mDirection];
+    static const float dirSpeed[] = { 0.6f, -0.6f };
+    mSpeed.x = dirSpeed[mDirection] / mScaleCbrt;
 }
 
 void daEnHeihoLarge_c::updateModel() {
@@ -404,8 +427,8 @@ void daEnHeihoLarge_c::initializeState_Walk() {
     if (mStateMgr.getOldStateID() != &StateID_Turn) {
         nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("walk");
         mAnmChr.setAnm(mModel, resAnmChr, m3d::FORWARD_LOOP);
-        mModel.setAnm(mAnmChr, 0.0f);
-        mAnmChr.setRate(0.85f * mWalkSpeed * 2);
+        mModel.setAnm(mAnmChr, 15.0f);
+        mAnmChr.setRate(1.0f / mScaleCbrt);
     }
     setWalkSpeed();
 }
@@ -418,7 +441,7 @@ void daEnHeihoLarge_c::executeState_Walk() {
     calcSpeedY();
     posMove();
     // Finish turning if not facing a direction
-    sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x800);
+    sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x600 / mScaleCbrt);
 
     if ((EnBgCheck() & 1) == 0) { // Not touching a tile
         // Related to walking speed in water? not sure
@@ -465,7 +488,7 @@ void daEnHeihoLarge_c::executeState_Turn() {
     }
 
     // Face our new direction, and exit state when finished
-    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x800);
+    bool doneTurning = sLib::chaseAngle((short*)&mAngle.y, l_base_angleY[mDirection], 0x600 / mScaleCbrt);
 
     if (doneTurning) {
         changeState(StateID_Walk);
@@ -476,8 +499,8 @@ void daEnHeihoLarge_c::executeState_Turn() {
 void daEnHeihoLarge_c::initializeState_Dizzy() {
     nw4r::g3d::ResAnmChr resAnmChr = mRes.GetResAnmChr("dizzy");
     mAnmChr.setAnm(mModel, resAnmChr, m3d::FORWARD_LOOP);
-    mModel.setAnm(mAnmChr, 0.0f);
-    mAnmChr.setRate(mWalkSpeed * 2);
+    mModel.setAnm(mAnmChr, 15.0f);
+    mAnmChr.setRate(1.0f / mScaleCbrt);
 
     mSpeed.x = 0.0f;
     mSpeed.y = -4.0f;
