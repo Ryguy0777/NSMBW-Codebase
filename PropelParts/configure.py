@@ -460,6 +460,8 @@ def main(argv=None) -> None:
     """
     Main function
     """
+    Path('_map').mkdir(exist_ok=True)
+    
     parser = Config.create_arg_parser(
         description='Creates a Ninja file matching the configuration options you specify.')
 
