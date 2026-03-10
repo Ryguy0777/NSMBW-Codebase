@@ -5,7 +5,7 @@
 #include <propelparts/bases/koopatlas/d_a_kp_player.hpp>
 #include <game/bases/d_a_player_manager.hpp>
 #include <game/mLib/m_heap.hpp>
-#include <game/sLib/s_math.hpp>
+#include <game/sLib/s_lib.hpp>
 
 daKpPlayer_c *daKpPlayer_c::m_instance = nullptr;
 
