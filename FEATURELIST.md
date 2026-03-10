@@ -31,7 +31,6 @@ These features are complete and should be fully functional.
 * MANTA_MGR2 actor restoration + fixes
 * Fixed fence climbing koopas giving unlimited coins when frozen
 * Player 1 Can Change Character (togglable)
-* SMW Flip Block actor
 * Bomb Bro actor
 * Removal of stage timer + live counter (togglable)
 * Rotation controlled coin hacks
@@ -45,7 +44,8 @@ These features are complete and should be fully functional.
 * Custom Tileset Grass/Flowers
 * Custom Tileset Profile overrides
 * ON/OFF Block actor
-* Luigi Physics (toggleable)
+* Luigi Physics (togglable)
+* Shyguy variant actors
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
@@ -55,12 +55,12 @@ These features are implemented, but not complete or not fully functional.
 * Goombrat actor
 * Magic Platform actor
 * Debug menu scene (togglable)
+* SMW Flip Block actor
 * Switch Blocks (togglable)
-* Shyguy variant actors
+* 2D Maps (Koopatlas port) (togglable)
 
 ### Planned Features
 These features are planned to be implemented in the future.
-* 2D Maps (Koopatlas port) (togglable)
 * Petey Pirahna Boss actor
 * Level Names/Info (togglable)
 * Triple ? Block actor

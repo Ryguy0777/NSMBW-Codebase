@@ -397,7 +397,7 @@ void daEnHeihoBalloon_c::executeState_Balloon() {
 }
 
 void daEnHeihoBalloon_c::initializeState_BalloonFall() {
-    playChrAnim("fall", m3d::FORWARD_LOOP, 0.0f, 1.0f);
+    playChrAnim("fall", m3d::FORWARD_LOOP, 5.0f, 1.0f);
     mSpeed.x = 0.0f;
     mAccelY = -0.1875f;
     mSpeedMax.y = -4.0f;

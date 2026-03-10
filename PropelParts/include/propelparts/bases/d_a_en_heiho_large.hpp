@@ -34,6 +34,8 @@ public:
 
     virtual void setDamage(dActor_c *actor);
 
+    virtual void boyonBegin();
+
     virtual bool createIceActor();
 
     virtual void FumiJumpSet(dActor_c *actor);
@@ -60,6 +62,6 @@ public:
     HEIHO_LARGE_TYPE_e mLargeType;
     int mTimer;
     u8 mFireHitCount;
-    float mWalkSpeed;
+    float mScaleCbrt;
     mEf::levelEffect_c mDizzyEffect;
 };
