@@ -94,10 +94,10 @@ const dScKoopatlas_c::ResItem_s dScKoopatlas_c::sc_arcRes[] = {
     {"WorldMap", "SI_star"},
 
     // Shop resources
-    {"Koopatlas", "lakitu"},
+    {"WorldMap", "lakitu"},
 
     // Others
-    {"Koopatlas", "cobCourse"},
+    {"WorldMap", "cobCourse"},
     //{"Object", "StarRing"},
     //{"Object", "star_coin"}, // TODO: Remove: its unused
 };
@@ -210,7 +210,7 @@ sPhase_c::METHOD_RESULT_e KPInitPhase_LoadMapList(void *ptr) {
 
     dScKoopatlas_c *wm = (dScKoopatlas_c*)ptr;
 
-    bool result = wm->mMapListLoader.request("/Koopatlas/MapList.txt", 0, nullptr) != nullptr;
+    bool result = wm->mMapListLoader.request("/Maps/List.txt", 0, nullptr) != nullptr;
     return (sPhase_c::METHOD_RESULT_e)result;
 }
 
