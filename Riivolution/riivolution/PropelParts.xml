@@ -22,6 +22,7 @@
 		<folder external="Object" disc="/Object" create="true" />
 		<folder external="Stage" disc="/Stage" create="true" />
 		<folder external="Stage/Texture" disc="/Stage/Texture" create="true" />
+		<folder external="WorldMap" disc="/WorldMap" create="true" />
 		
 		<folder external="Language/CN" disc="/CN" recursive="true" />
 		<folder external="Language/EU" disc="/EU" recursive="true" />

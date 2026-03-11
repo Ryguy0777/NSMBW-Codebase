@@ -60,6 +60,7 @@ namespace dWmLib {
     int getPointDir(const mVec3_c &v1, const mVec3_c &v2);
     int GetCurrentPlayResultStatus();
     int getEnemyRevivalCount(int, int);
+    dWmActor_c *SearchMapObjFromCsvIndex(u16, int);
 
     /// @unofficial
     static ForceListElement sc_ForceList[] = {

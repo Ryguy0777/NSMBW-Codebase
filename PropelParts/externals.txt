@@ -1,6 +1,8 @@
 vf58__12dPlayerMdl_cFv=0x800d4150
 setCurrentModel__12dPlayerMdl_cFQ212dPlayerMdl_c7MODEL_e=0x800d4750
 
+FUN_801017c0__11dCsSeqMng_cFiP10dWmEnemy_cii=0x801017c0
+
 item_start_check__15daEnBlockMain_cFi=0x80022770
 l_item_values=0x802ee620
 
