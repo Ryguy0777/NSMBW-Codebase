@@ -394,6 +394,7 @@ int dScKoopatlas_c::create() {
 
     SpammyReport("Creating STOCK_ITEM\n");
     mpStockItem = (dStockItem_c*)fBase_c::createChild(fProfile::STOCK_ITEM, this, 0, 0);
+
     SpammyReport("Creating STOCK_ITEM_SHADOW\n");
     mpStockItemShadow = (dStockItemShadow_c*)fBase_c::createChild(fProfile::STOCK_ITEM_SHADOW, this, 0, 0);
     mpStockItem->mpShadow = mpStockItemShadow;
@@ -425,7 +426,8 @@ int dScKoopatlas_c::create() {
     int level = dKpPathManager_c::s_cmpData.mPrevLevelID[1];
     bool isFirstClear = dKpPathManager_c::s_cmpData.mChkSavePrompt;
 
-    if (((world == WORLD_8) && (level == STAGE_CASTLE_2)) && save->isCourseDataFlag(7, 24, dMj2dGame_c::GOAL_NORMAL) && isFirstClear) {
+    // Check if we just cleared 08-25 for the first time
+    if (((world == WORLD_8) && (level == STAGE_CASTLE_2)) && save->isCourseDataFlag(WORLD_8, STAGE_CASTLE_2, dMj2dGame_c::GOAL_NORMAL) && isFirstClear) {
         SpammyReport("After 8-Castle: Sending player to Map 7\n");
         mCurrentMapID = 7; // KoopaPlanetUnd
         save->setCurrentWorld(7);
@@ -557,7 +559,7 @@ void dScKoopatlas_c::loadScene(int sceneID) {
     nw4r::g3d::ResAnmScn anmScn = res.GetResAnmScn("MainSelect");
     anmScn.Bind(anmScn);
 
-    lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, -3);
+    lightMgr->LoadScnLightInner(anmScn, 0.0f, -1, 3);
 
     if (sceneID == 0) { // World lighting
         nw4r::g3d::ResFile resLight = dResMng_c::m_instance->getRes("Env_world", "light/W8.blight");
@@ -1247,7 +1249,7 @@ void dScKoopatlas_c_painter() {
     m3d::drawLightMapTexture(0);
     m3d::calcWorld(0);
     m3d::calcView(0);
-    GXSetAlphaUpdate(false);
+    EGG::StateGX::GXSetAlphaUpdate_(false);
     m3d::drawOpa();
     m3d::drawXlu();
     m3d::drawDone(0);
@@ -1268,14 +1270,14 @@ void dScKoopatlas_c_painter() {
     m3d::drawXlu();
     m3d::drawDone(1);
     m3d::setCurrentCamera(0);
-    if (dInfo_c::m_instance->mDrawEffectsForMapLayouts) {
-        for (int i = 0; i < 4; i++) {
-            EffectManager_c::draw(0, 11+i);
-            EffectManager_c::draw(0, 7+i);
-        }
+    for (int i = 0; i < 4; i++) {
+        EffectManager_c::draw(0, 11+i);
+    }
+    for (int i = 0; i < 4; i++) {
+        EffectManager_c::draw(0, 7+i);
     }
     GXDrawDone();
-    m2d::drawAfter(0x80);
+    d2d::drawAfter();
     m2d::reset();
     m3d::setCurrentCamera(0);
 }

@@ -5,13 +5,15 @@ KOOPATLAS TODO:
   - Maybe rename director or move its functionality into dScKoopatlas_c?
 - Once main branch changes are merged, remove compression override from mapdata tileset loading
 
+CLEANUP:
+- Make dKpMusic_c into an actor
+
 Nitpicky Shit:
 - Player is not centered on the course node, needs to be moved up 4 units like with the model itself
 
 Miscellaneous TODO:
 - Implement internal-font portion of MoreFonts, then use that for Newer's pause menu layout
 - Add support for overiding the BMG font via userdata
-- Move pane_userdata hacks to whatever the right place is
 - Revamp Star Coins Menu arrows to have idle animations and look more like the retail arrow layouts
 - Add succession scrolling to the Star Coins Menu
 - Focus circle wipes on the player position
@@ -21,8 +23,10 @@ Miscellaneous TODO:
 
 Bugs:
 - [Newer bug] Exiting from a "cave entrance" will scale the player incorrectly, they're slightly too small
-- Effects are currently broken (partially?), player star works, HUD star sparkles don't work, StockItem effects are offset, etc.
-- Tileset decompression issues, and general issues with loading
+- Effects issues
+  - HUD star effects are broken (offset if fixed)
+  - StockItem effects are all either offset, or don't work
+  - Map effects are untested
 
 Planned Features/TODO:
 - Add support for "back entrances" where a course will auto-begin when walking onto the node
