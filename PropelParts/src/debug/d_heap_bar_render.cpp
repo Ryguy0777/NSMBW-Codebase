@@ -163,6 +163,7 @@ void dHeapBarRender_c::setupGX() {
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBX8, 0);
     
     GXSetZMode(GX_TRUE, GX_ALWAYS, GX_TRUE);
+    GXSetBlendMode(GX_BM_NONE, GX_BL_ZERO, GX_BL_ZERO, GX_LO_NOOP);
 }
 
 void dHeapBarRender_c::drawHeapBar(int freeSize, int heapSize, int index, const char *name) {
