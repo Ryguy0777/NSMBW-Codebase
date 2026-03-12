@@ -412,6 +412,6 @@ kmBranchDefCpp(0x8015D850, NULL, void, void) {
         dScene_c::setNextScene(fProfile::MOVIE, instance.mMovieId, false);
     } else if (launchType == LaunchType::ToWorldmap) {
         CrsinLoadFiles();
-        dScene_c::setNextScene(fProfile::DEBUG_MENU, instance.mWorld, false);
+        dScene_c::setNextScene(fProfile::WORLD_MAP, instance.mWorld, false);
     }
 }
