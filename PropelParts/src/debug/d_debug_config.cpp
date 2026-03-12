@@ -42,7 +42,8 @@ const DebugKey keys[] = {
     {DebugKey::DrawSpawnRangeMargins, "DrawSpawnRangeMargins"},
     {DebugKey::DrawVisibleArea, "DrawVisibleArea"},
     {DebugKey::DrawEnemySpawnRange, "DrawEnemySpawnRange"},
-    {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"}
+    {DebugKey::DrawMapObjSpawnRange, "DrawMapObjSpawnRange"},
+    {DebugKey::DrawHeapBars, "DrawHeapBars"}
 };
 
 static dDebugConfig_c instance;
@@ -71,6 +72,7 @@ dDebugConfig_c::dDebugConfig_c() {
     mMovieId = 1;
 
     mActorLog = false;
+    mDrawHeapBars = false;
 }
 
 void dDebugConfig_c::parseConfigLine(char* key, char* param, int paramSize) {
@@ -208,6 +210,11 @@ void dDebugConfig_c::parseConfigLine(char* key, char* param, int paramSize) {
         
         case DebugKey::ActorLog:
             mActorLog = decodedParam & 1;
+            break;
+
+        case DebugKey::DrawHeapBars:
+            mDrawHeapBars = decodedParam & 1;
+            break;
 
         default:
     }
@@ -405,6 +412,6 @@ kmBranchDefCpp(0x8015D850, NULL, void, void) {
         dScene_c::setNextScene(fProfile::MOVIE, instance.mMovieId, false);
     } else if (launchType == LaunchType::ToWorldmap) {
         CrsinLoadFiles();
-        dScene_c::setNextScene(fProfile::WORLD_MAP, instance.mWorld, false);
+        dScene_c::setNextScene(fProfile::DEBUG_MENU, instance.mWorld, false);
     }
 }

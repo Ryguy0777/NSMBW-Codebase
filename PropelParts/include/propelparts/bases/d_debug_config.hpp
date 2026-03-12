@@ -75,6 +75,7 @@ struct DebugKey {
         DrawVisibleArea,
         DrawEnemySpawnRange,
         DrawMapObjSpawnRange,
+        DrawHeapBars,
     };
 
     KeyId keyId;
@@ -115,6 +116,7 @@ class dDebugConfig_c {
 
         // Debug only
         bool mActorLog;
+        bool mDrawHeapBars;
 
         // Static instance
         static dDebugConfig_c* m_instance;
