@@ -11,7 +11,7 @@
 #include <game/bases/d_actor_manager.hpp>
 
 
-CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::RIVER_BARREL, fProfile::DRAW_ORDER::RIVER_BARREL, 0x2);
+CUSTOM_ACTOR_PROFILE(EN_BLOCK_ROTATE, daEnBlockRotate_c, fProfile::EN_BLOCK, fProfile::DRAW_ORDER::EN_BLOCK, 0x2);
 
 STATE_DEFINE(daEnBlockRotate_c, Wait);
 STATE_DEFINE(daEnBlockRotate_c, HitWait);
