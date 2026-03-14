@@ -509,7 +509,6 @@ namespace CourseActor {
         AC_FLAG_INVERT,
         EN_KABOCHAN,
         EN_LARGE_KABOCHAN,
-        EN_KABOKURIBO,
         EN_KAKIBO,
         EN_KURIBON,
         EN_PATA_KURIBON,
@@ -521,6 +520,7 @@ namespace CourseActor {
         EN_HEIHO_MEGA,
         AC_LIFT_BG_RAIL,
         AC_LIFT_BG_ROTATION,
+        AC_LIFT_BG_PAIR_OBJ,
         AC_EFFECT_SPAWNER,
         EN_STAR_COIN_FAKE,
         AC_MODEL_LOADER,
@@ -542,7 +542,6 @@ namespace CourseActor {
         MODEL_RES15,
         EN_BLOCK_SWITCH,
         EN_PALACE_SWITCH,
-        AC_LIFT_BG_PAIR_OBJ,
 
         // End of custom entries, do NOT remove
         TOTAL_COURSE_ACTOR_COUNT

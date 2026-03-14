@@ -795,8 +795,6 @@ namespace fProfile {
         AC_FLAG_INVERT,
         EN_KABOCHAN,
         EN_LARGE_KABOCHAN,
-        EN_KABOKURIBO,
-        AC_KABOKURIBO_FLAME,
         EN_KAKIBO,
         EN_KURIBON,
         EN_PATA_KURIBON,
@@ -809,13 +807,13 @@ namespace fProfile {
         EN_HEIHO_MEGA,
         AC_LIFT_BG_RAIL,
         AC_LIFT_BG_ROTATION,
+        AC_LIFT_BG_PAIR_OBJ,
         AC_EFFECT_SPAWNER,
         EN_STAR_COIN_FAKE,
         DEBUG_MENU,
         AC_MODEL_LOADER,
         EN_BLOCK_SWITCH,
         EN_PALACE_SWITCH,
-        AC_LIFT_BG_PAIR_OBJ,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT

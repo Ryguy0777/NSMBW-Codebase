@@ -338,20 +338,8 @@
       <entry value="5">Large Jump</entry>
     </list>
   </sprite> <!-- #496: Splunkin -->
-
-  <sprite id="497" name="Jack O'Goomba" notes="A Goomba with a pumpkin shield on it's head. It will emit lingering flames occasionally. The pumpkin can only be broken with a spin jump.">
-    <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Jack O'Goomba placing it further behind other sprites."/>
-    <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Jack O'Goomba. This is useful for Jack O'Goomba within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
-      <entry value="0">Normal</entry>
-      <entry value="1">Tumble</entry>
-      <entry value="2">Small Jump</entry>
-      <entry value="3">Hesitates</entry>
-      <entry value="4">Medium Jump</entry>
-      <entry value="5">Large Jump</entry>
-    </list>
-  </sprite> <!-- #497: Jack O'Goomba -->
   
-  <sprite id="498" name="Goombrat" notes="A sub-species of a Goomba which stays on platforms.">
+  <sprite id="497" name="Goombrat" notes="A sub-species of a Goomba which stays on platforms.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Goombrat placing it further behind other sprites."/>
     <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Goombrat. This is useful for Goombrats within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
       <entry value="0">Normal</entry>
@@ -361,9 +349,9 @@
       <entry value="4">Medium Jump</entry>
       <entry value="5">Large Jump</entry>
     </list>
-  </sprite> <!-- #498: Goombrat -->
+  </sprite> <!-- #497: Goombrat -->
 
-  <sprite id="499" name="Galoomba" notes="A sub-species of a Goomba that resists being stomped.">
+  <sprite id="498" name="Galoomba" notes="A sub-species of a Goomba that resists being stomped.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Galoomba placing it further behind other sprites."/>
     <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Galoomba. This is useful for Galoombas within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
       <entry value="0">Normal</entry>
@@ -373,13 +361,13 @@
       <entry value="4">Medium Jump</entry>
       <entry value="5">Large Jump</entry>
     </list>
-  </sprite> <!-- #499: Galoomba -->
+  </sprite> <!-- #498: Galoomba -->
   
-  <sprite id="500" name="Para-Galoomba" notes="A sub-species of a Goomba that resists being stomped with wings that will flutter towards Mario when it loads.">
+  <sprite id="499" name="Para-Galoomba" notes="A sub-species of a Goomba that resists being stomped with wings that will flutter towards Mario when it loads.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Galoomba placing it further behind other sprites."/>
-  </sprite> <!-- #500: Para-Galoomba -->
+  </sprite> <!-- #499: Para-Galoomba -->
   
-  <sprite id="501" name="Goombud" notes="A sub-species of a Goomba that resists being stomped and will turn at ledges.">
+  <sprite id="500" name="Goombud" notes="A sub-species of a Goomba that resists being stomped and will turn at ledges.">
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Goombud placing it further behind other sprites."/>
     <list nybble="12" title="Load-In Animation" comment="This value affects the spawning animation of the Goombud. This is useful for Goombuds within range of a nearby Entrance. Jumps and Tumble will result in it landing on the platform below where it was initially placed.">
       <entry value="0">Normal</entry>
@@ -389,9 +377,9 @@
       <entry value="4">Medium Jump</entry>
       <entry value="5">Large Jump</entry>
     </list>
-  </sprite> <!-- #501: Goombud -->
+  </sprite> <!-- #500: Goombud -->
 
-  <sprite id="502" name="Bubble/Balloon Shy Guy" notes="A walking Shy Guy in a floating bubble/balloon. Will start walking when popped">
+  <sprite id="501" name="Bubble/Balloon Shy Guy" notes="A walking Shy Guy in a floating bubble/balloon. Will start walking when popped">
     <list nybble="5" title="Type" notes="Types greater than 4 spawn Shy Guys that won't move.">
       <entry value="0">Walker (Walks Off Ledges)</entry>
       <entry value="1">Walker (Turns Around At Ledges)</entry>
@@ -430,9 +418,9 @@
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
     <value nybble="9" title="Distance" comment="The distance the Shy Guy will walk in each direction. The Shy Guy will ignore ledges." requirednybble="5" requiredval="4"/>
     <dualbox nybble="10.4" title1="Spawns Left" title2="Spawns Right" requirednybble="5" requiredval="3-4"/>
-  </sprite> <!-- #502: Bubble Shy Guy -->
+  </sprite> <!-- #501: Bubble Shy Guy -->
 
-  <sprite id="503" name="Climbing Shy Guy" notes="A Shy guy that climbs on wire fences. The Shy guy can punch the player if on the other side of the fence.">
+  <sprite id="502" name="Climbing Shy Guy" notes="A Shy guy that climbs on wire fences. The Shy guy can punch the player if on the other side of the fence.">
     <list nybble="6" title="Color">
       <entry value="0">Red</entry>
       <entry value="1">Pink</entry>
@@ -448,9 +436,9 @@
     <checkbox nybble="8.1" title="Attacks" comment="When enabled, the Shy Guy will attempt to punch the other side of the Chainlink Fence if the player is on the other side."/>
     <checkbox nybble="8.2" title="Moves Up/Down"/>
     <checkbox nybble="8.4" title="Starts Behind Fence" comment="When enabled, the Shy Guy will be placed on the reverse side of the Chainlink Fence."/>
-  </sprite> <!-- #503: Climbing Shy Guy -->
+  </sprite> <!-- #502: Climbing Shy Guy -->
   
-  <sprite id="504" name="Large Shy Guy" notes="A large Shy guy that walks around. Will be stunned when jumped on, though it cannot be killed by normal jumps.">
+  <sprite id="503" name="Large Shy Guy" notes="A large Shy guy that walks around. Will be stunned when jumped on, though it cannot be killed by normal jumps.">
     <list nybble="6" title="Color">
       <entry value="0">Red</entry>
       <entry value="1">Pink</entry>
@@ -464,9 +452,9 @@
       <entry value="9">Purple</entry>
     </list>
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
-  </sprite> <!-- #504: Large Shy Guy -->
+  </sprite> <!-- #503: Large Shy Guy -->
   
-  <sprite id="505" name="Giant Shy Guy" notes="A giant Shy guy that walks around. Can not be damaged by jumps, but other methods like fireballs will kill it.">
+  <sprite id="504" name="Giant Shy Guy" notes="A giant Shy guy that walks around. Can not be damaged by jumps, but other methods like fireballs will kill it.">
     <list nybble="6" title="Color">
       <entry value="0">Red</entry>
       <entry value="1">Pink</entry>
@@ -480,9 +468,9 @@
       <entry value="9">Purple</entry>
     </list>
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
-  </sprite> <!-- #505: Giant Shy Guy -->
+  </sprite> <!-- #504: Giant Shy Guy -->
   
-  <sprite id="506" name="Mega Shy Guy" notes="A mega Shy gy that walks around. Will kill otther actors it comes into contact with, and can only die from contact with a star.">
+  <sprite id="505" name="Mega Shy Guy" notes="A mega Shy gy that walks around. Will kill otther actors it comes into contact with, and can only die from contact with a star.">
     <list nybble="6" title="Color">
       <entry value="0">Red</entry>
       <entry value="1">Pink</entry>
@@ -496,9 +484,9 @@
       <entry value="9">Purple</entry>
     </list>
     <checkbox nybble="8.4" title="Place Behind Other Sprites" comment="When enabled, this changes the relative Z-order of the Shy Guy placing it further behind other sprites."/>
-  </sprite> <!-- #506: Mega Shy Guy -->
+  </sprite> <!-- #505: Mega Shy Guy -->
   
-  <sprite id="507" name="Magic Platform - Path Controlled" notes="A path controlled platform made out of tile objects.">
+  <sprite id="506" name="Magic Platform - Path Controlled" notes="A path controlled platform made out of tile objects.">
     <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks."/>
     <value nybble="3-4" title="Triggering Event ID" comment="When this Event is activated, the Magic Platform will move as specified. Deactivating the event will not deactivate the Magic Platform; it will continue until it has reached the final Path Node." idtype="Triggering Event"/>
     <value nybble="1-2" title="Target Event ID" comment="When the Magic Platform reaches its final path Node, this Event ID is activated." idtype="Target Event"/>
@@ -517,9 +505,9 @@
       <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #507: Magic Platform - Path Controlled -->
+  </sprite> <!-- #506: Magic Platform - Path Controlled -->
 
-  <sprite id="508" name="Magic Platform - Rotation Controlled" notes="A rotation controlled platform made out of tile objects.">
+  <sprite id="507" name="Magic Platform - Rotation Controlled" notes="A rotation controlled platform made out of tile objects.">
     <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A rotation controller is required for the Magic Platform.">
       <suggested sprite="96"/>
       <suggested sprite="149" />
@@ -538,7 +526,26 @@
       <entry value="7">Circular</entry>
     </list>
     <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #508: Magic Platform - Rotation Controlled -->
+  </sprite> <!-- #507: Magic Platform - Rotation Controlled -->
+  
+  <sprite id="508" name="Magic Platform - Two Way Line" notes="A Two Way Line controlled platform made out of tile objects.">
+    <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A Two Way Line controller is required for the Magic Platform.">
+      <required sprite="260"/>
+    </dependency>
+    <value nybble="5-6" title="Two Way Line ID" comment="This pairs the platform to a matching Two Way Line movement controller." comment2="If set to 0, the Magic Platform will be stationary." idtype="Two Way Line"/>
+    <value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
+    <list nybble="10" title="Collision" comment="This determines the type of collision.">
+      <entry value="0">Solid Block</entry>
+      <entry value="1">Permeable (Solid on Top)</entry>
+      <entry value="2">Fully Permeable</entry>
+      <entry value="3">Collision Line on Right Side</entry>
+      <entry value="4">Collision Line on Left Side</entry>
+      <entry value="5">Collision Line on Top Edge</entry>
+      <entry value="6">Collision Line on Bottom Edge</entry>
+      <entry value="7">Circular</entry>
+    </list>
+    <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
+  </sprite> <!-- #508: Magic Platform - Two Way Line -->
   
   <sprite id="509" name="Effect Spawner" phonebook="Effects" notes="Enables event-driven spawning of Sound Effects and Graphic Effects.&lt;br&gt;&lt;u&gt;Limitations&lt;/u&gt;&lt;br&gt; 1) Do not use 1000 or more sounds/effects per area.&lt;br&gt; 2) A single Event ID can only trigger one sound/effect per area&lt;br&gt; 3) Only a specific number of sounds/effects can be active at the same time&lt;br&gt; 4) Only two BRSTMs can be active at the same time." advancednotes="If spawning a Sound Effect, the placement of the sprite is crucial, as the sound is emitted from that position. If the player is ~3 screens away from the sprite, then they won't hear it anymore. Placing multiple sprites with the same settings at different locations is possible.">
     <value nybble="3-4" title="Triggering Event ID" comment="When this Event ID is activated, the associated sound or affect will be played." idtype="Triggering Event"/>
@@ -710,23 +717,4 @@
     <checkbox nybble="5.2" title="Loads at Midway" comment="When enabled, the switch will only appear if the level has been loaded from a Midway point."/>
     <value nybble="1-2" title="Triggering Event ID" comment="This switch will not be visible if a Triggering Event is defined unless that event is activated." idtype="Triggering Event"/>
   </sprite> <!-- #529: Switch Palace Switch -->
-  
-  <sprite id="530" name="Magic Platform - Two Way Line" notes="A Two Way Line controlled platform made out of tile objects.">
-    <dependency notes="It should be noted that the Magic Platform can only create rectangular/circular shapes. It cannot have slopes, and it cannot have 'unused space' within the location. All tiles will turn into solid blocks. A Two Way Line controller is required for the Magic Platform.">
-      <required sprite="260"/>
-    </dependency>
-    <value nybble="5-6" title="Two Way Line ID" comment="This pairs the platform to a matching Two Way Line movement controller." comment2="If set to 0, the Magic Platform will be stationary." idtype="Two Way Line"/>
-    <value nybble="11-12" title="Location ID" comment="This determines what the Magic Platform looks like. It will clone the Layer 1 tiles as it sees them within the given Location. This Location does not have to be within the current Zone boundaries." idtype="Location"/>
-    <list nybble="10" title="Collision" comment="This determines the type of collision.">
-      <entry value="0">Solid Block</entry>
-      <entry value="1">Permeable (Solid on Top)</entry>
-      <entry value="2">Fully Permeable</entry>
-      <entry value="3">Collision Line on Right Side</entry>
-      <entry value="4">Collision Line on Left Side</entry>
-      <entry value="5">Collision Line on Top Edge</entry>
-      <entry value="6">Collision Line on Bottom Edge</entry>
-      <entry value="7">Circular</entry>
-    </list>
-    <value nybble="9.2-9.4" title="Z-Order" comment="Changes the Z-Order of the Magic Platform to place it behind Layer 2." comment2="Higher values are further behind other Magic Platforms."/>
-  </sprite> <!-- #530: Magic Platform - Two Way Line -->
 </sprites>
