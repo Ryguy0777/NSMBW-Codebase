@@ -46,10 +46,10 @@ void BombExplosionCollcheck(dCc_c *self, dCc_c *other) {
         // Only collide with players if we've been thrown by a bro
         u32 otherKind = ac->mKind;
         if (otherKind == dActor_c::STAGE_ACTOR_PLAYER) {
-            daPlBase_c *pl = (daPlBase_c *)other;
+            daPlBase_c *pl = (daPlBase_c *)other->mpOwner;
             pl->setDamage(bomb, daPlBase_c::DAMAGE_DEFAULT);
         } else if (otherKind == dActor_c::STAGE_ACTOR_YOSHI) {
-            daYoshi_c *ys = (daYoshi_c *)other;
+            daYoshi_c *ys = (daYoshi_c *)other->mpOwner;
             s8 *playerNum = ys->getPlrNo();
             if (*playerNum > -1) {
                 ys->setDamage(bomb, daPlBase_c::DAMAGE_DEFAULT);
@@ -120,16 +120,19 @@ int daBombProjectile_c::create() {
 
     dActor_c *owner = getParent();
 
+    if (owner) {
+        mDirection = owner->mDirection;
+        mAngle.y = l_base_angleY[mDirection];
+    } else {
+        mDirection = getPlayerDirection();
+        mAngle.y = l_base_angleY[mDirection];
+        mStateMgr.changeState(StateID_Throw);
+        return SUCCEEDED;
+    }
+
     if (owner->mKind == dActor_c::STAGE_ACTOR_PLAYER) {
         mPlayerBomb = true;
     }
-
-    if (owner) {
-        mDirection = owner->mDirection;
-    } else {
-        mDirection = getPlayerDirection();
-    }
-    mAngle.y = l_base_angleY[mDirection];
 
     if (owner->mProfName == fProfile::EN_BOMBBROS) {
         // Wait for the bro to release us
