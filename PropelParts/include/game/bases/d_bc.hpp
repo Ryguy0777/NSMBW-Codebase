@@ -178,6 +178,7 @@ public:
     static u32 checkBg(float, float, u8, u8, unsigned long);
     static u32 checkWireNet(float x, float y, unsigned char layer);
     static u32 checkGround(const mVec3_c *, float *, u8, u8, signed char);
+    static u32 checkGroundAngle(const mVec3_c*, float*, short*, unsigned char, unsigned char, signed char, int*, int);
     static u32 checkTenjou(const mVec3_c *, float *, u8, u8);
     static u32 checkWall(const mVec3_c *, const mVec3_c *, float *, u8, u8, dActor_c **);
 
