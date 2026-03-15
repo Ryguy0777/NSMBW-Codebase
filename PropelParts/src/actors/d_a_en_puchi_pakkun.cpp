@@ -228,28 +228,16 @@ void daEnPuchiPakkun_c::setWalkSpeed() {
     return;
 }
 
-bool daEnPuchiPakkun_c::checkForLedge(float xOffset) {
+bool daEnPuchiPakkun_c::checkLedge(float xOffset) {
     float xOffs[] = {xOffset, -xOffset};
 
-    mVec3_c tileToCheck;
-    tileToCheck.y = 4.0f + mPos.y;
-    tileToCheck.z = mPos.z;
-    tileToCheck.x = mPos.x + xOffs[mDirection];
-
-    u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0f, mLayer);
-
-    if (((unit >> 0x10) & 0xFF) == 8) {
-        return false;
-    } else {
-        float zeroFloat = 0.0f;
-        bool result = mBc.checkGround(&tileToCheck, &zeroFloat, mLayer, 1, -1);
-        if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0f)) {
-            return false;
-        } else {
-            return true;
-        }
+    mVec3_c groundCheckPos(mPos.x + xOffs[mDirection], mPos.y + 4.0f, mPos.z);
+    float groundY;
+    bool found = mBc.checkGround(&groundCheckPos, &groundY, mLayer, l_Ami_Line[mAmiLayer], -1);
+    float dist = groundCheckPos.y - groundY;
+    if (found && dist <= groundCheckPos.y - mPos.y + 5.0f) {
+        return true;
     }
-
     return false;
 }
 
@@ -346,7 +334,7 @@ void daEnPuchiPakkun_c::executeState_Walk() {
             mFootPush2.x = mFootPush2.x + m_1eb.x;
         }
     } else {
-        if (checkForLedge(4.0f) == false) {
+        if (checkLedge(4.0f) == false) {
             changeState(StateID_Turn);
             return;
         }

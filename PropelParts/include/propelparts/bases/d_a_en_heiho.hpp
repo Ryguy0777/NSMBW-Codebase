@@ -50,7 +50,7 @@ public:
 
     void setWalkSpeed();
     void playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate);
-    bool checkForLedge(float xOffset);
+    bool checkLedge(float xOffset);
 
     void reactFumiProc(dActor_c *player);
     void reactSpinFumiProc(dActor_c *player);

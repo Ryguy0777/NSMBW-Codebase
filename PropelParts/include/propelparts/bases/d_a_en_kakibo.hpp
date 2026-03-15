@@ -33,7 +33,7 @@ public:
 
     bool checkGround(float checkDist);
 
-    bool checkForLedge(float xOffset);
+    bool checkLedge(float xOffset);
 
     void calcHa() {
         if (mBgmHoldTimer != 0) {

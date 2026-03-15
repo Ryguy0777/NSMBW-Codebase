@@ -317,28 +317,16 @@ void daEnHeiho_c::playChrAnim(const char* name, m3d::playMode_e playMode, float 
     mAnmChr.setRate(rate);
 }
 
-bool daEnHeiho_c::checkForLedge(float xOffset) {
+bool daEnHeiho_c::checkLedge(float xOffset) {
     float xOffs[] = {xOffset, -xOffset};
 
-    mVec3_c tileToCheck;
-    tileToCheck.y = 4.0f + mPos.y;
-    tileToCheck.z = mPos.z;
-    tileToCheck.x = mPos.x + xOffs[mDirection];
-
-    u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0f, mLayer);
-
-    if (((unit >> 0x10) & 0xFF) == 8) {
-        return false;
-    } else {
-        float zeroFloat = 0.0f;
-        bool result = mBc.checkGround(&tileToCheck, &zeroFloat, mLayer, 1, -1);
-        if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0f)) {
-            return false;
-        } else {
-            return true;
-        }
+    mVec3_c groundCheckPos(mPos.x + xOffs[mDirection], mPos.y + 4.0f, mPos.z);
+    float groundY;
+    bool found = mBc.checkGround(&groundCheckPos, &groundY, mLayer, l_Ami_Line[mAmiLayer], -1);
+    float dist = groundCheckPos.y - groundY;
+    if (found && dist <= groundCheckPos.y - mPos.y + 5.0f) {
+        return true;
     }
-
     return false;
 }
 
@@ -389,7 +377,7 @@ void daEnHeiho_c::executeState_Walk() {
     } else { // Touching a tile
         mFootPush2.x = 0.0f;
         mSpeed.y = 0.0f;
-        if (checkForLedge(2.5f) == false) { // Check for ledges
+        if (checkLedge(2.5f) == false) { // Check for ledges
             if (mType == HEIHO_TYPE_WALKER_LEDGE) {
                 changeState(StateID_Turn);
                 return;

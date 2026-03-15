@@ -9,5 +9,5 @@ public:
 
     virtual bool isBgmSync() const;
 
-    bool checkForLedge(float xOffset);
+    bool checkLedge(float xOffset);
 };

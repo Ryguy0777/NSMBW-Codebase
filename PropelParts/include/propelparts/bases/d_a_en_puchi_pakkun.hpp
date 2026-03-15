@@ -24,7 +24,7 @@ public:
     void playChrAnim(const char* name, m3d::playMode_e playMode, float blendFrame, float rate);
     void updateModel();
     void setWalkSpeed();
-    bool checkForLedge(float xOffset);
+    bool checkLedge(float xOffset);
     bool isPlayerAbove();
     bool isPlayerInFireRange();
     void setFireDistance(float distance);

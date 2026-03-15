@@ -59,7 +59,7 @@ void daEnKakibo_c::initializeState_DieFall() {
 }
 
 void daEnKakibo_c::initializeState_Walk() {
-    setKakiboAnm(checkForLedge(36.0f) ? ANM_WALK0 : ANM_WALK1);
+    setKakiboAnm(checkLedge(36.0f) ? ANM_WALK0 : ANM_WALK1);
     setWalkSpeed();
     mAccelY = -0.1875;
     mSpeedMax.set(0.0f, -4.0f, 0.0f);
@@ -86,7 +86,7 @@ void daEnKakibo_c::executeState_Walk() {
         if (isOnEnLiftRemoconTrpln()) {
             changeState(StateID_TrplnJump);
         }
-        if (checkForLedge(2.5f) == false) { // Check for ledges
+        if (checkLedge(1.5f) == false) { // Check for ledges
             if (!mIsWalk1) {
                 setKakiboAnm(ANM_WALK1);
             }
@@ -101,7 +101,7 @@ void daEnKakibo_c::executeState_Walk() {
     if (mBc.mFlags & 0x15 << mDirection & 0x3f) {
         changeState(StateID_Turn);
     }
-    if (checkForLedge(36.0f)) {
+    if (checkLedge(36.0f)) {
         setKakiboAnm(ANM_WALK0);
     } else {
         setKakiboAnm(ANM_WALK1);
@@ -134,7 +134,7 @@ void daEnKakibo_c::executeState_Turn() {
         changeState(StateID_Walk);
     }
 
-    if (checkForLedge(36.0f)) {
+    if (checkLedge(36.0f)) {
         setKakiboAnm(ANM_WALK0);
     } else {
         setKakiboAnm(ANM_WALK1);
@@ -228,27 +228,15 @@ void daEnKakibo_c::setKakiboAnm(KAKIBO_ANIM_ID_e anmId) {
     }
 }
 
-bool daEnKakibo_c::checkForLedge(float xOffset) {
+bool daEnKakibo_c::checkLedge(float xOffset) {
     float xOffs[] = {xOffset, -xOffset};
 
-    mVec3_c tileToCheck;
-    tileToCheck.y = 4.0f + mPos.y;
-    tileToCheck.z = mPos.z;
-    tileToCheck.x = mPos.x + xOffs[mDirection];
-
-    u32 unit = mBc.getUnitKind(tileToCheck.x, mPos.y - 2.0f, mLayer);
-
-    if (((unit >> 0x10) & 0xFF) == 8) {
-        return false;
-    } else {
-        float zeroFloat = 0.0f;
-        bool result = mBc.checkGround(&tileToCheck, &zeroFloat, mLayer, 1, -1);
-        if (((!result) || (tileToCheck.y <= zeroFloat)) || (zeroFloat <= mPos.y - 5.0f)) {
-            return false;
-        } else {
-            return true;
-        }
+    mVec3_c groundCheckPos(mPos.x + xOffs[mDirection], mPos.y + 4.0f, mPos.z);
+    float groundY;
+    bool found = mBc.checkGround(&groundCheckPos, &groundY, mLayer, l_Ami_Line[mAmiLayer], -1);
+    float dist = groundCheckPos.y - groundY;
+    if (found && dist <= groundCheckPos.y - mPos.y + 5.0f) {
+        return true;
     }
-
     return false;
 }
