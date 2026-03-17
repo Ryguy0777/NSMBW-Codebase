@@ -2,6 +2,14 @@
 #include <game/bases/d_tag_processor.hpp>
 #include <propelparts/constants/message_list.h>
 
+// Change MsgIDSet() to get the string from the given MsgRes_c, instead of the original BMG
+kmCallDefCpp(0x800E6AF4, const wchar_t *, TagProcessor_c *this_, MsgRes_c *msgRes, ulong cat, ulong msg) {
+    return msgRes->getMsg(cat, msg);
+}
+
+// Nop dMessage_c::getMsg() call
+kmWriteNop(0x800E6AFC);
+
 // Add other colored switch blocks to the TagProcessor_c class
 kmBranchDefCpp(0x800e72b0, NULL, int, TagProcessor_c *this_, MsgRes_c *msgRes, char *param_3) {
     ulong msgCat = 0;
@@ -50,8 +58,9 @@ kmBranchDefCpp(0x800e72b0, NULL, int, TagProcessor_c *this_, MsgRes_c *msgRes, c
     return this_->MsgIDSet(msgRes, msgCat, msgID);
 }
 
-// Controls TagProcessor behavior, 0xB is for printing icons like PictureFont
-// Corresponds to global game fonts
+// Controls per-font TagProcessor behavior
+// 0xB is for printing icons like PictureFont
+// Others don't serve a purpose?
 const u16 sc_newFontParam[] = {
     0xA,
     0xB,

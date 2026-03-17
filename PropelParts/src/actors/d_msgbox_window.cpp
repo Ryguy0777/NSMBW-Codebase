@@ -172,7 +172,7 @@ void dMsgBoxWindow_c::showMessage(unsigned long id, bool canCancel, int delay, b
     mDelay = delay;
     mLeaveLevel = leavesLevel;
 
-    MsgRes_c *msgRes = dMessage_c::getMesRes();
+    MsgRes_c *msgRes = dMessage_c::getPropelMsgRes();
 
     if (msgRes->getMsgEntry(BMG_CATEGORY_MESSAGE_BOX_TITLE, id)) {
         mpTextBoxes[T_title_00]->setMessage(msgRes, BMG_CATEGORY_MESSAGE_BOX_TITLE, id, 0);

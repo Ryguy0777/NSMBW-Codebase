@@ -10,6 +10,7 @@ public:
     virtual void freeHeap();
 
     void *request(const char *, unsigned char, EGG::Heap *);
+    bool freeResouce();
 
 private:
     u32 mSize;

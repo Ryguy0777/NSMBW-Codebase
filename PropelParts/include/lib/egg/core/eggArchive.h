@@ -1,4 +1,5 @@
 #pragma once
+#include <lib/egg/core/eggHeap.h>
 #include <revolution/ARC.h>
 
 namespace EGG {
@@ -21,5 +22,7 @@ namespace EGG {
         long convertPathToEntryID(const char *path);
         void *getFile(const char *path, FileInfo *fileInfo);
         void *getFileFast(long entryID, FileInfo *fileInfo);
+
+        static Archive *mount(void *, EGG::Heap *, int);
     };
 }
