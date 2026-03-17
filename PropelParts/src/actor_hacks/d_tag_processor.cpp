@@ -14,13 +14,16 @@ kmWriteNop(0x800E6AFC);
 kmBranchDefCpp(0x800e72b0, NULL, int, TagProcessor_c *this_, MsgRes_c *msgRes, char *param_3) {
     ulong msgCat = 0;
     ulong msgID = 0;
+    bool forceGameBmg = false;
     switch (*param_3) {
         default:
         case '\0': // Worldmap block
             msgID = 0x22;
+            forceGameBmg = true;
             break;
         case '\x01': // Worldmap dotted block
             msgID = 0x21;
+            forceGameBmg = true;
             break;
         case '\x02': // Yellow dotted block
             msgCat = BMG_CATEGORY_PICTUREFONT_ICONS;
@@ -54,6 +57,10 @@ kmBranchDefCpp(0x800e72b0, NULL, int, TagProcessor_c *this_, MsgRes_c *msgRes, c
             msgCat = BMG_CATEGORY_PICTUREFONT_ICONS;
             msgID = 0x6;
             break;
+    }
+
+    if (forceGameBmg) {
+        msgRes = dMessage_c::getMesRes();
     }
     return this_->MsgIDSet(msgRes, msgCat, msgID);
 }
