@@ -21,6 +21,9 @@ private:
     static FontInformation* Rebuild(BinaryFileHeader* pHeader);
 
 private:
+    u16 mLastCharCode;
+    u16 mLastGlyphIndex;
+
     static const ulong SIGNATURE = 'RFNT';
     static const ulong SIGNATURE_UNPACKED = 'RFNU';
 

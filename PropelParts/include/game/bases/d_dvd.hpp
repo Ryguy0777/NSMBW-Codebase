@@ -9,6 +9,8 @@ public:
     virtual ~loader_c();
     virtual void freeHeap();
 
+    void *request(const char *, unsigned char, EGG::Heap *);
+
 private:
     u32 mSize;
     u32 mCommand;

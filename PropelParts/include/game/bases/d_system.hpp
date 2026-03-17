@@ -1,4 +1,5 @@
 #pragma once
+#include <lib/egg/core/eggHeap.h>
 
 namespace dSys_c {
     void create();
@@ -8,4 +9,6 @@ namespace dSys_c {
 
 namespace dSystem {
     void fixArena();
+
+    static EGG::Heap *s_FontManagerHeap;
 }

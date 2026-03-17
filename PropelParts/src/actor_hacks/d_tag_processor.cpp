@@ -49,3 +49,40 @@ kmBranchDefCpp(0x800e72b0, NULL, int, TagProcessor_c *this_, MsgRes_c *msgRes, c
     }
     return this_->MsgIDSet(msgRes, msgCat, msgID);
 }
+
+// Controls TagProcessor behavior, 0xB is for printing icons like PictureFont
+// Corresponds to global game fonts
+const u16 sc_newFontParam[] = {
+    0xA,
+    0xB,
+    0xC,
+    0xE,
+    0xB,
+};
+
+// Load new param array
+kmBranchDefAsm(0x800E6B3C, 0x800E6B40) {
+    lis r3, sc_newFontParam@h
+    ori r3, r3, sc_newFontParam@l
+
+    // While we're here, store the icon message fontID for later
+    // (This is normally a padding byte)
+    stb r31, 0xC5(r26)
+    blr
+}
+
+// For context, FontChange() and PictureFontCalcRect() are hardcoded to use PictureFont,
+// preventing us from using custom fonts to print icons, so whenever MsgIDSet() is called,
+// we save the fontID into a padding byte, and use that to load the desired font
+
+// FontChange()
+kmBranchDefAsm(0x800E5958, 0x800E595C) {
+    lbz r3, 0xC5(r28)
+    blr
+}
+
+// PictureFontCalcRect()
+kmBranchDefAsm(0x800E64B8, 0x800E64BC) {
+    lbz r3, 0xC5(r3)
+    blr
+}

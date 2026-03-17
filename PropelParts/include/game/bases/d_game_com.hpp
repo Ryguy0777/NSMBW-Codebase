@@ -108,5 +108,7 @@ namespace dGameCom {
 
     bool chkCancelButton(int);
 
+    void AreaLanguageFolder(const char *, char *);
+
     extern u32 l_gameStop;
 }
