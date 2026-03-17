@@ -12,12 +12,12 @@ const char *dNewFontMng_c::FONT_NAME_TBL[] = {
     "mj2d00_PictureFont_32_RGBA8.brfnt",
     "mj2d00_MessageFont_32_I4.brfnt",
     "mj2d00_numberFont_I4A.brfnt",
-    "propel00_PictureFont.brfnt",
+    "propelparts_PictureFont.brfnt",
 };
 
 #define FONT_NUM ARRAY_SIZE(dNewFontMng_c::FONT_NAME_TBL)
 
-dNewFontMng_c *dNewFontMng_c::instance = nullptr;
+dNewFontMng_c *dNewFontMng_c::m_instance = nullptr;
 
 dNewFontMng_c::dNewFontMng_c() {
     // Create dynamically-sized arrays
@@ -32,7 +32,7 @@ dNewFontMng_c::dNewFontMng_c() {
 
 int dNewFontMng_c::create(EGG::Heap *pHeap) {
     nw4r::ut::BinaryFileHeader *brfnt = nullptr;
-    dNewFontMng_c *fontMng = dNewFontMng_c::instance;
+    dNewFontMng_c *fontMng = dNewFontMng_c::m_instance;
     char resPath[48];
     char filename[100];
 
@@ -72,24 +72,24 @@ nw4r::ut::BinaryFileHeader *dNewFontMng_c::getResFontData(const char *name) {
     if (index < 0) {
         index = 0;
     }
-    return dNewFontMng_c::instance->mpFontDatas[index & 0xFF];
+    return dNewFontMng_c::m_instance->mpFontDatas[index & 0xFF];
 }
 
 nw4r::ut::ResFont *dNewFontMng_c::getFont(int index) {
     if (index < 0) {
         index = 0;
     }
-    return &dNewFontMng_c::instance->mpFonts[index];
+    return &dNewFontMng_c::m_instance->mpFonts[index];
 }
 
 // dSystem::createFontManagerPhase()
 // Initialize the new font manager instead of the original one
 kmBranchDefCpp(0x800E51E0, NULL, bool) {
-    if (dNewFontMng_c::instance == nullptr) {
-        dNewFontMng_c::instance = new dNewFontMng_c;
+    if (dNewFontMng_c::m_instance == nullptr) {
+        dNewFontMng_c::m_instance = new dNewFontMng_c;
     }
 
-    if (dNewFontMng_c::instance != nullptr) {
+    if (dNewFontMng_c::m_instance != nullptr) {
         return dNewFontMng_c::create(dSystem::s_FontManagerHeap);
     }
     return false;

@@ -15,6 +15,6 @@ public:
     dDvd::loader_c *mpFontLoaders;
     nw4r::ut::BinaryFileHeader **mpFontDatas;
 
-    static dNewFontMng_c *instance;
+    static dNewFontMng_c *m_instance;
     static const char *FONT_NAME_TBL[];
 };
