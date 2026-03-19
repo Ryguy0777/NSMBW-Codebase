@@ -28,6 +28,8 @@ public:
     void onMultiWorldOpenFlag(int world); ///< Unlocks the given world in extra modes.
     bool isMultiWorldOpenFlag(int world); ///< Checks if the given world is unlocked in extra modes.
 
+    inline void setChecksum(u32 val) { mChecksum = val; }
+
 private:
     /// @brief Ensures that the save's major revision number matches the current one.
     /// @details If the revision number does not match, the header data is reset.

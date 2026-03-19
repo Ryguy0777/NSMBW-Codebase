@@ -77,6 +77,36 @@ class SpriteImage_ColorExcSwitch(SLib.SpriteImage_StaticMultiple):  # 42
         super().dataChanged()
 
 
+class SpriteImage_SnakeBlock(SLib.SpriteImage):  # 166
+    def __init__(self, parent):
+        super().__init__(parent, 1.5)
+        self.spritebox.shown = False
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('BlockTrain', 'block_train.png')
+        SLib.loadIfNotInImageCache('BlockTrainGreen', 'block_train_green.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        length = self.parent.spritedata[5] & 15
+        self.width = (length + 3) * 16
+        self.type = self.parent.spritedata[3] & 0xF0
+
+    def paint(self, painter):
+        super().paint(painter)
+        
+        if self.type == 0:
+            kind = 'Green'
+        else:
+            kind = ''
+
+        endpiece = ImageCache['BlockTrain' + kind]
+        painter.drawPixmap(0, 0, endpiece)
+        painter.drawTiledPixmap(24, 0, int((self.width * 1.5) - 48), 24, ImageCache['BlockTrain' + kind])
+        painter.drawPixmap(int((self.width * 1.5) - 24), 0, endpiece)
+
+
 class SpriteImage_TileEventImproved(common.SpriteImage_TileEvent):  # 191
     def __init__(self, parent):
         super().__init__(parent)
@@ -538,6 +568,7 @@ class SpriteImage_SwitchPalace(SLib.SpriteImage_StaticMultiple):  # 529
 ImageClasses = {
     22: SpriteImage_MiniGoomba,
     42: SpriteImage_ColorExcSwitch,
+    166: SpriteImage_SnakeBlock,
     191: SpriteImage_TileEventImproved,
     302: SpriteImage_CliffKoopa,
     486: SpriteImage_WaterPlatform,

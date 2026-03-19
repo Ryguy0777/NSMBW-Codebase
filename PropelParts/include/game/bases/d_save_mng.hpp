@@ -6,6 +6,9 @@ public:
     dMj2dGame_c* getSaveGame(s8 slot);
     void initLoadGame(s8 slot);
 
+    bool startNandSave();
+    bool isNandBusy();
+
     inline u8 getLastSelectedFile() {return mSave.mLastSelectedFile;}
 
     bool mIsNowSave; // set to true when accessing NAND
