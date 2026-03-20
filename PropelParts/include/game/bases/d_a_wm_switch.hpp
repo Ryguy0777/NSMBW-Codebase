@@ -9,24 +9,10 @@
 // @unofficial
 class daWmSwitch_c : public dWmDemoActor_c {
 public:
-    enum TYPE_e {
-        TYPE_RED_W3,
-
-        TYPE_YELLOW,
-        TYPE_RED,
-        TYPE_GREEN,
-        TYPE_BLUE,
-    };
-
     int create();
     int doDelete();
     int execute();
     int draw();
-
-    void createTexPat();
-    void setPressState();
-
-    inline bool isSwitchActive(int type) { return (dInfo_c::m_instance->mWmSwitch & (1 << type)) != 0; }
 
     u32 mMapNodeIdx;
     dHeapAllocator_c mAllocator;
@@ -35,7 +21,4 @@ public:
     m3d::anmTexSrt_c mAnmTexSrt;
 
     bool mIsPressed;
-
-    m3d::anmTexPat_c *mpAnmTexPat;
-    int mSwitchType;
 };
