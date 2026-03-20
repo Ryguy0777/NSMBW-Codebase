@@ -1,36 +1,12 @@
 #include <kamek.h>
-#include <game/bases/d_3d.hpp>
 #include <game/bases/d_a_en_snakeblock.hpp>
 #include <game/bases/d_res_mng.hpp>
-#include <game/bases/d_save_mng.hpp>
-
-// TODO:
-// Clean this up, its kinda messy
-// Separate Glow Snake Block into its own actor
+#include <game/bases/d_switch_flag_mng.hpp>
 
 extern "C" void afterSnakeBlockCollCheck(void);
-extern "C" void drawLightMask__16daEnSnakeBlock_cFv(void);
-
-const char *daEnSnakeBlock_c::sc_resName[] = {
-    "block_snake",
-    "block_snake_ice",
-    "block_snake",
-    "block_snake_glow",
-    NULL,
-};
-
-// Replace l_SNAKEBLOCK_res
-// (Temporary)
-kmWritePointer(0x8031ADE4, daEnSnakeBlock_c::sc_resName);
-
-// Patch class size (+0x74)
-kmWrite16(0x80AA67EA, 0x2E00);
-
-// Read entire nybble 7
-//kmWrite32(0x80AA74C4, 0x5400673E);
 
 // Only apply ice tile collision to icy snake blocks
-kmCallDefAsm(0x80AA6FC0) {
+kmBranchDefAsm(0x80AA6FC0, 0x80AA6FC4) {
     lwz r4, 0x1B0(r31) // Grab parent daEnSnakeBlock_c
     lwz r4, 0x2B2C(r4) // Get mSnakeType
     cmpwi r4, 1
@@ -38,42 +14,20 @@ kmCallDefAsm(0x80AA6FC0) {
 
     ori r0, r0, 4
 
-skipParamSet:
-    b afterSnakeBlockCollCheck
+    skipParamSet:
+    blr
 }
 
 // Extra setup in create()
 kmCallDefCpp(0x80AA74D8, void, daEnSnakeBlock_c *this_) {
-    // Set snake type depending on profile ID
-    if (this_->mProfName == fProfile::EN_SNAKEBLOCK) {
-        this_->mSnakeType = (this_->mParam >> 20) & 1;
-    }/*else if (this_->mProfName == fProfile::EN_SNAKEBLOCK_GLOW) {
-        this_->mSnakeType = daEnSnakeBlock_c::TYPE_GLOW;
-    }*/
+    // Set snake type
+    this_->mSnakeType = (this_->mParam >> 20) & 1;
     
     // Set block owners so we can access it for createMdl()
     this_->mHead.mpOwner = this_;
     this_->mTail.mpOwner = this_;
     for (int i = 0; i < this_->mBlockNum; i++) {
         this_->mBlocks[i].mpOwner = this_;
-    }
-
-    // Setup lighting for Glow blocks
-    if (this_->mSnakeType == daEnSnakeBlock_c::TYPE_GLOW) {
-        for (int i = 0; i < 22; i++) {
-            this_->mMaskAllocs[i] = mHeapAllocator_c();
-        }
-        
-        this_->mpLightMaskH = new dCircleLightMask_c;
-        this_->mpLightMaskH->init(&this_->mMaskAllocs[0], 2);
-
-        this_->mpLightMaskT = new dCircleLightMask_c;
-        this_->mpLightMaskT->init(&this_->mMaskAllocs[1], 2);
-
-        for (int i = 0; i < this_->mBlockNum; i++) {
-            this_->mpLightMasks[i] = new dCircleLightMask_c;
-            this_->mpLightMasks[i]->init(&this_->mMaskAllocs[i+2], 2);
-        }
     }
 
     this_->initBlock(); // Replaced insn
@@ -90,13 +44,12 @@ kmBranchDefCpp(0x80AA74F8, 0x80AA750C, int, daEnSnakeBlock_c *this_) {
     return 1;
 }
 
-// Init all block models
-//kmWrite32(0x80AA79F4, 0x38000014);
+extern const char *l_SNAKEBLOCK_res[];
 
 // Load custom snake block models
 kmBranchDefCpp(0x80AA6B70, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, dHeapAllocator_c *pAlloc) {
     int type = this_->mpOwner->mSnakeType;
-    const char *resName = daEnSnakeBlock_c::sc_resName[type];
+    const char *resName = l_SNAKEBLOCK_res[type];
     char brresBuf[64];
     sprintf(brresBuf, "g3d/%s.brres", resName);
 
@@ -121,59 +74,6 @@ kmBranchDefCpp(0x80AA6B70, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, dHeapA
     this_->mAnmClr.setRate(0.0f, 0);
 }
 
-// Draw lights
-kmBranchDefAsm(0x80AA75C0, 0x80AA75C4) {
-    or r29, r3, r3
-    bl drawLightMask__16daEnSnakeBlock_cFv
-    or r3, r29, r29
-    blr
-}
-
-void daEnSnakeBlock_c::drawLightMask() {
-    if (mSnakeType == daEnSnakeBlock_c::TYPE_GLOW) {
-        mpLightMaskH->draw();
-        mpLightMaskT->draw();
-
-        for (int i = 0; i < mBlockNum; i++) {
-            mpLightMasks[i]->draw();
-        }
-    }
-}
-
-// Calc lights
-kmBranchDefCpp(0x80AA754C, 0x80AA7550, void, daEnSnakeBlock_c *this_) {
-    if (this_->mSnakeType == daEnSnakeBlock_c::TYPE_GLOW) {
-        this_->mpLightMaskH->mPos.x = this_->mHead.mPos.x;
-        this_->mpLightMaskH->mPos.y = this_->mHead.mPos.y;
-        this_->mpLightMaskH->mPos.z = this_->mHead.mPos.z;
-        this_->mpLightMaskH->mRadius = 120.0f;
-        this_->mpLightMaskH->execute();
-
-        nw4r::g3d::ResMdl resMdl = this_->mHead.mResFile.GetResMdl(this_->sc_resName[daEnSnakeBlock_c::TYPE_GLOW]);
-        nw4r::g3d::ResMat glowMat = resMdl.GetResMat("mat_light_block_source");
-
-        resMdl = this_->mTail.mResFile.GetResMdl(this_->sc_resName[daEnSnakeBlock_c::TYPE_GLOW]);
-        glowMat = resMdl.GetResMat("mat_light_block_glow");
-        d3d::setMatCullMode(&this_->mHead.mModel, 1, GX_CULL_ALL);
-
-        this_->mpLightMaskT->mPos.x = this_->mTail.mPos.x;
-        this_->mpLightMaskT->mPos.y = this_->mTail.mPos.y;
-        this_->mpLightMaskT->mPos.z = this_->mTail.mPos.z;
-        this_->mpLightMaskT->mRadius = 120.0f;
-        this_->mpLightMaskT->execute();
-
-        for (int i = 0; i < this_->mBlockNum; i++) {
-            this_->mpLightMasks[i]->mPos.x = this_->mBlocks[i].mPos.x;
-            this_->mpLightMasks[i]->mPos.y = this_->mBlocks[i].mPos.y;
-            this_->mpLightMasks[i]->mPos.z = this_->mBlocks[i].mPos.z;
-            this_->mpLightMasks[i]->mRadius = 120.0f;
-            this_->mpLightMasks[i]->execute();
-        }
-    }
-    
-    this_->calcAnm();
-}
-
 // dBlock_c::doDelete()
 kmBranchDefCpp(0x80AA6D00, NULL, void, daEnSnakeBlock_c::dBlock_c *this_) {
     this_->mModel.remove();
@@ -189,4 +89,46 @@ kmBranchDefCpp(0x80AA6D70, NULL, void, daEnSnakeBlock_c::dBlock_c *this_) {
     if (this_->mpOwner->mSnakeType == daEnSnakeBlock_c::TYPE_ICE) {
         this_->mAnmTexSrt.play();
     }
+}
+
+// Event activated Snake Block
+kmBranchDefCpp(0x80AA83D0, NULL, void, daEnSnakeBlock_c *this_) {
+    if (this_->mEventNums[1] != 0) {
+        if (dSwitchFlagMng_c::checkEvent(this_->mEventNums[1]-1)) {
+            this_->changeState(daEnSnakeBlock_c::StateID_Move);
+        }
+    }
+}
+
+// Don't activate when stood on if we're event activated
+kmBranchDefCpp(0x80AA7220, NULL, void, dActor_c *self, dActor_c *other) {
+    daEnSnakeBlock_c *snakeBlock = (daEnSnakeBlock_c*)self;
+    if (snakeBlock->mEventNums[1] == 0) {
+        bool activate = false;
+        if (other->mKind == dActor_c::STAGE_ACTOR_PLAYER) {
+            activate = true;
+        } else if (other->mKind == dActor_c::STAGE_ACTOR_YOSHI && *other->getPlrNo() != -1) {
+            activate = true;
+        }
+        if (activate) {
+            if (snakeBlock->isState(daEnSnakeBlock_c::StateID_Wait)) {
+                snakeBlock->changeState(daEnSnakeBlock_c::StateID_Move);
+            }
+        }
+    }
+}
+
+extern "C" void startSound__14SndObjctCmnMapFUlRCQ34nw4r4math4VEC2Ul(void);
+
+// Don't play sound effect if disabled
+kmBranchDefAsm(0x80AA85D8, 0x80AA85DC) {
+    nofralloc
+    lwz r12, 0x4(r29)
+    rlwinm r12, r12, 21, 31, 31
+    cmpwi r12, 1
+    beq noSound
+    bl startSound__14SndObjctCmnMapFUlRCQ34nw4r4math4VEC2Ul
+
+    noSound:
+    blr
 }

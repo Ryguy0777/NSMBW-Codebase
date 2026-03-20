@@ -1,6 +1,5 @@
 #pragma once
 #include <game/bases/d_bg_ctr.hpp>
-#include <game/bases/d_circle_light_mask.hpp>
 #include <game/bases/d_enemy.hpp>
 #include <game/bases/d_heap_allocator.hpp>
 #include <game/mLib/m_3d/anm_mat_clr.hpp>
@@ -11,18 +10,7 @@ public:
     enum SNAKE_TYPE_e {
         TYPE_NORMAL,
         TYPE_ICE,
-        TYPE_GLOW,
     };
-
-    // Extras -- TODO
-    /*class dBlockEx_c {
-    public:
-        dBlockEx_c();
-
-        mHeapAllocator_c mLightMaskAlloc;
-        dCircleLightMask_c mLightMask;
-        int mSnakeType;
-    };*/
 
     class dBlock_c {
     public:
@@ -99,10 +87,6 @@ public:
     bool chkCollapseDelete(); ///< Returns if the Tail is below the screen edge (meaning the collapse has ended, and the actor can be deleted)
     bool chkOffScreen(); ///< Returns if the Snake Block is far past the right edge of the screen (used to delete it)
 
-    // New
-    void drawLightMask();
-    void chkPathLoop();
-
     static void callBackF(dActor_c *, dActor_c *);
     static void callBackH(dActor_c *, dActor_c *);
     static void callBackW(dActor_c *, dActor_c *);
@@ -125,18 +109,11 @@ public:
     int mCreateAnmBlockNum;
     u8 _pad[4];
 
-    mHeapAllocator_c mMaskAllocs[22];
-    dCircleLightMask_c *mpLightMaskH;
-    dCircleLightMask_c *mpLightMaskT;
-    dCircleLightMask_c *mpLightMasks[20];
-
     static float sc_snakeSpeeds[4];
     static sStateID_c *sc_stopStates;
     static Vec2 sc_ctrlPosMods[5];
     static int sc_glbSnakeNum;
     static Vec2 sc_collapseSpeeds[5];
-
-    static const char *sc_resName[];
 
     STATE_FUNC_DECLARE(daEnSnakeBlock_c, Wait);
     STATE_FUNC_DECLARE(daEnSnakeBlock_c, Move);
