@@ -255,10 +255,6 @@ bool daEnKakibo_c::checkGround(float xDist) {
     return false;
 }
 
-float Lerp(float a, float b, float t) {
-    return a + (b - a) * t;
-}
-
 bool daEnKakibo_c::checkTurnSaka() {
     if (!mBc.checkFootEnm()) {
         return false;
@@ -290,52 +286,26 @@ bool daEnKakibo_c::checkTurnSaka() {
 
     mVec2_c checkVec = checkVecA + checkVecB;
 
-    mVec2_c p0(mPos.x + checkVec.x, mPos.y + checkVec.y);
-    mVec2_c p1(mPos.x + checkVecB.x, mPos.y + checkVecB.y);
+    mVec3_c p0(mPos.x + checkVec.x, mPos.y + checkVec.y, mPos.z);
+    mVec3_c p1(mPos.x + checkVecB.x, mPos.y + checkVecB.y, mPos.z);
 
-    int numSteps = std::ceil(c_check_dist_x / 4);
+    float groundY;
+    s16 groundAngle;
+    bool found = mBc.checkGroundAngle(&p0, &groundY, &groundAngle, mLayer, l_Ami_Line[mAmiLayer], -1, nullptr, 0);
+    float bottomY = mPos.y - 4.0f;
 
-    bool  hasPrev = false;
-    float prevLineY = 0.f;
-    float prevGndY = 0.f;
-    short prevAng = 0;
-    float prevX = 0.f;
-
-    for (int i = 0; i <= numSteps; ++i) {
-        float t  = static_cast<float>(i) / numSteps;
-        float px = Lerp(p0.x, p1.x, t);
-        float py = Lerp(p0.y, p1.y, t);
-        mVec3_c p(px, py, 0.0f);
-
-        float groundY = 0.0f;
-        short groundAngle = 0;
-        if (!mBc.checkGroundAngle(&p, &groundY, &groundAngle, mLayer, 1, -1, nullptr, 0) || groundY > py) {
-            hasPrev = false;
-            continue;
-        }
-        if (groundY == py) {
+    if (groundAngle == 0) {
+        if (groundY >= bottomY) {
             return false;
+        } else {
+            return true;
         }
-
-        if (hasPrev) {
-            float dx = px - prevX;
-
-            float projPrev = prevGndY + (nw4r::math::SinIdx(prevAng) / nw4r::math::CosIdx(prevAng)) * dx;
-            if (projPrev >= py) {
-                return false;
-            }
-
-            float projCur = groundY - (nw4r::math::SinIdx(groundAngle) / nw4r::math::CosIdx(groundAngle)) * dx;
-            if (projCur >= prevLineY) {
-                return false;
-            }
+    } else {
+        if (groundY >= bottomY - 32.0f) {
+            return false;
+        } else {
+            return true;
         }
-
-        hasPrev = true;
-        prevLineY = py;
-        prevGndY = groundY;
-        prevAng = groundAngle;
-        prevX = px;
     }
 
     return true;
