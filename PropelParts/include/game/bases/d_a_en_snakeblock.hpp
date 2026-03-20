@@ -9,9 +9,8 @@
 class daEnSnakeBlock_c : public dEn_c {
 public:
     enum SNAKE_TYPE_e {
-        TYPE_NORMAL, // Original, green snake block (unimplemented in NSMBW)
+        TYPE_NORMAL,
         TYPE_ICE,
-        TYPE_EVIL,
         TYPE_GLOW,
     };
 
@@ -141,5 +140,4 @@ public:
 
     STATE_FUNC_DECLARE(daEnSnakeBlock_c, Wait);
     STATE_FUNC_DECLARE(daEnSnakeBlock_c, Move);
-    STATE_FUNC_DECLARE(daEnSnakeBlock_c, Evil);
 };

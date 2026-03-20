@@ -33,7 +33,6 @@ StateID_Move__16daEnSnakeBlock_c=0x80B1B3F8
 initTravelInfo__16daEnSnakeBlock_cFv=0x80AA7B30
 initBlockPath__16daEnSnakeBlock_cFv=0x80AA7730
 
-
 setupAnimTile__11dBgTexMng_cFiUsPcPUcb=0x80087B60
 
 randomiseHorz__9dBgUnit_cFP9dBGRenderPUsii=0x80086EC0

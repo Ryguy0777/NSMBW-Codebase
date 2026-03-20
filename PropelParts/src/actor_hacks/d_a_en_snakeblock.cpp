@@ -46,11 +46,7 @@ skipParamSet:
 kmCallDefCpp(0x80AA74D8, void, daEnSnakeBlock_c *this_) {
     // Set snake type depending on profile ID
     if (this_->mProfName == fProfile::EN_SNAKEBLOCK) {
-        int type = (this_->mParam >> 20) & 0xF;
-        if (type > daEnSnakeBlock_c::TYPE_EVIL) {
-            type = daEnSnakeBlock_c::TYPE_EVIL;
-        }
-        this_->mSnakeType = type;
+        this_->mSnakeType = (this_->mParam >> 20) & 1;
     }/*else if (this_->mProfName == fProfile::EN_SNAKEBLOCK_GLOW) {
         this_->mSnakeType = daEnSnakeBlock_c::TYPE_GLOW;
     }*/
@@ -194,26 +190,3 @@ kmBranchDefCpp(0x80AA6D70, NULL, void, daEnSnakeBlock_c::dBlock_c *this_) {
         this_->mAnmTexSrt.play();
     }
 }
-
-// Jump to Evil state if this is the right block type
-kmBranchDefCpp(0x80AA83C0, NULL, void, daEnSnakeBlock_c *this_) {
-    if (this_->mSnakeType == daEnSnakeBlock_c::TYPE_EVIL) {
-        this_->changeState(this_->StateID_Evil);    
-    }
-}
-
-// Evil Snake Block easter egg
-STATE_DEFINE(daEnSnakeBlock_c, Evil);
-
-void daEnSnakeBlock_c::initializeState_Evil() {
-    dSaveMng_c::m_instance->mSave.setChecksum(0xFFFFFFFF);
-    dSaveMng_c::m_instance->startNandSave();
-}
-void daEnSnakeBlock_c::executeState_Evil() {
-    if (!dSaveMng_c::m_instance->isNandBusy()) {
-        GXColor text = {0xFF, 0xFF, 0xFF, 0xFF};
-        GXColor back = {0x00, 0x00, 0x00, 0xFF};
-        OSFatal(text, back, "It  will lay  waste  to our  kind");
-    }
-}
-void daEnSnakeBlock_c::finalizeState_Evil() { }
