@@ -46,13 +46,12 @@ These features are complete and should be fully functional.
 * ON/OFF Block actor
 * Luigi Physics (togglable)
 * Shyguy variant actors
+* Goombrat actor
 
 ### Unfinished Features
 These features are implemented, but not complete or not fully functional.
 * Classic + GameCube controller support (togglable)
 * Splunkin actor
-* Jack O' Goomba actor
-* Goombrat actor
 * Magic Platform actor
 * Debug menu scene (togglable)
 * SMW Flip Block actor
