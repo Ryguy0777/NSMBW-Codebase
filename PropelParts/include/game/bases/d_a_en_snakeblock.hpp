@@ -23,13 +23,17 @@ public:
         void calcAnm();
         void setAnmClr(const char *name);
 
-        void draw(Vec pos);
+        void draw(mVec3_c pos);
 
-        void initBgCtr(daEnSnakeBlock_c *owner, Vec *blockPos);
+        void initBgCtr(daEnSnakeBlock_c *parent, mVec3_c *blockPos);
         void calcBgCtr();
 
         void setFallCollapse();
         void calcCollapse1(u8 *travelInfo);
+
+        static void callBackF(dActor_c *, dActor_c *);
+        static void callBackH(dActor_c *, dActor_c *);
+        static void callBackW(dActor_c *, dActor_c *, u8);
 
         nw4r::g3d::ResFile mResFile;
         m3d::mdl_c mModel;
@@ -86,10 +90,6 @@ public:
 
     bool chkCollapseDelete(); ///< Returns if the Tail is below the screen edge (meaning the collapse has ended, and the actor can be deleted)
     bool chkOffScreen(); ///< Returns if the Snake Block is far past the right edge of the screen (used to delete it)
-
-    static void callBackF(dActor_c *, dActor_c *);
-    static void callBackH(dActor_c *, dActor_c *);
-    static void callBackW(dActor_c *, dActor_c *);
 
     dHeapAllocator_c mAllocator;
 

@@ -3,19 +3,24 @@
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 
-extern "C" void afterSnakeBlockCollCheck(void);
-
 // Only apply ice tile collision to icy snake blocks
-kmBranchDefAsm(0x80AA6FC0, 0x80AA6FC4) {
-    lwz r4, 0x1B0(r31) // Grab parent daEnSnakeBlock_c
-    lwz r4, 0x2B2C(r4) // Get mSnakeType
-    cmpwi r4, 1
-    bne skipParamSet
+kmBranchDefCpp(0x80AA6F10, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, daEnSnakeBlock_c *parent, mVec3_c *blockPos) {
+    this_->mPos = *blockPos;
+    if (this_->mpOwner == nullptr) {
+        this_->mpOwner = parent;
+    }
 
-    ori r0, r0, 4
+    float blockX = this_->mPos.x - this_->mpOwner->mPos.x;
+    float blockY = this_->mPos.y - this_->mpOwner->mPos.y;
+    this_->mBgCtr.set(this_->mpOwner, blockX - 8.0f, blockY + 8.0f, blockX + 8.0f, blockY - 8.0f,
+        &daEnSnakeBlock_c::dBlock_c::callBackF, &daEnSnakeBlock_c::dBlock_c::callBackH, &daEnSnakeBlock_c::dBlock_c::callBackW,
+        1, 0, nullptr
+    );
 
-    skipParamSet:
-    blr
+    if (this_->mpOwner->mSnakeType == daEnSnakeBlock_c::TYPE_ICE) {
+        this_->mBgCtr.mFlags = 4;
+    }
+    this_->mBgCtr.entry();
 }
 
 // Extra setup in create()
