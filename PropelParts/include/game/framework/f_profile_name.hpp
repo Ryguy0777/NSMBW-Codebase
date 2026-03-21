@@ -814,6 +814,7 @@ namespace fProfile {
         AC_MODEL_LOADER,
         EN_BLOCK_SWITCH,
         EN_PALACE_SWITCH,
+        EN_BOSS_PACKUN,
 
         // End of custom entries, do NOT remove
         TOTAL_ACTOR_COUNT
