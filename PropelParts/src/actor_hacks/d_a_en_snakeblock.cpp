@@ -123,6 +123,19 @@ kmBranchDefCpp(0x80AA7220, NULL, void, dActor_c *self, dActor_c *other) {
     }
 }
 
+extern "C" void skipSnakeBlockCLR(void);
+
+kmBranchDefAsm(0x80AA8684, 0x80AA8688) {
+    lwz r0, 0x2B34(r29) // Snake Block CLR index
+    lwz r12, 0x2B18(r29) // Snake Block Length
+    cmpw r23, r12
+    blt canSetCLR
+    b skipSnakeBlockCLR
+    
+    canSetCLR:
+    blr
+}
+
 extern "C" void startSound__14SndObjctCmnMapFUlRCQ34nw4r4math4VEC2Ul(void);
 
 // Don't play sound effect if disabled
