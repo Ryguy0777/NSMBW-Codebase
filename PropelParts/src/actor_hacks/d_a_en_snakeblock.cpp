@@ -1,5 +1,6 @@
 #include <kamek.h>
 #include <game/bases/d_a_en_snakeblock.hpp>
+#include <game/bases/d_info.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
 
@@ -23,9 +24,17 @@ kmBranchDefCpp(0x80AA6F10, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, daEnSn
     this_->mBgCtr.entry();
 }
 
-// Extra setup in create()
-kmCallDefCpp(0x80AA74D8, void, daEnSnakeBlock_c *this_) {
-    // Set snake type
+// Replace create
+kmBranchDefCpp(0x80AA7470, NULL, int, daEnSnakeBlock_c *this_) {
+    // Handle spawn at midway
+    if ((this_->mParam >> 21) & 1) {
+        if (dInfo_c::m_instance->mChukanPointNum < 0) {
+            this_->deleteRequest();
+            return fBase_c::CANCELED;
+        }
+    }
+    daEnSnakeBlock_c::sc_glbSnakeNum++;
+    this_->mBlockNum = (this_->mParam & 0xF) + 2;
     this_->mSnakeType = (this_->mParam >> 20) & 1;
     
     // Set block owners so we can access it for createMdl()
@@ -35,18 +44,17 @@ kmCallDefCpp(0x80AA74D8, void, daEnSnakeBlock_c *this_) {
         this_->mBlocks[i].mpOwner = this_;
     }
 
-    this_->initBlock(); // Replaced insn
-}
+    this_->initBlock();
+    this_->initBlockPath();
+    this_->setStopState();
 
-// Check if we should automatically begin moving
-kmBranchDefCpp(0x80AA74F8, 0x80AA750C, int, daEnSnakeBlock_c *this_) {
     if ((this_->mParam >> 10) & 1) {
         this_->changeState(daEnSnakeBlock_c::StateID_Move);
     } else {
         this_->changeState(daEnSnakeBlock_c::StateID_Wait);
     }
 
-    return 1;
+    return fBase_c::SUCCEEDED;
 }
 
 extern const char *l_SNAKEBLOCK_res[];

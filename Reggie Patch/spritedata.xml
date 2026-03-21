@@ -85,12 +85,14 @@
     <value nybble="1-2" title="Triggering Event ID" comment="This switch will not be visible if a Triggering Event is defined unless that event is activated." advanced="True" advancedcomment="Using a Triggering ID with Multi-Use functionality is somewhat glitchy and not recommended." requirednybble="10.4" idtype="Triggering Event"/> <!-- Appears if Multi-Use is set, but only if Advanced fields are enabled -->
   </sprite> <!-- #45: Brick Block !-Switch -->
 
-    <sprite id="166" name="Snake Block">
+  <sprite id="166" name="Snake Block">
     <dependency notes="The sprite snaps to the Path Node location. From Node 0 to Node 1, it must be a straight horizontal line, and it must be at least as long as the Snake Block itself. Straight lines and exact 45° angles are recommended, as after each Node, the Snake Block will navigate in a 1-by-1 zigzag until it reaches the height of the next Node before going straight."/>
-    <checkbox nybble="7.4" title="Ice Snake"/>
+    <value nybble="3-4" title="Triggering Event ID" comment="When this Event ID is activated, the Snake Block will begin to move. If set to 0, the Snake Block will begin moving when the player steps on it." idtype="Triggering Event"/>
+    <checkbox nybble="7.4" title="Ice Snake" comment="This determines if the Snake Block will be icy, like in 3-Castle."/>
     <value nybble="11" title="Path ID" idtype="Path"/>
     <value nybble="8-9" title="Starting Node" comment="This determines the Node of the Path that the Snake Block will start moving from."/>
     <checkbox nybble="10.2" title="Move by Default" comment="When enabled, the Snake Block will begin moving on its own."/>
+    <checkbox nybble="10.1" title="Disable Sound Effect" comment="This disables the sound played by the Snake Block as it moves."/>
     <list nybble="12" title="Length">
       <entry value="0">3 Blocks</entry>
       <entry value="1">4 Blocks</entry>
@@ -109,7 +111,7 @@
       <entry value="14">17 Blocks</entry>
       <entry value="15">18 Blocks</entry>
     </list>
-    <list nybble="10.3-10.4" title="Speed" comment2="Due to a bug, Fast will cause Snake Blocks shorter than 7 blocks to crash.">
+    <list nybble="10.3-10.4" title="Speed">
       <entry value="0">Very Slow (0.5)</entry>
       <entry value="1">Slow (1.0)</entry>
       <entry value="2">Fast (1.4)</entry>
@@ -121,6 +123,7 @@
       <entry value="2">Stop, Fall Piece by Piece</entry>
       <entry value="3">Stop, Fall All at Once</entry>
     </list>
+    <checkbox nybble="7.3" title="Loads at Midway" comment="When enabled, the Snake Block will only appear if the level has been loaded from a Midway point."/>
   </sprite> <!-- #166: Snake Block -->
 
   <sprite id="191" name="Tile God Event" notes="The Tile God can Create / Change / Destroy tiles within a specified area when an Event is activated.">

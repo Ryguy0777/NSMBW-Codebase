@@ -91,7 +91,7 @@ class SpriteImage_SnakeBlock(SLib.SpriteImage):  # 166
         super().dataChanged()
         length = self.parent.spritedata[5] & 15
         self.width = (length + 3) * 16
-        self.type = self.parent.spritedata[3] & 0xF0
+        self.type = self.parent.spritedata[3] & 0x10
 
     def paint(self, painter):
         super().paint(painter)

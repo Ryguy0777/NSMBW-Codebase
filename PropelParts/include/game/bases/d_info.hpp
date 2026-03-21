@@ -70,9 +70,11 @@ public:
     u8 pad8[0x7];
     int mCourseSelectPageNum;
     int mCourseSelectIndexInPage;
-    u8 pad9[0x712];
+    u8 pad9[0x708];
+    int mChukanPointNum;
+    u8 pad10[6];
     bool mFukidashiActionPerformed[4][0x16];
-    u32 pad10;
+    u32 pad11;
 
     static dInfo_c *m_instance;
     static unsigned int mGameFlag; ///< See GAME_FLAG_e
