@@ -150,3 +150,165 @@ kmBranchDefAsm(0x80AA85D8, 0x80AA85DC) {
     noSound:
     blr
 }
+
+// The following was made by RedStoneMatt
+
+extern "C" void firstLoop(void);
+kmBranchDefAsm(0x80AA7C0C, 0x80AA7C10) {
+    blt _firstLoop
+
+	lhz r5, 6(r28) // sRailInfoData.mFlags
+	andi. r5, r5, 2
+	stb r5, 0x2B26(r30)
+	beq _notLooped
+
+	mulli r5, r29, 0x10
+	neg r5, r5
+	lha       r3, 0(r24)
+	lhax r0, r5, r24
+	srawi     r3, r3, 4
+	srawi     r0, r0, 4
+	subf      r3, r3, r0
+	bl        abs
+	lha       r4, 2(r24)
+	extsh     r21, r3
+	mulli r5, r29, 0x10
+	addi r5, r5, -2
+	neg r5, r5
+	lhax r0, r5, r24
+	srawi     r3, r4, 4
+	srawi     r0, r0, 4
+	subf      r3, r3, r0
+	bl        abs
+	extsh     r3, r3
+	add       r0, r25, r21
+	add       r25, r3, r0
+	addi      r24, r24, 0x10
+	addi      r26, r26, 1
+    b _notLooped
+
+    _firstLoop:
+	b firstLoop
+
+    _notLooped:
+	blr
+}
+
+extern "C" void loopForNodes(void);
+extern "C" void finishNodeLoop(void);
+extern "C" void cancelNodeLoop(void);
+kmBranchDefAsm(0x80AA8134, 0x80AA7C80) {
+    blt _loopForNodes
+
+	lhz r7, 6(r28) // sRailInfoData.mFlags
+	andi. r7, r7, 2
+	beq _notNodeLooped
+
+	lhz r7, 4(r28) // sRailInfoData.mCount
+	cmpw r31, r7
+	bge _finishNodeLoop
+	addi r7, r7, -1
+
+	mulli r6, r7, 0x10
+	neg r6, r6
+
+	lha       r3, 0(r27)
+	lhax r0, r6, r27
+	srawi     r5, r3, 4
+	lha       r3, 2(r27)
+	srawi     r4, r0, 4
+	mulli r6, r7, 0x10
+	addi r6, r6, -2
+	neg r6, r6
+	lhax r0, r6, r27
+	srawi     r3, r3, 4
+	subf      r4, r5, r4
+	srawi     r0, r0, 4
+	subf      r0, r3, r0
+	extsh     r23, r4
+	mr        r3, r23
+	extsh     r22, r0
+	bl        abs
+	extsh     r26, r3
+	mr        r3, r22
+	bl        abs
+	cmpwi     r23, 0
+	extsh     r6, r3
+	li        r7, 0
+	li        r8, 0
+    b _returnFromNodeLoop
+
+    _loopForNodes:
+	b loopForNodes
+
+    _finishNodeLoop:
+	b finishNodeLoop
+
+    _notNodeLooped:
+	b cancelNodeLoop
+
+    _returnFromNodeLoop:
+    blr
+}
+
+kmBranchDefAsm(0x80AA7450, 0x80AA7454) {
+	cmpwi r0, 0
+	bne _doUsual
+    lbz r9, 0x2B26(r29)
+    lbz r14, 0x2B27(r29)
+	cmpwi r9, 0 // Is looped
+	beq _checkForEndState
+	li r0, 1
+	stw r0, 0x1AC(r3) // dCtrlBlock_c.mTravelInfoIdx
+	b _doUsual
+
+_checkForEndState:
+	cmpwi r15, 4 // End State
+	bne _doUsual
+	cmpwi r17, 1 // Are we the head
+	bne _doUsual
+
+
+	lwz r0, 0x1AC(r3) // dCtrlBlock_c.mTravelInfoIdx
+	cmpwi r14, 0
+	bne _subTwo
+	lwz r17, 0x2B20(r29) // daEnSnakeBlock_c.mTravelInfoIdx
+	mr r16, r17
+	addi r16, r16, 3
+	lwz r17, 0x2B18 (r29) // daEnSnakeBlock_c.mBlockNum
+	add r0, r16, r17
+	b _storeNumberInChain
+	_subTwo:
+	li r0, 1
+	_storeNumberInChain:
+	stw  r0, 0x1AC(r3) // dCtrlBlock_c.mTravelInfoIdx
+
+
+	lwz r0, 0x8A8(r29) // daEnSnakeBlock_c.mTail.mTravelInfoIdx
+	cmpwi r14, 0
+	bne _subTwo2
+	lwz r17, 0x2B20(r29) // daEnSnakeBlock_c.mTravelInfoIdx
+	mr r16, r17
+	addi r0, r16, 3
+	b _storeNumberInChain2
+	_subTwo2:
+	lwz r16, 0x2B18 (r29) // daEnSnakeBlock_c.mBlockNum
+	addi r0, r16, 1
+	_storeNumberInChain2:
+	stw  r0, 0x8A8(r29) // daEnSnakeBlock_c.mTail.mTravelInfoIdx
+
+	li r0, 1
+	cmpwi r14, 0
+	beq _setR14ToOne
+	li r14, 0
+	li r0, 1
+	b _doUsual
+	_setR14ToOne:
+	li r14, 1
+	li r0, 1
+
+_doUsual:
+    stb r14, 0x2B27(r29)
+	stfs f5, 0xC(r1) // Restore Instruction
+	blr
+}

@@ -25,6 +25,11 @@ checkForKoopas2=0x80868714
 RailColors=0x8097DE48
 RailScales=0x8097DE70
 
+cancelNodeLoop=0x80AA8138
+loopForNodes=0x80AA7C2C
+finishNodeLoop=0x80AA8138
+firstLoop=0x80AA7BC0
+
 skipSnakeBlockCLR=0x80AA8690
 
 callBackF__Q216daEnSnakeBlock_c8dBlock_cFP8dActor_cP8dActor_c=0x80AA7220
