@@ -18,6 +18,7 @@
 		<folder external="config" disc="/config" create="true" />
 		<folder external="Code" disc="/Code" create="true" />
 		<folder external="Effect" disc="/Effect" create="true" />
+		<folder external="LangDefault" disc="/LangDefault" create="true" recursive="true" />
 		<folder external="Layout" disc="/Layout" create="true" recursive="true"/>
 		<folder external="LevelSamples" disc="/LevelSamples" create="true" />
 		<folder external="Object" disc="/Object" create="true" />

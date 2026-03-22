@@ -45,7 +45,31 @@ int dNewFontMng_c::create(EGG::Heap *pHeap) {
             dGameCom::AreaLanguageFolder(resPath, filename);
             brfnt = (nw4r::ut::BinaryFileHeader*)fontMng->mpFontLoaders[i].request(filename, 0, pHeap);
             if (brfnt == nullptr) {
-                return false;
+                int entrynum = DVDConvertPathToEntrynum(filename);
+                if (entrynum != -1) {
+                    return false;
+                }
+
+                // Try the fallback
+                char nameBuf[100];
+                strcat(nameBuf, "LangDefault/");
+                strcat(nameBuf, resPath);
+
+                brfnt = (nw4r::ut::BinaryFileHeader*)fontMng->mpFontLoaders[i].request(nameBuf, 0, pHeap);
+                if (brfnt == nullptr) {
+                    int entrynum = DVDConvertPathToEntrynum(nameBuf);
+                    if (entrynum != -1) {
+                        return false;
+                    }
+
+                    // No fallback was found, display a failure message so the user knows what happened
+                    GXColor fatalText = {0xFF, 0xFF, 0xFF, 0xFF};
+                    GXColor fatalBack = {0x00, 0x00, 0x00, 0xFF};
+                    char msgBuf[256];
+                    sprintf(msgBuf, "FATAL ERROR:\nThe fallback file\n\"%s\"\ncould not be found.\nEnsure it exists and is in the correct location.", nameBuf);
+
+                    OSFatal(fatalText, fatalBack, msgBuf);
+                }
             }
 
             fontMng->mpFontDatas[i] = brfnt;

@@ -27,7 +27,31 @@ kmBranchDefCpp(0x800CDC20, NULL, bool, EGG::Heap *pHeap) {
 
             void *file = l_dMessage_obj.mMsgLoader.request(filename, 0, pHeap);
             if (file == nullptr) {
-                return false;
+                int entrynum = DVDConvertPathToEntrynum(filename);
+                if (entrynum != -1) {
+                    return false;
+                }
+
+                // Try the fallback
+                char nameBuf[100];
+                strcat(nameBuf, "LangDefault/");
+                strcat(nameBuf, MSG_NAME_TBL[i]);
+
+                file = l_dMessage_obj.mMsgLoader.request(nameBuf, 0, pHeap);
+                if (file == nullptr) {
+                    int entrynum = DVDConvertPathToEntrynum(nameBuf);
+                    if (entrynum != -1) {
+                        return false;
+                    }
+
+                    // No fallback was found, display a failure message so the user knows what happened
+                    GXColor fatalText = {0xFF, 0xFF, 0xFF, 0xFF};
+                    GXColor fatalBack = {0x00, 0x00, 0x00, 0xFF};
+                    char msgBuf[256];
+                    sprintf(msgBuf, "FATAL ERROR:\nThe fallback file\n\"%s\"\ncould not be found.\nEnsure it exists and is in the correct location.", nameBuf);
+
+                    OSFatal(fatalText, fatalBack, msgBuf);
+                }
             }
 
             EGG::Archive *pArc = EGG::Archive::mount(file, pHeap, 4);
