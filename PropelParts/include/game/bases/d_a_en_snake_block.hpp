@@ -25,7 +25,7 @@ public:
 
         void draw(mVec3_c pos);
 
-        void initBgCtr(daEnSnakeBlock_c *parent, mVec3_c *blockPos);
+        void initBgCtr(daEnSnakeBlock_c *parent, mVec3_c *blockPos, int _unused);
         void calcBgCtr();
 
         void setFallCollapse();
@@ -60,7 +60,7 @@ public:
         bool calcPos(u8 *travelInfo);
         bool calcTravelPos(u8 *travelInfo);
 
-        int mSnakeSpeed;
+        int mSnakeSpeedIdx;
     };
 
     daEnSnakeBlock_c();
@@ -117,4 +117,9 @@ public:
 
     STATE_FUNC_DECLARE(daEnSnakeBlock_c, Wait);
     STATE_FUNC_DECLARE(daEnSnakeBlock_c, Move);
+    STATE_FUNC_DECLARE(daEnSnakeBlock_c, Shake);
+    STATE_FUNC_DECLARE(daEnSnakeBlock_c, Stop);
+    STATE_FUNC_DECLARE(daEnSnakeBlock_c, Collapse1);
+    STATE_FUNC_DECLARE(daEnSnakeBlock_c, Collapse2);
+    STATE_FUNC_DECLARE(daEnSnakeBlock_c, Collapse3);
 };

@@ -1,11 +1,15 @@
 #include <kamek.h>
-#include <game/bases/d_a_en_snakeblock.hpp>
+#include <game/bases/d_a_en_snake_block.hpp>
 #include <game/bases/d_info.hpp>
 #include <game/bases/d_res_mng.hpp>
 #include <game/bases/d_switch_flag_mng.hpp>
+#include <constants/sound_list.h>
+#include <game/bases/d_audio.hpp>
+#include <game/bases/d_rail.hpp>
+#include <game/bases/d_s_stage.hpp>
 
 // Only apply ice tile collision to icy snake blocks
-kmBranchDefCpp(0x80AA6F10, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, daEnSnakeBlock_c *parent, mVec3_c *blockPos) {
+kmBranchDefCpp(0x80AA6F10, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, daEnSnakeBlock_c *parent, mVec3_c *blockPos, int isIce) {
     mVec3_c targetPos = *blockPos;
     // Adjust spawn position based on travel direction
     switch (parent->mpTravelInfo[1]) {
@@ -34,7 +38,7 @@ kmBranchDefCpp(0x80AA6F10, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, daEnSn
         1, 0, nullptr
     );
 
-    if (this_->mpOwner->mSnakeType == daEnSnakeBlock_c::TYPE_ICE) {
+    if (isIce) {
         this_->mBgCtr.mFlags = 4;
     }
     this_->mBgCtr.entry();
@@ -147,32 +151,90 @@ kmBranchDefCpp(0x80AA7220, NULL, void, dActor_c *self, dActor_c *other) {
     }
 }
 
-extern "C" void skipSnakeBlockCLR(void);
+// Thanks to Grop for decompiling the following functions
+kmBranchDefCpp(0x80AA8540, NULL, void, daEnSnakeBlock_c *this_) {
+	bool b3 = this_->mHead.calcPos(this_->mpTravelInfo);
+    bool b4 = this_->mTail.calcPos(this_->mpTravelInfo);
+    bool b5 = false;
+    bool b6 = false;
 
-kmBranchDefAsm(0x80AA8684, 0x80AA8688) {
-    lwz r0, 0x2B34(r29) // Snake Block CLR index
-    lwz r12, 0x2B18(r29) // Snake Block Length
-    cmpw r23, r12
-    blt canSetCLR
-    b skipSnakeBlockCLR
-    
-    canSetCLR:
-    blr
+    if (b3 || b4) {
+        b5 = this_->mHead.calcTravelPos(this_->mpTravelInfo);
+        b6 = this_->mTail.calcTravelPos(this_->mpTravelInfo);
+		
+		// Don't play sound effect if disabled
+		if (!(this_->mParam >> 11 & 1)) {
+			dAudio::SoundEffectID_t(SE_OBJ_SNAKE_BLOCK).playMapSound(this_->mPos, 0);
+		}
+
+        this_->setBlockPos();
+        this_->mCreateAnmBlockIdx++;
+        if (this_->mCreateAnmBlockNum < this_->mCreateAnmBlockIdx) {
+            this_->mCreateAnmBlockIdx = this_->mCreateAnmBlockNum;
+        }
+
+        int frame_idx = 0;
+        int frame_delta = (int)(16.0f / daEnSnakeBlock_c::sc_snakeSpeeds[(this_->mParam >> 8) & 3]);
+
+        for (int i = 0; i < this_->mCreateAnmBlockIdx; i++) {
+			if (i < this_->mBlockNum) {
+				this_->mBlocks[i].setAnmClr("create");
+				this_->mBlocks[i].mAnmClr.setFrame(frame_idx, 0);
+				frame_idx += frame_delta;
+			}
+        }
+    }
+
+    if (b5 || b6) {
+        if (this_->mpStopState->isEqual(daEnSnakeBlock_c::StateID_Stop)) {
+            this_->changeState(daEnSnakeBlock_c::StateID_Stop);
+        } else {
+            this_->changeState(daEnSnakeBlock_c::StateID_Shake);
+        }
+    }
 }
 
-extern "C" void startSound__14SndObjctCmnMapFUlRCQ34nw4r4math4VEC2Ul(void);
+kmBranchDefCpp(0x80AA7730, NULL, void, daEnSnakeBlock_c *this_) {
+	sRailInfoData *rail = dRail_c::getRailInfoP((this_->mParam >> 4) & 0xF);
+    dCdFile_c *file = dCd_c::m_instance->getFileP(dScStage_c::m_instance->mCurrFile);
 
-// Don't play sound effect if disabled
-kmBranchDefAsm(0x80AA85D8, 0x80AA85DC) {
-    nofralloc
-    lwz r12, 0x4(r29)
-    rlwinm r12, r12, 21, 31, 31
-    cmpwi r12, 1
-    beq noSound
-    bl startSound__14SndObjctCmnMapFUlRCQ34nw4r4math4VEC2Ul
+    sRailNodeData *node = &file->mpRailNodes[rail->mNodeIdx + ((this_->mParam >> 12) & 0xFF)];
 
-    noSound:
-    blr
+    float f1 = node->mX + (this_->mBlockNum * 16.0f) + 8.0f;
+    float f2 = -node->mY - 8.0f;
+    mVec3_c head_pos = mVec3_c(f1, f2, 1516.0f);
+    this_->mHead.initBgCtr(this_, &head_pos, (this_->mParam >> 20) & 1);
+
+    mVec3_c mid_pos;
+    for (int i = 0; i < this_->mBlockNum; i++) {
+        mid_pos.set(f1, f2, 1500.0f);
+        this_->mBlocks[i].initBgCtr(this_, &mid_pos, (this_->mParam >> 20) & 1);
+		// Adjust position changes depending on starting direction
+		switch (this_->mpTravelInfo[1]) {
+			case 1: // Up
+				f2 -= 16.0f;
+				break;
+			case 2: // Down
+				f2 += 16.0f;
+				break;
+			case 3: // Left
+				f1 += 16.0f;
+				break;
+			default: // Right
+				f1 -= 16.0f;
+				break;
+		}
+    }
+
+    mVec3_c tail_pos = mVec3_c(f1, f2, 1516.0f);
+    this_->mTail.initBgCtr(this_, &tail_pos, (this_->mParam >> 20) & 1);
+
+    this_->mHead.mTravelInfoIdx = this_->mBlockNum + 1;
+    this_->mTail.mTravelInfoIdx = 1;
+
+    // Note: Value 3 is out of bounds
+    this_->mHead.mSnakeSpeedIdx = (this_->mParam >> 8) & 3;
+    this_->mTail.mSnakeSpeedIdx = (this_->mParam >> 8) & 3;
 }
 
 // The following was made by RedStoneMatt
@@ -335,41 +397,6 @@ _doUsual:
     stb r14, 0x2B27(r29)
 	stfs f5, 0xC(r1) // Restore Instruction
 	blr
-}
-
-kmBranchDefAsm(0x80AA7898, 0x80AA789C) {
-	lwz r3, 0x2B1C(r30) //daEnSnakeBlock_c.mpTravelInfo
-	lbz r3, 1(r3)
-
-	cmpwi r3, 1 // Up
-	beq _doUp
-	cmpwi r3, 2 // Down
-	beq _doDown
-	cmpwi r3, 3 // Left
-	beq _doLeft
-	cmpwi r3, 4 // Right
-	beq _doRight
-
-	b continueFromOtherDirectionsSpawn
-
-    _doRight:
-	fsubs f29, f29, f31
-	b continueFromOtherDirectionsSpawn
-
-    _doLeft:
-	fadds f29, f29, f31
-	b continueFromOtherDirectionsSpawn
-
-    _doUp:
-	fsubs f28, f28, f31
-	b continueFromOtherDirectionsSpawn
-
-    _doDown:
-	fadds f28, f28, f31
-	b continueFromOtherDirectionsSpawn
-
-    continueFromOtherDirectionsSpawn:
-    blr
 }
 
 kmBranchDefAsm(0x80AA7C14, 0x80AA7C18) {
