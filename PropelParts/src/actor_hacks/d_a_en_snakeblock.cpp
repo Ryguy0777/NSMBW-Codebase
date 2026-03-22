@@ -6,7 +6,23 @@
 
 // Only apply ice tile collision to icy snake blocks
 kmBranchDefCpp(0x80AA6F10, NULL, void, daEnSnakeBlock_c::dBlock_c *this_, daEnSnakeBlock_c *parent, mVec3_c *blockPos) {
-    this_->mPos = *blockPos;
+    mVec3_c targetPos = *blockPos;
+    // Adjust spawn position based on travel direction
+    switch (parent->mpTravelInfo[1]) {
+        case 1: // Up
+            targetPos.x -= parent->mBlockNum * 16.0f;
+            targetPos.y += parent->mBlockNum * 16.0f;
+            break;
+        case 2: // Down
+            targetPos.x -= parent->mBlockNum * 16.0f;
+            targetPos.y -= parent->mBlockNum * 16.0f;
+            break;
+        case 3: // Left
+            targetPos.x -= parent->mBlockNum * 32.0f;
+        // Vanilla behavior is to spawn right, so nothing to do here
+    }
+    this_->mPos = targetPos;
+
     if (this_->mpOwner == nullptr) {
         this_->mpOwner = parent;
     }
@@ -318,5 +334,144 @@ _checkForEndState:
 _doUsual:
     stb r14, 0x2B27(r29)
 	stfs f5, 0xC(r1) // Restore Instruction
+	blr
+}
+
+kmBranchDefAsm(0x80AA7898, 0x80AA789C) {
+	lwz r3, 0x2B1C(r30) //daEnSnakeBlock_c.mpTravelInfo
+	lbz r3, 1(r3)
+
+	cmpwi r3, 1 // Up
+	beq _doUp
+	cmpwi r3, 2 // Down
+	beq _doDown
+	cmpwi r3, 3 // Left
+	beq _doLeft
+	cmpwi r3, 4 // Right
+	beq _doRight
+
+	b continueFromOtherDirectionsSpawn
+
+    _doRight:
+	fsubs f29, f29, f31
+	b continueFromOtherDirectionsSpawn
+
+    _doLeft:
+	fadds f29, f29, f31
+	b continueFromOtherDirectionsSpawn
+
+    _doUp:
+	fsubs f28, f28, f31
+	b continueFromOtherDirectionsSpawn
+
+    _doDown:
+	fadds f28, f28, f31
+	b continueFromOtherDirectionsSpawn
+
+    continueFromOtherDirectionsSpawn:
+    blr
+}
+
+kmBranchDefAsm(0x80AA7C14, 0x80AA7C18) {
+	addi r3, r25, 2
+	slwi r3, r3, 1 // r3 *= 2
+    blr
+}
+
+
+kmCallDefAsm(0x80AA8150) {
+    // r3 is mpTravelInfo; r25 is mTravelInfoIdx
+	stb r4, 1(r3) // Restore instruction
+
+	mr r3, r0
+
+	stwu sp, -0x100(sp)
+	mflr r0
+	stw r0, 0x104(sp)
+	stw r31, 0xFC(sp)
+	stw r30, 0xF8(sp)
+	stw r29, 0xF4(sp)
+	stw r28, 0xF0(sp)
+	stw r27, 0xEC(sp)
+	stw r26, 0xE8(sp)
+	stw r25, 0xE4(sp)
+	stw r24, 0xE0(sp)
+	stw r23, 0xDC(sp)
+	stw r22, 0xD8(sp)
+	stw r21, 0xD4(sp)
+	stw r20, 0xD0(sp)
+	stw r19, 0xCC(sp)
+	stw r18, 0xC8(sp)
+	stw r17, 0xC4(sp)
+	stw r16, 0xC0(sp)
+	stw r15, 0xBC(sp)
+	stw r14, 0xB8(sp)
+
+	li r0, 0 // r0 will be our index to the beginning
+	mr r4, r25
+	addi r4, r4, 2
+	slwi r4, r4, 1 // r4 will be out index to the end
+	addi r4, r4, -1
+
+	addi r6, r25, 1
+
+    _startLoop:
+	lbzx r16, r3, r0 // Load r0(mpTravelInfo)
+	cmpw r0, r6
+	bgt _endLoop
+
+    _doLoop:
+	cmpwi r16, 1
+	beq _setToTwo
+	cmpwi r16, 2
+	beq _setToOne
+	cmpwi r16, 3
+	beq _setToFour
+	cmpwi r16, 4
+	beq _setToThree
+
+	b _storeNewInfo
+
+	_setToOne:
+	li r16, 1
+	b _storeNewInfo
+	_setToTwo:
+	li r16, 2
+	b _storeNewInfo
+	_setToThree:
+	li r16, 3
+	b _storeNewInfo
+	_setToFour:
+	li r16, 4
+
+	_storeNewInfo:
+	stbx r16, r3, r4
+	mr r16, r0
+	addi r0, r16, 1 // That's to avoid it addi r0, r0 to compile as li r0
+	addi r4, r4, -1
+	b _startLoop
+
+    _endLoop:
+	lwz r0, 0x104(sp)
+	lwz r31, 0xFC(sp)
+	lwz r30, 0xF8(sp)
+	lwz r29, 0xF4(sp)
+	lwz r28, 0xF0(sp)
+	lwz r27, 0xEC(sp)
+	lwz r26, 0xE8(sp)
+	lwz r25, 0xE4(sp)
+	lwz r24, 0xE0(sp)
+	lwz r23, 0xDC(sp)
+	lwz r22, 0xD8(sp)
+	lwz r21, 0xD4(sp)
+	lwz r20, 0xD0(sp)
+	lwz r19, 0xCC(sp)
+	lwz r18, 0xC8(sp)
+	lwz r17, 0xC4(sp)
+	lwz r16, 0xC0(sp)
+	lwz r15, 0xBC(sp)
+	lwz r14, 0xB8(sp)
+	mtlr r0
+	addi sp, sp, 0x100
 	blr
 }
