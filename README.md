@@ -1,3 +1,6 @@
+# Notice
+PropelParts's development will be on haitus until my mental health improves.
+
 # PropelParts
 This is a custom code platform for New Super Mario Bros. Wii that adds new features to the game, intended to serve as a basis for mods of the game.
 Currently still in development, so don't expect everything to be finished. You can check `FEATURELIST.md` to see a list of features implemented, planned, and unfinished.
